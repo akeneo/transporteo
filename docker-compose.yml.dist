@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  php:
+    image: akeneo/php:php-7.1
+    environment:
+      COMPOSER_HOME: /home/docker/.composer
+      XDEBUG_CONFIG: 'remote_host=xxx.xxx.xxx.xxx'
+    user: docker
+    volumes:
+      - ./:/home/docker/migration
+      - ~/.config/composer:/home/docker/.composer
+    working_dir: /home/docker/migration
+    networks:
+      - akeneo
+
+networks:
+  akeneo: ~

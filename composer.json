@@ -1,0 +1,29 @@
+{
+  "name": "akeneo/migration-tool",
+  "description": "Migrate your PIM to the latest version!",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Akeneo",
+      "homepage": "http://www.akeneo.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Akeneo\\PimMigration\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.1.0",
+    "phpseclib/phpseclib": "~2.0",
+    "symfony/config": "3.3.4",
+    "symfony/console": "3.3.4",
+    "symfony/dependency-injection": "3.3.4"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "3.0.*",
+    "phpunit/phpunit": "5.4.*",
+    "friendsofphp/php-cs-fixer": "2.3.2"
+  },
+  "minimum-stability": "stable"
+}

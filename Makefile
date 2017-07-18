@@ -13,6 +13,7 @@ list:
 	@echo "Akeneo PIM Migration tool available targets:"
 	@echo ""
 	@echo "  $(YELLOW)fix-style$(RESTORE)     > run the PHP-CS-FIXER"
+	@echo "  $(YELLOW)test$(RESTORE)          > run All tests"
 	@echo "  $(YELLOW)phpspec$(RESTORE)       > run All PHPSpec"
 	@echo "  $(YELLOW)phpunit$(RESTORE)       > run All PHPUnit"
 	@echo "  $(YELLOW)enter$(RESTORE)         > enter in the PHP container"
@@ -31,6 +32,9 @@ fix-style:
 .PHONY: enter
 enter:
 	docker-compose run php /bin/bash
+
+.PHONY: test
+test: | phpspec phpunit
 
 .PHONY: phpspec
 phpspec:

@@ -27,7 +27,7 @@ final class ComposerJson implements File
         return $this->localPath;
     }
 
-    public static function getName(): string
+    public static function getFileName(): string
     {
         return 'composer.json';
     }

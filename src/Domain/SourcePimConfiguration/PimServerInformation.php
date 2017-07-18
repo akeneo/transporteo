@@ -32,7 +32,7 @@ final class PimServerInformation
     public function __construct(string $composerJsonPath, string $projectName, ?string $host = null, ?int $port = null, ?string $username = null)
     {
         if (!$this->endsByComposerDotJson($composerJsonPath)) {
-            throw new \InvalidArgumentException('ComposerJsonPath must end by '.ComposerJson::getName());
+            throw new \InvalidArgumentException('ComposerJsonPath must end by '.ComposerJson::getFileName());
         }
 
         $this->composerJsonPath = $composerJsonPath;
@@ -59,7 +59,7 @@ final class PimServerInformation
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR,
-            ParametersYml::getName()
+            ParametersYml::getFileName()
         );
 
         return pathinfo((string) $this->getComposerJsonPath())['dirname'].$path;
@@ -72,7 +72,7 @@ final class PimServerInformation
 
     private function endsByComposerDotJson(string $haystack): bool
     {
-        $needle = ComposerJson::getName();
+        $needle = ComposerJson::getFileName();
 
         return $needle === ''
             || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);

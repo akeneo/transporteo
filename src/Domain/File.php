@@ -14,5 +14,5 @@ interface File
 {
     public function getPath(): string;
 
-    public static function getName(): string;
+    public static function getFileName(): string;
 }

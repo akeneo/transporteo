@@ -1,12 +1,13 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 
 /**
- * Build the source pim configuration
+ * Build the source pim configuration.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

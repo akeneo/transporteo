@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
@@ -8,7 +9,7 @@ use Akeneo\PimMigration\Domain\FileNotFoundException;
 use phpseclib\Net\SFTP;
 
 /**
- * Ssh implementation of a file fetcher
+ * Ssh implementation of a file fetcher.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
@@ -33,7 +34,7 @@ final class SshFileFetcher implements FileFetcher
 
         $subList = $this->sftp->nlist($pathInfo['dirname']);
 
-        $filesMatchingName = array_filter($subList, function ($element) use ($fileName){
+        $filesMatchingName = array_filter($subList, function ($element) use ($fileName) {
             return $element == $fileName;
         });
 
@@ -49,7 +50,7 @@ final class SshFileFetcher implements FileFetcher
             DIRECTORY_SEPARATOR
         );
 
-        $localPath = realpath($varDir) . DIRECTORY_SEPARATOR . $fileName;
+        $localPath = realpath($varDir).DIRECTORY_SEPARATOR.$fileName;
 
         $result = $this->sftp->get($path, $localPath);
 

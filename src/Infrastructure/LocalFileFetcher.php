@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Local file fetcher
+ * Local file fetcher.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017  Akeneo SAS (http://www.akeneo.com)
@@ -36,7 +36,7 @@ final class LocalFileFetcher implements FileFetcher
             DIRECTORY_SEPARATOR
         );
 
-        $localPath = sprintf('%s%s%s',$varDir, DIRECTORY_SEPARATOR, $fileName);
+        $localPath = sprintf('%s%s%s', $varDir, DIRECTORY_SEPARATOR, $fileName);
 
         $fs->copy($path, $localPath);
 

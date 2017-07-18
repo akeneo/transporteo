@@ -1,10 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 /**
- * Keep the PIM server information
+ * Keep the PIM server information.
  *
  * @see Step 2
  *
@@ -31,7 +32,7 @@ final class PimServerInformation
     public function __construct(string $composerJsonPath, string $projectName, ?string $host = null, ?int $port = null, ?string $username = null)
     {
         if (!$this->endsByComposerDotJson($composerJsonPath)) {
-            throw new \InvalidArgumentException('ComposerJsonPath must end by '. ComposerJson::getName());
+            throw new \InvalidArgumentException('ComposerJsonPath must end by '.ComposerJson::getName());
         }
 
         $this->composerJsonPath = $composerJsonPath;
@@ -61,7 +62,7 @@ final class PimServerInformation
             ParametersYml::getName()
         );
 
-        return pathinfo((string)$this->getComposerJsonPath())['dirname'] . $path;
+        return pathinfo((string) $this->getComposerJsonPath())['dirname'].$path;
     }
 
     public function getProjectName(): string

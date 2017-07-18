@@ -1,10 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 /**
- * Global configuration of PIM source
+ * Global configuration of PIM source.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

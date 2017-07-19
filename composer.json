@@ -10,7 +10,10 @@
   ],
   "autoload": {
     "psr-4": {
-      "Akeneo\\PimMigration\\": "src/"
+        "Akeneo\\PimMigration\\": "src/",
+        "integration\\Akeneo\\PimMigration\\": "tests/integration",
+        "resources\\Akeneo\\PimMigration\\": "tests/resources",
+        "spec\\Akeneo\\PimMigration\\": "tests/spec"
     }
   },
   "require": {
@@ -18,11 +21,13 @@
     "phpseclib/phpseclib": "~2.0",
     "symfony/config": "3.3.4",
     "symfony/console": "3.3.4",
-    "symfony/dependency-injection": "3.3.4"
+    "symfony/dependency-injection": "3.3.4",
+    "symfony/filesystem": "3.3.4"
   },
   "require-dev": {
-    "phpspec/phpspec": "3.0.*",
-    "phpunit/phpunit": "5.4.*",
+    "sebastian/exporter": "^3.1",
+    "phpspec/phpspec": "3.4.*",
+    "phpunit/phpunit": "6.2.*",
     "friendsofphp/php-cs-fixer": "2.3.2"
   },
   "minimum-stability": "stable"

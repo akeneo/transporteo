@@ -72,9 +72,6 @@ final class PimServerInformation
 
     private function endsByComposerDotJson(string $haystack): bool
     {
-        $needle = ComposerJson::getFileName();
-
-        return $needle === ''
-            || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
+        return pathinfo($haystack)['basename'] === ComposerJson::getFileName();
     }
 }

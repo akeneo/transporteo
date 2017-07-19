@@ -7,7 +7,7 @@ services:
       COMPOSER_HOME: /home/docker/.composer
       PHP_IDE_CONFIG: 'serverName=php-migration-cli'
       XDEBUG_CONFIG: 'remote_host=xxx.xxx.xxx.xxx'
-      PHP_XDEBUG_ENABLED: 1
+      PHP_XDEBUG_ENABLED: 0
     user: docker
     volumes:
       - ./:/home/docker/migration

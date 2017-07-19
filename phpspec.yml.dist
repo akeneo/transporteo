@@ -1,0 +1,6 @@
+suites:
+    migration:
+        psr4_prefix: Akeneo\PimMigration
+        namespace: Akeneo\PimMigration
+        src_path: %paths.config%/src
+        spec_path: %paths.config%/tests

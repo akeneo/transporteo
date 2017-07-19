@@ -8,6 +8,12 @@ use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Spec for LocalFileFetcher.
+ *
+ * @author    Anael Chardan <anael.chardan@akeneo.com>
+ * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
+ */
 class LocalFileFetcherSpec extends ObjectBehavior
 {
     function it_is_initializable()

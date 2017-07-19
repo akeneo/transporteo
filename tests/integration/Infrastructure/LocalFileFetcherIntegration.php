@@ -9,6 +9,12 @@ use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Integration test about local file fetcher.
+ *
+ * @author    Anael Chardan <anael.chardan@akeneo.com>
+ * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
+ */
 final class LocalFileFetcherIntegration extends TestCase
 {
     public function testItCopyTheFileCorrectly()
@@ -44,5 +50,4 @@ final class LocalFileFetcherIntegration extends TestCase
 
         $fs->remove($finalPath);
     }
-
 }

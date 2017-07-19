@@ -8,6 +8,12 @@ use phpseclib\Net\SFTP;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 
+/**
+ * Spec for SshFileFetcher.
+ *
+ * @author    Anael Chardan <anael.chardan@akeneo.com>
+ * @copyright ${YEAR} Akeneo SAS (http://www.akeneo.com)
+ */
 class SshFileFetcherSpec extends ObjectBehavior
 {
     public function let(SFTP $sftp)

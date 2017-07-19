@@ -11,6 +11,12 @@ use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurator;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 
+/**
+ * Spec for SourcePimConfigurator.
+ *
+ * @author    Anael Chardan <anael.chardan@akeneo.com>
+ * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
+ */
 class SourcePimConfiguratorSpec extends ObjectBehavior
 {
     public function let(FileFetcher $fetcher)

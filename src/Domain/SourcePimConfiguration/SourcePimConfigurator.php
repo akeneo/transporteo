@@ -26,7 +26,8 @@ class SourcePimConfigurator
     {
         $composerJson = new ComposerJson($this->fetcher->fetch($pimServerInfo->getComposerJsonPath()));
         $parametersYml = new ParametersYml($this->fetcher->fetch($pimServerInfo->getParametersYmlPath()));
+        $pimParameters = new PimParameters($this->fetcher->fetch($pimServerInfo->getPimParametersPath()));
 
-        return new SourcePimConfiguration($composerJson, $parametersYml, $pimServerInfo->getProjectName());
+        return new SourcePimConfiguration($composerJson, $parametersYml, $pimParameters, $pimServerInfo->getProjectName());
     }
 }

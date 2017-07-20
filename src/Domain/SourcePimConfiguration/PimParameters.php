@@ -8,12 +8,12 @@ use Akeneo\PimMigration\Domain\File;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Representation of a parameters.yml file.
+ * Representation of a pim_parameters.yml file.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class ParametersYml implements File
+class PimParameters implements File
 {
     /** @var string */
     private $localPath;
@@ -29,38 +29,23 @@ class ParametersYml implements File
         }
     }
 
-    public function getDatabaseHost(): string
-    {
-        return $this->fullContent['database_host'];
-    }
-
-    public function getDatabasePort(): ?int
-    {
-        return $this->fullContent['database_port'] ?? 3306;
-    }
-
-    public function getDatabaseUser(): string
-    {
-        return $this->fullContent['database_user'];
-    }
-
-    public function getDatabasePassword(): string
-    {
-        return $this->fullContent['database_password'];
-    }
-
-    public function getDatabaseName(): string
-    {
-        return $this->fullContent['database_name'];
-    }
-
     public function getPath(): string
     {
         return $this->localPath;
     }
 
+    public function getMongoDbInformation(): ?string
+    {
+        return $this->fullContent['mongodb_server'] ?? null;
+    }
+
+    public function getMongoDbDatabase(): ?string
+    {
+        return $this->fullContent['mongodb_database'] ?? null;
+    }
+
     public static function getFileName(): string
     {
-        return 'parameters.yml';
+        return 'pim_parameters.yml';
     }
 }

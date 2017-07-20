@@ -5,6 +5,7 @@ namespace spec\Akeneo\PimMigration\Domain\SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\ParametersYml;
+use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimParameters;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurator;
@@ -31,20 +32,24 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
 
     public function it_returns_the_good_configuration($fetcher)
     {
-        $localComposerJsonPath = ResourcesFileLocator::getAbsoluteComposerJsonLocalPath();
-        $localParameterYmlPath = ResourcesFileLocator::getAbsoluteParametersYamlLocalPath();
+        $localComposerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
+        $localParameterYmlPath = ResourcesFileLocator::getStepOneAbsoluteParametersYamlLocalPath();
+        $localPimParametersPath = ResourcesFileLocator::getStepOneAbsolutePimParametersLocalPath();
 
         $pimServerInfo = new PimServerInformation($localComposerJsonPath, 'nanou-migration');
 
         $destinationComposerJsonPath = ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath();
         $destinationParametersYmlPath = ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath();
+        $destinationPimParametersPath = ResourcesFileLocator::getAbsolutePimParametersDestinationPath();
 
         $fetcher->fetch($localComposerJsonPath)->willReturn($destinationComposerJsonPath);
         $fetcher->fetch($localParameterYmlPath)->willReturn($destinationParametersYmlPath);
+        $fetcher->fetch($localPimParametersPath)->willReturn($destinationPimParametersPath);
 
         $sourcePimConfiguration = new SourcePimConfiguration(
             new ComposerJson($destinationComposerJsonPath),
             new ParametersYml($destinationParametersYmlPath),
+            new PimParameters($destinationPimParametersPath),
             'nanou-migration'
         );
 
@@ -57,7 +62,8 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
             'beASourcePimConfigurationLike' => function (SourcePimConfiguration $result, SourcePimConfiguration $expected) {
                 return (
                     $result->getComposerJson()->getPath() === $expected->getComposerJson()->getPath() &&
-                    $result->getParametersYml()->getPath() === $expected->getParametersYml()->getPath()
+                    $result->getParametersYml()->getPath() === $expected->getParametersYml()->getPath() &&
+                    $result->getPimParameters()->getPath() === $expected->getPimParameters()->getPath()
                 );
             }
         ];

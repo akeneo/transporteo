@@ -32,7 +32,7 @@ class LocalFileFetcherSpec extends ObjectBehavior
 
     function it_return_the_local_path()
     {
-        $path = ResourcesFileLocator::getAbsoluteComposerJsonLocalPath();
+        $path = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $finalPath = ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath();
 
         $this->fetch($path)->shouldReturn(realpath($finalPath));

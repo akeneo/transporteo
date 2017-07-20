@@ -14,7 +14,7 @@ use phpseclib\Net\SFTP;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-final class SshFileFetcher implements FileFetcher
+class SshFileFetcher implements FileFetcher
 {
     /** @var SFTP */
     private $sftp;

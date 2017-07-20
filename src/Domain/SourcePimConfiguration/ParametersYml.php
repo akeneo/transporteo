@@ -13,7 +13,7 @@ use Akeneo\PimMigration\Domain\File;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-final class ParametersYml extends AbstractFile implements File
+class ParametersYml extends AbstractFile implements File
 {
     public static function getFileName(): string
     {

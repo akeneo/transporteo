@@ -11,6 +11,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
 final class SourcePimConfiguration
+class SourcePimConfiguration
 {
     /** @var ComposerJson */
     private $composerJson;

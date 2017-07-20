@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\File;
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
 final class ParametersYml implements File
+class ParametersYml implements File
 {
     /** @var string */
     private $localPath;

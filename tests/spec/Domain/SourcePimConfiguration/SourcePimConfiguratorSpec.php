@@ -10,6 +10,7 @@ use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurator;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Spec for SourcePimConfigurator.
@@ -22,6 +23,16 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
     public function let(FileFetcher $fetcher)
     {
         $this->beConstructedWith($fetcher);
+
+        $fs = new Filesystem();
+        $fs->copy(
+            ResourcesFileLocator::getAbsoluteComposerJsonLocalPath(),
+            ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath()
+        );
+        $fs->copy(
+            ResourcesFileLocator::getAbsoluteParametersYamlLocalPath(),
+            ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath()
+        );
     }
 
     public function it_is_initializable()
@@ -61,5 +72,12 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
                 );
             }
         ];
+    }
+
+    public function letGo()
+    {
+        $fs = new Filesystem();
+        $fs->remove(ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath());
+        $fs->remove(ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath());
     }
 }

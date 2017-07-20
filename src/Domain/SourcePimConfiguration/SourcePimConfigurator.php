@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
+use Akeneo\PimMigration\Domain\FileNotFoundException;
+use Ds\Map;
 
 /**
  * Build the source pim configuration.
@@ -24,9 +26,24 @@ class SourcePimConfigurator
 
     public function configure(PimServerInformation $pimServerInfo): SourcePimConfiguration
     {
-        $composerJson = new ComposerJson($this->fetcher->fetch($pimServerInfo->getComposerJsonPath()));
-        $parametersYml = new ParametersYml($this->fetcher->fetch($pimServerInfo->getParametersYmlPath()));
+        $filesToFetch = new Map([
+            ComposerJson::class => $pimServerInfo->getComposerJsonPath(),
+            ParametersYml::class => $pimServerInfo->getParametersYmlPath(),
+        ]);
 
-        return new SourcePimConfiguration($composerJson, $parametersYml, $pimServerInfo->getProjectName());
+        $fetchedFile = $filesToFetch
+            ->map(function (string $class, string $path) {
+                try {
+                    return new $class($this->fetcher->fetch($path));
+                } catch (FileNotFoundException $exception) {
+                    throw new SourcePimConfigurationException("The file {$exception->getFilePath()} is not reachable or readable");
+                }
+            });
+
+        return new SourcePimConfiguration(
+            $fetchedFile->get(ComposerJson::class),
+            $fetchedFile->get(ParametersYml::class),
+            $pimServerInfo->getProjectName()
+        );
     }
 }

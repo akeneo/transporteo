@@ -34,7 +34,7 @@ class SshFileFetcherSpec extends ObjectBehavior
         $sftp->nlist($pathInfo['dirname'])->willReturn(['afile.jyon']);
 
         $this->shouldThrow(
-            new FileNotFoundException("The file {$path} does not exist")
+            new FileNotFoundException("The file {$path} does not exist", $path)
         )->during('fetch', [$path]);
     }
 
@@ -61,6 +61,8 @@ class SshFileFetcherSpec extends ObjectBehavior
 
         $sftp->get($path, $finalPath)->willReturn(false);
 
-        $this->shouldThrow(new \RuntimeException("The file {$path} is not reachable"))->during('fetch', [$path]);
+        $this->shouldThrow(
+            new FileNotFoundException("The file {$path} is not reachable", $path)
+        )->during('fetch', [$path]);
     }
 }

@@ -29,6 +29,7 @@ class SourcePimConfigurator
         $filesToFetch = new Map([
             ComposerJson::class => $pimServerInfo->getComposerJsonPath(),
             ParametersYml::class => $pimServerInfo->getParametersYmlPath(),
+            PimParameters::class => $pimServerInfo->getPimParametersPath()
         ]);
 
         $fetchedFile = $filesToFetch
@@ -43,6 +44,7 @@ class SourcePimConfigurator
         return new SourcePimConfiguration(
             $fetchedFile->get(ComposerJson::class),
             $fetchedFile->get(ParametersYml::class),
+            $fetchedFile->get(PimParameters::class),
             $pimServerInfo->getProjectName()
         );
     }

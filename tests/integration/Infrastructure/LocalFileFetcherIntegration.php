@@ -21,7 +21,7 @@ final class LocalFileFetcherIntegration extends TestCase
     {
         $localFileFetcher = new LocalFileFetcher();
 
-        $localPath = ResourcesFileLocator::getAbsoluteComposerJsonLocalPath();
+        $localPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $finalPath = ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath();
 
         $path = $localFileFetcher->fetch($localPath);

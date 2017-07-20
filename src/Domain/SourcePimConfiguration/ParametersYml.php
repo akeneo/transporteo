@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 use Akeneo\PimMigration\Domain\AbstractFile;
 use Akeneo\PimMigration\Domain\File;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Representation of a parameters.yml file.
@@ -18,5 +19,35 @@ class ParametersYml extends AbstractFile implements File
     public static function getFileName(): string
     {
         return 'parameters.yml';
+    }
+
+    public function getDatabaseHost(): string
+    {
+        return $this->fullContent['database_host'];
+    }
+
+    public function getDatabasePort(): ?int
+    {
+        return $this->fullContent['database_port'] ?? 3306;
+    }
+
+    public function getDatabaseUser(): string
+    {
+        return $this->fullContent['database_user'];
+    }
+
+    public function getDatabasePassword(): string
+    {
+        return $this->fullContent['database_password'];
+    }
+
+    public function getDatabaseName(): string
+    {
+        return $this->fullContent['database_name'];
+    }
+
+    protected function loadContent(): void
+    {
+        $this->fullContent = Yaml::parse(file_get_contents($this->getPath()))['parameters'];
     }
 }

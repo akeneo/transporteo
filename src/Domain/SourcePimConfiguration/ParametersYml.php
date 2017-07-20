@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
+use Akeneo\PimMigration\Domain\AbstractFile;
 use Akeneo\PimMigration\Domain\File;
 
 /**
@@ -12,21 +13,8 @@ use Akeneo\PimMigration\Domain\File;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-final class ParametersYml implements File
+final class ParametersYml extends AbstractFile implements File
 {
-    /** @var string */
-    private $localPath;
-
-    public function __construct(string $localPath)
-    {
-        $this->localPath = $localPath;
-    }
-
-    public function getPath(): string
-    {
-        return $this->localPath;
-    }
-
     public static function getFileName(): string
     {
         return 'parameters.yml';

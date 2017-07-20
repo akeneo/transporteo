@@ -39,7 +39,7 @@ final class SshFileFetcher implements FileFetcher
         });
 
         if (0 === count($filesMatchingName)) {
-            throw new FileNotFoundException("The file {$path} does not exist");
+            throw new FileNotFoundException("The file {$path} does not exist", $path);
         }
 
         $varDir = sprintf(
@@ -55,7 +55,7 @@ final class SshFileFetcher implements FileFetcher
         $result = $this->sftp->get($path, $localPath);
 
         if (false === $result) {
-            throw new \RuntimeException("The file {$path} is not reachable");
+            throw new FileNotFoundException("The file {$path} is not reachable", $path);
         }
 
         return $localPath;

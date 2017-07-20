@@ -14,15 +14,18 @@ use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
  */
 class SourcePimDetector
 {
-    const PIM_ENTERPRISE_STANDARD = 'akeneo/pim-enterprise-standard';
-    const PIM_COMMUNITY_STANDARD = 'akeneo/pim-community-standard';
+    private const PIM_ENTERPRISE_STANDARD = 'akeneo/pim-enterprise-standard';
+    private const PIM_COMMUNITY_STANDARD = 'akeneo/pim-community-standard';
+    private const PIM_COMMUNITY_DEV = 'akeneo/pim-community-dev';
+    private const PIM_VERSION_ALLOWED = '1.7.';
+    private const INNER_VARIATION_BUNDLE = 'akeneo/inner-variation-bundle';
 
     public function detect(SourcePimConfiguration $sourcePimConfiguration): SourcePim
     {
         $composerJsonRepositoryName = $sourcePimConfiguration->getComposerJson()->getRepositoryName();
 
         if (!(self::PIM_COMMUNITY_STANDARD === $composerJsonRepositoryName || self::PIM_ENTERPRISE_STANDARD === $composerJsonRepositoryName)) {
-            throw new NotAcceptablePimException(
+            throw new SourcePimDetectionException(
                 sprintf(
                     'Your PIM name should be either %s or either %s, currently %s',
                     self::PIM_COMMUNITY_STANDARD,
@@ -40,13 +43,13 @@ class SourcePimDetector
 
         $dependencies = $sourcePimConfiguration->getComposerJson()->getDependencies();
 
-        $pimVersion = $dependencies->get('akeneo/pim-community-dev');
+        $pimVersion = $dependencies->get(self::PIM_COMMUNITY_DEV);
 
-        if (strpos($pimVersion, '1.7.') === false) {
-            throw new NotAcceptablePimException('Your PIM version should be 1.7');
+        if (strpos($pimVersion, self::PIM_VERSION_ALLOWED) === false) {
+            throw new SourcePimDetectionException('Your PIM version should be '.self::PIM_VERSION_ALLOWED);
         }
 
-        $hasIvb = $dependencies->hasKey('akeneo/inner-variation-bundle');
+        $hasIvb = $dependencies->hasKey(self::INNER_VARIATION_BUNDLE);
 
         $mongoDbInformation = $sourcePimConfiguration->getPimParameters()->getMongoDbInformation();
         $mongoDbDatabase = $sourcePimConfiguration->getPimParameters()->getMongoDbDatabase();

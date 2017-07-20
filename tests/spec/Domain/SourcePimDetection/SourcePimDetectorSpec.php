@@ -4,7 +4,7 @@ namespace spec\Akeneo\PimMigration\Domain\SourcePimDetection;
 
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
-use Akeneo\PimMigration\Domain\SourcePimDetection\NotAcceptablePimException;
+use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePimDetectionException;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePimDetector;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
@@ -30,7 +30,7 @@ class SourcePimDetectorSpec extends ObjectBehavior
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
         $this->shouldThrow(
-            new NotAcceptablePimException(
+            new SourcePimDetectionException(
                 'Your PIM name should be either akeneo/pim-community-standard or either akeneo/pim-enterprise-standard, currently a-repo'
             ))->during('detect', [$sourcePimConfiguration]);
     }
@@ -44,7 +44,7 @@ class SourcePimDetectorSpec extends ObjectBehavior
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
         $this->shouldThrow(
-            new NotAcceptablePimException(
+            new SourcePimDetectionException(
                 'Your PIM version should be 1.7'
             ))->during('detect', [$sourcePimConfiguration]);
     }

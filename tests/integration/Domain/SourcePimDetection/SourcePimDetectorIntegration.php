@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\ParametersYml;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimParameters;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePimDetector;
+use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 
@@ -22,21 +22,7 @@ class SourcePimDetectorIntegration extends TestCase
 {
     public function testSimpleCommunityStandardEdition()
     {
-        $sourcePimDetector = new SourcePimDetector();
-
-        $stepTwoFolder = ResourcesFileLocator::getStepFolder('step_two_source_pim_detection') . DIRECTORY_SEPARATOR;
-        $standardComposerJson = $stepTwoFolder . 'community_standard_composer.json';
-        $parametersYaml = $stepTwoFolder . 'parameters.yml';
-        $pimParameters = $stepTwoFolder . 'community_pim_parameters.yml';
-
-        $sourcePimConfiguration = new SourcePimConfiguration(
-            new ComposerJson($standardComposerJson),
-            new ParametersYml($parametersYaml),
-            new PimParameters($pimParameters),
-            'plop'
-        );
-
-        $sourcePim = $sourcePimDetector->detect($sourcePimConfiguration);
+        $sourcePim = SourcePim::fromSourcePimConfiguration($this->getPimConfiguration('simple-pim-community-standard'));
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
         $this->assertEquals($sourcePim->getMysqlHost(), 'localhost');
@@ -51,21 +37,7 @@ class SourcePimDetectorIntegration extends TestCase
 
     public function testEnterpriseStandardEditionMongoIvb()
     {
-        $sourcePimDetector = new SourcePimDetector();
-
-        $stepTwoFolder = ResourcesFileLocator::getStepFolder('step_two_source_pim_detection') . DIRECTORY_SEPARATOR;
-        $standardComposerJson = $stepTwoFolder . 'enterprise_standard_mongo_ivb_composer.json';
-        $parametersYaml = $stepTwoFolder . 'parameters.yml';
-        $pimParameters = $stepTwoFolder . 'enterprise_mongo_pim_parameters.yml';
-
-        $sourcePimConfiguration = new SourcePimConfiguration(
-            new ComposerJson($standardComposerJson),
-            new ParametersYml($parametersYaml),
-            new PimParameters($pimParameters),
-            'plop'
-        );
-
-        $sourcePim = $sourcePimDetector->detect($sourcePimConfiguration);
+        $sourcePim = SourcePim::fromSourcePimConfiguration($this->getPimConfiguration('ivb-mongo-pim-entreprise-standard'));
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
         $this->assertEquals($sourcePim->getMysqlHost(), 'localhost');
@@ -77,5 +49,38 @@ class SourcePimDetectorIntegration extends TestCase
         $this->assertEquals($sourcePim->hasIvb(), true);
         $this->assertEquals($sourcePim->getMongoDbInformation(), 'mongodb://localhost:27017');
         $this->assertEquals($sourcePim->getMongoDatabase(), 'your_mongo_database');
+    }
+
+    private function getPimConfiguration(string $pimConfigurationName): ?SourcePimConfiguration
+    {
+        if ('simple-pim-community-standard' === $pimConfigurationName) {
+            $stepTwoFolder = ResourcesFileLocator::getStepFolder('step_two_source_pim_detection') . DIRECTORY_SEPARATOR;
+            $standardComposerJson = $stepTwoFolder . 'community_standard_composer.json';
+            $parametersYaml = $stepTwoFolder . 'parameters.yml';
+            $pimParameters = $stepTwoFolder . 'community_pim_parameters.yml';
+
+            return new SourcePimConfiguration(
+                new ComposerJson($standardComposerJson),
+                new ParametersYml($parametersYaml),
+                new PimParameters($pimParameters),
+                'plop'
+            );
+        }
+
+        if ('ivb-mongo-pim-entreprise-standard' === $pimConfigurationName) {
+            $stepTwoFolder = ResourcesFileLocator::getStepFolder('step_two_source_pim_detection') . DIRECTORY_SEPARATOR;
+            $standardComposerJson = $stepTwoFolder . 'enterprise_standard_mongo_ivb_composer.json';
+            $parametersYaml = $stepTwoFolder . 'parameters.yml';
+            $pimParameters = $stepTwoFolder . 'enterprise_mongo_pim_parameters.yml';
+
+            return new SourcePimConfiguration(
+                new ComposerJson($standardComposerJson),
+                new ParametersYml($parametersYaml),
+                new PimParameters($pimParameters),
+                'plop'
+            );
+        }
+
+        return null;
     }
 }

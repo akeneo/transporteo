@@ -37,7 +37,11 @@ class SourcePimConfigurator
                 try {
                     return new $class($this->fetcher->fetch($path));
                 } catch (FileNotFoundException $exception) {
-                    throw new SourcePimConfigurationException("The file {$exception->getFilePath()} is not reachable or readable");
+                    throw new SourcePimConfigurationException(
+                        "The file {$exception->getFilePath()} is not reachable or readable",
+                        0,
+                        $exception
+                    );
                 }
             });
 

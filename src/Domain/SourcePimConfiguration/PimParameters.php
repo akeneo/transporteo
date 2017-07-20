@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
+use Akeneo\PimMigration\Domain\AbstractFile;
 use Akeneo\PimMigration\Domain\File;
 use Symfony\Component\Yaml\Yaml;
 
@@ -13,39 +14,25 @@ use Symfony\Component\Yaml\Yaml;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class PimParameters implements File
+class PimParameters extends AbstractFile implements File
 {
-    /** @var string */
-    private $localPath;
-
-    /** @var array */
-    private $fullContent;
-
-    public function __construct(string $localPath)
+    public static function getFileName(): string
     {
-        $this->localPath = $localPath;
-        if (file_exists($localPath)) {
-            $this->fullContent = Yaml::parse(file_get_contents($localPath))['parameters'];
-        }
-    }
-
-    public function getPath(): string
-    {
-        return $this->localPath;
+        return 'pim_parameters.yml';
     }
 
     public function getMongoDbInformation(): ?string
     {
-        return $this->fullContent['mongodb_server'] ?? null;
+        return $this->getFullContent()['mongodb_server'] ?? null;
     }
 
     public function getMongoDbDatabase(): ?string
     {
-        return $this->fullContent['mongodb_database'] ?? null;
+        return $this->getFullContent()['mongodb_database'] ?? null;
     }
 
-    public static function getFileName(): string
+    protected function loadContent(): array
     {
-        return 'pim_parameters.yml';
+        return Yaml::parse(file_get_contents($this->getPath()))['parameters'];
     }
 }

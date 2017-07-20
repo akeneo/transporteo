@@ -27,12 +27,16 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
 
         $fs = new Filesystem();
         $fs->copy(
-            ResourcesFileLocator::getAbsoluteComposerJsonLocalPath(),
+            ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(),
             ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath()
         );
         $fs->copy(
-            ResourcesFileLocator::getAbsoluteParametersYamlLocalPath(),
+            ResourcesFileLocator::getStepOneAbsoluteParametersYamlLocalPath(),
             ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath()
+        );
+        $fs->copy(
+            ResourcesFileLocator::getStepOneAbsolutePimParametersLocalPath(),
+            ResourcesFileLocator::getAbsolutePimParametersDestinationPath()
         );
     }
 
@@ -85,5 +89,6 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
         $fs = new Filesystem();
         $fs->remove(ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath());
         $fs->remove(ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath());
+        $fs->remove(ResourcesFileLocator::getAbsolutePimParametersDestinationPath());
     }
 }

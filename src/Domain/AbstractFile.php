@@ -15,6 +15,9 @@ abstract class AbstractFile implements File
     /** @var string */
     private $localPath;
 
+    /** @var array */
+    private $fullContent;
+
     public function __construct(string $localPath)
     {
         if (!file_exists($localPath) || !is_readable($localPath)) {
@@ -22,10 +25,18 @@ abstract class AbstractFile implements File
         }
 
         $this->localPath = $localPath;
+        $this->fullContent = $this->loadContent();
     }
 
     public function getPath(): string
     {
         return $this->localPath;
     }
+
+    protected function getFullContent(): array
+    {
+        return $this->fullContent;
+    }
+
+    protected abstract function loadContent(): array;
 }

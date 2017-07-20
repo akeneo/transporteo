@@ -19,17 +19,17 @@ class ComposerJson extends AbstractFile implements File
 {
     public function getRepositoryName(): string
     {
-        return $this->fullContent['name'];
+        return $this->getFullContent()['name'];
     }
 
     public function getDependencies(): Map
     {
-        return new Map($this->fullContent['require']);
+        return new Map($this->getFullContent()['require']);
     }
 
     public function getRepositories(): Vector
     {
-        return new Vector($this->fullContent['repositories']);
+        return new Vector($this->getFullContent()['repositories']);
     }
 
     public static function getFileName(): string
@@ -37,8 +37,8 @@ class ComposerJson extends AbstractFile implements File
         return 'composer.json';
     }
 
-    protected function loadContent(): void
+    protected function loadContent(): array
     {
-        $this->fullContent = json_decode(file_get_contents($this->getPath()), true);
+        return json_decode(file_get_contents($this->getPath()), true);
     }
 }

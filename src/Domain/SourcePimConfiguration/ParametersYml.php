@@ -23,31 +23,41 @@ class ParametersYml extends AbstractFile implements File
 
     public function getDatabaseHost(): string
     {
-        return $this->fullContent['database_host'];
+        return $this->getFullContent()['database_host'];
     }
 
     public function getDatabasePort(): ?int
     {
-        return $this->fullContent['database_port'] ?? 3306;
+        return $this->getFullContent()['database_port'] ?? 3306;
     }
 
     public function getDatabaseUser(): string
     {
-        return $this->fullContent['database_user'];
+        return $this->getFullContent()['database_user'];
     }
 
     public function getDatabasePassword(): string
     {
-        return $this->fullContent['database_password'];
+        return $this->getFullContent()['database_password'];
     }
 
     public function getDatabaseName(): string
     {
-        return $this->fullContent['database_name'];
+        return $this->getFullContent()['database_name'];
     }
 
-    protected function loadContent(): void
+    public function getMongoDbInformation(): ?string
     {
-        $this->fullContent = Yaml::parse(file_get_contents($this->getPath()))['parameters'];
+        return $this->getFullContent()['mongodb_server'] ?? null;
+    }
+
+    public function getMongoDbDatabase(): ?string
+    {
+        return $this->getFullContent()['mongodb_database'] ?? null;
+    }
+
+    protected function loadContent(): array
+    {
+        return Yaml::parse(file_get_contents($this->getPath()))['parameters'];
     }
 }

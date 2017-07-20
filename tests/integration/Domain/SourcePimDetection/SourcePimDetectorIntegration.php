@@ -73,6 +73,7 @@ class SourcePimDetectorIntegration extends TestCase
         $this->assertEquals($sourcePim->getDatabaseUser(), 'akeneo_pim_user');
         $this->assertEquals($sourcePim->getDatabasePassword(), 'akeneo_pim_password');
         $this->assertEquals($sourcePim->isEnterpriseEdition(), true);
+        $this->assertEquals($sourcePim->getEnterpriseRepository(), 'ssh://git@distribution.akeneo.com:443/pim-enterprise-dev-nanou-migration.git');
         $this->assertEquals($sourcePim->hasIvb(), true);
         $this->assertEquals($sourcePim->getMongoDbInformation(), 'mongodb://localhost:27017');
         $this->assertEquals($sourcePim->getMongoDatabase(), 'your_mongo_database');

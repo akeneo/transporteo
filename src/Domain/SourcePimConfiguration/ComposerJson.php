@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 use Akeneo\PimMigration\Domain\File;
 use Ds\Map;
+use Ds\Vector;
 
 /**
  * Representation of a composer.json file.
@@ -43,6 +44,11 @@ class ComposerJson implements File
     public function getDependencies(): Map
     {
         return new Map($this->fullContent['require']);
+    }
+
+    public function getRepositories(): Vector
+    {
+        return new Vector($this->fullContent['repositories']);
     }
 
     public static function getFileName(): string

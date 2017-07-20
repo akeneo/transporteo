@@ -56,6 +56,18 @@ class SourcePimDetector
         $databasePassword = $sourcePimConfiguration->getParametersYml()->getDatabasePassword();
         $databaseName = $sourcePimConfiguration->getParametersYml()->getDatabaseName();
 
+        $enterpriseRepository = null;
+
+        if ($isEnterpriseEdition) {
+            $enterpriseRepository = $sourcePimConfiguration
+                ->getComposerJson()
+                ->getRepositories()
+                ->filter(function ($element) {
+                    return false !== strpos($element['url'], 'enterprise');
+                })
+                ->first()['url'];
+        }
+
         return new SourcePim(
             $databaseHost,
             $databasePort,
@@ -65,6 +77,7 @@ class SourcePimDetector
             $mongoDbInformation,
             $mongoDbDatabase,
             $isEnterpriseEdition,
+            $enterpriseRepository,
             $hasIvb
         );
     }

@@ -36,6 +36,9 @@ class SourcePim
     /** @var bool */
     private $isEnterpriseEdition;
 
+    /** @var null|string */
+    private $enterpriseRepository;
+
     /** @var bool */
     private $hasIvb;
 
@@ -48,6 +51,7 @@ class SourcePim
         ?string $mongoDbInformation,
         ?string $mongoDatabase,
         bool $isEnterpriseEdition,
+        ?string $enterpriseRepository,
         bool $hasIvb
     ) {
         $this->mysqlHost = $mysqlHost;
@@ -58,6 +62,7 @@ class SourcePim
         $this->mongoDbInformation = $mongoDbInformation;
         $this->mongoDatabase = $mongoDatabase;
         $this->isEnterpriseEdition = $isEnterpriseEdition;
+        $this->enterpriseRepository = $enterpriseRepository;
         $this->hasIvb = $hasIvb;
     }
 
@@ -99,6 +104,11 @@ class SourcePim
     public function isEnterpriseEdition(): bool
     {
         return $this->isEnterpriseEdition;
+    }
+
+    public function getEnterpriseRepository(): ?string
+    {
+        return $this->enterpriseRepository;
     }
 
     public function hasIvb(): bool

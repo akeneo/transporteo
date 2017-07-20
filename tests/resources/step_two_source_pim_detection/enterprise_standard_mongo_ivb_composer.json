@@ -36,7 +36,7 @@
     },
     {
       "type": "vcs",
-      "url": "https://github.com/akeneo/pim-enterprise-dev.git",
+      "url": "ssh://git@distribution.akeneo.com:443/pim-enterprise-dev-nanou-migration.git",
       "branch": "master"
     }
   ],

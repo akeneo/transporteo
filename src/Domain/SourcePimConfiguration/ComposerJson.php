@@ -7,6 +7,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\AbstractFile;
 use Akeneo\PimMigration\Domain\File;
 use Ds\Map;
+use Ds\Vector;
 
 /**
  * Representation of a composer.json file.
@@ -16,11 +17,6 @@ use Ds\Map;
  */
 class ComposerJson extends AbstractFile implements File
 {
-    public static function getFileName(): string
-    {
-        return 'composer.json';
-    }
-
     public function getRepositoryName(): string
     {
         return $this->fullContent['name'];
@@ -31,8 +27,18 @@ class ComposerJson extends AbstractFile implements File
         return new Map($this->fullContent['require']);
     }
 
+    public function getRepositories(): Vector
+    {
+        return new Vector($this->fullContent['repositories']);
+    }
+
+    public static function getFileName(): string
+    {
+        return 'composer.json';
+    }
+
     protected function loadContent(): void
     {
-        $this->fullContent = json_decode(file_get_contents($this->getLocalPath()), true);
+        $this->fullContent = json_decode(file_get_contents($this->getPath()), true);
     }
 }

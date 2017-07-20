@@ -38,5 +38,5 @@ abstract class AbstractFile implements File
         return $this->fullContent;
     }
 
-    protected abstract function loadContent(): array;
+    abstract protected function loadContent(): array;
 }

@@ -74,7 +74,8 @@ class SourcePim
         $this->hasIvb = $hasIvb;
     }
 
-    public static function fromSourcePimConfiguration(SourcePimConfiguration $sourcePimConfiguration): SourcePim{
+    public static function fromSourcePimConfiguration(SourcePimConfiguration $sourcePimConfiguration): SourcePim
+    {
         $composerJsonRepositoryName = $sourcePimConfiguration->getComposerJson()->getRepositoryName();
 
         if (!(self::PIM_COMMUNITY_STANDARD === $composerJsonRepositoryName || self::PIM_ENTERPRISE_STANDARD === $composerJsonRepositoryName)) {

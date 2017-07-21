@@ -11,6 +11,10 @@ use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Workflow\DefinitionBuilder;
+use Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore;
+use Symfony\Component\Workflow\StateMachine;
+use Symfony\Component\Workflow\Transition;
 
 final class MigrationTool extends Command
 {
@@ -54,5 +58,18 @@ final class MigrationTool extends Command
             $sshVerificator->verify($sourcePim, $sourcePimConfiguration->getSshKey());
             $output->writeln('Access to the Enterprise Edition allowed');
         }
+
+
+        //State machine
+        $definitionBuilder = new DefinitionBuilder();
+        $definition = $definitionBuilder
+            ->addPlaces(['start', 'configured', 'detected', 'end'])
+            ->addTransition(new Transition('to_configure', 'start', 'configured'))
+            ->addTransition(new Transition('to_detect', 'configured', 'detected'))
+            ->addTransition(new Transition('to_finish', 'detected', 'end'))
+            ->build();
+
+        $markingStore = new SingleStateMarkingStore('currentState');
+        $workflow = new StateMachine($definition, $markingStore);
     }
 }

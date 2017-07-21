@@ -14,7 +14,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017  Akeneo SAS (http://www.akeneo.com)
  */
-final class LocalFileFetcher implements FileFetcher
+class LocalFileFetcher implements FileFetcher
 {
     /**
      * {@inheritdoc}

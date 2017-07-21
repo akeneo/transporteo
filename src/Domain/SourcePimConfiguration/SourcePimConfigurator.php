@@ -29,6 +29,7 @@ class SourcePimConfigurator
         $filesToFetch = new Map([
             ComposerJson::class => $pimServerInfo->getComposerJsonPath(),
             ParametersYml::class => $pimServerInfo->getParametersYmlPath(),
+            PimParameters::class => $pimServerInfo->getPimParametersPath(),
         ]);
 
         $fetchedFile = $filesToFetch
@@ -36,13 +37,18 @@ class SourcePimConfigurator
                 try {
                     return new $class($this->fetcher->fetch($path));
                 } catch (FileNotFoundException $exception) {
-                    throw new SourcePimConfigurationException("The file {$exception->getFilePath()} is not reachable or readable");
+                    throw new SourcePimConfigurationException(
+                        "The file {$exception->getFilePath()} is not reachable or readable",
+                        0,
+                        $exception
+                    );
                 }
             });
 
         return new SourcePimConfiguration(
             $fetchedFile->get(ComposerJson::class),
             $fetchedFile->get(ParametersYml::class),
+            $fetchedFile->get(PimParameters::class),
             $pimServerInfo->getProjectName()
         );
     }

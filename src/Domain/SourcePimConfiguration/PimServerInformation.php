@@ -12,7 +12,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-final class PimServerInformation
+class PimServerInformation
 {
     /** @var string */
     private $host;
@@ -62,7 +62,19 @@ final class PimServerInformation
             ParametersYml::getFileName()
         );
 
-        return pathinfo((string) $this->getComposerJsonPath())['dirname'].$path;
+        return pathinfo($this->getComposerJsonPath())['dirname'].$path;
+    }
+
+    public function getPimParametersPath(): string
+    {
+        $path = sprintf('%sapp%sconfig%s%s',
+            DIRECTORY_SEPARATOR,
+            DIRECTORY_SEPARATOR,
+            DIRECTORY_SEPARATOR,
+            PimParameters::getFileName()
+        );
+
+        return pathinfo($this->getComposerJsonPath())['dirname'].$path;
     }
 
     public function getProjectName(): string

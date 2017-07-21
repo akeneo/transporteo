@@ -10,7 +10,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-final class SourcePimConfiguration
+class SourcePimConfiguration
 {
     /** @var ComposerJson */
     private $composerJson;
@@ -21,11 +21,15 @@ final class SourcePimConfiguration
     /** @var string */
     private $projectName;
 
-    public function __construct(ComposerJson $composerJson, ParametersYml $parametersYml, string $projectName)
+    /** @var PimParameters */
+    private $pimParameters;
+
+    public function __construct(ComposerJson $composerJson, ParametersYml $parametersYml, PimParameters $pimParameters, string $projectName)
     {
         $this->composerJson = $composerJson;
         $this->parametersYml = $parametersYml;
         $this->projectName = $projectName;
+        $this->pimParameters = $pimParameters;
     }
 
     public function getComposerJson(): ComposerJson
@@ -36,5 +40,10 @@ final class SourcePimConfiguration
     public function getParametersYml(): ParametersYml
     {
         return $this->parametersYml;
+    }
+
+    public function getPimParameters(): PimParameters
+    {
+        return $this->pimParameters;
     }
 }

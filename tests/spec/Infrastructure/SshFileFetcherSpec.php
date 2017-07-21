@@ -40,7 +40,7 @@ class SshFileFetcherSpec extends ObjectBehavior
 
     function it_return_the_local_path($sftp)
     {
-        $path = ResourcesFileLocator::getAbsoluteComposerJsonLocalPath();
+        $path = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $pathInfo = pathinfo($path);
         $finalPath = ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath();
 
@@ -53,7 +53,7 @@ class SshFileFetcherSpec extends ObjectBehavior
 
     function it_throws_an_exception_if_there_is_problem_during_ssh_processing($sftp)
     {
-        $path = ResourcesFileLocator::getAbsoluteComposerJsonLocalPath();
+        $path = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $pathInfo = pathinfo($path);
         $finalPath = ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath();
 

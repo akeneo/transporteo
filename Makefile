@@ -14,7 +14,8 @@ list:
 	@echo ""
 	@echo "  $(YELLOW)fix-style$(RESTORE)     > run the PHP-CS-FIXER"
 	@echo "  $(YELLOW)test$(RESTORE)          > run All tests"
-	@echo "  $(YELLOW)phpspec$(RESTORE)       > run All PHPSpec"
+	@echo "  $(YELLOW)phpspec-run$(RESTORE)   > run All PHPSpec tests"
+	@echo "  $(YELLOW)phpspec(RESTORE)        > run PHPSpec"
 	@echo "  $(YELLOW)phpunit$(RESTORE)       > run All PHPUnit"
 	@echo "  $(YELLOW)enter$(RESTORE)         > enter in the PHP container"
 	@echo ""
@@ -34,15 +35,19 @@ enter:
 	docker-compose run php /bin/bash
 
 .PHONY: test
-test: | phpspec phpunit
+test: | phpspec-run phpunit
 
-.PHONY: phpspec
-phpspec:
+.PHONY: phpspec-run
+phpspec-run:
 	docker-compose run php ./vendor/bin/phpspec run ${ARGS}
 
 .PHONY: phpunit
 phpunit:
 	docker-compose run php ./vendor/bin/phpunit ${ARGS}
+
+.PHONY: phpspec
+phpspec:
+	docker-compose run php ./vendor/bin/phpspec ${ARGS}
 
 .PHONY: composer
 composer:

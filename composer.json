@@ -22,7 +22,8 @@
     "symfony/config": "3.3.4",
     "symfony/console": "3.3.4",
     "symfony/dependency-injection": "3.3.4",
-    "symfony/filesystem": "3.3.4"
+    "symfony/filesystem": "3.3.4",
+    "php-ds/php-ds": "1.1.1"
   },
   "require-dev": {
     "sebastian/exporter": "^3.1",

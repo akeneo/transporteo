@@ -39,6 +39,11 @@ class PimServerInformationSpec extends ObjectBehavior
         $this->getParametersYmlPath()->shouldReturn('/home/plop/app/config/parameters.yml');
     }
 
+    public function it_returns_the_pim_parameters_yml_path()
+    {
+        $this->getPimParametersPath()->shouldReturn('/home/plop/app/config/pim_parameters.yml');
+    }
+
     public function it_throws_an_exception_if_composer_json_is_not_well_formatted()
     {
         $this->shouldThrow(

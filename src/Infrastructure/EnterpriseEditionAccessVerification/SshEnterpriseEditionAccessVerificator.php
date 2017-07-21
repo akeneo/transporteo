@@ -31,7 +31,7 @@ class SshEnterpriseEditionAccessVerificator implements EnterpriseEditionAccessVe
         $ssh = new SSH2($urlParsed['host'], $urlParsed['port']);
         $key = new RSA();
 
-        $key->load(file_get_contents($sshKey->getPath()));
+        $key->load($sshKey->getKey());
 
         if (!$ssh->login($urlParsed['user'], $key)) {
             throw new EnterpriseEditionAccessException('You are not allowed to download the EnterpriseEdition');

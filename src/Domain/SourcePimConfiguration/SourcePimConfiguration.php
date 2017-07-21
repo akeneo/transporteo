@@ -21,9 +21,6 @@ class SourcePimConfiguration
     /** @var PimParameters */
     private $pimParameters;
 
-    /** @var SshKey|null */
-    private $sshKey;
-
     /** @var string */
     private $projectName;
 
@@ -31,12 +28,10 @@ class SourcePimConfiguration
         ComposerJson $composerJson,
         ParametersYml $parametersYml,
         PimParameters $pimParameters,
-        ?SshKey $sshKey,
         string $projectName
     ) {
         $this->composerJson = $composerJson;
         $this->parametersYml = $parametersYml;
-        $this->sshKey = $sshKey;
         $this->projectName = $projectName;
         $this->pimParameters = $pimParameters;
     }
@@ -54,10 +49,5 @@ class SourcePimConfiguration
     public function getPimParameters(): PimParameters
     {
         return $this->pimParameters;
-    }
-
-    public function getSshKey(): ?SshKey
-    {
-        return $this->sshKey;
     }
 }

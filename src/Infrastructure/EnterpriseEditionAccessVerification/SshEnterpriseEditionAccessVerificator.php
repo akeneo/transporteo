@@ -6,8 +6,9 @@ namespace Akeneo\PimMigration\Infrastructure\EnterpriseEditionAccessVerification
 
 use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessException;
 use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessVerificator;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SshKey;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
+use Akeneo\PimMigration\Infrastructure\SshKey;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
 
@@ -19,21 +20,27 @@ use phpseclib\Net\SSH2;
  */
 class SshEnterpriseEditionAccessVerificator implements EnterpriseEditionAccessVerificator
 {
+    /** @var SshKey */
+    private $sshKey;
+
+    public function __construct(SshKey $sshKey)
+    {
+        $this->sshKey = $sshKey;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function verify(SourcePim $sourcePim, SshKey $sshKey): void
+    public function verify(SourcePim $sourcePim): void
     {
-        $repository = $sourcePim->getEnterpriseRepository();
+        $serverAccess = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $this->sshKey);
 
-        $urlParsed = parse_url($repository);
-
-        $ssh = new SSH2($urlParsed['host'], $urlParsed['port']);
+        $ssh = new SSH2($serverAccess->getHost(), $serverAccess->getPort());
         $key = new RSA();
 
-        $key->load($sshKey->getKey());
+        $key->load($this->sshKey->getKey());
 
-        if (!$ssh->login($urlParsed['user'], $key)) {
+        if (!$ssh->login($serverAccess->getUsername(), $key)) {
             throw new EnterpriseEditionAccessException('You are not allowed to download the EnterpriseEdition');
         }
     }

@@ -16,30 +16,32 @@ use phpseclib\Net\SFTP;
  */
 class SshFileFetcher implements FileFetcher
 {
-    /** @var SFTP */
-    private $sftp;
+    /** @var ServerAccessInformation */
+    private $serverAccessInformation;
 
-    public function __construct(SFTP $sftp)
+    public function __construct(ServerAccessInformation $serverAccessInformation)
     {
-        $this->sftp = $sftp;
+        $this->serverAccessInformation = $serverAccessInformation;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function fetch(string $path): string
+    public function fetch(string $filePath): string
     {
-        $pathInfo = pathinfo($path);
+        $sftp = new SFTP($this->serverAccessInformation->getHost(), $this->serverAccessInformation->getPort());
+
+        $pathInfo = pathinfo($filePath);
         $fileName = $pathInfo['basename'];
 
-        $subList = $this->sftp->nlist($pathInfo['dirname']);
+        $subList = $sftp->nlist($pathInfo['dirname']);
 
         $filesMatchingName = array_filter($subList, function ($element) use ($fileName) {
             return $element == $fileName;
         });
 
         if (0 === count($filesMatchingName)) {
-            throw new FileNotFoundException("The file {$path} does not exist", $path);
+            throw new FileNotFoundException("The file {$filePath} does not exist", $filePath);
         }
 
         $varDir = sprintf(
@@ -52,10 +54,10 @@ class SshFileFetcher implements FileFetcher
 
         $localPath = realpath($varDir).DIRECTORY_SEPARATOR.$fileName;
 
-        $result = $this->sftp->get($path, $localPath);
+        $result = $sftp->get($filePath, $localPath);
 
         if (false === $result) {
-            throw new FileNotFoundException("The file {$path} is not reachable", $path);
+            throw new FileNotFoundException("The file {$filePath} is not reachable", $filePath);
         }
 
         return $localPath;

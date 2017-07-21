@@ -29,11 +29,6 @@ class PimServerInformationSpec extends ObjectBehavior
         $this->shouldHaveType(PimServerInformation::class);
     }
 
-    public function it_is_not_local_with_information_filled()
-    {
-        $this->isLocal()->shouldReturn(false);
-    }
-
     public function it_returns_the_parameters_yml_path()
     {
         $this->getParametersYmlPath()->shouldReturn('/home/plop/app/config/parameters.yml');

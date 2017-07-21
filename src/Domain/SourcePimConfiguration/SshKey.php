@@ -15,13 +15,18 @@ use Akeneo\PimMigration\Domain\File;
  */
 class SshKey extends AbstractFile implements File
 {
-    protected function loadContent(): array
+    public function getKey(): string
     {
-        return [file_get_contents($this->getPath())];
+        return $this->getFullContent()[0];
     }
 
     public static function getFileName(): string
     {
         return 'ssh_key';
+    }
+
+    protected function loadContent(): array
+    {
+        return [file_get_contents($this->getPath())];
     }
 }

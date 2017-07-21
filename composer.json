@@ -18,12 +18,13 @@
   },
   "require": {
     "php": ">=7.1.0",
+    "php-ds/php-ds": "1.1.1",
     "phpseclib/phpseclib": "dev-master#2b808030428d7c60b90d23f7371c3098b6b9c43a",
     "symfony/config": "3.3.4",
     "symfony/console": "3.3.4",
     "symfony/dependency-injection": "3.3.4",
     "symfony/filesystem": "3.3.4",
-    "php-ds/php-ds": "1.1.1"
+    "symfony/workflow": "3.3.4"
   },
   "require-dev": {
     "sebastian/exporter": "^3.1",

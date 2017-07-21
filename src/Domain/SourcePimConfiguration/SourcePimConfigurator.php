@@ -32,6 +32,10 @@ class SourcePimConfigurator
             PimParameters::class => $pimServerInfo->getPimParametersPath(),
         ]);
 
+        if (null !== $pimServerInfo->getSshKeyPath()) {
+            $filesToFetch->put(SshKey::class, $pimServerInfo->getSshKeyPath());
+        }
+
         $fetchedFile = $filesToFetch
             ->map(function (string $class, string $path) {
                 try {
@@ -49,6 +53,7 @@ class SourcePimConfigurator
             $fetchedFile->get(ComposerJson::class),
             $fetchedFile->get(ParametersYml::class),
             $fetchedFile->get(PimParameters::class),
+            $fetchedFile->get(SshKey::class, null),
             $pimServerInfo->getProjectName()
         );
     }

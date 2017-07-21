@@ -63,6 +63,7 @@ class SourcePimDetectorIntegration extends TestCase
                 new ComposerJson($standardComposerJson),
                 new ParametersYml($parametersYaml),
                 new PimParameters($pimParameters),
+                null,
                 'plop'
             );
         }
@@ -77,6 +78,7 @@ class SourcePimDetectorIntegration extends TestCase
                 new ComposerJson($standardComposerJson),
                 new ParametersYml($parametersYaml),
                 new PimParameters($pimParameters),
+                null,
                 'plop'
             );
         }

@@ -6,7 +6,9 @@ namespace Akeneo\PimMigration\Infrastructure\EnterpriseEditionAccessVerification
 
 use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessException;
 use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessVerificator;
+use Akeneo\PimMigration\Domain\SourcePimConfiguration\SshKey;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
 
 /**
@@ -20,18 +22,19 @@ class SshEnterpriseEditionAccessVerificator implements EnterpriseEditionAccessVe
     /**
      * {@inheritdoc}
      */
-    public function verify(SourcePim $sourcePim): void
+    public function verify(SourcePim $sourcePim, SshKey $sshKey): void
     {
         $repository = $sourcePim->getEnterpriseRepository();
 
         $urlParsed = parse_url($repository);
 
         $ssh = new SSH2($urlParsed['host'], $urlParsed['port']);
+        $key = new RSA();
 
-        $val = $ssh->login($urlParsed['user']);
-        if (!$ssh->login($urlParsed['user'])) {
-            throw new EnterpriseEditionAccessException('BOUBOUBOUB');
+        $key->load(file_get_contents($sshKey->getPath()));
+
+        if (!$ssh->login($urlParsed['user'], $key)) {
+            throw new EnterpriseEditionAccessException('You are not allowed to download the EnterpriseEdition');
         }
-        echo 'coucou';
     }
 }

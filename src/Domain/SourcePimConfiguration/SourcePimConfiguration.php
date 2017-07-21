@@ -18,16 +18,25 @@ class SourcePimConfiguration
     /** @var ParametersYml */
     private $parametersYml;
 
-    /** @var string */
-    private $projectName;
-
     /** @var PimParameters */
     private $pimParameters;
 
-    public function __construct(ComposerJson $composerJson, ParametersYml $parametersYml, PimParameters $pimParameters, string $projectName)
-    {
+    /** @var SshKey|null */
+    private $sshKey;
+
+    /** @var string */
+    private $projectName;
+
+    public function __construct(
+        ComposerJson $composerJson,
+        ParametersYml $parametersYml,
+        PimParameters $pimParameters,
+        ?SshKey $sshKey,
+        string $projectName
+    ) {
         $this->composerJson = $composerJson;
         $this->parametersYml = $parametersYml;
+        $this->sshKey = $sshKey;
         $this->projectName = $projectName;
         $this->pimParameters = $pimParameters;
     }
@@ -45,5 +54,10 @@ class SourcePimConfiguration
     public function getPimParameters(): PimParameters
     {
         return $this->pimParameters;
+    }
+
+    public function getSshKey(): ?SshKey
+    {
+        return $this->sshKey;
     }
 }

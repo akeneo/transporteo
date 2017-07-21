@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification;
 
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SshKey;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 
 /**
@@ -16,10 +15,9 @@ use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 interface EnterpriseEditionAccessVerificator
 {
     /**
-     * @param SourcePim $sourcePim the Pim to check the access
-     * @param SshKey    $sshKey    the Ssh key allowed to download enterprise edition
+     * @param SourcePim $sourcePim the Pim to check the access to.
      *
      * @throws EnterpriseEditionAccessException when the access is not successful
      */
-    public function verify(SourcePim $sourcePim, SshKey $sshKey): void;
+    public function verify(SourcePim $sourcePim): void;
 }

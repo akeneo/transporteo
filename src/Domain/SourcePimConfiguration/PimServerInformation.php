@@ -15,47 +15,19 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 class PimServerInformation
 {
     /** @var string */
-    private $host;
-
-    /** @var int */
-    private $port;
-
-    /** @var string */
     private $composerJsonPath;
-
-    /** @var string */
-    private $sshKeyPath;
 
     /** @var string */
     private $projectName;
 
-    /** @var string */
-    private $username;
-
-    public function __construct(
-        string $composerJsonPath,
-        string $projectName,
-        ?string $host = null,
-        ?int $port = null,
-        ?string $sshKeyPath = null,
-        ?string $username = null
-    ) {
+    public function __construct(string $composerJsonPath, string $projectName)
+    {
         if (!$this->endsByComposerDotJson($composerJsonPath)) {
             throw new \InvalidArgumentException('ComposerJsonPath must end by '.ComposerJson::getFileName());
         }
 
         $this->composerJsonPath = $composerJsonPath;
         $this->projectName = $projectName;
-
-        $this->host = $host;
-        $this->port = $port;
-        $this->sshKeyPath = $sshKeyPath;
-        $this->username = $username;
-    }
-
-    public function isLocal(): bool
-    {
-        return null === $this->host || null === $this->port || null === $this->sshKeyPath;
     }
 
     public function getComposerJsonPath(): string
@@ -85,16 +57,6 @@ class PimServerInformation
         );
 
         return pathinfo($this->getComposerJsonPath())['dirname'].$path;
-    }
-
-    public function getSshKeyPath(): ?string
-    {
-        return $this->sshKeyPath;
-    }
-
-    public function getUsername(): ?string
-    {
-        return $this->username;
     }
 
     public function getProjectName(): string

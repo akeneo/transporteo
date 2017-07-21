@@ -65,7 +65,6 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
             new ComposerJson($destinationComposerJsonPath),
             new ParametersYml($destinationParametersYmlPath),
             new PimParameters($destinationPimParametersPath),
-            null,
             'nanou-migration'
         );
 

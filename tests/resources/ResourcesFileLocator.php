@@ -14,7 +14,18 @@ final class ResourcesFileLocator
 {
     public final static function getStepOneAbsoluteComposerJsonLocalPath(): string
     {
-        return realpath(__DIR__ . DIRECTORY_SEPARATOR . 'step_one_source_pim_configuration' . DIRECTORY_SEPARATOR . 'composer.json');
+        return realpath(
+            sprintf(
+                '%s%s%s%s%s%s%s',
+                __DIR__,
+                DIRECTORY_SEPARATOR,
+                'step_one_source_pim_configuration',
+                DIRECTORY_SEPARATOR,
+                'community_standard',
+                DIRECTORY_SEPARATOR,
+                'composer.json'
+            )
+        );
     }
 
     public final static function getAbsoluteComposerJsonDestinationPath(): string
@@ -27,10 +38,12 @@ final class ResourcesFileLocator
     public final static function getStepOneAbsoluteParametersYamlLocalPath(): string
     {
         $path = sprintf(
-            '%s%s%s%sapp%sconfig%sparameters.yml',
+            '%s%s%s%s%s%sapp%sconfig%sparameters.yml',
             __DIR__,
             DIRECTORY_SEPARATOR,
             'step_one_source_pim_configuration',
+            DIRECTORY_SEPARATOR,
+            'community_standard',
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
@@ -49,10 +62,12 @@ final class ResourcesFileLocator
     public final static function getStepOneAbsolutePimParametersLocalPath(): string
     {
         $path = sprintf(
-            '%s%s%s%sapp%sconfig%spim_parameters.yml',
+            '%s%s%s%s%s%sapp%sconfig%spim_parameters.yml',
             __DIR__,
             DIRECTORY_SEPARATOR,
             'step_one_source_pim_configuration',
+            DIRECTORY_SEPARATOR,
+            'community_standard',
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR

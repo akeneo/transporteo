@@ -54,10 +54,16 @@ class SourcePimDetectorIntegration extends TestCase
     private function getPimConfiguration(string $pimConfigurationName): ?SourcePimConfiguration
     {
         if ('simple-pim-community-standard' === $pimConfigurationName) {
-            $stepTwoFolder = ResourcesFileLocator::getStepFolder('step_two_source_pim_detection') . DIRECTORY_SEPARATOR;
-            $standardComposerJson = $stepTwoFolder . 'community_standard_composer.json';
+            $stepTwoFolder = sprintf(
+                '%s%s%s%s',
+                ResourcesFileLocator::getStepFolder('step_two_source_pim_detection'),
+                DIRECTORY_SEPARATOR,
+                'community_standard',
+                DIRECTORY_SEPARATOR
+            );
+            $standardComposerJson = $stepTwoFolder . 'composer.json';
             $parametersYaml = $stepTwoFolder . 'parameters.yml';
-            $pimParameters = $stepTwoFolder . 'community_pim_parameters.yml';
+            $pimParameters = $stepTwoFolder . 'pim_parameters.yml';
 
             return new SourcePimConfiguration(
                 new ComposerJson($standardComposerJson),
@@ -68,10 +74,16 @@ class SourcePimDetectorIntegration extends TestCase
         }
 
         if ('ivb-mongo-pim-entreprise-standard' === $pimConfigurationName) {
-            $stepTwoFolder = ResourcesFileLocator::getStepFolder('step_two_source_pim_detection') . DIRECTORY_SEPARATOR;
-            $standardComposerJson = $stepTwoFolder . 'enterprise_standard_mongo_ivb_composer.json';
+            $stepTwoFolder = sprintf(
+                '%s%s%s%s',
+                ResourcesFileLocator::getStepFolder('step_two_source_pim_detection'),
+                DIRECTORY_SEPARATOR,
+                'enterprise_mongo_ivb_standard',
+                DIRECTORY_SEPARATOR
+            );
+            $standardComposerJson = $stepTwoFolder . 'composer.json';
             $parametersYaml = $stepTwoFolder . 'parameters.yml';
-            $pimParameters = $stepTwoFolder . 'enterprise_mongo_pim_parameters.yml';
+            $pimParameters = $stepTwoFolder . 'pim_parameters.yml';
 
             return new SourcePimConfiguration(
                 new ComposerJson($standardComposerJson),

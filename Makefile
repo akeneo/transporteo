@@ -18,6 +18,7 @@ list:
 	@echo "  $(YELLOW)phpspec(RESTORE)        > run PHPSpec"
 	@echo "  $(YELLOW)phpunit$(RESTORE)       > run All PHPUnit"
 	@echo "  $(YELLOW)enter$(RESTORE)         > enter in the PHP container"
+	@echo "  $(YELLOW)launch(RESTORE)         > Launch the tool"
 	@echo ""
 	@echo ""
 	@echo "  $(YELLOW)composer$(RESTORE)      > run composer"
@@ -33,6 +34,10 @@ fix-style:
 .PHONY: enter
 enter:
 	docker-compose run php /bin/bash
+
+.PHONY: launch
+launch:
+	docker-compose run php php MigrationTool.php akeneo-pim:migrate
 
 .PHONY: test
 test: | phpspec-run phpunit

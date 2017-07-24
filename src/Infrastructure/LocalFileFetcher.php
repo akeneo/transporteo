@@ -19,15 +19,15 @@ class LocalFileFetcher implements FileFetcher
     /**
      * {@inheritdoc}
      */
-    public function fetch(string $path): string
+    public function fetch(string $filePath): string
     {
         $fs = new Filesystem();
 
-        if (!$fs->exists($path)) {
-            throw new FileNotFoundException("The file {$path} does not exist");
+        if (!$fs->exists($filePath)) {
+            throw new FileNotFoundException("The file {$filePath} does not exist");
         }
 
-        $fileName = pathinfo($path)['basename'];
+        $fileName = pathinfo($filePath)['basename'];
         $varDir = sprintf(
             '%s%s..%s..%svar',
             __DIR__,
@@ -38,7 +38,7 @@ class LocalFileFetcher implements FileFetcher
 
         $localPath = sprintf('%s%s%s', $varDir, DIRECTORY_SEPARATOR, $fileName);
 
-        $fs->copy($path, $localPath);
+        $fs->copy($filePath, $localPath);
 
         return realpath($localPath);
     }

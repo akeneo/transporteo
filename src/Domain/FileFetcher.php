@@ -17,5 +17,5 @@ interface FileFetcher
      *
      * @throws FileNotFoundException when the file to fetch does not exist
      */
-    public function fetch(string $path): string;
+    public function fetch(string $filePath): string;
 }

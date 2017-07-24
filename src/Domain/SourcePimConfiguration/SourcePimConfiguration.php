@@ -18,14 +18,18 @@ class SourcePimConfiguration
     /** @var ParametersYml */
     private $parametersYml;
 
-    /** @var string */
-    private $projectName;
-
     /** @var PimParameters */
     private $pimParameters;
 
-    public function __construct(ComposerJson $composerJson, ParametersYml $parametersYml, PimParameters $pimParameters, string $projectName)
-    {
+    /** @var string */
+    private $projectName;
+
+    public function __construct(
+        ComposerJson $composerJson,
+        ParametersYml $parametersYml,
+        PimParameters $pimParameters,
+        string $projectName
+    ) {
         $this->composerJson = $composerJson;
         $this->parametersYml = $parametersYml;
         $this->projectName = $projectName;

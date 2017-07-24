@@ -15,21 +15,12 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
 class PimServerInformation
 {
     /** @var string */
-    private $host;
-
-    /** @var int */
-    private $port;
-
-    /** @var string */
     private $composerJsonPath;
-
-    /** @var string */
-    private $username;
 
     /** @var string */
     private $projectName;
 
-    public function __construct(string $composerJsonPath, string $projectName, ?string $host = null, ?int $port = null, ?string $username = null)
+    public function __construct(string $composerJsonPath, string $projectName)
     {
         if (!$this->endsByComposerDotJson($composerJsonPath)) {
             throw new \InvalidArgumentException('ComposerJsonPath must end by '.ComposerJson::getFileName());
@@ -37,15 +28,6 @@ class PimServerInformation
 
         $this->composerJsonPath = $composerJsonPath;
         $this->projectName = $projectName;
-
-        $this->host = $host;
-        $this->port = $port;
-        $this->username = $username;
-    }
-
-    public function isLocal(): bool
-    {
-        return null === $this->host || null === $this->port || null === $this->username;
     }
 
     public function getComposerJsonPath(): string

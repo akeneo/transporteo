@@ -12,13 +12,14 @@ list:
 	@echo ""
 	@echo "Akeneo PIM Migration tool available targets:"
 	@echo ""
-	@echo "  $(YELLOW)fix-style$(RESTORE)     > run the PHP-CS-FIXER"
-	@echo "  $(YELLOW)test$(RESTORE)          > run All tests"
-	@echo "  $(YELLOW)phpspec-run$(RESTORE)   > run All PHPSpec tests"
-	@echo "  $(YELLOW)phpspec(RESTORE)        > run PHPSpec"
-	@echo "  $(YELLOW)phpunit$(RESTORE)       > run All PHPUnit"
-	@echo "  $(YELLOW)enter$(RESTORE)         > enter in the PHP container"
-	@echo "  $(YELLOW)launch(RESTORE)         > Launch the tool"
+	@echo "  $(YELLOW)fix-style$(RESTORE)          > run the PHP-CS-FIXER"
+	@echo "  $(YELLOW)test$(RESTORE)               > run All tests"
+	@echo "  $(YELLOW)phpspec-run$(RESTORE)        > run All PHPSpec tests"
+	@echo "  $(YELLOW)phpspec$(RESTORE)            > run PHPSpec"
+	@echo "  $(YELLOW)phpunit$(RESTORE)            > run All PHPUnit"
+	@echo "  $(YELLOW)enter$(RESTORE)              > enter in the PHP container"
+	@echo "  $(YELLOW)launch$(RESTORE)             > Launch the tool"
+	@echo "  $(YELLOW)dump-state-machine$(RESTORE) > Dump the State Machine"
 	@echo ""
 	@echo ""
 	@echo "  $(YELLOW)composer$(RESTORE)      > run composer"
@@ -38,6 +39,10 @@ enter:
 .PHONY: launch
 launch:
 	docker-compose run php php MigrationTool.php akeneo-pim:migrate
+
+.PHONY: dump-state-machine
+dump-state-machine:
+	docker-compose run php php MigrationTool.php state-machine:dump
 
 .PHONY: test
 test: | phpspec-run phpunit

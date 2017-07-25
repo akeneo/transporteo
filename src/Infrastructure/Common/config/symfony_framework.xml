@@ -6,13 +6,14 @@
 
     <services>
         <defaults public="false" />
-
+        <!--Event Dispatcher-->
         <service id="event_dispatcher" class="Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher" public="true">
             <argument type="service" id="service_container" />
         </service>
 
         <service id="Symfony\Component\EventDispatcher\EventDispatcherInterface" alias="event_dispatcher" />
 
+        <!--//Workflow-->
         <service id="workflow.abstract" class="Symfony\Component\Workflow\Workflow" abstract="true" public="true">
             <argument /> <!-- workflow definition -->
             <argument type="constant">null</argument> <!-- marking store -->

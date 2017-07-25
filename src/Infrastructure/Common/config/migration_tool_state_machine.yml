@@ -29,15 +29,12 @@ workflows:
             source_pim_detection:
                 from: 'source_pim_configured'
                 to: 'source_pim_detected'
-            ce_access_granted:
+            grant_all_accesses:
                 from: 'source_pim_detected'
                 to: 'all_accesses_granted'
-            ee_try_ssh_key_already_provided:
+            ee_ask_an_ssh_key:
                 from: 'source_pim_detected'
                 to: 'ee_access_pending'
-            ee_ask_and_try_an_ssh_key:
-                from: 'source_pim_detected'
-                to: 'ee_access_pending'
-            ee_grant_access:
+            grant_ee_accesses:
                 from: 'ee_access_pending'
                 to: 'all_accesses_granted'

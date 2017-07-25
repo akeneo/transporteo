@@ -13,8 +13,7 @@ digraph workflow {
   place_source_pim_location_guessed -> place_source_pim_configured [label="local_source_pim_configuration" style="solid"];
   place_source_pim_location_guessed -> place_source_pim_configured [label="distant_source_pim_configuration" style="solid"];
   place_source_pim_configured -> place_source_pim_detected [label="source_pim_detection" style="solid"];
-  place_source_pim_detected -> place_all_accesses_granted [label="ce_access_granted" style="solid"];
-  place_source_pim_detected -> place_ee_access_pending [label="ee_try_ssh_key_already_provided" style="solid"];
-  place_source_pim_detected -> place_ee_access_pending [label="ee_ask_and_try_an_ssh_key" style="solid"];
-  place_ee_access_pending -> place_all_accesses_granted [label="ee_grant_access" style="solid"];
+  place_source_pim_detected -> place_all_accesses_granted [label="grant_all_accesses" style="solid"];
+  place_source_pim_detected -> place_ee_access_pending [label="ee_ask_an_ssh_key" style="solid"];
+  place_ee_access_pending -> place_all_accesses_granted [label="grant_ee_accesses" style="solid"];
 }

@@ -43,6 +43,7 @@ launch:
 .PHONY: dump-state-machine
 dump-state-machine:
 	docker-compose run php php MigrationTool.php state-machine:dump
+	dot -Tpng stateMachineMigrationTool.dot -o stateMachineMigrationTool.png
 
 .PHONY: test
 test: | phpspec-run phpunit

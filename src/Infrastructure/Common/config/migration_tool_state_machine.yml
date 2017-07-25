@@ -1,0 +1,43 @@
+workflows:
+    migration_tool:
+        type: 'state_machine'
+        audit_trail:
+            enabled: false
+        marking_store:
+            type: 'single_state'
+            arguments:
+                - 'currentState'
+        supports:
+            - 'Akeneo\PimMigration\Domain\MigrationToolStateMachine'
+        places:
+            - 'ready'
+            - 'source_pim_location_guessed'
+            - 'source_pim_configured'
+            - 'source_pim_detected'
+            - 'ee_access_pending'
+            - 'all_accesses_granted'
+        transitions:
+            ask_source_pim_location:
+                from: 'ready'
+                to: 'source_pim_location_guessed'
+            local_source_pim_configuration:
+                from: 'source_pim_location_guessed'
+                to: 'source_pim_configured'
+            distant_source_pim_configuration:
+                from: 'source_pim_location_guessed'
+                to: 'source_pim_configured'
+            source_pim_detection:
+                from: 'source_pim_configured'
+                to: 'source_pim_detected'
+            ce_access_granted:
+                from: 'source_pim_detected'
+                to: 'all_accesses_granted'
+            ee_try_ssh_key_already_provided:
+                from: 'source_pim_detected'
+                to: 'ee_access_pending'
+            ee_ask_and_try_an_ssh_key:
+                from: 'source_pim_detected'
+                to: 'ee_access_pending'
+            ee_grant_access:
+                from: 'ee_access_pending'
+                to: 'all_accesses_granted'

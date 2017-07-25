@@ -1,0 +1,8 @@
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+
+  Akeneo\PimMigration\Infrastructure\StateMachineTransition\:
+    resource: './../../StateMachineTransition/*'
+    autoconfigure: true

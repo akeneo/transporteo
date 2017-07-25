@@ -1,0 +1,20 @@
+digraph workflow {
+  ratio="compress" rankdir="LR"
+  node [fontsize="9" fontname="Arial" color="#333333" fillcolor="lightblue" fixedsize="1" width="1"];
+  edge [fontsize="9" fontname="Arial" color="#333333" arrowhead="normal" arrowsize="0.5"];
+
+  place_ready [label="ready", shape=circle, style="filled"];
+  place_source_pim_location_guessed [label="source_pim_location_guessed", shape=circle];
+  place_source_pim_configured [label="source_pim_configured", shape=circle];
+  place_source_pim_detected [label="source_pim_detected", shape=circle];
+  place_ee_access_pending [label="ee_access_pending", shape=circle];
+  place_all_accesses_granted [label="all_accesses_granted", shape=circle];
+  place_ready -> place_source_pim_location_guessed [label="ask_source_pim_location" style="solid"];
+  place_source_pim_location_guessed -> place_source_pim_configured [label="local_source_pim_configuration" style="solid"];
+  place_source_pim_location_guessed -> place_source_pim_configured [label="distant_source_pim_configuration" style="solid"];
+  place_source_pim_configured -> place_source_pim_detected [label="source_pim_detection" style="solid"];
+  place_source_pim_detected -> place_all_accesses_granted [label="ce_access_granted" style="solid"];
+  place_source_pim_detected -> place_ee_access_pending [label="ee_try_ssh_key_already_provided" style="solid"];
+  place_source_pim_detected -> place_ee_access_pending [label="ee_ask_and_try_an_ssh_key" style="solid"];
+  place_ee_access_pending -> place_all_accesses_granted [label="ee_grant_access" style="solid"];
+}

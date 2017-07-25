@@ -4,17 +4,16 @@ namespace Akeneo\PimMigration\Infrastructure\UserInterface\Cli;
 
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class MigrationTool extends Command
 {
-    /** @var Container */
+    /** @var ContainerBuilder */
     private $container;
 
-    public function __construct(Container $container, $name = null)
+    public function __construct(ContainerBuilder $container, $name = null)
     {
         $this->container = $container;
         parent::__construct($name);
@@ -30,9 +29,15 @@ final class MigrationTool extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'));
-        $stateMachine->addToGatheredInformation(OutputInterface::class, $output);
-        $stateMachine->addToGatheredInformation(InputInterface::class, $input);
-        $stateMachine->addToGatheredInformation(QuestionHelper::class, $this->getHelper('question'));
+
+        $stateMachineSubscribers = $this->container->findTaggedServiceIds('migration_tool.subscriber');
+        $questionHelper = $this->getHelper('question');
+        foreach ($stateMachineSubscribers as $serviceId => $values) {
+            $service = $this->container->get($serviceId);
+            $service->setInput($input);
+            $service->setOutput($output);
+            $service->setQuestionHelper($questionHelper);
+        }
 
         $stateMachine->start();
 

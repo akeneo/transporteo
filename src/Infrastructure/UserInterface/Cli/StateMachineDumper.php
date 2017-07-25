@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Workflow\Dumper\GraphvizDumper;
 use Symfony\Component\Workflow\Dumper\StateMachineGraphvizDumper;
 
 /**
@@ -37,7 +38,7 @@ class StateMachineDumper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $dumper = new StateMachineGraphvizDumper();
+        $dumper = new GraphvizDumper();
 
         $stateMachine = $this->container->get('state_machine.migration_tool');
 

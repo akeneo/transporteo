@@ -23,7 +23,6 @@
     "symfony/config": "3.3.4",
     "symfony/console": "3.3.4",
     "symfony/event-dispatcher": "3.3.4",
-    "symfony/expression-language": "3.3.4",
     "symfony/dependency-injection": "3.3.4",
     "symfony/filesystem": "3.3.4",
     "symfony/workflow": "3.3.4"

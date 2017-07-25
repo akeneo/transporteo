@@ -9,16 +9,13 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder as SymfonyContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Workflow\Definition as WorkflowDefinition;
 use Symfony\Component\Workflow\EventListener\AuditTrailListener;
-use Symfony\Component\Workflow\EventListener\GuardListener;
 use Symfony\Component\Workflow\SupportStrategy\ClassInstanceSupportStrategy;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\Workflow;
@@ -57,14 +54,6 @@ final class ContainerBuilder
 
     private static function loadWorkflowConfiguration(SymfonyContainerBuilder $container, $workflows)
     {
-        if (!$workflows) {
-            return;
-        }
-
-        if (!class_exists(Workflow::class)) {
-            throw new LogicException('Workflow support cannot be enabled as the Workflow component is not installed.');
-        }
-
         $registryDefinition = $container->getDefinition('workflow.registry');
 
         foreach ($workflows as $name => $workflow) {
@@ -133,8 +122,6 @@ final class ContainerBuilder
                     $strategyDefinition->setPublic(false);
                     $registryDefinition->addMethodCall('add', array(new Reference($workflowId), $strategyDefinition));
                 }
-            } elseif (isset($workflow['support_strategy'])) {
-                $registryDefinition->addMethodCall('add', array(new Reference($workflowId), new Reference($workflow['support_strategy'])));
             }
 
             // Enable the AuditTrail
@@ -146,35 +133,6 @@ final class ContainerBuilder
                 $listener->addTag('kernel.event_listener', array('event' => sprintf('workflow.%s.enter', $name), 'method' => 'onEnter'));
                 $listener->addArgument(new Reference('logger'));
                 $container->setDefinition(sprintf('%s.listener.audit_trail', $workflowId), $listener);
-            }
-
-            // Add Guard Listener
-            $guard = new Definition(GuardListener::class);
-            $configuration = array();
-            foreach ($workflow['transitions'] as $transitionName => $config) {
-                if (!isset($config['guard'])) {
-                    continue;
-                }
-
-                if (!class_exists(ExpressionLanguage::class)) {
-                    throw new LogicException('Cannot guard workflows as the ExpressionLanguage component is not installed.');
-                }
-
-                $eventName = sprintf('workflow.%s.guard.%s', $name, $transitionName);
-                $guard->addTag('kernel.event_listener', array('event' => $eventName, 'method' => 'onTransition'));
-                $configuration[$eventName] = $config['guard'];
-            }
-            if ($configuration) {
-                $guard->setArguments(array(
-                    $configuration,
-                    new Reference('workflow.security.expression_language'),
-                    new Reference('security.token_storage'),
-                    new Reference('security.authorization_checker'),
-                    new Reference('security.authentication.trust_resolver'),
-                    new Reference('security.role_hierarchy'),
-                ));
-
-                $container->setDefinition(sprintf('%s.listener.guard', $workflowId), $guard);
             }
         }
     }

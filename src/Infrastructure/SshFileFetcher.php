@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileNotFoundException;
+use phpseclib\Crypt\RSA;
 use phpseclib\Net\SFTP;
 
 /**
@@ -30,7 +31,14 @@ class SshFileFetcher implements FileFetcher
     public function fetch(string $filePath): string
     {
         $sftp = new SFTP($this->serverAccessInformation->getHost(), $this->serverAccessInformation->getPort());
+        $key = new RSA();
+        $key->load($this->serverAccessInformation->getSshKey()->getKey());
 
+        if (!$sftp->login($this->serverAccessInformation->getUsername(), $key)) {
+            throw new FileNotFoundException('The file is not reachable due to impossible connection');
+        }
+
+        $this->serverAccessInformation->getSshKey();
         $pathInfo = pathinfo($filePath);
         $fileName = $pathInfo['basename'];
 

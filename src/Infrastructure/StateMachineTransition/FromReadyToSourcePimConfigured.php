@@ -50,6 +50,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $stateMachine = $event->getSubject();
 
         $projectNameQuestion = new Question('What is the name of the project you want to migrate? ');
+        $projectNameQuestion->setAutocompleterValues(['a-super-project']);
         $stateMachine->setProjectName($this->ask($projectNameQuestion));
 
         $pimLocationQuestion = new ChoiceQuestion('Where is located your PIM? ', ['local', 'server']);
@@ -71,7 +72,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $stateMachine = $event->getSubject();
         $pimSourceLocation = $stateMachine->getSourcePimLocation();
 
-        $event->setBlocked($pimSourceLocation !== 'distant');
+        $event->setBlocked($pimSourceLocation !== 'server');
     }
 
     public function onDistantConfiguration(Event $event)
@@ -82,15 +83,19 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $this->output->writeln('Source Pim Configuration: Collect your configuration files from a server');
 
         $hostQuestion = new Question('What is the hostname of the source PIM server? ');
+        $hostQuestion->setAutocompleterValues(['test-dev-feature-6.akeneo.com']);
         $host = $this->ask($hostQuestion);
 
         $portQuestion = new Question('What is the SSH port of the source PIM server? ', 22);
-        $port = $this->ask($portQuestion);
+        $portQuestion->setAutocompleterValues([2323]);
+        $port = (int) $this->ask($portQuestion);
 
         $userNameQuestion = new Question('What is the SSH user you want to connect with ? ');
+        $userNameQuestion->setAutocompleterValues(['akeneo']);
         $user = $this->ask($userNameQuestion);
 
         $sshKeyPathQuestion = new Question('Where is located the private SSH key able to connect to the server ? ');
+        $sshKeyPathQuestion->setAutocompleterValues(['/home/docker/.ssh/akeneo']);
         $sshPath = $this->ask($sshKeyPathQuestion);
 
         $sshKeySourcePimServer = new SshKey($sshPath);
@@ -99,10 +104,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
         $composerJsonPathQuestion = new Question('Where is located the composer.json on the server? ');
         //TODO REMOVE THAT ONLY TEST
-        $composerJsonPathQuestion->setAutocompleterValues([
-            '/home/docker/migration/tests/resources/step_one_source_pim_configuration/community_standard/composer.json',
-            '/home/docker/migration/tests/resources/step_one_source_pim_configuration/enterprise_mongo_ivb_standard/composer.json',
-        ]);
+        $composerJsonPathQuestion->setAutocompleterValues(['/home/akeneo/pim/composer.json',]);
 
         $composerJsonPath = $this->ask($composerJsonPathQuestion);
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());

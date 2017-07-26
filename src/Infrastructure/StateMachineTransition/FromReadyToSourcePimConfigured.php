@@ -104,7 +104,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
         $composerJsonPathQuestion = new Question('Where is located the composer.json on the server? ');
         //TODO REMOVE THAT ONLY TEST
-        $composerJsonPathQuestion->setAutocompleterValues(['/home/akeneo/pim/composer.json',]);
+        $composerJsonPathQuestion->setAutocompleterValues(['/home/akeneo/pim/composer.json']);
 
         $composerJsonPath = $this->ask($composerJsonPathQuestion);
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());

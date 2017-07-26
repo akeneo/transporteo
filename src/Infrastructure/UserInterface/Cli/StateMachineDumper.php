@@ -10,7 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Workflow\Dumper\GraphvizDumper;
-use Symfony\Component\Workflow\Dumper\StateMachineGraphvizDumper;
 
 /**
  * Allow to dump the state machine in a dot file..

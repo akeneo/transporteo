@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurator;
-use Akeneo\PimMigration\Infrastructure\LocalFileFetcher;
+use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
-use Akeneo\PimMigration\Infrastructure\SshFileFetcher;
+use Akeneo\PimMigration\Infrastructure\SourcePimConfiguration\SourcePimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\SshKey;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -24,6 +21,18 @@ use Symfony\Component\Workflow\Event\GuardEvent;
  */
 class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
+    /** @var FileFetcherFactory */
+    private $fileFetcherFactory;
+
+    /** @var SourcePimConfiguratorFactory */
+    private $sourcePimConfiguratorFactory;
+
+    public function __construct(FileFetcherFactory $fileFfileFetcherFactory, SourcePimConfiguratorFactory $sourcePimConfiguratorFactory)
+    {
+        $this->fileFetcherFactory = $fileFfileFetcherFactory;
+        $this->sourcePimConfiguratorFactory = $sourcePimConfiguratorFactory;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -41,7 +50,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
     public function leaveReadyPlace(Event $event)
     {
-        $this->output->writeln('Here you are ! Few questions before start to migrate the PIM !');
+        $this->printerAndAsker->printMessage('Here you are ! Few questions before start to migrate the PIM !');
     }
 
     public function askSourcePimLocation(Event $event)
@@ -49,12 +58,11 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $projectNameQuestion = new Question('What is the name of the project you want to migrate? ');
-        $projectNameQuestion->setAutocompleterValues(['a-super-project']);
-        $stateMachine->setProjectName($this->ask($projectNameQuestion));
+        $projectName = $this->printerAndAsker->askSimpleQuestion('What is the name of the project you want to migrate? ');
+        $stateMachine->setProjectName($projectName);
 
-        $pimLocationQuestion = new ChoiceQuestion('Where is located your PIM? ', ['local', 'server']);
-        $stateMachine->setSourcePimLocation($this->ask($pimLocationQuestion));
+        $pimLocation = $this->printerAndAsker->askChoiceQuestion('Where is located your PIM? ', ['local', 'server']);
+        $stateMachine->setSourcePimLocation($pimLocation);
     }
 
     public function guardLocalSourcePimConfiguration(GuardEvent $event)
@@ -80,36 +88,27 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->output->writeln('Source Pim Configuration: Collect your configuration files from a server');
+        $this->printerAndAsker->printMessage('Source Pim Configuration: Collect your configuration files from a server');
 
-        $hostQuestion = new Question('What is the hostname of the source PIM server? ');
-        $hostQuestion->setAutocompleterValues(['test-dev-feature-6.akeneo.com']);
-        $host = $this->ask($hostQuestion);
-
-        $portQuestion = new Question('What is the SSH port of the source PIM server? ', 22);
-        $portQuestion->setAutocompleterValues([2323]);
-        $port = (int) $this->ask($portQuestion);
-
-        $userNameQuestion = new Question('What is the SSH user you want to connect with ? ');
-        $userNameQuestion->setAutocompleterValues(['akeneo']);
-        $user = $this->ask($userNameQuestion);
-
-        $sshKeyPathQuestion = new Question('Where is located the private SSH key able to connect to the server ? ');
-        $sshKeyPathQuestion->setAutocompleterValues(['/home/docker/.ssh/akeneo']);
-        $sshPath = $this->ask($sshKeyPathQuestion);
+        $host = $this->printerAndAsker->askSimpleQuestion('What is the hostname of the source PIM server? ');
+        $port = (int) $this->printerAndAsker->askSimpleQuestion('What is the SSH port of the source PIM server? ', '22');
+        $user = $this->printerAndAsker->askSimpleQuestion('What is the SSH user you want to connect with ? ');
+        $sshPath = $this->printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ');
 
         $sshKeySourcePimServer = new SshKey($sshPath);
         $stateMachine->setSshKey($sshKeySourcePimServer);
         $serverAccessInformation = new ServerAccessInformation($host, $port, $user, $sshKeySourcePimServer);
 
-        $composerJsonPathQuestion = new Question('Where is located the composer.json on the server? ');
-        //TODO REMOVE THAT ONLY TEST
-        $composerJsonPathQuestion->setAutocompleterValues(['/home/akeneo/pim/composer.json']);
 
-        $composerJsonPath = $this->ask($composerJsonPathQuestion);
+        $composerJsonPath = $this->printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ');
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
 
-        $sourcePimConfigurator = new SourcePimConfigurator(new SshFileFetcher($serverAccessInformation));
+        $sourcePimConfigurator = $this
+            ->sourcePimConfiguratorFactory
+            ->createSourcePimConfigurator(
+                $this->fileFetcherFactory->createSshFileFetcher($serverAccessInformation)
+            );
+
         $sourcePimConfiguration = $sourcePimConfigurator->configure($pimServerInformation);
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);
@@ -120,21 +119,18 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->output->writeln('Source Pim Configuration: Collect your configuration files from your computer');
+        $this->printerAndAsker->printMessage('Source Pim Configuration: Collect your configuration files from your computer');
 
-        $composerJsonPathQuestion = new Question('Where is located the composer.json on your computer? ');
-
-        //TODO REMOVE THAT ONLY TEST
-        $composerJsonPathQuestion->setAutocompleterValues([
-            '/home/docker/migration/tests/resources/step_one_source_pim_configuration/community_standard/composer.json',
-            '/home/docker/migration/tests/resources/step_one_source_pim_configuration/enterprise_mongo_ivb_standard/composer.json',
-        ]);
-
-        $composerJsonPath = $this->ask($composerJsonPathQuestion);
+        $composerJsonPath = $this->printerAndAsker->askSimpleQuestion('Where is located the composer.json on your computer? ');
 
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
 
-        $sourcePimConfigurator = new SourcePimConfigurator(new LocalFileFetcher());
+        $sourcePimConfigurator = $this
+            ->sourcePimConfiguratorFactory
+            ->createSourcePimConfigurator(
+                $this->fileFetcherFactory->createLocalFileFetcher()
+            )
+        ;
         $sourcePimConfiguration = $sourcePimConfigurator->configure($pimServerInformation);
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);

@@ -8,7 +8,6 @@ use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEdi
 use Akeneo\PimMigration\Infrastructure\EnterpriseEditionAccessVerification\SshEnterpriseEditionAccessVerificator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\SshKey;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -43,7 +42,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
             return;
         }
 
-        $this->output->writeln('Enterprise Edition Access Verification with the key you already provided');
+        $this->printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you already provided');
 
         $sourcePim = $stateMachine->getSourcePim();
 
@@ -52,7 +51,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         try {
             $sshVerificator->verify($sourcePim);
         } catch (EnterpriseEditionAccessException $exception) {
-            $this->output->writeln('It looks like the key you provided is not allowed to download the Enterprise Edition');
+            $this->printerAndAsker->printMessage('It looks like the key you provided is not allowed to download the Enterprise Edition');
             $event->setBlocked(true);
         }
     }
@@ -62,8 +61,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $sshKeyPathQuestion = new Question('Where is located your SSH key allowed to connect to Akeneo Enterprise Edition distribution? ');
-        $sshPath = $this->ask($sshKeyPathQuestion);
+        $sshPath = $this->printerAndAsker->askSimpleQuestion('Where is located your SSH key allowed to connect to Akeneo Enterprise Edition distribution? ');
 
         $sshKey = new SshKey($sshPath);
 
@@ -89,7 +87,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $sourcePim = $stateMachine->getSourcePim();
 
-        $this->output->writeln(
+        $this->printerAndAsker->printMessage(
             sprintf(
                 'Access to the %s edition allowed',
                 $sourcePim->isEnterpriseEdition() ? 'Enterprise' : 'Community'

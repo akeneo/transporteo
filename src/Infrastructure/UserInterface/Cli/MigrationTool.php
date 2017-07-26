@@ -30,13 +30,13 @@ final class MigrationTool extends Command
     {
         $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'));
 
+        $cliQuestionAsker = new ConsolePrinterAndAsker($input, $output, $this->getHelper('question'));
+
         $stateMachineSubscribers = $this->container->findTaggedServiceIds('migration_tool.subscriber');
-        $questionHelper = $this->getHelper('question');
+
         foreach ($stateMachineSubscribers as $serviceId => $values) {
             $service = $this->container->get($serviceId);
-            $service->setInput($input);
-            $service->setOutput($output);
-            $service->setQuestionHelper($questionHelper);
+            $service->setPrinterAndAsker($cliQuestionAsker);
         }
 
         $stateMachine->start();

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -17,9 +15,5 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 interface StateMachineSubscriber extends EventSubscriberInterface
 {
-    public function setOutput(OutputInterface $output): void;
-
-    public function setInput(InputInterface $input): void;
-
-    public function setQuestionHelper(QuestionHelper $helper): void;
+    public function setPrinterAndAsker(PrinterAndAsker $asker): void;
 }

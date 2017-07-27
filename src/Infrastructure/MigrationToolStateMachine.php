@@ -23,9 +23,6 @@ class MigrationToolStateMachine
     /** @var StateMachine */
     protected $stateMachineMarker;
 
-    /** @var array */
-    protected $gatheredInformation;
-
     /** @var string */
     protected $projectName;
 
@@ -44,7 +41,6 @@ class MigrationToolStateMachine
     public function __construct(StateMachine $stateMachine)
     {
         $this->stateMachineMarker = $stateMachine;
-        $this->gatheredInformation = [];
     }
 
     public function start(): void

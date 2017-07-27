@@ -11,6 +11,12 @@ use Akeneo\PimMigration\Infrastructure\SshKey;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
+/**
+ * Grant accesses to the PIM..
+ *
+ * @author    Anael Chardan <anael.chardan@akeneo.com>
+ * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
+ */
 class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
     /** @var EnterpriseEditionVerificatorFactory */

@@ -11,6 +11,7 @@ use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\EnterpriseEditionAccessVerification\SshEnterpriseEditionAccessVerificator;
 use Akeneo\PimMigration\Infrastructure\EnterpriseEditionVerificatorFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
@@ -74,11 +75,14 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $stateMachine->getSourcePim()->willReturn($sourcePim);
 
         $sourcePim->isEnterpriseEdition()->willReturn(true);
+        $sourcePim->getEnterpriseRepository()->willReturn('ssh://git@distribution.akeneo.com:443');
+
+        $serverAccessInformation = ServerAccessInformation::fromString('ssh://git@distribution.akeneo.com:443', $sshKey->getWrappedObject());
 
         $stateMachine->getSshKey()->willReturn($sshKey);
 
         $printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you already provided')->shouldBeCalled();
-        $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey)->willReturn($sshEnterpriseEditionAccessVerificator);
+        $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation)->willReturn($sshEnterpriseEditionAccessVerificator);
 
         $sshEnterpriseEditionAccessVerificator->verify($sourcePim)->willThrow(new EnterpriseEditionAccessException(''));
         $printerAndAsker->printMessage('It looks like the key you provided is not allowed to download the Enterprise Edition')->shouldBeCalled();
@@ -100,11 +104,14 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $stateMachine->getSourcePim()->willReturn($sourcePim);
 
         $sourcePim->isEnterpriseEdition()->willReturn(true);
+        $sourcePim->getEnterpriseRepository()->willReturn('ssh://git@distribution.akeneo.com:443');
 
         $stateMachine->getSshKey()->willReturn($sshKey);
 
+        $serverAccessInformation = ServerAccessInformation::fromString('ssh://git@distribution.akeneo.com:443', $sshKey->getWrappedObject());
+
         $printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you already provided')->shouldBeCalled();
-        $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey)->willReturn($sshEnterpriseEditionAccessVerificator);
+        $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation)->willReturn($sshEnterpriseEditionAccessVerificator);
 
         $sshEnterpriseEditionAccessVerificator->verify($sourcePim)->shouldBeCalled();
 
@@ -136,7 +143,11 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $stateMachine->getSourcePim()->willReturn($sourcePim);
         $stateMachine->getSshKey()->willReturn($sshKey);
 
-        $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey)->willReturn($enterpriseEditionVerificator);
+        $sourcePim->getEnterpriseRepository()->willReturn('ssh://git@distribution.akeneo.com:443');
+
+        $serverAccessInformation = ServerAccessInformation::fromString('ssh://git@distribution.akeneo.com:443', $sshKey->getWrappedObject());
+
+        $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation)->willReturn($enterpriseEditionVerificator);
         $enterpriseEditionVerificator->verify($sourcePim)->shouldBeCalled();
 
         $this->shouldNotThrow(new EnterpriseEditionAccessException(''))->during('grantEeAccesses', [$event]);

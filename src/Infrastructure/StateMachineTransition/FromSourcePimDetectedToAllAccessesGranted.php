@@ -7,6 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessException;
 use Akeneo\PimMigration\Infrastructure\EnterpriseEditionVerificatorFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -60,7 +61,9 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $sourcePim = $stateMachine->getSourcePim();
 
-        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey);
+        $serverAccessInformation = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
+
+        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation);
 
         try {
             $sshVerificator->verify($sourcePim);
@@ -89,8 +92,9 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         $sourcePim = $stateMachine->getSourcePim();
 
         $sshKey = $stateMachine->getSshKey();
+        $serverAccessInformation = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
 
-        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey);
+        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation);
         $sshVerificator->verify($sourcePim);
     }
 

@@ -20,9 +20,17 @@ class SshFileFetcher implements FileFetcher
     /** @var ServerAccessInformation */
     private $serverAccessInformation;
 
-    public function __construct(ServerAccessInformation $serverAccessInformation)
+    /** @var SFTP */
+    private $sftp;
+
+    /** @var RSA */
+    private $key;
+
+    public function __construct(ServerAccessInformation $serverAccessInformation, SFTP $sftp, RSA $key)
     {
         $this->serverAccessInformation = $serverAccessInformation;
+        $this->sftp = $sftp;
+        $this->key = $key;
     }
 
     /**
@@ -30,11 +38,7 @@ class SshFileFetcher implements FileFetcher
      */
     public function fetch(string $filePath): string
     {
-        $sftp = new SFTP($this->serverAccessInformation->getHost(), $this->serverAccessInformation->getPort());
-        $key = new RSA();
-        $key->load($this->serverAccessInformation->getSshKey()->getKey());
-
-        if (!$sftp->login($this->serverAccessInformation->getUsername(), $key)) {
+        if (!$this->sftp->login($this->serverAccessInformation->getUsername(), $this->key)) {
             throw new ImpossibleConnectionException(
                 sprintf(
                     'Impossible to login to %s@%s:%d using this ssh key : %s',
@@ -46,11 +50,10 @@ class SshFileFetcher implements FileFetcher
             );
         }
 
-        $this->serverAccessInformation->getSshKey();
         $pathInfo = pathinfo($filePath);
         $fileName = $pathInfo['basename'];
 
-        $subList = $sftp->nlist($pathInfo['dirname']);
+        $subList = $this->sftp->nlist($pathInfo['dirname']);
 
         $filesMatchingName = array_filter($subList, function ($element) use ($fileName) {
             return $element == $fileName;
@@ -70,7 +73,7 @@ class SshFileFetcher implements FileFetcher
 
         $localPath = realpath($varDir).DIRECTORY_SEPARATOR.$fileName;
 
-        $result = $sftp->get($filePath, $localPath);
+        $result = $this->sftp->get($filePath, $localPath);
 
         if (false === $result) {
             throw new FileNotFoundException("The file {$filePath} is not reachable", $filePath);

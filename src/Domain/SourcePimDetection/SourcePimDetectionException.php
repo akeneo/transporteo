@@ -14,4 +14,10 @@ use Akeneo\PimMigration\Domain\MigrationStepException;
  */
 class SourcePimDetectionException extends MigrationStepException
 {
+    public function __construct($message = '', $code = 0, Throwable $previous = null)
+    {
+        $message = sprintf('Error: Step 2 - SourcePimDetection: %s', $message);
+
+        parent::__construct($message, $code, $previous);
+    }
 }

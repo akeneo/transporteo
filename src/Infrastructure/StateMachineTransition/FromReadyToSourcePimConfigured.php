@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
+use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurationException;
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
@@ -99,7 +100,6 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $stateMachine->setSshKey($sshKeySourcePimServer);
         $serverAccessInformation = new ServerAccessInformation($host, $port, $user, $sshKeySourcePimServer);
 
-
         $composerJsonPath = $this->printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ');
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
 
@@ -109,7 +109,11 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
                 $this->fileFetcherFactory->createSshFileFetcher($serverAccessInformation)
             );
 
-        $sourcePimConfiguration = $sourcePimConfigurator->configure($pimServerInformation);
+        try {
+            $sourcePimConfiguration = $sourcePimConfigurator->configure($pimServerInformation);
+        } catch (\RuntimeException $exception) {
+            throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
+        }
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);
     }

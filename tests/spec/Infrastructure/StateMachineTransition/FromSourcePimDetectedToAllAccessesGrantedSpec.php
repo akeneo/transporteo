@@ -31,7 +31,7 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $this->setPrinterAndAsker($printerAndAsker);
     }
 
-    public function it_grant_all_access_to_a_community_edition(
+    public function it_grants_all_access_to_a_community_edition(
         GuardEvent $event,
         MigrationToolStateMachine $stateMachine,
         SourcePim $sourcePim
@@ -45,7 +45,7 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $this->grantAllAccesses($event);
     }
 
-    public function it_block_a_non_existing_ssh_key(
+    public function it_blocks_a_non_existing_ssh_key(
         GuardEvent $event,
         MigrationToolStateMachine $stateMachine,
         SourcePim $sourcePim
@@ -61,7 +61,7 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $this->grantAllAccesses($event);
     }
 
-    public function it_block_a_non_authorized_ssh_key(
+    public function it_blocks_a_non_authorized_ssh_key(
         GuardEvent $event,
         MigrationToolStateMachine $stateMachine,
         SourcePim $sourcePim,
@@ -111,7 +111,7 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         $this->grantAllAccesses($event);
     }
 
-    public function it_ask_ssh_key(
+    public function it_asks_ssh_key(
         Event $event,
         MigrationToolStateMachine $stateMachine,
         $printerAndAsker

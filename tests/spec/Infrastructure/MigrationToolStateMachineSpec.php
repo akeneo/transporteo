@@ -37,12 +37,11 @@ class MigrationToolStateMachineSpec extends ObjectBehavior
         $this->start();
     }
 
-    public function it_apply_transition_if_there_is_one(Transition $transition, $stateMachine)
+    public function it_apples_transition_if_there_is_one(Transition $transition, $stateMachine)
     {
         $transition->getName()->willReturn('a_transition');
-        $stateMachine->getEnabledTransitions($this)->willReturn([$transition]);
+        $stateMachine->getEnabledTransitions($this)->willReturn([$transition], []);
         $stateMachine->apply($this, 'a_transition')->shouldBeCalled();
-        $stateMachine->getEnabledTransitions($this)->willReturn([]);
 
         $this->start();
     }

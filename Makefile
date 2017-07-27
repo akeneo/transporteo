@@ -12,6 +12,7 @@ list:
 	@echo ""
 	@echo "Akeneo PIM Migration tool available targets:"
 	@echo ""
+	@echo "  $(YELLOW)commit$(RESTORE)             > run pre commit stuff"
 	@echo "  $(YELLOW)fix-style$(RESTORE)          > run the PHP-CS-FIXER"
 	@echo "  $(YELLOW)test$(RESTORE)               > run All tests"
 	@echo "  $(YELLOW)phpspec-run$(RESTORE)        > run All PHPSpec tests"
@@ -27,6 +28,9 @@ list:
 	@echo "  $(YELLOW)update$(RESTORE)        > update vendors"
 	@echo "  $(YELLOW)run$(RESTORE)           > run the tool"
 	@echo "  $(YELLOW)clean$(RESTORE)         > removes the vendors"
+
+.PHONY: commit
+commit: | fix-style test dump-state-machine
 
 .PHONY: fix-style
 fix-style:

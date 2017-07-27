@@ -35,7 +35,15 @@ class SshFileFetcher implements FileFetcher
         $key->load($this->serverAccessInformation->getSshKey()->getKey());
 
         if (!$sftp->login($this->serverAccessInformation->getUsername(), $key)) {
-            throw new FileNotFoundException('The file is not reachable due to impossible connection');
+            throw new ImpossibleConnectionException(
+                sprintf(
+                    'Impossible to login to %s@%s:%d using this ssh key : %s',
+                    $this->serverAccessInformation->getUsername(),
+                    $this->serverAccessInformation->getHost(),
+                    $this->serverAccessInformation->getPort(),
+                    $this->serverAccessInformation->getSshKey()->getPath()
+                )
+            );
         }
 
         $this->serverAccessInformation->getSshKey();

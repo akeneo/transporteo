@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessException;
-use Akeneo\PimMigration\Infrastructure\EnterpriseEditionAccessVerification\SshEnterpriseEditionAccessVerificator;
+use Akeneo\PimMigration\Infrastructure\EnterpriseEditionVerificatorFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Symfony\Component\Workflow\Event\Event;
@@ -13,6 +13,14 @@ use Symfony\Component\Workflow\Event\GuardEvent;
 
 class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
+    /** @var EnterpriseEditionVerificatorFactory */
+    private $enterpriseEditionVerificatorFactory;
+
+    public function __construct(EnterpriseEditionVerificatorFactory $enterpriseEditionVerificatorFactory)
+    {
+        $this->enterpriseEditionVerificatorFactory = $enterpriseEditionVerificatorFactory;
+    }
+
     public static function getSubscribedEvents()
     {
         return [
@@ -46,7 +54,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $sourcePim = $stateMachine->getSourcePim();
 
-        $sshVerificator = new SshEnterpriseEditionAccessVerificator($sshKey);
+        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey);
 
         try {
             $sshVerificator->verify($sourcePim);
@@ -76,7 +84,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $sshKey = $stateMachine->getSshKey();
 
-        $sshVerificator = new SshEnterpriseEditionAccessVerificator($sshKey);
+        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($sshKey);
         $sshVerificator->verify($sourcePim);
     }
 

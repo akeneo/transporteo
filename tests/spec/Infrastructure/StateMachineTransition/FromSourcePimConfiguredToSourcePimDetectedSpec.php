@@ -16,7 +16,7 @@ use PhpSpec\ObjectBehavior;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
- * Your Class description.
+ * FromSourcePimConfiguredToSourcePimDetectedSpec.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

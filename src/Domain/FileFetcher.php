@@ -16,6 +16,7 @@ interface FileFetcher
      * @return string the local path
      *
      * @throws FileNotFoundException when the file to fetch does not exist
+     * @throws \RuntimeException     when something else happen
      */
     public function fetch(string $filePath): string;
 }

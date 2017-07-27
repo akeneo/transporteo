@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
-use Symfony\Component\Console\Application;
-
 /**
  * Symfony application factory.
  *
@@ -16,7 +14,12 @@ final class ApplicationFactory
 {
     public static function create(bool $autoExit = true, string $env = 'prod'): Application
     {
-        $application = new Application('Akeneo PIM Migration Tool', '1.0.0');
+        $container = ContainerBuilder::getContainer();
+
+        $application = new Application('Akeneo PIM Migration Tool', '1.0.0', $container);
+
+        $application->setAutoExit($autoExit);
+        $application->setDispatcher($container->get('event_dispatcher'));
 
         return $application;
     }

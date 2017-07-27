@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+
+  _instanceof:
+    Akeneo\PimMigration\Infrastructure\StateMachineTransition\StateMachineSubscriber:
+      tags: ['migration_tool.subscriber']
+
+  Akeneo\PimMigration\Infrastructure\StateMachineTransition\:
+    resource: './../../StateMachineTransition/*'

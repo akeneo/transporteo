@@ -83,6 +83,18 @@ final class ResourcesFileLocator
         return realpath($path) . DIRECTORY_SEPARATOR . 'pim_parameters.yml';
     }
 
+    public static final function getSshKeyPath(): string
+    {
+        return realpath(
+            sprintf(
+                '%s%s%s',
+                __DIR__,
+                DIRECTORY_SEPARATOR,
+                'a_false_ssh_key'
+            )
+        );
+    }
+
     public static final function getStepFolder(string $step): string
     {
         return sprintf(

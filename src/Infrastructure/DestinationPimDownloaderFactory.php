@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\InstalledDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
 
@@ -24,10 +23,5 @@ class DestinationPimDownloaderFactory
     public function createGitDestinationPimDownloader(): GitDestinationPimDownloader
     {
         return new GitDestinationPimDownloader();
-    }
-
-    public function createInstalledDestinationPimDownload(string $localPath): InstalledDestinationPimDownloader
-    {
-        return new InstalledDestinationPimDownloader($localPath);
     }
 }

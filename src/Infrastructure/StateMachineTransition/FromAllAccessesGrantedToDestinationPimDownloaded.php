@@ -86,15 +86,18 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
 
         $downloader = null;
 
+        if (self::DESTINATION_PIM_ALREADY_INSTALLED === $destinationPimLocation) {
+            $stateMachine->setCurrentDestinationPimLocation($destinationPathPimLocation);
+
+            return;
+        }
+
         switch ($destinationPimLocation) {
             case self::DOCKER_COMPOSE_INSTALL:
                 $downloader = $this->destinationPimDownloaderFactory->createGitDestinationPimDownloader();
                 break;
             case self::TAR_GZ_INSTALL:
                 $downloader = $this->destinationPimDownloaderFactory->createLocalArchiveDestinationPimDownloader($destinationPathPimLocation);
-                break;
-            case self::DESTINATION_PIM_ALREADY_INSTALLED:
-                $downloader = $this->destinationPimDownloaderFactory->createInstalledDestinationPimDownload($destinationPathPimLocation);
                 break;
         }
 

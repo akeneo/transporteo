@@ -27,7 +27,6 @@ class DestinationPimDownloaderIntegration extends TestCase
         return  [
            [new GitDestinationPimDownloader()],
             [new LocalArchiveDestinationPimDownloader($resourcesRoot . 'pim_community_standard_2_0.tar.gz')],
-           [new InstalledDestinationPimDownloader($resourcesRoot . 'pim_community_standard_2_0')]
         ];
     }
 

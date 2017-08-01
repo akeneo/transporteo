@@ -16,6 +16,8 @@ workflows:
             - 'source_pim_detected'
             - 'ee_access_pending'
             - 'all_accesses_granted'
+            - 'destination_pim_location_guessed'
+            - 'destination_pim_downloaded'
         transitions:
             ask_source_pim_location:
                 from: 'ready'
@@ -38,3 +40,9 @@ workflows:
             grant_ee_accesses:
                 from: 'ee_access_pending'
                 to: 'all_accesses_granted'
+            ask_destination_pim_location:
+                from: 'all_accesses_granted'
+                to: 'destination_pim_location_guessed'
+            download_destination_pim:
+                from: 'destination_pim_location_guessed'
+                to: 'destination_pim_downloaded'

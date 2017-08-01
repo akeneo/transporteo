@@ -9,6 +9,8 @@ digraph workflow {
   place_source_pim_detected [label="source_pim_detected", shape=circle];
   place_ee_access_pending [label="ee_access_pending", shape=circle];
   place_all_accesses_granted [label="all_accesses_granted", shape=circle];
+  place_destination_pim_location_guessed [label="destination_pim_location_guessed", shape=circle];
+  place_destination_pim_downloaded [label="destination_pim_downloaded", shape=circle];
   transition_ask_source_pim_location [label="ask_source_pim_location", shape=box, shape="box", regular="1"];
   transition_local_source_pim_configuration [label="local_source_pim_configuration", shape=box, shape="box", regular="1"];
   transition_distant_source_pim_configuration [label="distant_source_pim_configuration", shape=box, shape="box", regular="1"];
@@ -16,6 +18,8 @@ digraph workflow {
   transition_grant_all_accesses [label="grant_all_accesses", shape=box, shape="box", regular="1"];
   transition_ee_ask_an_ssh_key [label="ee_ask_an_ssh_key", shape=box, shape="box", regular="1"];
   transition_grant_ee_accesses [label="grant_ee_accesses", shape=box, shape="box", regular="1"];
+  transition_ask_destination_pim_location [label="ask_destination_pim_location", shape=box, shape="box", regular="1"];
+  transition_download_destination_pim [label="download_destination_pim", shape=box, shape="box", regular="1"];
   place_ready -> transition_ask_source_pim_location [style="solid"];
   transition_ask_source_pim_location -> place_source_pim_location_guessed [style="solid"];
   place_source_pim_location_guessed -> transition_local_source_pim_configuration [style="solid"];
@@ -30,4 +34,8 @@ digraph workflow {
   transition_ee_ask_an_ssh_key -> place_ee_access_pending [style="solid"];
   place_ee_access_pending -> transition_grant_ee_accesses [style="solid"];
   transition_grant_ee_accesses -> place_all_accesses_granted [style="solid"];
+  place_all_accesses_granted -> transition_ask_destination_pim_location [style="solid"];
+  transition_ask_destination_pim_location -> place_destination_pim_location_guessed [style="solid"];
+  place_destination_pim_location_guessed -> transition_download_destination_pim [style="solid"];
+  transition_download_destination_pim -> place_destination_pim_downloaded [style="solid"];
 }

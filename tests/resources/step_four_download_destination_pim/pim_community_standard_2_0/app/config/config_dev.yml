@@ -1,0 +1,31 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:   { resource: "%kernel.root_dir%/config/routing_dev.yml" }
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+monolog:
+    handlers:
+        main:
+            type:     stream
+            path:     "%kernel.logs_dir%/%kernel.environment%.log"
+            level:    debug
+            channels: [!event]
+        firephp:
+            type:     firephp
+            level:    info
+        console:
+            type:     console
+            channels: [!event, !doctrine]
+
+oro_assetic:
+    css_debug:      ~
+    css_debug_all:  false
+
+swiftmailer:
+    disable_delivery: true

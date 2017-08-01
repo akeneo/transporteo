@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurationException;
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
-use Akeneo\PimMigration\Infrastructure\SourcePimConfiguration\SourcePimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -25,13 +25,13 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
     /** @var FileFetcherFactory */
     private $fileFetcherFactory;
 
-    /** @var SourcePimConfiguratorFactory */
-    private $sourcePimConfiguratorFactory;
+    /** @var PimConfiguratorFactory */
+    private $pimConfiguratorFactory;
 
-    public function __construct(FileFetcherFactory $fileFfileFetcherFactory, SourcePimConfiguratorFactory $sourcePimConfiguratorFactory)
+    public function __construct(FileFetcherFactory $fileFfileFetcherFactory, PimConfiguratorFactory $sourcePimConfiguratorFactory)
     {
         $this->fileFetcherFactory = $fileFfileFetcherFactory;
-        $this->sourcePimConfiguratorFactory = $sourcePimConfiguratorFactory;
+        $this->pimConfiguratorFactory = $sourcePimConfiguratorFactory;
     }
 
     /**
@@ -103,14 +103,14 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $composerJsonPath = $this->printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ');
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
 
-        $sourcePimConfigurator = $this
-            ->sourcePimConfiguratorFactory
-            ->createSourcePimConfigurator(
+        $pimConfigurator = $this
+            ->pimConfiguratorFactory
+            ->createPimConfigurator(
                 $this->fileFetcherFactory->createSshFileFetcher($serverAccessInformation)
             );
 
         try {
-            $sourcePimConfiguration = $sourcePimConfigurator->configure($pimServerInformation);
+            $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
         } catch (\RuntimeException $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
@@ -129,13 +129,13 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
         $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
 
-        $sourcePimConfigurator = $this
-            ->sourcePimConfiguratorFactory
-            ->createSourcePimConfigurator(
+        $pimConfigurator = $this
+            ->pimConfiguratorFactory
+            ->createPimConfigurator(
                 $this->fileFetcherFactory->createLocalFileFetcher()
             )
         ;
-        $sourcePimConfiguration = $sourcePimConfigurator->configure($pimServerInformation);
+        $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);
     }

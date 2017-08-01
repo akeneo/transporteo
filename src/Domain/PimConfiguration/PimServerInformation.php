@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
+namespace Akeneo\PimMigration\Domain\PimConfiguration;
 
 /**
  * Keep the PIM server information.
- *
- * @see Step 2
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

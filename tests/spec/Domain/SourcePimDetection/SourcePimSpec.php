@@ -2,8 +2,8 @@
 
 namespace spec\Akeneo\PimMigration\Domain\SourcePimDetection;
 
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\ComposerJson;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePimDetectionException;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Ds\Map;
@@ -36,7 +36,7 @@ class SourcePimSpec extends ObjectBehavior
 
     public function it_throws_an_exception_if_it_is_not_a_standard(
         ComposerJson $composerJson,
-        SourcePimConfiguration $sourcePimConfiguration
+        PimConfiguration $sourcePimConfiguration
     ) {
         $composerJson->getRepositoryName()->willReturn('a-repo');
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
@@ -50,7 +50,7 @@ class SourcePimSpec extends ObjectBehavior
 
     public function it_throws_an_exception_if_it_is_not_a_one_dot_seven(
         ComposerJson $composerJson,
-        SourcePimConfiguration $sourcePimConfiguration
+        PimConfiguration $sourcePimConfiguration
     ) {
         $composerJson->getRepositoryName()->willReturn('akeneo/pim-community-standard');
         $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '~1.6']));

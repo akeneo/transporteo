@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
+use Akeneo\PimMigration\Domain\PimConfiguration\ComposerJson;
+use Akeneo\PimMigration\Domain\PimConfiguration\ParametersYml;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ParametersYml;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimParameters;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Ds\Map;
@@ -31,7 +31,7 @@ class FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
     public function it_can_detect_source_pim(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        SourcePimConfiguration $sourcePimConfiguration,
+        PimConfiguration $sourcePimConfiguration,
         ComposerJson $composerJson,
         PimParameters $pimParameters,
         ParametersYml $parametersYml

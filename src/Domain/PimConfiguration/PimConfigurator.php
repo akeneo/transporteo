@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
+namespace Akeneo\PimMigration\Domain\PimConfiguration;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileNotFoundException;
+use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurationException;
 use Ds\Map;
 
 /**
@@ -14,7 +15,7 @@ use Ds\Map;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SourcePimConfigurator
+class PimConfigurator
 {
     /** @var FileFetcher */
     private $fetcher;
@@ -24,7 +25,7 @@ class SourcePimConfigurator
         $this->fetcher = $fetcher;
     }
 
-    public function configure(PimServerInformation $pimServerInfo): SourcePimConfiguration
+    public function configure(PimServerInformation $pimServerInfo): PimConfiguration
     {
         $filesToFetch = new Map([
             ComposerJson::class => $pimServerInfo->getComposerJsonPath(),
@@ -45,7 +46,7 @@ class SourcePimConfigurator
                 }
             });
 
-        return new SourcePimConfiguration(
+        return new PimConfiguration(
             $fetchedFile->get(ComposerJson::class),
             $fetchedFile->get(ParametersYml::class),
             $fetchedFile->get(PimParameters::class),

@@ -1,8 +1,8 @@
 <?php
 
-namespace spec\Akeneo\PimMigration\Domain\SourcePimConfiguration;
+namespace spec\Akeneo\PimMigration\Domain\PimConfiguration;
 
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use PhpSpec\ObjectBehavior;
 
 /**

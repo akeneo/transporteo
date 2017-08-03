@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\SourcePimDetection;
 
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ParametersYml;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimParameters;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\ComposerJson;
+use Akeneo\PimMigration\Domain\PimConfiguration\ParametersYml;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimParameters;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
@@ -51,7 +51,7 @@ class SourcePimDetectorIntegration extends TestCase
         $this->assertEquals($sourcePim->getMongoDatabase(), 'your_mongo_database');
     }
 
-    private function getPimConfiguration(string $pimConfigurationName): ?SourcePimConfiguration
+    private function getPimConfiguration(string $pimConfigurationName): ?PimConfiguration
     {
         if ('simple-pim-community-standard' === $pimConfigurationName) {
             $stepTwoFolder = sprintf(
@@ -65,7 +65,7 @@ class SourcePimDetectorIntegration extends TestCase
             $parametersYaml = $stepTwoFolder . 'parameters.yml';
             $pimParameters = $stepTwoFolder . 'pim_parameters.yml';
 
-            return new SourcePimConfiguration(
+            return new PimConfiguration(
                 new ComposerJson($standardComposerJson),
                 new ParametersYml($parametersYaml),
                 new PimParameters($pimParameters),
@@ -85,7 +85,7 @@ class SourcePimDetectorIntegration extends TestCase
             $parametersYaml = $stepTwoFolder . 'parameters.yml';
             $pimParameters = $stepTwoFolder . 'pim_parameters.yml';
 
-            return new SourcePimConfiguration(
+            return new PimConfiguration(
                 new ComposerJson($standardComposerJson),
                 new ParametersYml($parametersYaml),
                 new PimParameters($pimParameters),

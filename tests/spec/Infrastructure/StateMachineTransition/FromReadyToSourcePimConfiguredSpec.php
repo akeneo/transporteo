@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfigurator;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurationException;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurator;
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\ImpossibleConnectionException;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
-use Akeneo\PimMigration\Infrastructure\SourcePimConfiguration\SourcePimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Akeneo\PimMigration\Infrastructure\StateMachineTransition\FromReadyToSourcePimConfigured;
 use PhpSpec\ObjectBehavior;
@@ -32,7 +32,7 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 {
     public function let(
         FileFetcherFactory $fileFetcherFactory,
-        SourcePimConfiguratorFactory $sourcePimConfiguratorFactory,
+        PimConfiguratorFactory $sourcePimConfiguratorFactory,
         PrinterAndAsker $printerAndAsker
     ) {
         $this->beConstructedWith($fileFetcherFactory, $sourcePimConfiguratorFactory);
@@ -96,8 +96,8 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         Event $event,
         MigrationToolStateMachine $stateMachine,
         FileFetcher $fileFetcher,
-        SourcePimConfigurator $sourcePimConfigurator,
-        SourcePimConfiguration $sourcePimConfiguration,
+        PimConfigurator $sourcePimConfigurator,
+        PimConfiguration $sourcePimConfiguration,
         $fileFetcherFactory,
         $sourcePimConfiguratorFactory,
         $printerAndAsker
@@ -118,7 +118,7 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
         $printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
-        $sourcePimConfiguratorFactory->createSourcePimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
+        $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
         $sourcePimConfigurator->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))->willReturn($sourcePimConfiguration);
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldBeCalled();
@@ -130,8 +130,8 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         Event $event,
         MigrationToolStateMachine $stateMachine,
         FileFetcher $fileFetcher,
-        SourcePimConfigurator $sourcePimConfigurator,
-        SourcePimConfiguration $sourcePimConfiguration,
+        PimConfigurator $sourcePimConfigurator,
+        PimConfiguration $sourcePimConfiguration,
         $fileFetcherFactory,
         $sourcePimConfiguratorFactory,
         $printerAndAsker
@@ -143,7 +143,7 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $printerAndAsker->askSimpleQuestion('Where is located the composer.json on your computer? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
 
         $fileFetcherFactory->createLocalFileFetcher()->willReturn($fileFetcher);
-        $sourcePimConfiguratorFactory->createSourcePimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
+        $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
 
         $sourcePimConfigurator->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))->willReturn($sourcePimConfiguration);
 
@@ -156,8 +156,8 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         Event $event,
         MigrationToolStateMachine $stateMachine,
         FileFetcher $fileFetcher,
-        SourcePimConfigurator $sourcePimConfigurator,
-        SourcePimConfiguration $sourcePimConfiguration,
+        PimConfigurator $sourcePimConfigurator,
+        PimConfiguration $sourcePimConfiguration,
         $fileFetcherFactory,
         $sourcePimConfiguratorFactory,
         $printerAndAsker
@@ -179,7 +179,7 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $exception = new ImpossibleConnectionException('Impossible to login to akeneo@my-super-pim.akeneo.com:22 using this ssh key : /home/docker/migration/tests/resources/a_false_ssh_key');
         $printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
-        $sourcePimConfiguratorFactory->createSourcePimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
+        $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
         $sourcePimConfigurator
             ->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))
             ->willThrow($exception);

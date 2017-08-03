@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
+namespace Akeneo\PimMigration\Domain\PimConfiguration;
 
 use Akeneo\PimMigration\Domain\AbstractFile;
 use Akeneo\PimMigration\Domain\File;

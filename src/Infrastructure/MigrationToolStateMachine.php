@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
+use Akeneo\PimMigration\Domain\DestinationPimDownload\DestinationPim;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
@@ -32,11 +33,23 @@ class MigrationToolStateMachine
     /** @var null|SshKey */
     protected $sshKey;
 
-    /** @var SourcePimConfiguration */
+    /** @var PimConfiguration */
     protected $sourcePimConfiguration;
 
     /** @var SourcePim */
     protected $sourcePim;
+
+    /** @var DestinationPim */
+    protected $destinationPim;
+
+    /** @var string */
+    protected $destinationPimLocation;
+
+    /** @var string */
+    protected $destinationPathPimLocation;
+
+    /** @var string */
+    protected $currentDestinationPimLocation;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -91,12 +104,12 @@ class MigrationToolStateMachine
         $this->sshKey = $sshKey;
     }
 
-    public function getSourcePimConfiguration(): SourcePimConfiguration
+    public function getSourcePimConfiguration(): PimConfiguration
     {
         return $this->sourcePimConfiguration;
     }
 
-    public function setSourcePimConfiguration(SourcePimConfiguration $sourcePimConfiguration)
+    public function setSourcePimConfiguration(PimConfiguration $sourcePimConfiguration)
     {
         $this->sourcePimConfiguration = $sourcePimConfiguration;
     }
@@ -109,5 +122,45 @@ class MigrationToolStateMachine
     public function getSourcePim(): SourcePim
     {
         return $this->sourcePim;
+    }
+
+    public function setDestinationPim(DestinationPim $destinationPim): void
+    {
+        $this->destinationPim = $destinationPim;
+    }
+
+    public function getDestinationPim(): DestinationPim
+    {
+        return $this->destinationPim;
+    }
+
+    public function setDestinationPimLocation(string $destinationPimLocation): void
+    {
+        $this->destinationPimLocation = $destinationPimLocation;
+    }
+
+    public function getDestinationPimLocation(): string
+    {
+        return $this->destinationPimLocation;
+    }
+
+    public function setDestinationPathPimLocation(string $destinationPath): void
+    {
+        $this->destinationPathPimLocation = $destinationPath;
+    }
+
+    public function getDestinationPathPimLocation(): string
+    {
+        return $this->destinationPathPimLocation;
+    }
+
+    public function setCurrentDestinationPimLocation(string $currentDestinationPimLocation): void
+    {
+        $this->currentDestinationPimLocation = $currentDestinationPimLocation;
+    }
+
+    public function getCurrentDestinationPimLocation(): string
+    {
+        return $this->currentDestinationPimLocation;
     }
 }

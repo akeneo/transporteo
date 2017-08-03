@@ -3,12 +3,12 @@
 namespace spec\Akeneo\PimMigration\Domain\SourcePimConfiguration;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ComposerJson;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\ParametersYml;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimParameters;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\PimServerInformation;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfiguration;
-use Akeneo\PimMigration\Domain\SourcePimConfiguration\SourcePimConfigurator;
+use Akeneo\PimMigration\Domain\PimConfiguration\ComposerJson;
+use Akeneo\PimMigration\Domain\PimConfiguration\ParametersYml;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimConfigurator;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimParameters;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -19,7 +19,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SourcePimConfiguratorSpec extends ObjectBehavior
+class PimConfiguratorSpec extends ObjectBehavior
 {
     public function let(FileFetcher $fetcher)
     {
@@ -42,7 +42,7 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(SourcePimConfigurator::class);
+        $this->shouldHaveType(PimConfigurator::class);
     }
 
     public function it_returns_the_good_configuration($fetcher)
@@ -61,7 +61,7 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
         $fetcher->fetch($localParameterYmlPath)->willReturn($destinationParametersYmlPath);
         $fetcher->fetch($localPimParametersPath)->willReturn($destinationPimParametersPath);
 
-        $sourcePimConfiguration = new SourcePimConfiguration(
+        $sourcePimConfiguration = new PimConfiguration(
             new ComposerJson($destinationComposerJsonPath),
             new ParametersYml($destinationParametersYmlPath),
             new PimParameters($destinationPimParametersPath),
@@ -74,7 +74,7 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
     public function getMatchers()
     {
         return [
-            'beASourcePimConfigurationLike' => function (SourcePimConfiguration $result, SourcePimConfiguration $expected) {
+            'beASourcePimConfigurationLike' => function (PimConfiguration $result, PimConfiguration $expected) {
                 return (
                     $result->getComposerJson()->getPath() === $expected->getComposerJson()->getPath() &&
                     $result->getParametersYml()->getPath() === $expected->getParametersYml()->getPath() &&

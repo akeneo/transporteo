@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
+namespace Akeneo\PimMigration\Domain\PimConfiguration;
 
 /**
  * Global configuration of PIM source.
@@ -10,7 +10,7 @@ namespace Akeneo\PimMigration\Domain\SourcePimConfiguration;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SourcePimConfiguration
+class PimConfiguration
 {
     /** @var ComposerJson */
     private $composerJson;

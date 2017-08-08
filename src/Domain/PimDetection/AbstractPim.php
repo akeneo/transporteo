@@ -12,6 +12,10 @@ namespace Akeneo\PimMigration\Domain\PimDetection;
  */
 abstract class AbstractPim
 {
+    protected const PIM_ENTERPRISE_STANDARD = 'akeneo/pim-enterprise-standard';
+    protected const PIM_COMMUNITY_STANDARD = 'akeneo/pim-community-standard';
+    protected const PIM_COMMUNITY_DEV = 'akeneo/pim-community-dev';
+
     /** @var string */
     private $mysqlHost;
 

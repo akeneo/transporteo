@@ -41,7 +41,13 @@ class StateMachineDumper extends Command
 
         $stateMachine = $this->container->get('state_machine.migration_tool');
 
-        $content = $dumper->dump($stateMachine->getDefinition());
+        $content = $dumper->dump(
+            $stateMachine->getDefinition(),
+            null,
+            [
+                'graph' => ['ratio' => 'fill', 'rankdir' => 'TB'],
+                'node' => ['fontsize' => 12, 'width' => '2.3'],
+            ]);
 
         $fs = new Filesystem();
 

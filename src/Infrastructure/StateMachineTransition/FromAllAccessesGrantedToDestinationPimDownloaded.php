@@ -35,45 +35,52 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
     public static function getSubscribedEvents()
     {
         return [
+            'workflow.migration_tool.transition.ask_destination_pim_location' => 'onAskDestinationPimLocation',
             'workflow.migration_tool.announce.download_destination_pim' => 'onDownloadAvailable',
-            'workflow.migration_tool.transition.ask_pim_location' => 'onAskPimLocation',
             'workflow.migration_tool.transition.download_destination_pim' => 'onDownloadingTransition',
             'workflow.migration_tool.entered.destination_pim_downloaded' => 'onDestinationDownloaded',
         ];
     }
 
-    public function onDownloadAvailable(Event $event)
-    {
-        $this->printerAndAsker->printMessage('Destination Pim Download : Download your future PIM');
-    }
-
-    public function onAskPimLocation(Event $event)
+    public function onAskDestinationPimLocation(Event $event)
     {
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $destination = $this->printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', [
+        $choices = [
             'Using docker-compose',
             'I have an tar.gz archive, install it with docker',
             'I have already installed a PIM 2.0',
-        ]);
+        ];
+
+        $destination = $this->printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', $choices);
 
         $destinationPath = null;
 
+        $destination = array_search($destination, $choices);
+
         switch ($destination) {
             case self::DOCKER_COMPOSE_INSTALL:
-                $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where do you want to install it? ');
+                $stateMachine->setUseDocker(true);
                 break;
             case self::TAR_GZ_INSTALL:
                 $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where is located your archive? ');
+                $stateMachine->setUseDocker(true);
+                $stateMachine->setDestinationPathPimLocation($destinationPath);
                 break;
             case self::DESTINATION_PIM_ALREADY_INSTALLED:
                 $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where is located your installed pim? ');
+                $stateMachine->setUseDocker(false);
+                $stateMachine->setDestinationPathPimLocation($destinationPath);
                 break;
         }
 
         $stateMachine->setDestinationPimLocation($destination);
-        $stateMachine->setDestinationPathPimLocation($destinationPath);
+    }
+
+    public function onDownloadAvailable(Event $event)
+    {
+        $this->printerAndAsker->printMessage('Destination Pim Download : Download your future PIM');
     }
 
     public function onDownloadingTransition(Event $event)
@@ -116,6 +123,6 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
 
     public function onDestinationDownloaded(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Downloaded : '.$event->getSubject()->getDestinationPim()->getPath());
+        $this->printerAndAsker->printMessage('Destination Pim Downloaded : '.$event->getSubject()->getCurrentDestinationPimLocation());
     }
 }

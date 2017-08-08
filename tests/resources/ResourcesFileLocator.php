@@ -107,7 +107,7 @@ final class ResourcesFileLocator
         );
     }
 
-    private static final function getVarPath(): string
+    public static final function getVarPath(): string
     {
         return sprintf(
             '%s%s..%s..%svar',

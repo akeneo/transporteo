@@ -34,7 +34,7 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
         return $this->questionHelper->ask(
             $this->input,
             $this->output,
-            new ChoiceQuestion($question, $choicesAvailable)
+            new ChoiceQuestion('<question>'.$question.'</question>', $choicesAvailable)
         );
     }
 
@@ -43,12 +43,12 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
         return $this->questionHelper->ask(
             $this->input,
             $this->output,
-            new Question($question, $default)
+            new Question('<question>'.$question.'</question>', $default)
         );
     }
 
     public function printMessage(string $message): void
     {
-        $this->output->writeln($message);
+        $this->output->writeln('<info>'.$message.'</info>');
     }
 }

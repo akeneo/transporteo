@@ -41,12 +41,16 @@ class GitDestinationPimDownloader implements DestinationPimDownloader
 
         $fs->mkdir($repositoryPath);
 
+        $repositoryPath = realpath($repositoryPath);
+
         $repository = Repository::createFromRemote(
             $pim->isEnterpriseEdition() ? self::PIM_ENTERPRISE_STANDARD_REPOSITORY : self::PIM_COMMUNITY_STANDARD_REPOSITORY,
             $repositoryPath,
             null,
             $projectName
         );
+
+        $repository->checkout('master');
 
         return $repositoryPath;
     }

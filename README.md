@@ -26,7 +26,7 @@ Before proceeding, we strongly encourage you to read our documentation and our f
 
 If the 1.7 source PIM you will migrate from is installed remotely, you'll be asked to provide a *private SSH key* able to connect to this server.
 
-Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *private ssh key* able to download this edition located on the _Akeneo distribution server_. This *private ssh key* should match the one you have provided in the [Partners Portal](https://partners.akeneo.com/login).
+Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *private SSH key* able to download this edition located on the _Akeneo distribution server_. This *private SSH key* should match the one you have provided in the [Partners Portal](https://partners.akeneo.com/login).
 
 ## Installation
 

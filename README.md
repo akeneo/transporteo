@@ -30,7 +30,7 @@ Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *
 
 ## Installation
 
-### System Requirements
+### System requirements
 
 - php-7.1
 - php7.1-gmp
@@ -58,6 +58,6 @@ To launch the tool, run:
 
 then, let you guide ;) 
 
-## How to contribute:
+## How to contribute
 
 Please, have a look on the [CONTRIBUTING](./.github/CONTRIBUTING.md) page.

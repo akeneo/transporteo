@@ -32,4 +32,9 @@ class FileFetcherFactory
     {
         return new LocalFileFetcher();
     }
+
+    public function createWithoutCopyLocalFileFetcher(): FileFetcher
+    {
+        return new WithoutCopyLocalFileFetcher();
+    }
 }

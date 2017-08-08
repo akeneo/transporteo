@@ -43,6 +43,7 @@ class MigrationToolStateMachine
     protected $destinationPim;
 
     /** @var string */
+    /** @var int */
     protected $destinationPimLocation;
 
     /** @var string */
@@ -50,6 +51,9 @@ class MigrationToolStateMachine
 
     /** @var string */
     protected $currentDestinationPimLocation;
+
+    /** @var PimConfiguration */
+    protected $destinationPimConfiguration;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -134,12 +138,12 @@ class MigrationToolStateMachine
         return $this->destinationPim;
     }
 
-    public function setDestinationPimLocation(string $destinationPimLocation): void
+    public function setDestinationPimLocation(int $destinationPimLocation): void
     {
         $this->destinationPimLocation = $destinationPimLocation;
     }
 
-    public function getDestinationPimLocation(): string
+    public function getDestinationPimLocation(): int
     {
         return $this->destinationPimLocation;
     }
@@ -149,9 +153,9 @@ class MigrationToolStateMachine
         $this->destinationPathPimLocation = $destinationPath;
     }
 
-    public function getDestinationPathPimLocation(): string
+    public function getDestinationPathPimLocation(): ?string
     {
-        return $this->destinationPathPimLocation;
+        return $this->destinationPathPimLocation ?? null;
     }
 
     public function setCurrentDestinationPimLocation(string $currentDestinationPimLocation): void
@@ -163,4 +167,15 @@ class MigrationToolStateMachine
     {
         return $this->currentDestinationPimLocation;
     }
+
+    public function setDestinationPimConfiguration(PimConfiguration $destinationPimConfiguration): void
+    {
+        $this->destinationPimConfiguration = $destinationPimConfiguration;
+    }
+
+    public function getDestinationPimConfiguration(): PimConfiguration
+    {
+        return $this->destinationPimConfiguration;
+    }
+
 }

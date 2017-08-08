@@ -18,7 +18,6 @@ list:
 	@echo "  $(YELLOW)phpspec-run$(RESTORE)        > run All PHPSpec tests"
 	@echo "  $(YELLOW)phpspec$(RESTORE)            > run PHPSpec"
 	@echo "  $(YELLOW)phpunit$(RESTORE)            > run All PHPUnit"
-	@echo "  $(YELLOW)enter$(RESTORE)              > enter in the PHP container"
 	@echo "  $(YELLOW)launch$(RESTORE)             > Launch the tool"
 	@echo "  $(YELLOW)dump-state-machine$(RESTORE) > Dump the State Machine"
 	@echo ""
@@ -34,19 +33,15 @@ commit: | fix-style test dump-state-machine
 
 .PHONY: fix-style
 fix-style:
-	docker-compose run php vendor/bin/php-cs-fixer fix --config=./.php_cs.php
-
-.PHONY: enter
-enter:
-	docker-compose run php /bin/bash
+	vendor/bin/php-cs-fixer fix --config=./.php_cs.php
 
 .PHONY: launch
 launch:
-	docker-compose run php php MigrationTool.php akeneo-pim:migrate
+	php MigrationTool.php akeneo-pim:migrate
 
 .PHONY: dump-state-machine
 dump-state-machine:
-	docker-compose run php php MigrationTool.php state-machine:dump
+	php MigrationTool.php state-machine:dump
 	dot -Tpng stateMachineMigrationTool.dot -o stateMachineMigrationTool.png
 
 .PHONY: test
@@ -54,27 +49,27 @@ test: | phpspec-run phpunit
 
 .PHONY: phpspec-run
 phpspec-run:
-	docker-compose run php ./vendor/bin/phpspec run ${ARGS}
+	./vendor/bin/phpspec run ${ARGS}
 
 .PHONY: phpunit
 phpunit:
-	docker-compose run php ./vendor/bin/phpunit ${ARGS}
+	./vendor/bin/phpunit ${ARGS}
 
 .PHONY: phpspec
 phpspec:
-	docker-compose run php ./vendor/bin/phpspec ${ARGS}
+	./vendor/bin/phpspec ${ARGS}
 
 .PHONY: composer
 composer:
-	docker-compose run php composer ${ARGS}
+	composer ${ARGS}
 
 .PHONY: install
 install:
-	docker-compose run php composer install
+	composer install
 
 .PHONY: update
 update:
-	docker-compose run php composer update
+	composer update
 
 .PHONY: clean
 clean:

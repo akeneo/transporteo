@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\DestinationPimDownload\DestinationPim;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Symfony\Component\Workflow\StateMachine;
@@ -42,7 +42,6 @@ class MigrationToolStateMachine
     /** @var DestinationPim */
     protected $destinationPim;
 
-    /** @var string */
     /** @var int */
     protected $destinationPimLocation;
 
@@ -54,6 +53,11 @@ class MigrationToolStateMachine
 
     /** @var PimConfiguration */
     protected $destinationPimConfiguration;
+
+    /**
+     * @var bool
+     */
+    protected $useDocker;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -178,4 +182,13 @@ class MigrationToolStateMachine
         return $this->destinationPimConfiguration;
     }
 
+    public function setUseDocker(bool $useDocker): void
+    {
+        $this->useDocker = $useDocker;
+    }
+
+    public function useDocker(): bool
+    {
+        return $this->useDocker;
+    }
 }

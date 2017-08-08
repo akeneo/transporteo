@@ -1,6 +1,6 @@
 digraph workflow {
-  ratio="compress" rankdir="LR"
-  node [fontsize="9" fontname="Arial" color="#333333" fillcolor="lightblue" fixedsize="1" width="1"];
+  ratio="fill" rankdir="TB"
+  node [fontsize="12" fontname="Arial" color="#333333" fillcolor="lightblue" fixedsize="1" width="2.3"];
   edge [fontsize="9" fontname="Arial" color="#333333" arrowhead="normal" arrowsize="0.5"];
 
   place_ready [label="ready", shape=circle, style="filled"];
@@ -11,6 +11,11 @@ digraph workflow {
   place_all_accesses_granted [label="all_accesses_granted", shape=circle];
   place_destination_pim_location_guessed [label="destination_pim_location_guessed", shape=circle];
   place_destination_pim_downloaded [label="destination_pim_downloaded", shape=circle];
+  place_destination_pim_pre_configured [label="destination_pim_pre_configured", shape=circle];
+  place_destination_pim_configured [label="destination_pim_configured", shape=circle];
+  place_destination_pim_detected [label="destination_pim_detected", shape=circle];
+  place_destination_pim_system_requirements_installed [label="destination_pim_system_requirements_installed", shape=circle];
+  place_destination_pim_requirements_checked [label="destination_pim_requirements_checked", shape=circle];
   transition_ask_source_pim_location [label="ask_source_pim_location", shape=box, shape="box", regular="1"];
   transition_local_source_pim_configuration [label="local_source_pim_configuration", shape=box, shape="box", regular="1"];
   transition_distant_source_pim_configuration [label="distant_source_pim_configuration", shape=box, shape="box", regular="1"];
@@ -20,6 +25,13 @@ digraph workflow {
   transition_grant_ee_accesses [label="grant_ee_accesses", shape=box, shape="box", regular="1"];
   transition_ask_destination_pim_location [label="ask_destination_pim_location", shape=box, shape="box", regular="1"];
   transition_download_destination_pim [label="download_destination_pim", shape=box, shape="box", regular="1"];
+  transition_destination_pim_pre_configuration [label="destination_pim_pre_configuration", shape=box, shape="box", regular="1"];
+  transition_destination_pim_configuration [label="destination_pim_configuration", shape=box, shape="box", regular="1"];
+  transition_destination_pim_configuration [label="destination_pim_configuration", shape=box, shape="box", regular="1"];
+  transition_destination_pim_detection [label="destination_pim_detection", shape=box, shape="box", regular="1"];
+  transition_destination_pim_system_requirements_installation [label="destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
+  transition_destination_pim_check_requirements [label="destination_pim_check_requirements", shape=box, shape="box", regular="1"];
+  transition_destination_pim_check_requirements [label="destination_pim_check_requirements", shape=box, shape="box", regular="1"];
   place_ready -> transition_ask_source_pim_location [style="solid"];
   transition_ask_source_pim_location -> place_source_pim_location_guessed [style="solid"];
   place_source_pim_location_guessed -> transition_local_source_pim_configuration [style="solid"];
@@ -38,4 +50,18 @@ digraph workflow {
   transition_ask_destination_pim_location -> place_destination_pim_location_guessed [style="solid"];
   place_destination_pim_location_guessed -> transition_download_destination_pim [style="solid"];
   transition_download_destination_pim -> place_destination_pim_downloaded [style="solid"];
+  place_destination_pim_downloaded -> transition_destination_pim_pre_configuration [style="solid"];
+  transition_destination_pim_pre_configuration -> place_destination_pim_pre_configured [style="solid"];
+  place_destination_pim_downloaded -> transition_destination_pim_configuration [style="solid"];
+  transition_destination_pim_configuration -> place_destination_pim_configured [style="solid"];
+  place_destination_pim_pre_configured -> transition_destination_pim_configuration [style="solid"];
+  transition_destination_pim_configuration -> place_destination_pim_configured [style="solid"];
+  place_destination_pim_configured -> transition_destination_pim_detection [style="solid"];
+  transition_destination_pim_detection -> place_destination_pim_detected [style="solid"];
+  place_destination_pim_detected -> transition_destination_pim_system_requirements_installation [style="solid"];
+  transition_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
+  place_destination_pim_detected -> transition_destination_pim_check_requirements [style="solid"];
+  transition_destination_pim_check_requirements -> place_destination_pim_requirements_checked [style="solid"];
+  place_destination_pim_system_requirements_installed -> transition_destination_pim_check_requirements [style="solid"];
+  transition_destination_pim_check_requirements -> place_destination_pim_requirements_checked [style="solid"];
 }

@@ -2,7 +2,28 @@
 
 ## Goal
 
-This tool aims to help you to migrate your PIM 1.7 to the new version 2.0. All your data will be migrated seamlessly.
+This tool aims to help you to migrate your PIM 1.7 to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
+- the [System Requirements](TODO) have changed between Akeneo PIM 1.7 and 2.0
+- with variant groups and inner variation there are a lot of different use cases to migrate products
+- you can migrate your real production data without worrying about a failure, a problem or an incomplete migration
+
+The 1.7 source PIM you will migrate from can be either installed locally or remotely. 
+
+The 2.0 destination PIM you will migrate to should be installed locally. If that's not the case, don't worry, we'll do it for you with [Docker](https://www.docker.com/).
+
+Before proceeding, we strongly encourage you to read our documentation and our functional and technical blog posts about the version 2.0:
+- [System Requirements](TODO)
+- [Story of Storage](https://medium.com/akeneo-labs/story-of-storage-9dbc27090de0)
+- [Single Product Storage?](https://medium.com/akeneo-labs/single-product-storage-28d92f35cbd7)
+- [Re-building the storage from the ground up](https://medium.com/akeneo-labs/re-building-the-storage-from-the-ground-up-d857bf497c32)
+- [Offer choice with variants!](TODO)
+- [How Akeneo deals products with variants?](TODO)
+
+### Access to remote servers
+
+If the 1.7 source PIM you will migrate from is installed remotely, you'll be asked to provide a *private SSH key* able to connect to this server.
+
+Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *private ssh key* able to download this edition located on the _Akeneo distribution server_. This *private ssh key* should match the one you have provided in the [Partners Portal](https://partners.akeneo.com/login).
 
 ## Installation
 
@@ -14,18 +35,8 @@ This tool aims to help you to migrate your PIM 1.7 to the new version 2.0. All y
 - php7.1-json
 - php7.1-xml
 - [composer](https://getcomposer.org/download/)
-- a ssh-client
-
-The source PIM you will migrate from can be either in local, either in a server. To be able to download you will need to provide
-a private ssh-key able to connect to this server.
-
-Moreover, if you want to install an Enterprise Edition, you will also have to provide a private ssh-key able to download this edition located on the akeneo
-distribution server.
-
-To conclude about SSH, you will need
-
-- one or two private ssh keys (distant source pim & enterprise edition installation)
-
+- a SSH client
+- [Docker](https://www.docker.com/), in case you want to automatically install the destination PIM 2.0
 
 ### Install the tool and its dependencies
 
@@ -36,19 +47,13 @@ To conclude about SSH, you will need
 
 ## How to use
 
-To run the tool, you just have to run:
+To launch the tool, run:
 
 ```
     php MigrationTool.php akeneo-pim:migrate
 ```
 
-The tool will ask you several paths, please always provide absolute paths.
-
-The tool will never update or make changes on your source pim, we copy everything and this one will always run.
-
-The tool will ask you information about your destination PIM, you will have several way to install it:
-- You have an empty PIM 2.0 already installed and running, it means you already check the PIM is running correctly.
-- We can install it for you with docker and will explain you how to handle it.
+then, let you guide ;) 
 
 ## How to contribute:
 

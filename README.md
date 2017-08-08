@@ -43,7 +43,7 @@ Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *
 
 ### Install the tool and its dependencies
 
-```
+```bash
   $ git clone https://github.com/akeneo/migration-tool.git
   $ composer install
 ```
@@ -52,8 +52,8 @@ Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *
 
 To launch the tool, run:
 
-```
-    php MigrationTool.php akeneo-pim:migrate
+```bash
+  $ php MigrationTool.php akeneo-pim:migrate
 ```
 
 then, let you guide ;) 

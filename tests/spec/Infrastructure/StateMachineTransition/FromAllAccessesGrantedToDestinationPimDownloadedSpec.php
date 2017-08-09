@@ -42,16 +42,14 @@ class FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBehavio
         $event->getSubject()->willReturn($stateMachine);
         $printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', [
             'Using docker-compose',
-            'I have an tar.gz archive, install it with docker',
+            'I have a tar.gz archive, install it with docker',
             'I have already installed a PIM 2.0'
-        ])->willReturn(0);
-
-        $printerAndAsker->askSimpleQuestion('Where do you want to install it? ')->willReturn('/home/akeneo/pim');
+        ])->willReturn('Using docker-compose');
 
         $stateMachine->setDestinationPimLocation(0)->shouldBeCalled();
-        $stateMachine->setDestinationPathPimLocation('/home/akeneo/pim')->shouldBeCalled();
+        $stateMachine->setUseDocker(true)->shouldBeCalled();
 
-        $this->onAskPimLocation($event);
+        $this->onAskDestinationPimLocation($event);
     }
 
     public function it_asks_to_download_the_pim(

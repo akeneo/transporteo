@@ -7,9 +7,9 @@ namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 use Akeneo\PimMigration\Domain\DestinationPimDownload\DestinationPimDownloader;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\InstalledDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader;
 use PHPUnit\Framework\TestCase;
+use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -22,16 +22,23 @@ class DestinationPimDownloaderIntegration extends TestCase
 {
     public function downloaderProvider()
     {
-        $resourcesRoot = '/home/docker/migration/tests/resources/step_four_download_destination_pim/';
+        $resourcesRoot = ResourcesFileLocator::getStepFolder('step_four_download_destination_pim');
 
         return  [
-           [new GitDestinationPimDownloader()],
-            [new LocalArchiveDestinationPimDownloader($resourcesRoot . 'pim_community_standard_2_0.tar.gz')],
+//            [new GitDestinationPimDownloader()],
+            [
+                new LocalArchiveDestinationPimDownloader(
+                    sprintf(
+                        '%s%spim_community_standard_2_0.tar.gz',
+                        $resourcesRoot,
+                        DIRECTORY_SEPARATOR
+                    )
+                )
+            ],
         ];
     }
 
     /**
-     * @group plop
      * @dataProvider downloaderProvider
      */
     public function testItDownloadAPimProperly(DestinationPimDownloader $downloader)
@@ -51,7 +58,13 @@ class DestinationPimDownloaderIntegration extends TestCase
 
         $downloader->download($sourcePim, 'test-project');
 
-        $this->assertFileExists('/home/docker/migration/var/test-project');
+        $destinationProjectPath = sprintf(
+            '%s%stest-project',
+            ResourcesFileLocator::getVarPath(),
+            DIRECTORY_SEPARATOR
+        );
+
+        $this->assertFileExists($destinationProjectPath);
     }
 
     public function tearDown()
@@ -60,6 +73,13 @@ class DestinationPimDownloaderIntegration extends TestCase
 
         $fs = new Filesystem();
 
-        $fs->remove('/home/docker/migration/var/test-project');
+        $destinationProjectPath = sprintf(
+            '%s%stest-project',
+            ResourcesFileLocator::getVarPath(),
+            DIRECTORY_SEPARATOR
+        );
+
+
+        $fs->remove($destinationProjectPath);
     }
 }

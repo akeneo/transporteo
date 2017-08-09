@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\DestinationPimDownload\DestinationPim;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Symfony\Component\Workflow\StateMachine;
@@ -42,7 +42,7 @@ class MigrationToolStateMachine
     /** @var DestinationPim */
     protected $destinationPim;
 
-    /** @var string */
+    /** @var int */
     protected $destinationPimLocation;
 
     /** @var string */
@@ -50,6 +50,12 @@ class MigrationToolStateMachine
 
     /** @var string */
     protected $currentDestinationPimLocation;
+
+    /** @var PimConfiguration */
+    protected $destinationPimConfiguration;
+
+    /** @var bool */
+    protected $useDocker;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -134,12 +140,12 @@ class MigrationToolStateMachine
         return $this->destinationPim;
     }
 
-    public function setDestinationPimLocation(string $destinationPimLocation): void
+    public function setDestinationPimLocation(int $destinationPimLocation): void
     {
         $this->destinationPimLocation = $destinationPimLocation;
     }
 
-    public function getDestinationPimLocation(): string
+    public function getDestinationPimLocation(): int
     {
         return $this->destinationPimLocation;
     }
@@ -149,9 +155,9 @@ class MigrationToolStateMachine
         $this->destinationPathPimLocation = $destinationPath;
     }
 
-    public function getDestinationPathPimLocation(): string
+    public function getDestinationPathPimLocation(): ?string
     {
-        return $this->destinationPathPimLocation;
+        return $this->destinationPathPimLocation ?? null;
     }
 
     public function setCurrentDestinationPimLocation(string $currentDestinationPimLocation): void
@@ -162,5 +168,25 @@ class MigrationToolStateMachine
     public function getCurrentDestinationPimLocation(): string
     {
         return $this->currentDestinationPimLocation;
+    }
+
+    public function setDestinationPimConfiguration(PimConfiguration $destinationPimConfiguration): void
+    {
+        $this->destinationPimConfiguration = $destinationPimConfiguration;
+    }
+
+    public function getDestinationPimConfiguration(): PimConfiguration
+    {
+        return $this->destinationPimConfiguration;
+    }
+
+    public function setUseDocker(bool $useDocker): void
+    {
+        $this->useDocker = $useDocker;
+    }
+
+    public function useDocker(): bool
+    {
+        return $this->useDocker;
     }
 }

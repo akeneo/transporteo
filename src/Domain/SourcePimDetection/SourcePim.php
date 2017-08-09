@@ -24,9 +24,6 @@ class SourcePim extends AbstractPim
     /** @var bool */
     private $hasIvb;
 
-    private const PIM_ENTERPRISE_STANDARD = 'akeneo/pim-enterprise-standard';
-    private const PIM_COMMUNITY_STANDARD = 'akeneo/pim-community-standard';
-    private const PIM_COMMUNITY_DEV = 'akeneo/pim-community-dev';
     private const INNER_VARIATION_BUNDLE = 'akeneo/inner-variation-bundle';
 
     public function __construct(

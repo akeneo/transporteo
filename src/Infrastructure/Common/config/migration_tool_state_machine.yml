@@ -18,6 +18,11 @@ workflows:
             - 'all_accesses_granted'
             - 'destination_pim_location_guessed'
             - 'destination_pim_downloaded'
+            - 'destination_pim_pre_configured'
+            - 'destination_pim_configured'
+            - 'destination_pim_detected'
+            - 'destination_pim_system_requirements_installed'
+            - 'destination_pim_requirements_checked'
         transitions:
             ask_source_pim_location:
                 from: 'ready'
@@ -46,3 +51,18 @@ workflows:
             download_destination_pim:
                 from: 'destination_pim_location_guessed'
                 to: 'destination_pim_downloaded'
+            destination_pim_pre_configuration:
+                from: 'destination_pim_downloaded'
+                to: 'destination_pim_pre_configured'
+            destination_pim_configuration:
+                from: ['destination_pim_downloaded', 'destination_pim_pre_configured']
+                to: 'destination_pim_configured'
+            destination_pim_detection:
+                from: 'destination_pim_configured'
+                to: 'destination_pim_detected'
+            destination_pim_system_requirements_installation:
+                from: 'destination_pim_detected'
+                to: 'destination_pim_system_requirements_installed'
+            destination_pim_check_requirements:
+                from: ['destination_pim_detected', 'destination_pim_system_requirements_installed']
+                to: 'destination_pim_requirements_checked'

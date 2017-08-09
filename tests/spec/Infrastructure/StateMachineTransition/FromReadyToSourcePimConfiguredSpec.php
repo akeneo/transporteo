@@ -110,9 +110,11 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $printerAndAsker->askSimpleQuestion('What is the hostname of the source PIM server? ')->willReturn('my-super-pim.akeneo.com');
         $printerAndAsker->askSimpleQuestion('What is the SSH port of the source PIM server? ', '22')->willReturn('22');
         $printerAndAsker->askSimpleQuestion('What is the SSH user you want to connect with ? ')->willReturn('akeneo');
-        $printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ')->willReturn('/home/docker/migration/tests/resources/a_false_ssh_key');
+        $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
 
-        $sshKey = new SshKey(ResourcesFileLocator::getSshKeyPath());
+        $printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ')->willReturn($sshKeyPath);
+
+        $sshKey = new SshKey($sshKeyPath);
         $stateMachine->setSshKey($sshKey)->shouldBeCalled();
         $serverAccessInformation = new ServerAccessInformation('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
 
@@ -170,13 +172,16 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $printerAndAsker->askSimpleQuestion('What is the hostname of the source PIM server? ')->willReturn('my-super-pim.akeneo.com');
         $printerAndAsker->askSimpleQuestion('What is the SSH port of the source PIM server? ', '22')->willReturn('22');
         $printerAndAsker->askSimpleQuestion('What is the SSH user you want to connect with ? ')->willReturn('akeneo');
-        $printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ')->willReturn('/home/docker/migration/tests/resources/a_false_ssh_key');
 
-        $sshKey = new SshKey(ResourcesFileLocator::getSshKeyPath());
+        $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
+
+        $printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ')->willReturn($sshKeyPath);
+
+        $sshKey = new SshKey($sshKeyPath);
         $stateMachine->setSshKey($sshKey)->shouldBeCalled();
         $serverAccessInformation = new ServerAccessInformation('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
 
-        $exception = new ImpossibleConnectionException('Impossible to login to akeneo@my-super-pim.akeneo.com:22 using this ssh key : /home/docker/migration/tests/resources/a_false_ssh_key');
+        $exception = new ImpossibleConnectionException('Impossible to login to akeneo@my-super-pim.akeneo.com:22 using this ssh key : '. $sshKeyPath);
         $printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);

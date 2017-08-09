@@ -56,6 +56,16 @@ class ParametersYml extends AbstractFile implements File
         return $this->getFullContent()['mongodb_database'] ?? null;
     }
 
+    public function getIndexHosts(): ?string
+    {
+        return $this->getFullContent()['index_hosts'] ?? null;
+    }
+
+    public function getIndexName(): ?string
+    {
+        return $this->getFullContent()['index_name'] ?? null;
+    }
+
     protected function loadContent(): array
     {
         return Yaml::parse(file_get_contents($this->getPath()))['parameters'];

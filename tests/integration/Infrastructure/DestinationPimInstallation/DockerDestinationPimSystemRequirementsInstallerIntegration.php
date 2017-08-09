@@ -6,7 +6,7 @@ namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimInstallat
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DockerDestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\DockerComposeCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\DockerComposeDestinationPimCommandLauncher;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -83,7 +83,7 @@ class DockerDestinationPimSystemRequirementsInstallerIntegration extends TestCas
            $destinationPimPath
        );
 
-        $dockerDestinationInstaller = new DockerDestinationPimSystemRequirementsInstaller(new DockerComposeCommandLauncher('fpm'));
+        $dockerDestinationInstaller = new DockerDestinationPimSystemRequirementsInstaller(new DockerComposeDestinationPimCommandLauncher('fpm'));
         $dockerDestinationInstaller->install($destinationPim);
         $this->addToAssertionCount(1);
     }

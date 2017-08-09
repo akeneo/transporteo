@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimDetectionException;
+use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimEditionCheckerFactory;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimInstallationException;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemNotBootable;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncherFactory;
+use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimConfigurationCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimParametersYmlGeneratorFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsInstallerFactory;
+use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
@@ -39,19 +41,27 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
     /** @var DestinationPimSystemRequirementsInstallerFactory */
     private $destinationPimSystemRequirementsInstallerFactory;
 
-    /** @var CommandLauncherFactory */
+    /** @var DestinationPimCommandLauncherFactory */
     private $commandLauncherFactory;
 
     /** @var DestinationPimConfigurationCheckerFactory */
     private $destinationPimConfigurationCheckerFactory;
+
+    /** @var DestinationPimEditionCheckerFactory */
+    private $destinationPimEditionCheckerFactory;
+
+    /** @var DestinationPimSystemRequirementsCheckerFactory */
+    private $destinationPimSystemRequirementsCheckerFactory;
 
     public function __construct(
         DestinationPimParametersYmlGeneratorFactory $destinationPimPreConfiguratorFactory,
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
         DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        CommandLauncherFactory $commandLauncherFactory,
-        DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory
+        DestinationPimCommandLauncherFactory $commandLauncherFactory,
+        DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
+        DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
+        DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory
     ) {
         $this->destinationPimParametersYmlGeneratorFactory = $destinationPimPreConfiguratorFactory;
         $this->pimConfiguratorFactory = $pimConfiguratorFactory;
@@ -59,6 +69,8 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $this->destinationPimSystemRequirementsInstallerFactory = $destinationPimSystemRequirementsInstallerFactory;
         $this->commandLauncherFactory = $commandLauncherFactory;
         $this->destinationPimConfigurationCheckerFactory = $destinationPimConfigurationCheckerFactory;
+        $this->destinationPimEditionCheckerFactory = $destinationPimEditionCheckerFactory;
+        $this->destinationPimSystemRequirementsCheckerFactory = $destinationPimSystemRequirementsCheckerFactory;
     }
 
     public static function getSubscribedEvents()
@@ -182,7 +194,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
                 ->createDockerPimSystemRequirementsInstaller($this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm'))
                 ->install($stateMachine->getDestinationPim())
             ;
-        } catch (DestinationPimSystemNotBootable $exception) {
+        } catch (DestinationPimSystemRequirementsNotBootable $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
@@ -202,14 +214,14 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
         $this->printerAndAsker->printMessage('Destination Pim : Check Requirements');
 
+        $commandLauncher = $stateMachine->useDocker() ? $this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->commandLauncherFactory->createBasicDestinationPimCommandLauncher();
+        $editionChecker = $this->destinationPimEditionCheckerFactory->createDestinationPimEditionChecker();
+        $systemRequirementschecker = $this->destinationPimSystemRequirementsCheckerFactory->createCliDestinationPimSystemRequirementsChecker($commandLauncher);
+
+        $pimConfigurationChecker = $this->destinationPimConfigurationCheckerFactory->createDestinationPimConfigurationChecker($editionChecker, $systemRequirementschecker);
+
         try {
-            $this
-                ->destinationPimConfigurationCheckerFactory
-                ->createDestinationPimConfigurationChecker(
-                    $stateMachine->useDocker() ? $this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->commandLauncherFactory->createBasicCommandLauncher()
-                )
-                ->check($stateMachine->getSourcePim(), $stateMachine->getDestinationPim())
-            ;
+            $pimConfigurationChecker->check($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
         } catch (\Exception $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }

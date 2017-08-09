@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\CommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
 
 /**
  * Factory to create System requirements installer.
@@ -14,8 +14,8 @@ use Akeneo\PimMigration\Domain\CommandLauncher;
  */
 class DestinationPimSystemRequirementsInstallerFactory
 {
-    public function createDockerPimSystemRequirementsInstaller(CommandLauncher $commandLauncher): DockerDestinationPimSystemRequirementsInstaller
+    public function createDockerPimSystemRequirementsInstaller(DestinationPimCommandLauncher $destinationPimCommandLauncher): DockerDestinationPimSystemRequirementsInstaller
     {
-        return new DockerDestinationPimSystemRequirementsInstaller($commandLauncher);
+        return new DockerDestinationPimSystemRequirementsInstaller($destinationPimCommandLauncher);
     }
 }

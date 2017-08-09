@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\CommandLauncher;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimEditionChecker;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsChecker;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimConfigurationChecker;
 
 /**
@@ -15,8 +16,10 @@ use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimConfigur
  */
 class DestinationPimConfigurationCheckerFactory
 {
-    public function createDestinationPimConfigurationChecker(CommandLauncher $commandLauncher): DestinationPimConfigurationChecker
-    {
-        return new DestinationPimConfigurationChecker($commandLauncher);
+    public function createDestinationPimConfigurationChecker(
+        DestinationPimEditionChecker $destinationPimEditionChecker,
+        DestinationPimSystemRequirementsChecker $destinationPimSystemRequirementsChecker
+    ): DestinationPimConfigurationChecker {
+        return new DestinationPimConfigurationChecker($destinationPimEditionChecker, $destinationPimSystemRequirementsChecker);
     }
 }

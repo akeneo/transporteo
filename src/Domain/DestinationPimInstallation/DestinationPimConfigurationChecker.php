@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\CommandLauncher;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 
 /**
@@ -15,26 +14,25 @@ use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
  */
 class DestinationPimConfigurationChecker
 {
-    /** @var CommandLauncher */
-    private $commandLauncher;
+    /** @var DestinationPimEditionChecker */
+    private $destinationPimEditionChecker;
 
-    public function __construct(CommandLauncher $commandLauncher)
+    /** @var DestinationPimSystemRequirementsChecker */
+    private $destinationPimSystemRequirementsChecker;
+
+    public function __construct(DestinationPimEditionChecker $destinationPimEditionChecker, DestinationPimSystemRequirementsChecker $destinationPimSystemRequirementsChecker)
     {
-        $this->commandLauncher = $commandLauncher;
+        $this->destinationPimEditionChecker = $destinationPimEditionChecker;
+        $this->destinationPimSystemRequirementsChecker = $destinationPimSystemRequirementsChecker;
     }
 
     public function check(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        if ($sourcePim->isEnterpriseEdition() !== $destinationPim->isEnterpriseEdition()) {
-            throw new IncompatiblePimException(
-                sprintf(
-                    'The source PIM is %s whereas the destination PIM is %s',
-                    $sourcePim->isEnterpriseEdition() ? 'an Enterprise Edition' : 'not an Enterprise Edition',
-                    $destinationPim->isEnterpriseEdition() ? 'an Enterprise Edition' : 'not an Enterprise Edition'
-                )
-            );
+        try {
+            $this->destinationPimEditionChecker->check($sourcePim, $destinationPim);
+            $this->destinationPimSystemRequirementsChecker->check($destinationPim);
+        } catch (\Exception $e) {
+            throw new DestinationPimCheckConfigurationException($e->getMessage(), $e->getCode(), $e);
         }
-
-        $this->commandLauncher->runCommand(new CheckRequirementsCommand(), $destinationPim);
     }
 }

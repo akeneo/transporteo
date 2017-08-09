@@ -10,10 +10,12 @@ use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimConfigurator;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncherFactory;
+use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimConfigurationCheckerFactory;
+use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimEditionCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimParametersYmlGeneratorFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsInstallerFactory;
+use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
@@ -36,8 +38,10 @@ class FromDestinationPimDownloadedToDestinationPimInstalledSpec extends ObjectBe
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
         DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        CommandLauncherFactory $commandLauncherFactory,
+        DestinationPimCommandLauncherFactory $commandLauncherFactory,
         DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
+        DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
+        DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory,
         PrinterAndAsker $printerAndAsker
     )
     {
@@ -47,7 +51,9 @@ class FromDestinationPimDownloadedToDestinationPimInstalledSpec extends ObjectBe
             $fileFetcherFactory,
             $destinationPimSystemRequirementsInstallerFactory,
             $commandLauncherFactory,
-            $destinationPimConfigurationCheckerFactory
+            $destinationPimConfigurationCheckerFactory,
+            $destinationPimEditionCheckerFactory,
+            $destinationPimSystemRequirementsCheckerFactory
         );
 
         $this->setPrinterAndAsker($printerAndAsker);

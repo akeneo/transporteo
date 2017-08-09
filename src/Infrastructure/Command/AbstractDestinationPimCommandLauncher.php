@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\Command;
-use Akeneo\PimMigration\Domain\CommandLauncher;
-use Akeneo\PimMigration\Domain\UnsuccessfulCommandException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -17,7 +14,7 @@ use Symfony\Component\Process\Process;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-abstract class AbstractCommandLauncher implements CommandLauncher
+abstract class AbstractDestinationPimCommandLauncher implements DestinationPimCommandLauncher
 {
     /**
      * {@inheritdoc}

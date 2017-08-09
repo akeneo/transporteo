@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain;
+namespace Akeneo\PimMigration\Infrastructure\Command;
 
 /**
  * Exception thrown when a command is not successful.

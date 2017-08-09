@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\CommandLauncher;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\ComposerUpdateCommand;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemNotBootable;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\PrepareRequiredDirectoriesCommand;
+use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
 use Ds\Set;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -22,12 +20,12 @@ use Symfony\Component\Process\Process;
  */
 class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
-    /** @var CommandLauncher */
-    private $commandLauncher;
+    /** @var DestinationPimCommandLauncher */
+    private $destinationPimCommandLauncher;
 
-    public function __construct(CommandLauncher $commandLauncher)
+    public function __construct(DestinationPimCommandLauncher $destinationPimCommandLauncher)
     {
-        $this->commandLauncher = $commandLauncher;
+        $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
     }
 
     public function install(DestinationPim $destinationPim): void
@@ -53,13 +51,13 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
         $launchDockerComposeDaemon->run();
 
         if (!$this->dockerComposeInfrastructureIsUp($destinationPim->getPath())) {
-            throw new DestinationPimSystemNotBootable(
+            throw new DestinationPimSystemRequirementsNotBootable(
                 'Docker cannot boot the install system, please check `docker-compose ps` in '.$destinationPim->getPath()
             );
         }
 
-        $this->commandLauncher->runCommand(new ComposerUpdateCommand(), $destinationPim);
-        $this->commandLauncher->runCommand(new PrepareRequiredDirectoriesCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new ComposerUpdateCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new PrepareRequiredDirectoriesCommand(), $destinationPim);
     }
 
     protected function dockerComposeInfrastructureIsUp(string $destinationPimPath): bool

@@ -49,7 +49,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
 
         $choices = [
             'Using docker-compose',
-            'I have an tar.gz archive, install it with docker',
+            'I have a tar.gz archive, install it with docker',
             'I have already installed a PIM 2.0',
         ];
 

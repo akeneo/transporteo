@@ -37,7 +37,7 @@ class DestinationPim extends AbstractPim
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
         string $indexName = 'akeneo_pim',
-        string $indexHosts = "'elasticsearch: 9200'",
+        string $indexHosts,
         string $path
     ) {
         parent::__construct(

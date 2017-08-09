@@ -42,7 +42,7 @@ class FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBehavio
         $event->getSubject()->willReturn($stateMachine);
         $printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', [
             'Using docker-compose',
-            'I have an tar.gz archive, install it with docker',
+            'I have a tar.gz archive, install it with docker',
             'I have already installed a PIM 2.0'
         ])->willReturn('Using docker-compose');
 

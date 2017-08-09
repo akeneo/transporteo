@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
-use Akeneo\PimMigration\Domain\Command;
-use Akeneo\PimMigration\Domain\CommandLauncher;
-
 /**
  * Launch command through docker.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class DockerComposeCommandLauncher extends AbstractCommandLauncher implements CommandLauncher
+class DockerComposeDestinationPimCommandLauncher extends AbstractDestinationPimCommandLauncher implements DestinationPimCommandLauncher
 {
     /** @var string */
     private $container;

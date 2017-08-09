@@ -100,8 +100,6 @@ class DockerDestinationPimSystemRequirementsInstallerIntegration extends TestCas
             DIRECTORY_SEPARATOR
         );
 
-        $process = new Process('docker-compose stop', $destinationPimPath);
-        $process->run();
         $process = new Process('docker-compose down', $destinationPimPath);
         $process->run();
 

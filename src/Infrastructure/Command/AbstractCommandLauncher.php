@@ -26,7 +26,6 @@ abstract class AbstractCommandLauncher implements CommandLauncher
     {
         $process = new Process($this->getStringCommand($command), $destinationPim->getPath());
 
-        $process = new Process($this->getStringCommand($command), $destinationPim->getPath());
         if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
             $process->setTty(true);
         }

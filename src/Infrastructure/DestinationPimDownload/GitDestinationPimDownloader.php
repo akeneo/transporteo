@@ -50,6 +50,7 @@ class GitDestinationPimDownloader implements DestinationPimDownloader
             $projectName
         );
 
+        //TODO put the right version
         $repository->checkout('master');
 
         return $repositoryPath;

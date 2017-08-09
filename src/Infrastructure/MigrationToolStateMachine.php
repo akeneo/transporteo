@@ -54,9 +54,7 @@ class MigrationToolStateMachine
     /** @var PimConfiguration */
     protected $destinationPimConfiguration;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $useDocker;
 
     public function __construct(StateMachine $stateMachine)

@@ -193,7 +193,10 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         try {
             $this
                 ->destinationPimSystemRequirementsInstallerFactory
-                ->createDockerPimSystemRequirementsInstaller($this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm'))
+                ->createDockerPimSystemRequirementsInstaller(
+                    $this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm'),
+                    $this->commandLauncherFactory->createBasicDestinationPimCommandLauncher()
+                )
                 ->install($stateMachine->getDestinationPim())
             ;
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {

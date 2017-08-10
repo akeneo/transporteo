@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRe
 use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
 use Ds\Set;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Install Pim System Requirements through docker.
@@ -21,11 +21,17 @@ use Symfony\Component\Process\Process;
 class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
     /** @var DestinationPimCommandLauncher */
-    private $destinationPimCommandLauncher;
+    private $dockerDestinationPimCommandLauncher;
 
-    public function __construct(DestinationPimCommandLauncher $destinationPimCommandLauncher)
-    {
-        $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
+    /** @var DestinationPimCommandLauncher */
+    private $basicDestinationPimCommandLauncher;
+
+    public function __construct(
+        DestinationPimCommandLauncher $dockerDestinationPimCommandLauncher,
+        DestinationPimCommandLauncher $basicDestinationPimCommandLauncher
+    ) {
+        $this->dockerDestinationPimCommandLauncher = $dockerDestinationPimCommandLauncher;
+        $this->basicDestinationPimCommandLauncher = $basicDestinationPimCommandLauncher;
     }
 
     public function install(DestinationPim $destinationPim): void
@@ -42,31 +48,41 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
             DIRECTORY_SEPARATOR
         );
 
+        $dockerComposeConfig = Yaml::dump($this->setupDockerComposePorts($dockerComposeDistFilePath));
+
         $fs = new Filesystem();
+        $fs->dumpFile($dockerComposeDestinationPath, $dockerComposeConfig);
 
-        $fs->copy($dockerComposeDistFilePath, $dockerComposeDestinationPath);
+        $this->basicDestinationPimCommandLauncher->runCommand(new DockerComposeUpDaemonCommand(), $destinationPim);
 
-        $launchDockerComposeDaemon = new Process('docker-compose up -d', $destinationPim->getPath());
-
-        $launchDockerComposeDaemon->run();
-
-        if (!$this->dockerComposeInfrastructureIsUp($destinationPim->getPath())) {
+        if (!$this->dockerComposeInfrastructureIsUp($destinationPim)) {
             throw new DestinationPimSystemRequirementsNotBootable(
                 'Docker cannot boot the install system, please check `docker-compose ps` in '.$destinationPim->getPath()
             );
         }
 
-        $this->destinationPimCommandLauncher->runCommand(new ComposerUpdateCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new PrepareRequiredDirectoriesCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineDropDatabaseCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateDatabaseCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateSchemaCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineUpdateSchemaCommand(), $destinationPim);
+        $this->dockerDestinationPimCommandLauncher->runCommand(new ComposerUpdateCommand(), $destinationPim);
+        $this->dockerDestinationPimCommandLauncher->runCommand(new PrepareRequiredDirectoriesCommand(), $destinationPim);
+        $this->dockerDestinationPimCommandLauncher->runCommand(new DoctrineDropDatabaseCommand(), $destinationPim);
+        $this->dockerDestinationPimCommandLauncher->runCommand(new DoctrineCreateDatabaseCommand(), $destinationPim);
+        $this->dockerDestinationPimCommandLauncher->runCommand(new DoctrineCreateSchemaCommand(), $destinationPim);
+        $this->dockerDestinationPimCommandLauncher->runCommand(new DoctrineUpdateSchemaCommand(), $destinationPim);
     }
 
-    protected function dockerComposeInfrastructureIsUp(string $destinationPimPath): bool
+    protected function setupDockerComposePorts(string $dockerComposePath): array
     {
-        $folderName = basename($destinationPimPath);
+        $dockerConfig = Yaml::parse(file_get_contents($dockerComposePath));
+
+        $dockerConfig['services']['httpd']['ports'][0] = '9991:80';
+        $dockerConfig['services']['mysql']['ports'][0] = '9992:3306';
+        $dockerConfig['services']['elasticsearch']['ports'][0] = '9993:9200';
+
+        return $dockerConfig;
+    }
+
+    protected function dockerComposeInfrastructureIsUp(DestinationPim $destinationPim): bool
+    {
+        $folderName = basename($destinationPim->getPath());
         $containerPrefix = str_replace(['-', '_'], '', $folderName);
 
         $services = [
@@ -76,13 +92,11 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
             $containerPrefix.'_fpm_1',
         ];
 
-        $process = new Process('docker ps --format="{{.Names}}"', $destinationPimPath);
-        $process->run();
-        $output = $process->getOutput();
+        $getContainerRunningProcess = $this
+            ->basicDestinationPimCommandLauncher
+            ->runCommand(new DockerGetContainersRunningCommand(), $destinationPim);
 
-        $output = explode(PHP_EOL, $output);
-
-        $servicesNames = new Set($output);
+        $servicesNames = new Set(explode(PHP_EOL, $getContainerRunningProcess->getOutput()));
 
         return $servicesNames->filter(function (string $service) {
             return !empty(trim($service));

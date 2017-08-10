@@ -14,9 +14,11 @@ use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
  */
 class DestinationPimSystemRequirementsInstallerFactory
 {
-    public function createDockerPimSystemRequirementsInstaller(DestinationPimCommandLauncher $destinationPimCommandLauncher): DockerDestinationPimSystemRequirementsInstaller
-    {
-        return new DockerDestinationPimSystemRequirementsInstaller($destinationPimCommandLauncher);
+    public function createDockerPimSystemRequirementsInstaller(
+        DestinationPimCommandLauncher $dockerDestinationPimCommandLauncher,
+        DestinationPimCommandLauncher $basicDestinationPimCommandLauncher
+    ): DockerDestinationPimSystemRequirementsInstaller {
+        return new DockerDestinationPimSystemRequirementsInstaller($dockerDestinationPimCommandLauncher, $basicDestinationPimCommandLauncher);
     }
 
     public function createBasicPimSystemRequirementsInstaller(DestinationPimCommandLauncher $destinationPimCommandLauncher): BasicDestinationPimSystemRequirementsInstaller

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
+use Symfony\Component\Process\Process;
 
 /**
  * Define public contract for a command launcher.
@@ -17,5 +18,5 @@ interface DestinationPimCommandLauncher
     /**
      * @throws UnsuccessfulCommandException
      */
-    public function runCommand(Command $command, DestinationPim $destinationPim): void;
+    public function runCommand(Command $command, DestinationPim $destinationPim): Process;
 }

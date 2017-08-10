@@ -45,7 +45,7 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
             $this->output,
             (new Question('<question>'.$question.'</question>', $default))->setValidator(function ($answer) use ($validator) {
                 if (empty(trim($answer))) {
-                    throw new \RuntimeException('You cannot use an empty value');
+                    throw new \RuntimeException('Please provide a value :)');
                 }
 
                 if (null !== $validator) {

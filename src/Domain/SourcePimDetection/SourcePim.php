@@ -60,7 +60,7 @@ class SourcePim extends AbstractPim
         if (!(self::PIM_COMMUNITY_STANDARD === $composerJsonRepositoryName || self::PIM_ENTERPRISE_STANDARD === $composerJsonRepositoryName)) {
             throw new SourcePimDetectionException(
                 sprintf(
-                    'Your PIM name should be either %s or either %s, currently %s',
+                    'Your PIM distribution should be either "%s" or "%s". It appears you try to migrate a "%s" instead.',
                     self::PIM_COMMUNITY_STANDARD,
                     self::PIM_ENTERPRISE_STANDARD,
                     $composerJsonRepositoryName

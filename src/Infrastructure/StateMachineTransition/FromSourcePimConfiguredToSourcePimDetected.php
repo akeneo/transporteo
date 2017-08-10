@@ -27,7 +27,6 @@ class FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachineSub
 
     public function onDetectionAvailable(Event $event)
     {
-        $this->printerAndAsker->printMessage('Source Pim Detection : Detect your source pim');
     }
 
     public function onSourcePimDetection(Event $event)
@@ -50,12 +49,10 @@ class FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachineSub
         $sourcePim = $stateMachine->getSourcePim();
 
         $this->printerAndAsker->printMessage(sprintf(
-            'You want to migrate from an edition %s with %s storage%s',
-            $sourcePim->isEnterpriseEdition() ? 'Enterprise' : 'Community',
+            'You want to migrate from %s edition with %s storage%s',
+            $sourcePim->isEnterpriseEdition() ? 'an Enterprise' : 'a Community',
             null === $sourcePim->getMongoDatabase() ? 'ORM' : 'Hybrid',
-            $sourcePim->hasIvb() ? ' with InnerVariationBundle.' : '.'
+            $sourcePim->hasIvb() ? ' and the InnerVariationBundle.' : '.'
         ));
-
-        $this->printerAndAsker->printMessage('Source Pim Detection : Complete');
     }
 }

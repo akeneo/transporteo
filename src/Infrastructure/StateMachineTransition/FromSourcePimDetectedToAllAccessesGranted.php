@@ -57,8 +57,6 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
             return;
         }
 
-        $this->printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you have already provided');
-
         $sourcePim = $stateMachine->getSourcePim();
 
         $serverAccessInformation = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
@@ -68,7 +66,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         try {
             $sshVerificator->verify($sourcePim);
         } catch (EnterpriseEditionAccessException $exception) {
-            $this->printerAndAsker->printMessage('It looks like the key you have provided is not allowed to download the Enterprise Edition');
+            $this->printerAndAsker->printMessage('It looks like the private SSH key you have provided is not allowed to download the Akeneo Enterprise Edition.');
             $event->setBlocked(true);
         }
     }
@@ -82,7 +80,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
             ->printerAndAsker
             ->askSimpleQuestion(
                 sprintf(
-                    'What is the %s path of your %s SSH key allowed to connect to Akeneo Enterprise Edition distribution? ',
+                    'What is the %s path of the %s SSH key allowed to connect to the Akeneo Enterprise Edition? ',
                     $this->printerAndAsker->getBoldQuestionWords('absolute'),
                     $this->printerAndAsker->getBoldQuestionWords('private')
                 )
@@ -115,7 +113,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $this->printerAndAsker->printMessage(
             sprintf(
-                'Access to the %s edition allowed',
+                'Access to the Akeneo %s Edition allowed.',
                 $sourcePim->isEnterpriseEdition() ? 'Enterprise' : 'Community'
             )
         );

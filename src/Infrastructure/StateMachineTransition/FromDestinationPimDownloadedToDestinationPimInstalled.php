@@ -120,7 +120,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onDestinationPimConfigurationAvailable(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Configuration : Configure your destination PIM');
     }
 
     public function guardOnDestinationPimConfiguration(GuardEvent $event)
@@ -161,8 +160,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onDestinationPimDetection(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Detection : Detect your future PIM.');
-
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -185,7 +182,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onDockerDestinationPimSystemRequirementsInstallation(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Installation : Let docker makes the job');
+        $this->printerAndAsker->printMessage('Docker is currently installing the destination PIM... Please wait...');
 
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
@@ -211,8 +208,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onLocalDestinationPimSystemRequirementsInstallation(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Installation : Prepare your local environment');
-
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -232,8 +227,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->printerAndAsker->printMessage('Destination Pim : Check Requirements');
-
         $commandLauncher = $stateMachine->useDocker() ? $this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->commandLauncherFactory->createBasicDestinationPimCommandLauncher();
         $editionChecker = $this->destinationPimEditionCheckerFactory->createDestinationPimEditionChecker();
         $systemRequirementschecker = $this->destinationPimSystemRequirementsCheckerFactory->createCliDestinationPimSystemRequirementsChecker($commandLauncher);
@@ -245,7 +238,5 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         } catch (\Exception $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
-
-        $this->printerAndAsker->printMessage('Destination Pim : Ready');
     }
 }

@@ -48,9 +48,9 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
         $stateMachine = $event->getSubject();
 
         $choices = [
-            'Using docker-compose',
-            'I have a tar.gz archive, install it with docker',
-            'I have already installed a PIM 2.0',
+            //'Using docker-compose',
+            //'I have a tar.gz archive, install it with docker',
+            'I have already installed a destination PIM locally',
         ];
 
         $destination = $this->printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', $choices);
@@ -64,12 +64,18 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                 $stateMachine->setUseDocker(true);
                 break;
             case self::TAR_GZ_INSTALL:
-                $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where is located your archive? ');
+                $destinationPath = sprintf(
+                    'What is the %s path of your tar.gz archive? ',
+                    $this->printerAndAsker->getBoldQuestionWords('absolute')
+                );
                 $stateMachine->setUseDocker(true);
                 $stateMachine->setDestinationPathPimLocation($destinationPath);
                 break;
             case self::DESTINATION_PIM_ALREADY_INSTALLED:
-                $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where is located your installed pim? ');
+                $destinationPath = sprintf(
+                    'What is the %s path of your local destination PIM? ',
+                    $this->printerAndAsker->getBoldQuestionWords('absolute')
+                );
                 $stateMachine->setUseDocker(false);
                 $stateMachine->setDestinationPathPimLocation($destinationPath);
                 break;
@@ -80,7 +86,6 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
 
     public function onDownloadAvailable(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Download : Download your future PIM');
     }
 
     public function onDownloadingTransition(Event $event)
@@ -112,7 +117,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
             $destinationPim = $downloader->download($stateMachine->getSourcePim(), $stateMachine->getProjectName());
         } catch (\Exception $exception) {
             throw new DestinationPimDownloadException(
-                'Impossible to download your PIM : '.$exception->getMessage(),
+                'Impossible to download your PIM: '.$exception->getMessage(),
                 $exception->getCode(),
                 $exception
             );
@@ -123,6 +128,5 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
 
     public function onDestinationDownloaded(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Downloaded : '.$event->getSubject()->getCurrentDestinationPimLocation());
     }
 }

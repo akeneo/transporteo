@@ -1,5 +1,4 @@
 /vendor/
 /var/*
 !.gitkeep
-docker-compose.yml
 .php_cs.cache

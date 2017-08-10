@@ -38,16 +38,18 @@ class SshFileFetcher implements FileFetcher
      */
     public function fetch(string $filePath): string
     {
-        if (!$this->sftp->login($this->serverAccessInformation->getUsername(), $this->key)) {
-            throw new ImpossibleConnectionException(
-                sprintf(
-                    'Impossible to login to %s@%s:%d using this ssh key : %s',
-                    $this->serverAccessInformation->getUsername(),
-                    $this->serverAccessInformation->getHost(),
-                    $this->serverAccessInformation->getPort(),
-                    $this->serverAccessInformation->getSshKey()->getPath()
-                )
-            );
+        if (!$this->sftp->isConnected()) {
+            if (!$this->sftp->login($this->serverAccessInformation->getUsername(), $this->key)) {
+                throw new ImpossibleConnectionException(
+                    sprintf(
+                        'Impossible to login to %s@%s:%d using this ssh key : %s',
+                        $this->serverAccessInformation->getUsername(),
+                        $this->serverAccessInformation->getHost(),
+                        $this->serverAccessInformation->getPort(),
+                        $this->serverAccessInformation->getSshKey()->getPath()
+                    )
+                );
+            }
         }
 
         $pathInfo = pathinfo($filePath);

@@ -57,7 +57,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
             return;
         }
 
-        $this->printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you already provided');
+        $this->printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you have already provided');
 
         $sourcePim = $stateMachine->getSourcePim();
 
@@ -68,7 +68,7 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         try {
             $sshVerificator->verify($sourcePim);
         } catch (EnterpriseEditionAccessException $exception) {
-            $this->printerAndAsker->printMessage('It looks like the key you provided is not allowed to download the Enterprise Edition');
+            $this->printerAndAsker->printMessage('It looks like the key you have provided is not allowed to download the Enterprise Edition');
             $event->setBlocked(true);
         }
     }
@@ -78,7 +78,15 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $sshPath = $this->printerAndAsker->askSimpleQuestion('Where is located your SSH key allowed to connect to Akeneo Enterprise Edition distribution? ');
+        $sshPath = $this
+            ->printerAndAsker
+            ->askSimpleQuestion(
+                sprintf(
+                    'What is the %s path of your %s SSH key allowed to connect to Akeneo Enterprise Edition distribution? ',
+                    $this->printerAndAsker->getBoldQuestionWords('absolute'),
+                    $this->printerAndAsker->getBoldQuestionWords('private')
+                )
+            );
 
         $sshKey = new SshKey($sshPath);
 

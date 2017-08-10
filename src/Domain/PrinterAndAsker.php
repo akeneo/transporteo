@@ -14,7 +14,9 @@ interface PrinterAndAsker
 {
     public function askChoiceQuestion(string $question, array $choicesAvailable): string;
 
-    public function askSimpleQuestion(string $question, ?string $default = null): string;
+    public function askSimpleQuestion(string $question, string $default = '', ?callable $validator = null): string;
 
     public function printMessage(string $message): void;
+
+    public function getBoldQuestionWords(string $words): string;
 }

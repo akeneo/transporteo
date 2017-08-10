@@ -82,8 +82,10 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
             'workflow.migration_tool.announce.destination_pim_configuration' => 'onDestinationPimConfigurationAvailable',
             'workflow.migration_tool.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
             'workflow.migration_tool.transition.destination_pim_detection' => 'onDestinationPimDetection',
-            'workflow.migration_tool.guard.destination_pim_system_requirements_installation' => 'guardOnDestinationPimSystemRequirementsInstallation',
-            'workflow.migration_tool.transition.destination_pim_system_requirements_installation' => 'onDestinationPimSystemRequirementsInstallation',
+            'workflow.migration_tool.guard.docker_destination_pim_system_requirements_installation' => 'guardOnDockerDestinationPimSystemRequirementsInstallation',
+            'workflow.migration_tool.transition.docker_destination_pim_system_requirements_installation' => 'onDockerDestinationPimSystemRequirementsInstallation',
+            'workflow.migration_tool.guard.local_destination_pim_system_requirements_installation' => 'guardOnLocalDestinationPimSystemRequirementsInstallation',
+            'workflow.migration_tool.transition.local_destination_pim_system_requirements_installation' => 'onLocalDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.guard.destination_pim_check_requirements' => 'guardOnDestinationPimCheckRequirements',
             'workflow.migration_tool.transition.destination_pim_check_requirements' => 'onDestinationPimCheckRequirements',
         ];
@@ -118,7 +120,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onDestinationPimConfigurationAvailable(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Configuration : Configure your future PIM');
+        $this->printerAndAsker->printMessage('Destination Pim Configuration : Configure your destination PIM');
     }
 
     public function guardOnDestinationPimConfiguration(GuardEvent $event)
@@ -173,7 +175,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $stateMachine->setDestinationPim($destinationPim);
     }
 
-    public function guardOnDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
+    public function guardOnDockerDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
     {
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $guardEvent->getSubject();
@@ -181,7 +183,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $guardEvent->setBlocked(false === $stateMachine->useDocker());
     }
 
-    public function onDestinationPimSystemRequirementsInstallation(Event $event)
+    public function onDockerDestinationPimSystemRequirementsInstallation(Event $event)
     {
         $this->printerAndAsker->printMessage('Destination Pim Installation : Let docker makes the job');
 
@@ -199,12 +201,30 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         }
     }
 
-    public function guardOnDestinationPimCheckRequirements(GuardEvent $guardEvent)
+    public function guardOnLocalDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
     {
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $guardEvent->getSubject();
 
-        $guardEvent->setBlocked(true === $stateMachine->useDocker() && false === $guardEvent->getMarking()->has('destination_pim_system_requirements_installed'));
+        $guardEvent->setBlocked(true === $stateMachine->useDocker());
+    }
+
+    public function onLocalDestinationPimSystemRequirementsInstallation(Event $event)
+    {
+        $this->printerAndAsker->printMessage('Destination Pim Installation : Prepare your local environment');
+
+        /** @var MigrationToolStateMachine $stateMachine */
+        $stateMachine = $event->getSubject();
+
+        try {
+            $this
+                ->destinationPimSystemRequirementsInstallerFactory
+                ->createBasicPimSystemRequirementsInstaller($this->commandLauncherFactory->createBasicDestinationPimCommandLauncher())
+                ->install($stateMachine->getDestinationPim())
+            ;
+        } catch (DestinationPimSystemRequirementsNotBootable $exception) {
+            throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
+        }
     }
 
     public function onDestinationPimCheckRequirements(Event $event)
@@ -225,5 +245,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         } catch (\Exception $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
+
+        $this->printerAndAsker->printMessage('Destination Pim : Ready');
     }
 }

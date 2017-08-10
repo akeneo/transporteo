@@ -29,8 +29,8 @@ digraph workflow {
   transition_destination_pim_configuration [label="destination_pim_configuration", shape=box, shape="box", regular="1"];
   transition_destination_pim_configuration [label="destination_pim_configuration", shape=box, shape="box", regular="1"];
   transition_destination_pim_detection [label="destination_pim_detection", shape=box, shape="box", regular="1"];
-  transition_destination_pim_system_requirements_installation [label="destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
-  transition_destination_pim_check_requirements [label="destination_pim_check_requirements", shape=box, shape="box", regular="1"];
+  transition_docker_destination_pim_system_requirements_installation [label="docker_destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
+  transition_local_destination_pim_system_requirements_installation [label="local_destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
   transition_destination_pim_check_requirements [label="destination_pim_check_requirements", shape=box, shape="box", regular="1"];
   place_ready -> transition_ask_source_pim_location [style="solid"];
   transition_ask_source_pim_location -> place_source_pim_location_guessed [style="solid"];
@@ -58,10 +58,10 @@ digraph workflow {
   transition_destination_pim_configuration -> place_destination_pim_configured [style="solid"];
   place_destination_pim_configured -> transition_destination_pim_detection [style="solid"];
   transition_destination_pim_detection -> place_destination_pim_detected [style="solid"];
-  place_destination_pim_detected -> transition_destination_pim_system_requirements_installation [style="solid"];
-  transition_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
-  place_destination_pim_detected -> transition_destination_pim_check_requirements [style="solid"];
-  transition_destination_pim_check_requirements -> place_destination_pim_requirements_checked [style="solid"];
+  place_destination_pim_detected -> transition_docker_destination_pim_system_requirements_installation [style="solid"];
+  transition_docker_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
+  place_destination_pim_detected -> transition_local_destination_pim_system_requirements_installation [style="solid"];
+  transition_local_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
   place_destination_pim_system_requirements_installed -> transition_destination_pim_check_requirements [style="solid"];
   transition_destination_pim_check_requirements -> place_destination_pim_requirements_checked [style="solid"];
 }

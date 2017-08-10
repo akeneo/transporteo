@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\DestinationPimInstallation;
+namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsChecker;
 use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\CheckRequirementsCommand;
 
 /**
  * Check system requirements through CLI.

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\CliDestinationPimSystemRequirementsChecker;
 use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
 
 /**

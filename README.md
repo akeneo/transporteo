@@ -45,7 +45,7 @@ Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *
 
 ```bash
   $ git clone https://github.com/akeneo/migration-tool.git
-  $ composer install
+  $ composer.phar install
 ```
 
 ## How to use

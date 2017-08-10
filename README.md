@@ -32,7 +32,7 @@ Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *
 
 ### System requirements
 
-- php-7.1
+- php7.1
 - php7.1-gmp
 - php7.1-mbstring
 - php7.1-json

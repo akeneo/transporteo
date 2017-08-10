@@ -14,11 +14,13 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\YamlFileLoader as TranslationYamlFileLoader;
 use Symfony\Component\Workflow\Definition as WorkflowDefinition;
 use Symfony\Component\Workflow\EventListener\AuditTrailListener;
 use Symfony\Component\Workflow\SupportStrategy\ClassInstanceSupportStrategy;
 use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\Workflow;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -45,11 +47,23 @@ final class ContainerBuilder
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/config'));
         $loader->load('workflow_events.yml');
 
+        self::loadTranslatorConfiguration($container);
+
         $container->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('kernel.event_subscriber');
 
         $container->compile();
 
         return $container;
+    }
+
+    private static function loadTranslatorConfiguration(SymfonyContainerBuilder $containerBuilder)
+    {
+        $translatorDefinition = new Definition(Translator::class, ['en', new MessageSelector()]);
+        $translatorDefinition->addMethodCall('addLoader', ['yaml', new TranslationYamlFileLoader()]);
+        $translatorDefinition->addMethodCall('addResource', ['yaml', __DIR__ . DIRECTORY_SEPARATOR . 'messages.en.yml', 'en']);
+        $translatorDefinition->addMethodCall('setFallbackLocales', [['en']]);
+
+        $containerBuilder->setDefinition('translator', $translatorDefinition);
     }
 
     private static function loadWorkflowConfiguration(SymfonyContainerBuilder $container, $workflows)

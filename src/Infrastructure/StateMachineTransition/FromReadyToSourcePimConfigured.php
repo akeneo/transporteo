@@ -11,6 +11,8 @@ use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use Akeneo\PimMigration\Infrastructure\SshKey;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -32,9 +34,12 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
     private $pimConfiguratorFactory;
 
     public function __construct(
+        Translator $translator,
         FileFetcherFactory $fileFfileFetcherFactory,
         PimConfiguratorFactory $sourcePimConfiguratorFactory
     ) {
+        parent::__construct($translator);
+
         $this->fileFetcherFactory = $fileFfileFetcherFactory;
         $this->pimConfiguratorFactory = $sourcePimConfiguratorFactory;
     }
@@ -56,14 +61,19 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
     public function leaveReadyPlace(Event $event)
     {
-        $this->printerAndAsker->printMessage(
-            sprintf(
-                'This tool aims to help you to migrate your %s (either Community or Enterprise) to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won\'t be updated nor touched. Instead, we\'ll perform the migration in a brand new PIM 2.0.',
-                $this->printerAndAsker->getBoldQuestionWords('PIM 1.7 standard edition')
-            )
-        );
-        $this->printerAndAsker->printMessage('In what follows, "source PIM" will refer to your current 1.7 PIM whereas "destination PIM" will refer to your future 2.0 PIM.');
-        $this->printerAndAsker->printMessage('Here we are! A few questions before starting to migrate your PIM!');
+        $this->printerAndAsker->title("Akeneo Migration Tool");
+
+        $this
+            ->printerAndAsker
+            ->printMessage($this->translator->trans('from_ready_to_source_pim_configured.introduction.title'));
+
+        $this
+            ->printerAndAsker
+            ->note($this->translator->trans('from_ready_to_source_pim_configured.introduction.rules'));
+
+        $this
+            ->printerAndAsker
+            ->section($this->translator->trans('from_ready_to_source_pim_configured.introduction.start'));
     }
 
     public function askSourcePimLocation(Event $event)
@@ -74,23 +84,35 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $projectName = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                sprintf(
-                    'What is the name of the project you want to migrate? Please choose a name with %s characters. ',
-                    $this->printerAndAsker->getBoldQuestionWords('snake_case and alphanumeric')
-                ),
+                $this
+                    ->translator
+                    ->trans(
+                        'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.question',
+                        [
+                            '%characters_style%' => $this
+                                ->translator
+                                ->trans(
+                                    'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.snake_case_and_alphanumeric'
+                                )
+                        ]),
                 '',
                 function ($answer) {
                     if (0 === preg_match('/^[A-Za-z0-9_]+$/', $answer)) {
                         throw new \RuntimeException(
-                            'Your project name should use only alphanumeric and snake_case characters.'
+                            $this
+                                ->translator
+                                ->trans(
+                                    'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.error_message'
+                                )
                         );
                     }
                 }
             );
+
         $stateMachine->setProjectName($projectName);
 
         $pimLocation = $this->printerAndAsker->askChoiceQuestion(
-            'Where is located your source PIM? ',
+            $this->translator->trans('from_ready_to_source_pim_configured.ask_source_pim_location.pim_location.question'),
             [self::LOCAL_SOURCE_PIM, self::REMOTE_SOURCE_PIM]
         );
         $stateMachine->setSourcePimLocation($pimLocation);
@@ -120,20 +142,62 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $stateMachine = $event->getSubject();
 
         $host = $this->printerAndAsker->askSimpleQuestion(
-            'What is the hostname of the source PIM? For instance, myhost.domain.com. Don\'t put the http or https prefix please ;)'
+            $this->translator->trans('from_ready_to_source_pim_configured.on_distant_configuration.hostname_question'),
+            '',
+            function ($answer) {
+                if (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $answer)
+                    && preg_match("/^.{1,253}$/", $answer)
+                    && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $answer))
+                {
+                    return $answer;
+                }
+
+                throw new \RuntimeException(
+                    $this->translator->trans('from_ready_to_source_pim_configured.on_distant_configuration.hostname_error')
+                );
+            }
         );
-        $port = (int)$this->printerAndAsker->askSimpleQuestion('What is the SSH port of the source PIM? ', '22');
+
+        $port = (int)$this->printerAndAsker->askSimpleQuestion(
+            $this->translator->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_port_question'),
+            '22',
+            function ($answer) {
+                if (!is_numeric($answer)) {
+                    throw new \RuntimeException(
+                        $this
+                            ->translator
+                            ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_port_error')
+                    );
+                }
+
+                return $answer;
+            }
+        );
         $user = $this->printerAndAsker->askSimpleQuestion(
-            'What is the SSH user you want to connect with to the source PIM? '
+            $this
+                ->translator
+                ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_user_question')
         );
         $sshPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                sprintf(
-                    'What is the %s path of the %s SSH key able to connect to the source PIM? ',
-                    $this->printerAndAsker->getBoldQuestionWords('absolute'),
-                    $this->printerAndAsker->getBoldQuestionWords('private')
-                )
+                $this
+                    ->translator
+                    ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_key_path_question'),
+                '',
+                function ($answer) {
+                    $fs = new Filesystem();
+
+                    if (!$fs->isAbsolutePath($answer)) {
+                        throw new \RuntimeException(
+                            $this
+                                ->translator
+                                ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_key_path_error')
+                        );
+                    }
+
+                    return $answer;
+                }
             );
 
         $sshKeySourcePimServer = new SshKey($sshPath);
@@ -143,10 +207,23 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $composerJsonPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                sprintf(
-                    'What is the %s path of the source PIM composer.json on the server? ',
-                    $this->printerAndAsker->getBoldQuestionWords('absolute')
-                )
+                $this
+                    ->translator
+                    ->trans('from_ready_to_source_pim_configured.on_distant_configuration.composer_json_path_question'),
+                '',
+                function ($answer) {
+                    $fs = new Filesystem();
+
+                    if (!$fs->isAbsolutePath($answer)) {
+                        throw new \RuntimeException(
+                            $this
+                                ->translator
+                                ->trans('from_ready_to_source_pim_configured.on_distant_configuration.composer_json_path_error')
+                        );
+                    }
+
+                    return $answer;
+                }
             );
 
         try {
@@ -178,10 +255,23 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $composerJsonPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                sprintf(
-                    'What is the %s path of the source PIM composer.json on your computer? ',
-                    $this->printerAndAsker->getBoldQuestionWords('absolute')
-                )
+                $this
+                    ->translator
+                    ->trans('from_ready_to_source_pim_configured.on_local_configuration.composer_json_path_question'),
+                '',
+                function ($answer) {
+                    $fs = new Filesystem();
+
+                    if (!$fs->isAbsolutePath($answer)) {
+                        throw new \RuntimeException(
+                            $this
+                                ->translator
+                                ->trans('from_ready_to_source_pim_configured.on_local_configuration.composer_json_path_error')
+                        );
+                    }
+
+                    return $answer;
+                }
             );
 
         try {

@@ -27,7 +27,8 @@
     "symfony/event-dispatcher": "3.3.4",
     "symfony/dependency-injection": "3.3.4",
     "symfony/filesystem": "3.3.4",
-    "symfony/workflow": "3.3.4"
+    "symfony/workflow": "3.3.4",
+    "symfony/translation": "3.3.4"
   },
   "require-dev": {
     "sebastian/exporter": "^3.1",

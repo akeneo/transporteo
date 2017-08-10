@@ -16,7 +16,11 @@ interface PrinterAndAsker
 
     public function askSimpleQuestion(string $question, string $default = '', ?callable $validator = null): string;
 
-    public function printMessage(string $message): void;
+    public function title(string $message): void;
 
-    public function getBoldQuestionWords(string $words): string;
+    public function section(string $message): void;
+
+    public function note(string $message): void;
+
+    public function printMessage(string $message): void;
 }

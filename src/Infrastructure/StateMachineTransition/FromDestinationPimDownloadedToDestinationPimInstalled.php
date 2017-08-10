@@ -18,6 +18,7 @@ use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPim
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -54,6 +55,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
     private $destinationPimSystemRequirementsCheckerFactory;
 
     public function __construct(
+        Translator $translator,
         DestinationPimParametersYmlGeneratorFactory $destinationPimPreConfiguratorFactory,
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
@@ -63,6 +65,8 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
         DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory
     ) {
+        parent::__construct($translator);
+
         $this->destinationPimParametersYmlGeneratorFactory = $destinationPimPreConfiguratorFactory;
         $this->pimConfiguratorFactory = $pimConfiguratorFactory;
         $this->fileFetcherFactory = $fileFetcherFactory;
@@ -79,7 +83,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
             'workflow.migration_tool.guard.destination_pim_pre_configuration' => 'guardOnDestinationPimPreConfiguration',
             'workflow.migration_tool.transition.destination_pim_pre_configuration' => 'onDestinationPimPreConfiguration',
             'workflow.migration_tool.guard.destination_pim_configuration' => 'guardOnDestinationPimConfiguration',
-            'workflow.migration_tool.announce.destination_pim_configuration' => 'onDestinationPimConfigurationAvailable',
             'workflow.migration_tool.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
             'workflow.migration_tool.transition.destination_pim_detection' => 'onDestinationPimDetection',
             'workflow.migration_tool.guard.docker_destination_pim_system_requirements_installation' => 'guardOnDockerDestinationPimSystemRequirementsInstallation',
@@ -116,10 +119,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $preConfigurator = $this->destinationPimParametersYmlGeneratorFactory->createDestinationPimParametersYmlGenerator($stateMachine->getCurrentDestinationPimLocation());
 
         $preConfigurator->preconfigure();
-    }
-
-    public function onDestinationPimConfigurationAvailable(Event $event)
-    {
     }
 
     public function guardOnDestinationPimConfiguration(GuardEvent $event)

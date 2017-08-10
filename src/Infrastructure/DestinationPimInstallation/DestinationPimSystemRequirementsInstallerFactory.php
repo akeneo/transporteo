@@ -18,4 +18,9 @@ class DestinationPimSystemRequirementsInstallerFactory
     {
         return new DockerDestinationPimSystemRequirementsInstaller($destinationPimCommandLauncher);
     }
+
+    public function createBasicPimSystemRequirementsInstaller(DestinationPimCommandLauncher $destinationPimCommandLauncher): BasicDestinationPimSystemRequirementsInstaller
+    {
+        return new BasicDestinationPimSystemRequirementsInstaller($destinationPimCommandLauncher);
+    }
 }

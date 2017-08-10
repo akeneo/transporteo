@@ -59,7 +59,20 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $projectName = $this->printerAndAsker->askSimpleQuestion('What is the name of the project you want to migrate? ');
+        $projectName = $this
+            ->printerAndAsker
+            ->askSimpleQuestion(
+                sprintf(
+                    'What is the name of the project you want to migrate (%s)? ',
+                    $this->printerAndAsker->getBoldQuestionWords('snake_case, alphanumeric')
+                ),
+                '',
+                function ($answer) {
+                    if (0 === preg_match('/^[A-Za-z0-9_]+$/', $answer)) {
+                        throw new \RuntimeException('Your project name should be an alphanumeric in snake_case one.');
+                    }
+                }
+            );
         $stateMachine->setProjectName($projectName);
 
         $pimLocation = $this->printerAndAsker->askChoiceQuestion('Where is located your PIM? ', ['local', 'server']);
@@ -94,14 +107,34 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $host = $this->printerAndAsker->askSimpleQuestion('What is the hostname of the source PIM server? ');
         $port = (int) $this->printerAndAsker->askSimpleQuestion('What is the SSH port of the source PIM server? ', '22');
         $user = $this->printerAndAsker->askSimpleQuestion('What is the SSH user you want to connect with ? ');
-        $sshPath = $this->printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ');
+        $sshPath = $this
+            ->printerAndAsker
+            ->askSimpleQuestion(
+                sprintf(
+                    'What is the %s path of the %s SSH key able to connect to the server? ',
+                    $this->printerAndAsker->getBoldQuestionWords('absolute'),
+                    $this->printerAndAsker->getBoldQuestionWords('private')
+                )
+            );
 
         $sshKeySourcePimServer = new SshKey($sshPath);
         $stateMachine->setSshKey($sshKeySourcePimServer);
         $serverAccessInformation = new ServerAccessInformation($host, $port, $user, $sshKeySourcePimServer);
 
-        $composerJsonPath = $this->printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ');
-        $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
+        $composerJsonPath = $this
+            ->printerAndAsker
+            ->askSimpleQuestion(
+                sprintf(
+                    'What is the %s path of the composer.json on the server? ',
+                    $this->printerAndAsker->getBoldQuestionWords('absolute')
+                )
+            );
+
+        try {
+            $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
+        } catch (\Exception $exception) {
+            throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
+        }
 
         $pimConfigurator = $this
             ->pimConfiguratorFactory
@@ -111,7 +144,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
         try {
             $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
-        } catch (\RuntimeException $exception) {
+        } catch (\Exception $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
 
@@ -125,9 +158,20 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
 
         $this->printerAndAsker->printMessage('Source Pim Configuration: Collect your configuration files from your computer');
 
-        $composerJsonPath = $this->printerAndAsker->askSimpleQuestion('Where is located the composer.json on your computer? ');
+        $composerJsonPath = $this
+            ->printerAndAsker
+            ->askSimpleQuestion(
+                sprintf(
+                    'What is the %s path of the composer.json on your computer? ',
+                    $this->printerAndAsker->getBoldQuestionWords('absolute')
+                )
+            );
 
-        $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
+        try {
+            $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
+        } catch (\Exception $exception) {
+            throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
+        }
 
         $pimConfigurator = $this
             ->pimConfiguratorFactory
@@ -135,7 +179,12 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
                 $this->fileFetcherFactory->createLocalFileFetcher()
             )
         ;
-        $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
+
+        try {
+            $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
+        } catch (\Exception $exception) {
+            throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
+        }
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);
     }

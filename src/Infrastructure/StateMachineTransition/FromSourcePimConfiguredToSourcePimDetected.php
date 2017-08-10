@@ -56,6 +56,6 @@ class FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachineSub
             $sourcePim->hasIvb() ? ' with InnerVariationBundle.' : '.'
         ));
 
-        $this->printerAndAsker->printMessage('Source Pim Detection : Successful');
+        $this->printerAndAsker->printMessage('Source Pim Detection : Complete');
     }
 }

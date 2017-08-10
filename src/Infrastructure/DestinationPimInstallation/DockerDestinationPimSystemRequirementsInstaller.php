@@ -58,6 +58,10 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
 
         $this->destinationPimCommandLauncher->runCommand(new ComposerUpdateCommand(), $destinationPim);
         $this->destinationPimCommandLauncher->runCommand(new PrepareRequiredDirectoriesCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new DoctrineDropDatabaseCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateDatabaseCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateSchemaCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new DoctrineUpdateSchemaCommand(), $destinationPim);
     }
 
     protected function dockerComposeInfrastructureIsUp(string $destinationPimPath): bool
@@ -80,10 +84,8 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
 
         $servicesNames = new Set($output);
 
-        $set = $servicesNames->filter(function (string $service) {
+        return $servicesNames->filter(function (string $service) {
             return !empty(trim($service));
-        });
-
-        return $set->contains(...$services);
+        })->contains(...$services);
     }
 }

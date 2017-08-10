@@ -18,6 +18,7 @@ use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Akeneo\PimMigration\Infrastructure\StateMachineTransition\FromReadyToSourcePimConfigured;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -51,7 +52,13 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
     )
     {
         $event->getSubject()->willReturn($stateMachine);
-        $printerAndAsker->askSimpleQuestion('What is the name of the project you want to migrate? ')->willReturn('a-super-project');
+        $snakeCaseAlphanumeric = 'snake_case, alphanumeric';
+        $printerAndAsker->getBoldQuestionWords($snakeCaseAlphanumeric)->willReturn($snakeCaseAlphanumeric);
+        $printerAndAsker->askSimpleQuestion(
+            'What is the name of the project you want to migrate ('.$snakeCaseAlphanumeric.')? ',
+            '',
+            Argument::any()
+        )->willReturn('a-super-project');
         $printerAndAsker->askChoiceQuestion('Where is located your PIM? ', ['local', 'server'])->willReturn('local');
 
         $stateMachine->setProjectName('a-super-project')->shouldBeCalled();
@@ -112,13 +119,16 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $printerAndAsker->askSimpleQuestion('What is the SSH user you want to connect with ? ')->willReturn('akeneo');
         $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
 
-        $printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ')->willReturn($sshKeyPath);
+        $printerAndAsker->getBoldQuestionWords('private')->willReturn('private');
+        $printerAndAsker->getBoldQuestionWords('absolute')->willReturn('absolute');
+        $printerAndAsker->askSimpleQuestion('What is the absolute path of the private SSH key able to connect to the server? ')->willReturn($sshKeyPath);
 
         $sshKey = new SshKey($sshKeyPath);
         $stateMachine->setSshKey($sshKey)->shouldBeCalled();
         $serverAccessInformation = new ServerAccessInformation('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
 
-        $printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
+        $printerAndAsker->getBoldQuestionWords('absolute')->willReturn('absolute');
+        $printerAndAsker->askSimpleQuestion('What is the absolute path of the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
         $sourcePimConfigurator->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))->willReturn($sourcePimConfiguration);
@@ -142,7 +152,8 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getProjectName()->willReturn('a-super-project');
 
-        $printerAndAsker->askSimpleQuestion('Where is located the composer.json on your computer? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
+        $printerAndAsker->getBoldQuestionWords('absolute')->willReturn('absolute');
+        $printerAndAsker->askSimpleQuestion('What is the absolute path of the composer.json on your computer? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
 
         $fileFetcherFactory->createLocalFileFetcher()->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
@@ -175,14 +186,18 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
         $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
 
-        $printerAndAsker->askSimpleQuestion('Where is located the private SSH key able to connect to the server? ')->willReturn($sshKeyPath);
+        $printerAndAsker->getBoldQuestionWords('private')->willReturn('private');
+        $printerAndAsker->getBoldQuestionWords('absolute')->willReturn('absolute');
+        $printerAndAsker->askSimpleQuestion('What is the absolute path of the private SSH key able to connect to the server? ')->willReturn($sshKeyPath);
 
         $sshKey = new SshKey($sshKeyPath);
         $stateMachine->setSshKey($sshKey)->shouldBeCalled();
         $serverAccessInformation = new ServerAccessInformation('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
 
         $exception = new ImpossibleConnectionException('Impossible to login to akeneo@my-super-pim.akeneo.com:22 using this ssh key : '. $sshKeyPath);
-        $printerAndAsker->askSimpleQuestion('Where is located the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
+
+        $printerAndAsker->getBoldQuestionWords('absolute')->willReturn('absolute');
+        $printerAndAsker->askSimpleQuestion('What is the absolute path of the composer.json on the server? ')->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
         $sourcePimConfigurator

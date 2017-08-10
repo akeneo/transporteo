@@ -20,6 +20,7 @@ list:
 	@echo "  $(YELLOW)phpunit$(RESTORE)            > run All PHPUnit"
 	@echo "  $(YELLOW)launch$(RESTORE)             > Launch the tool"
 	@echo "  $(YELLOW)dump-state-machine$(RESTORE) > Dump the State Machine"
+	@echo "  $(YELLOW)clean-var$(RESTORE)          > Clean the var folder (akeneo_project)"
 	@echo ""
 	@echo ""
 	@echo "  $(YELLOW)composer$(RESTORE)      > run composer"
@@ -74,3 +75,9 @@ update:
 .PHONY: clean
 clean:
 	rm -rf vendor
+
+.PHONY: clean-var
+clean-var:
+	docker-compose -f ./var/akeneo_project/docker-compose.yml down
+	rm -rf var/akeneo_project
+	rm var/composer.json var/parameters.yml var/pim_parameters.yml

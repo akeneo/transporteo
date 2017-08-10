@@ -38,17 +38,32 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
         );
     }
 
-    public function askSimpleQuestion(string $question, ?string $default = null): string
+    public function askSimpleQuestion(string $question, string $default = '', ?callable $validator = null): string
     {
         return $this->questionHelper->ask(
             $this->input,
             $this->output,
-            new Question('<question>'.$question.'</question>', $default)
+            (new Question('<question>'.$question.'</question>', $default))->setValidator(function ($answer) use ($validator) {
+                if (empty(trim($answer))) {
+                    throw new \RuntimeException('You cannot use an empty value');
+                }
+
+                if (null !== $validator) {
+                    $validator($answer);
+                }
+
+                return $answer;
+            })
         );
     }
 
     public function printMessage(string $message): void
     {
         $this->output->writeln('<info>'.$message.'</info>');
+    }
+
+    public function getBoldQuestionWords(string $words): string
+    {
+        return '<options=bold;bg=cyan;fg=black>'.$words.'</>';
     }
 }

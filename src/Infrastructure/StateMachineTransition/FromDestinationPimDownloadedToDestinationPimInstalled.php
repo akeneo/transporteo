@@ -18,6 +18,7 @@ use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPim
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -54,6 +55,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
     private $destinationPimSystemRequirementsCheckerFactory;
 
     public function __construct(
+        Translator $translator,
         DestinationPimParametersYmlGeneratorFactory $destinationPimPreConfiguratorFactory,
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
@@ -63,6 +65,8 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
         DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory
     ) {
+        parent::__construct($translator);
+
         $this->destinationPimParametersYmlGeneratorFactory = $destinationPimPreConfiguratorFactory;
         $this->pimConfiguratorFactory = $pimConfiguratorFactory;
         $this->fileFetcherFactory = $fileFetcherFactory;
@@ -79,7 +83,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
             'workflow.migration_tool.guard.destination_pim_pre_configuration' => 'guardOnDestinationPimPreConfiguration',
             'workflow.migration_tool.transition.destination_pim_pre_configuration' => 'onDestinationPimPreConfiguration',
             'workflow.migration_tool.guard.destination_pim_configuration' => 'guardOnDestinationPimConfiguration',
-            'workflow.migration_tool.announce.destination_pim_configuration' => 'onDestinationPimConfigurationAvailable',
             'workflow.migration_tool.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
             'workflow.migration_tool.transition.destination_pim_detection' => 'onDestinationPimDetection',
             'workflow.migration_tool.guard.docker_destination_pim_system_requirements_installation' => 'guardOnDockerDestinationPimSystemRequirementsInstallation',
@@ -116,11 +119,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $preConfigurator = $this->destinationPimParametersYmlGeneratorFactory->createDestinationPimParametersYmlGenerator($stateMachine->getCurrentDestinationPimLocation());
 
         $preConfigurator->preconfigure();
-    }
-
-    public function onDestinationPimConfigurationAvailable(Event $event)
-    {
-        $this->printerAndAsker->printMessage('Destination Pim Configuration : Configure your destination PIM');
     }
 
     public function guardOnDestinationPimConfiguration(GuardEvent $event)
@@ -161,8 +159,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onDestinationPimDetection(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Detection : Detect your future PIM.');
-
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -185,7 +181,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onDockerDestinationPimSystemRequirementsInstallation(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Installation : Let docker makes the job');
+        $this->printerAndAsker->printMessage('Docker is currently installing the destination PIM... Please wait...');
 
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
@@ -211,8 +207,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
 
     public function onLocalDestinationPimSystemRequirementsInstallation(Event $event)
     {
-        $this->printerAndAsker->printMessage('Destination Pim Installation : Prepare your local environment');
-
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -232,8 +226,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->printerAndAsker->printMessage('Destination Pim : Check Requirements');
-
         $commandLauncher = $stateMachine->useDocker() ? $this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->commandLauncherFactory->createBasicDestinationPimCommandLauncher();
         $editionChecker = $this->destinationPimEditionCheckerFactory->createDestinationPimEditionChecker();
         $systemRequirementschecker = $this->destinationPimSystemRequirementsCheckerFactory->createCliDestinationPimSystemRequirementsChecker($commandLauncher);
@@ -245,7 +237,5 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         } catch (\Exception $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
-
-        $this->printerAndAsker->printMessage('Destination Pim : Ready');
     }
 }

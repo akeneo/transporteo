@@ -44,7 +44,7 @@ class SourcePimSpec extends ObjectBehavior
         $this->beConstructedThrough('fromSourcePimConfiguration', [$sourcePimConfiguration]);
         $this->shouldThrow(
             new SourcePimDetectionException(
-                'Your PIM name should be either akeneo/pim-community-standard or either akeneo/pim-enterprise-standard, currently a-repo'
+                'Your PIM distribution should be either "akeneo/pim-community-standard" or "akeneo/pim-enterprise-standard". It appears you try to migrate a "a-repo" instead.'
             ))->duringInstantiation();
     }
 

@@ -11,6 +11,8 @@ use Akeneo\PimMigration\Infrastructure\DestinationPimDownloaderFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\StateMachineTransition\FromAllAccessesGrantedToDestinationPimDownloaded;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -22,10 +24,11 @@ use Symfony\Component\Workflow\Event\Event;
 class FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBehavior
 {
     public function let(
+        Translator $translator,
         DestinationPimDownloaderFactory $destinationPimDownloaderFactory,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($destinationPimDownloaderFactory);
+        $this->beConstructedWith($translator, $destinationPimDownloaderFactory);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 
@@ -37,8 +40,15 @@ class FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBehavio
     public function it_asks_the_pim_location(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        $printerAndAsker
+        $printerAndAsker,
+        $translator
     ) {
+        $transPrefix = 'from_all_accesses_granted_to_destination_pim_downloaded.on_ask_destination_pim_location.';
+        $translator->trans($transPrefix.'question')->willReturn('How do you want to install the destination PIM? ');
+        $translator->trans($transPrefix.'docker_install')->willReturn('Using docker-compose');
+        $translator->trans($transPrefix.'archive_install')->willReturn('I have a tar.gz archive, install it with docker');
+        $translator->trans($transPrefix.'local_install')->willReturn('I have already installed a PIM 2.0');
+
         $event->getSubject()->willReturn($stateMachine);
         $printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', [
             'Using docker-compose',

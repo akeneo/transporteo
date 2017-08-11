@@ -7,6 +7,8 @@ namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 use Akeneo\PimMigration\Domain\DestinationPimDownload\DestinationPimDownloadException;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownloaderFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -24,8 +26,9 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
     /** @var DestinationPimDownloaderFactory */
     protected $destinationPimDownloaderFactory;
 
-    public function __construct(DestinationPimDownloaderFactory $destinationPimDownloaderFactory)
+    public function __construct(Translator $translator, DestinationPimDownloaderFactory $destinationPimDownloaderFactory)
     {
+        parent::__construct($translator);
         $this->destinationPimDownloaderFactory = $destinationPimDownloaderFactory;
     }
 
@@ -36,9 +39,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
     {
         return [
             'workflow.migration_tool.transition.ask_destination_pim_location' => 'onAskDestinationPimLocation',
-            'workflow.migration_tool.announce.download_destination_pim' => 'onDownloadAvailable',
             'workflow.migration_tool.transition.download_destination_pim' => 'onDownloadingTransition',
-            'workflow.migration_tool.entered.destination_pim_downloaded' => 'onDestinationDownloaded',
         ];
     }
 
@@ -47,13 +48,18 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $transPrefix = 'from_all_accesses_granted_to_destination_pim_downloaded.on_ask_destination_pim_location.';
+
         $choices = [
-            'Using docker-compose',
-            'I have a tar.gz archive, install it with docker',
-            'I have already installed a PIM 2.0',
+            $this->translator->trans($transPrefix.'docker_install'),
+            $this->translator->trans($transPrefix.'archive_install'),
+            $this->translator->trans($transPrefix.'local_install'),
         ];
 
-        $destination = $this->printerAndAsker->askChoiceQuestion('How do you want to install the destination PIM? ', $choices);
+        $destination = $this->printerAndAsker->askChoiceQuestion(
+            $this->translator->trans($transPrefix.'question'),
+            $choices
+        );
 
         $destinationPath = null;
 
@@ -64,23 +70,50 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                 $stateMachine->setUseDocker(true);
                 break;
             case self::TAR_GZ_INSTALL:
-                $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where is located your archive? ');
+                $destinationPath = $this->printerAndAsker->askSimpleQuestion(
+                    $this->translator->trans($transPrefix.'tar_gz_archive_path_question'),
+                    '',
+                    function ($answer) use ($transPrefix) {
+                        $fs = new Filesystem();
+
+                        if (!$fs->isAbsolutePath($answer)) {
+                            throw new \RuntimeException(
+                                $this->translator->trans(
+                                    $transPrefix.'tar_gz_archive_path_error'
+                                )
+                            );
+                        }
+
+                        return $answer;
+                    }
+                );
                 $stateMachine->setUseDocker(true);
                 $stateMachine->setDestinationPathPimLocation($destinationPath);
                 break;
             case self::DESTINATION_PIM_ALREADY_INSTALLED:
-                $destinationPath = $this->printerAndAsker->askSimpleQuestion('Where is located your installed pim? ');
+                $destinationPath = $this->printerAndAsker->askSimpleQuestion(
+                    $this->translator->trans($transPrefix.'local_pim_path_question'),
+                    '',
+                    function ($answer) use ($transPrefix) {
+                        $fs = new Filesystem();
+
+                        if (!$fs->isAbsolutePath($answer)) {
+                            throw new \RuntimeException(
+                                $this->translator->trans(
+                                    $transPrefix.'local_pim_path_error'
+                                )
+                            );
+                        }
+
+                        return $answer;
+                    }
+                );
                 $stateMachine->setUseDocker(false);
                 $stateMachine->setDestinationPathPimLocation($destinationPath);
                 break;
         }
 
         $stateMachine->setDestinationPimLocation($destination);
-    }
-
-    public function onDownloadAvailable(Event $event)
-    {
-        $this->printerAndAsker->printMessage('Destination Pim Download : Download your future PIM');
     }
 
     public function onDownloadingTransition(Event $event)
@@ -112,17 +145,17 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
             $destinationPim = $downloader->download($stateMachine->getSourcePim(), $stateMachine->getProjectName());
         } catch (\Exception $exception) {
             throw new DestinationPimDownloadException(
-                'Impossible to download your PIM : '.$exception->getMessage(),
+                $this->translator->trans(
+                    'from_all_accesses_granted_to_destination_pim_downloaded.on_downloading.error',
+                    [
+                        '%exception%' => $exception->getMessage(),
+                    ]
+                ),
                 $exception->getCode(),
                 $exception
             );
         }
 
         $stateMachine->setCurrentDestinationPimLocation($destinationPim);
-    }
-
-    public function onDestinationDownloaded(Event $event)
-    {
-        $this->printerAndAsker->printMessage('Destination Pim Downloaded : '.$event->getSubject()->getCurrentDestinationPimLocation());
     }
 }

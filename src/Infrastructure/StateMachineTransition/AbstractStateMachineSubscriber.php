@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Abstract State Machine Subscriber.
@@ -16,6 +17,14 @@ abstract class AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
     /** @var PrinterAndAsker */
     protected $printerAndAsker;
+
+    /** @var Translator */
+    protected $translator;
+
+    public function __construct(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
 
     public function setPrinterAndAsker(PrinterAndAsker $printerAndAsker): void
     {

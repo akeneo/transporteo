@@ -22,6 +22,7 @@ use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\StateMachineTransition\FromDestinationPimDownloadedToDestinationPimInstalled;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -34,6 +35,7 @@ use Symfony\Component\Workflow\Event\GuardEvent;
 class FromDestinationPimDownloadedToDestinationPimInstalledSpec extends ObjectBehavior
 {
     public function let(
+        Translator $translator,
         DestinationPimParametersYmlGeneratorFactory $destinationPimPreConfiguratorFactory,
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
@@ -46,6 +48,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalledSpec extends ObjectBe
     )
     {
         $this->beConstructedWith(
+            $translator,
             $destinationPimPreConfiguratorFactory,
             $pimConfiguratorFactory,
             $fileFetcherFactory,

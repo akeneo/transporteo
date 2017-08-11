@@ -9,6 +9,8 @@ use Akeneo\PimMigration\Infrastructure\EnterpriseEditionVerificatorFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use Akeneo\PimMigration\Infrastructure\SshKey;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -23,8 +25,9 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
     /** @var EnterpriseEditionVerificatorFactory */
     private $enterpriseEditionVerificatorFactory;
 
-    public function __construct(EnterpriseEditionVerificatorFactory $enterpriseEditionVerificatorFactory)
+    public function __construct(Translator $translator, EnterpriseEditionVerificatorFactory $enterpriseEditionVerificatorFactory)
     {
+        parent::__construct($translator);
         $this->enterpriseEditionVerificatorFactory = $enterpriseEditionVerificatorFactory;
     }
 
@@ -57,8 +60,6 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
             return;
         }
 
-        $this->printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you have already provided');
-
         $sourcePim = $stateMachine->getSourcePim();
 
         $serverAccessInformation = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
@@ -68,7 +69,11 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         try {
             $sshVerificator->verify($sourcePim);
         } catch (EnterpriseEditionAccessException $exception) {
-            $this->printerAndAsker->printMessage('It looks like the key you have provided is not allowed to download the Enterprise Edition');
+            $this->printerAndAsker->printMessage(
+                $this->translator->trans(
+                    'from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.first_ssh_key_error'
+                )
+            );
             $event->setBlocked(true);
         }
     }
@@ -78,14 +83,22 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $transPrefix = 'from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.';
+
         $sshPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                sprintf(
-                    'What is the %s path of your %s SSH key allowed to connect to Akeneo Enterprise Edition distribution? ',
-                    $this->printerAndAsker->getBoldQuestionWords('absolute'),
-                    $this->printerAndAsker->getBoldQuestionWords('private')
-                )
+                $this->translator->trans($transPrefix.'ssh_key_path_question'),
+                '',
+                function ($answer) use ($transPrefix) {
+                    $fs = new Filesystem();
+
+                    if (!$fs->isAbsolutePath($answer)) {
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'ssh_key_path_error'));
+                    }
+
+                    return $answer;
+                }
             );
 
         $sshKey = new SshKey($sshPath);
@@ -113,10 +126,18 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $sourcePim = $stateMachine->getSourcePim();
 
+        $translationPrefix = 'from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.';
+
         $this->printerAndAsker->printMessage(
-            sprintf(
-                'Access to the %s edition allowed',
-                $sourcePim->isEnterpriseEdition() ? 'Enterprise' : 'Community'
+            $this->translator->trans(
+                $translationPrefix.'access_granted',
+                [
+                    '%edition%' => $this
+                        ->translator
+                        ->trans(
+                            $translationPrefix.($sourcePim->isEnterpriseEdition() ? 'enterprise' : 'community')
+                        ),
+                ]
             )
         );
     }

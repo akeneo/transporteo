@@ -1,0 +1,54 @@
+from_ready_to_source_pim_configured:
+  introduction:
+    title: |
+       This tool aims to help you to migrate your PIM 1.7 standard edition (either Community or Enterprise) to the new version 2.0.
+       All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0.
+    rules: "In what follows, \"source PIM\" will refer to your current 1.7 PIM whereas \"destination PIM\" will refer to your future 2.0 PIM."
+    start: "Here we are! A few questions before starting to migrate your PIM!"
+  ask_source_pim_location:
+    project_name:
+      question: "What is the name of the project you want to migrate? Please choose a name with snake_case and alphanumeric characters. "
+      error_message: "Your project name should use only alphanumeric and snake_case characters."
+    pim_location:
+      question: "Where is located your source PIM? "
+  on_distant_configuration:
+    hostname_question: "What is the hostname of the source PIM? For instance, myhost.domain.com. Don't put the http or https prefix please. ;)"
+    hostname_error: "You should provide a valid hostname, for instance, myhost.domain.com. Don't put the http or https prefix please. ;)"
+    ssh_port_question: "What is the SSH port of the source PIM? "
+    ssh_port_error: "The SSH port should be an int. "
+    ssh_user_question:  "What is the SSH user you want to connect with to the source PIM? "
+    ssh_key_path_question: "What is the absolute path of the private SSH key able to connect to the source PIM? "
+    ssh_key_path_error: "Your SSH key path should be an absolute one."
+    composer_json_path_question: "What is the absolute path of the source PIM composer.json on the server? "
+    composer_json_path_error: "Your composer.json path should be an absolute one."
+  on_local_configuration:
+    composer_json_path_question: "What is the absolute path of the source PIM composer.json on your computer? "
+    composer_json_path_error: "Your composer.json path should be an absolute one."
+from_source_pim_configured_to_source_pim_detected:
+  on_source_pim_detected:
+    result: "You want to migrate from %edition% edition with %storage% storage%inner%."
+    an_enterprise: "an Enterprise"
+    a_community: "a Community"
+    orm: "ORM"
+    hybrid: "Hybrid"
+    and_inner_variation_bundle: " and the InnerVariationBundle"
+from_source_pim_detected_to_all_accesses_granted:
+  on_grant_all_accesses:
+    first_ssh_key_error: "It looks like the private SSH key you have provided is not allowed to download the Akeneo Enterprise Edition."
+    ssh_key_path_question: "What is the absolute path of the private SSH key allowed to connect to the Akeneo Enterprise Edition? "
+    ssh_key_path_error: "Your SSH key path should be an absolute one."
+    access_granted: "Access to the Akeneo %edition% Edition allowed."
+    community: "Community"
+    enterprise: "Enterprise"
+from_all_accesses_granted_to_destination_pim_downloaded:
+  on_ask_destination_pim_location:
+    question: "How do you want to install the destination PIM? "
+    docker_install: "Using docker-composer."
+    archive_install: "I have a tar.gz archive, install it with docker."
+    local_install: "I have already installed a destination PIM locally. "
+    tar_gz_archive_path_question: "What is the absolute path of your tar.gz archive? "
+    tar_gz_archive_path_error: "Your tar.gz archive path should be an absolute one."
+    local_pim_path_question: "What is the absolute path of your local destination PIM? "
+    local_pim_path_error: "Your local destination PIM path should be an absolute one."
+  on_downloading:
+    error: "Impossible to download your PIM: %exception%"

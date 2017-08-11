@@ -2,7 +2,7 @@
 
 ## Goal
 
-This tool aims to help you to migrate your PIM 1.7 to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
+This tool aims to help you to migrate your *PIM 1.7 standard edition* (either _Community_ or _Enterprise_) to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
 - the [System Requirements](TODO) have changed between Akeneo PIM 1.7 and 2.0
 - with variant groups and inner variation (a paid extension for the _Enterprise Edition_) there are a lot of different and complex use cases to migrate products data
 - the need to migrate real production data without worrying about a failure, a problem or an incomplete migration

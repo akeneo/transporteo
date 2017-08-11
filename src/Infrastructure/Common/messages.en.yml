@@ -7,8 +7,7 @@ from_ready_to_source_pim_configured:
     start: "Here we are! A few questions before starting to migrate your PIM!"
   ask_source_pim_location:
     project_name:
-      question: "What is the name of the project you want to migrate? Please choose a name with %characters_style% characters. "
-      snake_case_and_alphanumeric: "snake_case and alphanumeric"
+      question: "What is the name of the project you want to migrate? Please choose a name with snake_case and alphanumeric characters. "
       error_message: "Your project name should use only alphanumeric and snake_case characters."
     pim_location:
       question: "Where is located your source PIM? "

@@ -51,13 +51,13 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
         $transPrefix = 'from_all_accesses_granted_to_destination_pim_downloaded.on_ask_destination_pim_location.';
 
         $choices = [
-            $this->translator->trans($transPrefix . 'docker_install'),
-            $this->translator->trans($transPrefix . 'archive_install'),
-            $this->translator->trans($transPrefix . 'local_install'),
+            $this->translator->trans($transPrefix.'docker_install'),
+            $this->translator->trans($transPrefix.'archive_install'),
+            $this->translator->trans($transPrefix.'local_install'),
         ];
 
         $destination = $this->printerAndAsker->askChoiceQuestion(
-            $this->translator->trans($transPrefix . 'question'),
+            $this->translator->trans($transPrefix.'question'),
             $choices
         );
 
@@ -71,7 +71,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                 break;
             case self::TAR_GZ_INSTALL:
                 $destinationPath = $this->printerAndAsker->askSimpleQuestion(
-                    $this->translator->trans($transPrefix . 'tar_gz_archive_path_question'),
+                    $this->translator->trans($transPrefix.'tar_gz_archive_path_question'),
                     '',
                     function ($answer) use ($transPrefix) {
                         $fs = new Filesystem();
@@ -79,7 +79,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                         if (!$fs->isAbsolutePath($answer)) {
                             throw new \RuntimeException(
                                 $this->translator->trans(
-                                    $transPrefix . 'tar_gz_archive_path_error'
+                                    $transPrefix.'tar_gz_archive_path_error'
                                 )
                             );
                         }
@@ -92,7 +92,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                 break;
             case self::DESTINATION_PIM_ALREADY_INSTALLED:
                 $destinationPath = $this->printerAndAsker->askSimpleQuestion(
-                    $this->translator->trans($transPrefix . 'local_pim_path_question'),
+                    $this->translator->trans($transPrefix.'local_pim_path_question'),
                     '',
                     function ($answer) use ($transPrefix) {
                         $fs = new Filesystem();
@@ -100,7 +100,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                         if (!$fs->isAbsolutePath($answer)) {
                             throw new \RuntimeException(
                                 $this->translator->trans(
-                                    $transPrefix . 'local_pim_path_error'
+                                    $transPrefix.'local_pim_path_error'
                                 )
                             );
                         }
@@ -148,7 +148,7 @@ class FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMach
                 $this->translator->trans(
                     'from_all_accesses_granted_to_destination_pim_downloaded.on_downloading.error',
                     [
-                        '%exception%' => $exception->getMessage()
+                        '%exception%' => $exception->getMessage(),
                     ]
                 ),
                 $exception->getCode(),

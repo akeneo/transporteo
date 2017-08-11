@@ -8,8 +8,6 @@ use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ConsolePrinterAndAsker implements PrinterAndAsker
@@ -32,7 +30,6 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
         $this->output = $output;
         $this->questionHelper = $questionHelper;
         $this->io = new SymfonyStyle($input, $output);
-
     }
 
     public function askChoiceQuestion(string $question, array $choicesAvailable): string
@@ -43,16 +40,16 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
     public function askSimpleQuestion(string $question, string $default = '', ?callable $validator = null): string
     {
         return $this->io->ask($question, $default, function ($answer) use ($validator) {
-                if (empty(trim($answer))) {
-                    throw new \RuntimeException('Please provide a value :)');
-                }
-
-                if (null !== $validator) {
-                    $validator($answer);
-                }
-
-                return $answer;
+            if (empty(trim($answer))) {
+                throw new \RuntimeException('Please provide a value :)');
             }
+
+            if (null !== $validator) {
+                $validator($answer);
+            }
+
+            return $answer;
+        }
         );
     }
 
@@ -74,6 +71,5 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
     public function printMessage(string $message): void
     {
         $this->io->writeln($message);
-//        $this->output->writeln('<info>'.$message.'</info>');
     }
 }

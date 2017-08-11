@@ -14,7 +14,9 @@ use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
 
@@ -26,9 +28,12 @@ use Symfony\Component\Workflow\Event\GuardEvent;
  */
 class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
 {
-    public function let(EnterpriseEditionVerificatorFactory $enterpriseEditionVerificatorFactory, PrinterAndAsker $printerAndAsker)
-    {
-        $this->beConstructedWith($enterpriseEditionVerificatorFactory);
+    public function let(
+        Translator $translator,
+        EnterpriseEditionVerificatorFactory $enterpriseEditionVerificatorFactory,
+        PrinterAndAsker $printerAndAsker
+    ) {
+        $this->beConstructedWith($translator, $enterpriseEditionVerificatorFactory);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 
@@ -69,7 +74,8 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
         SshKey $sshKey,
         SshEnterpriseEditionAccessVerificator $sshEnterpriseEditionAccessVerificator,
         $enterpriseEditionVerificatorFactory,
-        $printerAndAsker
+        $printerAndAsker,
+        $translator
     ) {
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getSourcePim()->willReturn($sourcePim);
@@ -81,11 +87,13 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
 
         $stateMachine->getSshKey()->willReturn($sshKey);
 
-        $printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you have already provided')->shouldBeCalled();
+        $error = 'Enterprise Edition Access Verification with the key you have already provided';
+        $translator->trans('from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.first_ssh_key_error')->willReturn($error);
+        $printerAndAsker->printMessage($error, Argument::any(), Argument::any())->shouldBeCalled();
         $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation)->willReturn($sshEnterpriseEditionAccessVerificator);
 
         $sshEnterpriseEditionAccessVerificator->verify($sourcePim)->willThrow(new EnterpriseEditionAccessException(''));
-        $printerAndAsker->printMessage('It looks like the key you have provided is not allowed to download the Enterprise Edition')->shouldBeCalled();
+
         $event->setBlocked(true)->shouldBeCalled();
 
         $this->grantAllAccesses($event);
@@ -110,7 +118,6 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
 
         $serverAccessInformation = ServerAccessInformation::fromString('ssh://git@distribution.akeneo.com:443', $sshKey->getWrappedObject());
 
-        $printerAndAsker->printMessage('Enterprise Edition Access Verification with the key you have already provided')->shouldBeCalled();
         $enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation)->willReturn($sshEnterpriseEditionAccessVerificator);
 
         $sshEnterpriseEditionAccessVerificator->verify($sourcePim)->shouldBeCalled();
@@ -121,13 +128,14 @@ class FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
     public function it_asks_ssh_key(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        $printerAndAsker
+        $printerAndAsker,
+        $translator
     ) {
         $event->getSubject()->willReturn($stateMachine);
 
-        $printerAndAsker->getBoldQuestionWords('private')->willReturn('private');
-        $printerAndAsker->getBoldQuestionWords('absolute')->willReturn('absolute');
-        $printerAndAsker->askSimpleQuestion('What is the absolute path of your private SSH key allowed to connect to Akeneo Enterprise Edition distribution? ')->willReturn(ResourcesFileLocator::getSshKeyPath());
+        $question = 'What is the absolute path of your private SSH key allowed to connect to Akeneo Enterprise Edition distribution? ';
+        $translator->trans('from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.ssh_key_path_question')->willReturn($question);
+        $printerAndAsker->askSimpleQuestion($question, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getSshKeyPath());
 
         $stateMachine->setSshKey(new SshKey(ResourcesFileLocator::getSshKeyPath()))->shouldBeCalled();
 

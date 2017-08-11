@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -23,8 +24,9 @@ use Symfony\Component\Workflow\Event\Event;
  */
 class FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
 {
-    public function let(PrinterAndAsker $printerAndAsker)
+    public function let(Translator $translator, PrinterAndAsker $printerAndAsker)
     {
+        $this->beConstructedWith($translator);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

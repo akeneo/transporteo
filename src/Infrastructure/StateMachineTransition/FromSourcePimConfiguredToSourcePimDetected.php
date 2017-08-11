@@ -50,16 +50,16 @@ class FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachineSub
 
         $transPrefix = 'from_source_pim_configured_to_source_pim_detected.on_source_pim_detected.';
 
-        $editionTrans = $transPrefix . (true === $sourcePim->isEnterpriseEdition() ? 'an_enterprise' : 'a_community');
-        $storageTrans = $transPrefix . (null === $sourcePim->getMongoDatabase() ? 'orm' : 'hybrid');
+        $editionTrans = $transPrefix.(true === $sourcePim->isEnterpriseEdition() ? 'an_enterprise' : 'a_community');
+        $storageTrans = $transPrefix.(null === $sourcePim->getMongoDatabase() ? 'orm' : 'hybrid');
 
         $this->printerAndAsker->printMessage(
             $this->translator->trans(
-                $transPrefix. 'result',
+                $transPrefix.'result',
                 [
                     '%edition%' => $this->translator->trans($editionTrans),
                     '%storage%' => $this->translator->trans($storageTrans),
-                    '%inner%' => $sourcePim->hasIvb() ? $this->translator->trans($transPrefix . 'and_inner_variation_bundle') : ''
+                    '%inner%' => $sourcePim->hasIvb() ? $this->translator->trans($transPrefix.'and_inner_variation_bundle') : '',
                 ]
             )
         );

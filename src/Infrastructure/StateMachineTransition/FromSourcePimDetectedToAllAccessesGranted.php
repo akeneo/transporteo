@@ -83,24 +83,18 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $transPrefix = 'from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.';
+
         $sshPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                $this
-                    ->translator
-                    ->trans(
-                        'from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.ssh_key_path_question'
-                    ),
+                $this->translator->trans($transPrefix.'ssh_key_path_question'),
                 '',
-                function ($answer) {
+                function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
                     if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException(
-                            $this->translator->trans(
-                                'from_source_pim_detected_to_all_accesses_granted.on_grant_all_accesses.ssh_key_path_error'
-                            )
-                        );
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'ssh_key_path_error'));
                     }
 
                     return $answer;
@@ -136,13 +130,13 @@ class FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubs
 
         $this->printerAndAsker->printMessage(
             $this->translator->trans(
-                $translationPrefix . 'access_granted',
+                $translationPrefix.'access_granted',
                 [
                     '%edition%' => $this
                         ->translator
                         ->trans(
-                            $translationPrefix . ($sourcePim->isEnterpriseEdition() ? 'enterprise' : 'community')
-                        )
+                            $translationPrefix.($sourcePim->isEnterpriseEdition() ? 'enterprise' : 'community')
+                        ),
                 ]
             )
         );

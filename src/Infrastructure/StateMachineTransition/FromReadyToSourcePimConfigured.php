@@ -50,18 +50,18 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.leave.ready'                                 => 'leaveReadyPlace',
-            'workflow.migration_tool.transition.ask_source_pim_location'          => 'askSourcePimLocation',
-            'workflow.migration_tool.guard.local_source_pim_configuration'        => 'guardLocalSourcePimConfiguration',
-            'workflow.migration_tool.guard.distant_source_pim_configuration'      => 'guardDistantSourcePimConfiguration',
+            'workflow.migration_tool.leave.ready' => 'leaveReadyPlace',
+            'workflow.migration_tool.transition.ask_source_pim_location' => 'askSourcePimLocation',
+            'workflow.migration_tool.guard.local_source_pim_configuration' => 'guardLocalSourcePimConfiguration',
+            'workflow.migration_tool.guard.distant_source_pim_configuration' => 'guardDistantSourcePimConfiguration',
             'workflow.migration_tool.transition.distant_source_pim_configuration' => 'onDistantConfiguration',
-            'workflow.migration_tool.transition.local_source_pim_configuration'   => 'onLocalConfiguration',
+            'workflow.migration_tool.transition.local_source_pim_configuration' => 'onLocalConfiguration',
         ];
     }
 
     public function leaveReadyPlace(Event $event)
     {
-        $this->printerAndAsker->title("Akeneo Migration Tool");
+        $this->printerAndAsker->title('Akeneo Migration Tool');
 
         $this
             ->printerAndAsker
@@ -86,15 +86,7 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
             ->askSimpleQuestion(
                 $this
                     ->translator
-                    ->trans(
-                        'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.question',
-                        [
-                            '%characters_style%' => $this
-                                ->translator
-                                ->trans(
-                                    'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.snake_case_and_alphanumeric'
-                                )
-                        ]),
+                    ->trans('from_ready_to_source_pim_configured.ask_source_pim_location.project_name.question'),
                 '',
                 function ($answer) {
                     if (0 === preg_match('/^[A-Za-z0-9_]+$/', $answer)) {
@@ -141,59 +133,45 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $transPrefix = 'from_ready_to_source_pim_configured.on_distant_configuration.';
+
         $host = $this->printerAndAsker->askSimpleQuestion(
-            $this->translator->trans('from_ready_to_source_pim_configured.on_distant_configuration.hostname_question'),
+            $this->translator->trans($transPrefix.'hostname_question'),
             '',
-            function ($answer) {
+            function ($answer) use ($transPrefix) {
                 if (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $answer)
-                    && preg_match("/^.{1,253}$/", $answer)
-                    && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $answer))
-                {
+                    && preg_match('/^.{1,253}$/', $answer)
+                    && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $answer)) {
                     return $answer;
                 }
 
-                throw new \RuntimeException(
-                    $this->translator->trans('from_ready_to_source_pim_configured.on_distant_configuration.hostname_error')
-                );
+                throw new \RuntimeException($this->translator->trans($transPrefix.'hostname_error'));
             }
         );
 
-        $port = (int)$this->printerAndAsker->askSimpleQuestion(
-            $this->translator->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_port_question'),
+        $port = (int) $this->printerAndAsker->askSimpleQuestion(
+            $this->translator->trans($transPrefix.'ssh_port_question'),
             '22',
-            function ($answer) {
+            function ($answer) use ($transPrefix) {
                 if (!is_numeric($answer)) {
-                    throw new \RuntimeException(
-                        $this
-                            ->translator
-                            ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_port_error')
-                    );
+                    throw new \RuntimeException($this->translator->trans($transPrefix.'ssh_port_error'));
                 }
 
                 return $answer;
             }
         );
-        $user = $this->printerAndAsker->askSimpleQuestion(
-            $this
-                ->translator
-                ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_user_question')
-        );
+        $user = $this->printerAndAsker->askSimpleQuestion($this->translator->trans($transPrefix.'ssh_user_question'));
+
         $sshPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                $this
-                    ->translator
-                    ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_key_path_question'),
+                $this->translator->trans($transPrefix.'ssh_key_path_question'),
                 '',
-                function ($answer) {
+                function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
                     if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException(
-                            $this
-                                ->translator
-                                ->trans('from_ready_to_source_pim_configured.on_distant_configuration.ssh_key_path_error')
-                        );
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'ssh_key_path_error'));
                     }
 
                     return $answer;
@@ -207,19 +185,13 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
         $composerJsonPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                $this
-                    ->translator
-                    ->trans('from_ready_to_source_pim_configured.on_distant_configuration.composer_json_path_question'),
+                $this->translator->trans($transPrefix.'composer_json_path_question'),
                 '',
-                function ($answer) {
+                function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
                     if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException(
-                            $this
-                                ->translator
-                                ->trans('from_ready_to_source_pim_configured.on_distant_configuration.composer_json_path_error')
-                        );
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'composer_json_path_error'));
                     }
 
                     return $answer;
@@ -251,23 +223,18 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
     {
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
+        $transPrefix = 'from_ready_to_source_pim_configured.on_local_configuration.';
 
         $composerJsonPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                $this
-                    ->translator
-                    ->trans('from_ready_to_source_pim_configured.on_local_configuration.composer_json_path_question'),
+                $this->translator->trans($transPrefix.'composer_json_path_question'),
                 '',
-                function ($answer) {
+                function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
                     if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException(
-                            $this
-                                ->translator
-                                ->trans('from_ready_to_source_pim_configured.on_local_configuration.composer_json_path_error')
-                        );
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'composer_json_path_error'));
                     }
 
                     return $answer;

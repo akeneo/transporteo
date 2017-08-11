@@ -60,7 +60,7 @@ final class ContainerBuilder
     {
         $translatorDefinition = new Definition(Translator::class, ['en', new MessageSelector()]);
         $translatorDefinition->addMethodCall('addLoader', ['yaml', new TranslationYamlFileLoader()]);
-        $translatorDefinition->addMethodCall('addResource', ['yaml', __DIR__ . DIRECTORY_SEPARATOR . 'messages.en.yml', 'en']);
+        $translatorDefinition->addMethodCall('addResource', ['yaml', __DIR__.DIRECTORY_SEPARATOR.'messages.en.yml', 'en']);
         $translatorDefinition->addMethodCall('setFallbackLocales', [['en']]);
 
         $containerBuilder->setDefinition('translator', $translatorDefinition);

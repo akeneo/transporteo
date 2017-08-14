@@ -41,8 +41,6 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFilesMigrated extends
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->printerAndAsker->printMessage('Migrate your datas file');
-
         $this->databaseFilesMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }
 }

@@ -31,7 +31,11 @@ class AkeneoFileStorageFileInfoMigrator
 
         $sourcePimRecords->apply(
             function ($value) use ($destinationPimQueryBuilder) {
-                $destinationPimQueryBuilder->insert('akeneo_file_storage_file_info')->values($value);
+                try {
+                    $destinationPimQueryBuilder->insert('akeneo_file_storage_file_info')->values($value);
+                } catch (\Exception $exception) {
+                    throw new FilesMigrationException($exception->getMessage(), $exception->getCode(), $exception);
+                }
             }
         );
     }

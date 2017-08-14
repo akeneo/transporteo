@@ -19,7 +19,7 @@ abstract class AbstractDestinationPimCommandLauncher implements DestinationPimCo
     /**
      * {@inheritdoc}
      */
-    public function runCommand(Command $command, DestinationPim $destinationPim): void
+    public function runCommand(Command $command, DestinationPim $destinationPim): Process
     {
         $process = new Process($this->getStringCommand($command), $destinationPim->getPath());
 
@@ -28,9 +28,14 @@ abstract class AbstractDestinationPimCommandLauncher implements DestinationPimCo
         }
 
         $process->setTimeout(2 * 3600);
+        $output = [];
+
+        $process->enableOutput();
 
         try {
             $process->mustRun();
+            $output[] = $process->getOutput();
+//            $process->
         } catch (ProcessFailedException $e) {
             $authorizedExitCodes = [
                 129, // Hangup
@@ -40,6 +45,8 @@ abstract class AbstractDestinationPimCommandLauncher implements DestinationPimCo
                 throw new UnsuccessfulCommandException($e->getMessage(), $e->getCode(), $e);
             }
         }
+
+        return $process;
     }
 
     abstract protected function getStringCommand(Command $command): string;

@@ -22,11 +22,11 @@ class AkeneoFileStorageFileInfoMigrator
     {
         $sourcePimConnection = DriverManager::getConnection($sourcePim->getDatabaseConnectionParams(), new Configuration());
         $sourcePimConnection->connect();
-        $destinationPimConnection = DriverManager::getConnection($destinationPim->getDatabaseConnectionParams(), new Configuration());
-
         $sourcePimRecords = new Vector($sourcePimConnection->fetchAll('SELECT * FROM akeneo_file_storage_file_info'));
 
+        $destinationPimConnection = DriverManager::getConnection($destinationPim->getDatabaseConnectionParams(), new Configuration());
         $destinationPimConnection->connect();
+
         $destinationPimQueryBuilder = $destinationPimConnection->createQueryBuilder();
 
         $sourcePimRecords->apply(

@@ -28,7 +28,8 @@
     "symfony/dependency-injection": "3.3.4",
     "symfony/filesystem": "3.3.4",
     "symfony/workflow": "3.3.4",
-    "symfony/translation": "3.3.4"
+    "symfony/translation": "3.3.4",
+    "doctrine/dbal": "^2.6"
   },
   "require-dev": {
     "sebastian/exporter": "^3.1",

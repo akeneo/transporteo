@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
+use Akeneo\PimMigration\Domain\DatabaseServices\ConnectionBuilder;
 use Akeneo\PimMigration\Domain\FilesMigration\AkeneoFileStorageFileInfoMigrator;
+use Akeneo\PimMigration\Infrastructure\AkeneoFileStorageFileInfoMigratorFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\NaiveMigratorFactory;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -20,10 +23,25 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFilesMigrated extends
     /** @var AkeneoFileStorageFileInfoMigrator */
     private $databaseFilesMigrator;
 
-    public function __construct(Translator $translator, AkeneoFileStorageFileInfoMigrator $databaseFilesMigrator)
-    {
+    /** @var ConnectionBuilder */
+    private $connectionBuilder;
+
+    /** @var AkeneoFileStorageFileInfoMigratorFactory */
+    private $akeneoFileStorageFileInfoMigratorFactory;
+
+    /** @var NaiveMigratorFactory */
+    private $naiveMigratorFactory;
+
+    public function __construct(
+        Translator $translator,
+        AkeneoFileStorageFileInfoMigratorFactory $akeneoFileStorageFileInfoMigratorFactory,
+        NaiveMigratorFactory $naiveMigratorFactory,
+        ConnectionBuilder $connectionBuilder
+    ) {
         parent::__construct($translator);
-        $this->databaseFilesMigrator = $databaseFilesMigrator;
+        $this->connectionBuilder = $connectionBuilder;
+        $this->akeneoFileStorageFileInfoMigratorFactory = $akeneoFileStorageFileInfoMigratorFactory;
+        $this->naiveMigratorFactory = $naiveMigratorFactory;
     }
 
     /**
@@ -41,6 +59,12 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFilesMigrated extends
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->databaseFilesMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+        $naiveMigrator = $this->naiveMigratorFactory->createNaiveMigrator($this->connectionBuilder);
+
+        $akeneoFileStorageIngoMigrator = $this
+            ->akeneoFileStorageFileInfoMigratorFactory
+            ->createFileStorageFileInfoMigrator($naiveMigrator);
+
+        $akeneoFileStorageIngoMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }
 }

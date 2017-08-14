@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\FilesMigration;
 
+use Akeneo\PimMigration\Domain\DatabaseServices\ConnectionBuilder;
+use Akeneo\PimMigration\Domain\DatabaseServices\NaiveMigrator;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\FilesMigration\AkeneoFileStorageFileInfoMigrator;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
@@ -30,7 +32,7 @@ class AkeneoFileStorageFileInfoMigratorIntegration extends TestCase
     {
         parent::setUp();
 
-        $stepPath = realpath(ResourcesFileLocator::getStepFolder('step_six_migrate_akeneo_file_storage_file_info'));
+        $stepPath = realpath(ResourcesFileLocator::getStepFolder('step_seven_migrate_akeneo_file_storage_file_info'));
 
         $commandRoot = 'docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=akeneo_pim -e MYSQL_PASSWORD=akeneo_pim -e MYSQL_DATABASE=akeneo_pim -p %d:3306 -v %s:/tmp/mysqldumps -d mysql:%s';
         $initCommand = 'docker exec %s "/tmp/mysqldumps/%s"';
@@ -67,7 +69,7 @@ class AkeneoFileStorageFileInfoMigratorIntegration extends TestCase
         $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false);
         $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, 'akeneo_pim', 'localhost', '/a-path');
 
-        $akeneoFileStorageFileInfoMigrator = new AkeneoFileStorageFileInfoMigrator();
+        $akeneoFileStorageFileInfoMigrator = new AkeneoFileStorageFileInfoMigrator(new NaiveMigrator(new ConnectionBuilder()));
         $akeneoFileStorageFileInfoMigrator->migrate($sourcePim, $destinationPim);
 
         $sourcePimConnection = DriverManager::getConnection($sourcePim->getDatabaseConnectionParams(), new Configuration());

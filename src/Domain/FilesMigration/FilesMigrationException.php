@@ -15,7 +15,7 @@ use Throwable;
  */
 class FilesMigrationException extends MigrationStepException
 {
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = '', $code = 0, Throwable $previous = null)
     {
         $message = sprintf('Error: Step 7 - Files Migration: %s', $message);
 

@@ -2,23 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\DatabaseServices;
-
+namespace Akeneo\PimMigration\Domain\StructureMigration;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
-use Ds\Vector;
 
 /**
- * Migrate from one table to another without any changes.
+ * Migrate a structure table.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-interface NaiveMigrator
+interface TableStructureMigrator
 {
-    public function migrate(
-        SourcePim $sourcePim,
-        DestinationPim $destinationPim,
-        string $tableName
-    ): void;
+    public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void;
 }

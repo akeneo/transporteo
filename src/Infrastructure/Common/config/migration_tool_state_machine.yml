@@ -24,6 +24,7 @@ workflows:
             - 'destination_pim_system_requirements_installed'
             - 'destination_pim_requirements_checked'
             - 'destination_pim_files_migrated'
+            - 'destination_pim_structure_migrated'
         transitions:
             ask_source_pim_location:
                 from: 'ready'
@@ -73,3 +74,6 @@ workflows:
             destination_pim_files_migration:
                 from: 'destination_pim_requirements_checked'
                 to: 'destination_pim_files_migrated'
+            destination_pim_structure_migration:
+                from: 'destination_pim_files_migrated'
+                to: 'destination_pim_structure_migrated'

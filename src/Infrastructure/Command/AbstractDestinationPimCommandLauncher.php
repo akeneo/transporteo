@@ -16,6 +16,14 @@ use Symfony\Component\Process\Process;
  */
 abstract class AbstractDestinationPimCommandLauncher implements DestinationPimCommandLauncher
 {
+    /** @var ProcessLauncher */
+    private $processLauncher;
+
+    public function __construct(ProcessLauncher $processLauncher)
+    {
+        $this->processLauncher = $processLauncher;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -23,23 +31,7 @@ abstract class AbstractDestinationPimCommandLauncher implements DestinationPimCo
     {
         $process = new Process($this->getStringCommand($command), $destinationPim->getPath());
 
-        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-            $process->setTty(true);
-        }
-
-        $process->setTimeout(2 * 3600);
-
-        try {
-            $process->mustRun();
-        } catch (ProcessFailedException $e) {
-            $authorizedExitCodes = [
-                129, // Hangup
-                130, // Interrupt
-            ];
-            if (!in_array($e->getProcess()->getExitCode(), $authorizedExitCodes)) {
-                throw new UnsuccessfulCommandException($e->getMessage(), $e->getCode(), $e);
-            }
-        }
+        $this->processLauncher->runProcess($process);
     }
 
     abstract protected function getStringCommand(Command $command): string;

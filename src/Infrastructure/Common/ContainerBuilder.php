@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
+use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator;
+use Akeneo\PimMigration\Domain\StructureMigration\TableStructureMigrator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
@@ -53,7 +55,19 @@ final class ContainerBuilder
 
         $container->compile();
 
+        self::loadStructureMigrators($container);
+
         return $container;
+    }
+
+    private static function loadStructureMigrators(SymfonyContainerBuilder $containerBuilder) {
+        $definition = $containerBuilder->findDefinition(StructureMigrator::class);
+
+        $tablesStructureMigrators = $containerBuilder->findTaggedServiceIds('migration_tool.structure_migrator');
+
+        foreach ($tablesStructureMigrators as $id => $tags) {
+            $definition->addMethodCall('addStructureMigrator', array(new Reference($id)));
+        }
     }
 
     private static function loadTranslatorConfiguration(SymfonyContainerBuilder $containerBuilder)

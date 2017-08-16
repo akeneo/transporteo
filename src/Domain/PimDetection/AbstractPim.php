@@ -57,6 +57,18 @@ abstract class AbstractPim
 
     abstract protected static function getPimVersionAllowed(): string;
 
+    public function getDatabaseConnectionParams(): array
+    {
+        return [
+            'dbname' => $this->databaseName,
+            'user' => $this->databaseUser,
+            'password' => $this->databasePassword,
+            'host' => $this->mysqlHost,
+            'port' => $this->mysqlPort,
+            'driver' => 'pdo_mysql',
+        ];
+    }
+
     public function getMysqlHost(): string
     {
         return $this->mysqlHost;

@@ -15,8 +15,10 @@ class DockerComposeDestinationPimCommandLauncher extends AbstractDestinationPimC
     /** @var string */
     private $container;
 
-    public function __construct(string $container)
+    public function __construct(ProcessLauncher $processLauncher, string $container)
     {
+        parent::__construct($processLauncher);
+
         $this->container = trim($container);
     }
 

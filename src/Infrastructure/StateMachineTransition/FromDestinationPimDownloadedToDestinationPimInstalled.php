@@ -89,7 +89,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
             'workflow.migration_tool.transition.docker_destination_pim_system_requirements_installation' => 'onDockerDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.guard.local_destination_pim_system_requirements_installation' => 'guardOnLocalDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.transition.local_destination_pim_system_requirements_installation' => 'onLocalDestinationPimSystemRequirementsInstallation',
-            'workflow.migration_tool.guard.destination_pim_check_requirements' => 'guardOnDestinationPimCheckRequirements',
             'workflow.migration_tool.transition.destination_pim_check_requirements' => 'onDestinationPimCheckRequirements',
         ];
     }

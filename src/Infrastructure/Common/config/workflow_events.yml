@@ -6,6 +6,88 @@ services:
   _instanceof:
     Akeneo\PimMigration\Infrastructure\StateMachineTransition\StateMachineSubscriber:
       tags: ['migration_tool.subscriber']
+    Akeneo\PimMigration\Domain\StructureMigration\TableStructureMigrator:
+      tags: ['migration_tool.structure_migrator']
 
   Akeneo\PimMigration\Infrastructure\StateMachineTransition\:
     resource: './../../StateMachineTransition/*'
+
+  Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpNaiveMigrator: ~
+  Akeneo\PimMigration\Domain\DatabaseServices\NaiveMigrator: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpNaiveMigrator'
+
+### STRUCTURE MIGRATORS
+
+  Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator: ~
+
+  Akeneo\PimMigration\Domain\StructureMigration\LocaleStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_locale'
+
+  Akeneo\PimMigration\Domain\StructureMigration\CurrencyStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_currency'
+
+  Akeneo\PimMigration\Domain\StructureMigration\CategoryStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_category'
+
+  Akeneo\PimMigration\Domain\StructureMigration\CategoryTranslationStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_category_translation'
+
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeGroupStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_group'
+
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeGroupTranslationStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_group_translation'
+
+  Akeneo\PimMigration\Domain\StructureMigration\GroupTypeStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_group_type'
+
+  Akeneo\PimMigration\Domain\StructureMigration\GroupTypeStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_group_type_translation'
+
+  Akeneo\PimMigration\Domain\StructureMigration\ChannelStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_channel'
+
+  Akeneo\PimMigration\Domain\StructureMigration\ChannelCurrencyStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_channel_currency'
+
+  Akeneo\PimMigration\Domain\StructureMigration\ChannelLocaleStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_channel_locale'
+
+  Akeneo\PimMigration\Domain\StructureMigration\ChannelTranslationStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_channel_translation'
+
+  Akeneo\PimMigration\Domain\StructureMigration\AssociationTypeStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_association_type'
+
+  Akeneo\PimMigration\Domain\StructureMigration\AssociationTypeTranslationStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\SimpleTableStructureMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_association_type_translation'
+
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeTableStructureMigrator:
+    class: 'Akeneo\PimMigration\Domain\StructureMigration\AttributeTableStructureMigrator'

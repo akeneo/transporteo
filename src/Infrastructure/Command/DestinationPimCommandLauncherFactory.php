@@ -14,11 +14,11 @@ class DestinationPimCommandLauncherFactory
 {
     public function createDockerComposeCommandLauncher(string $container): DockerComposeDestinationPimCommandLauncher
     {
-        return new DockerComposeDestinationPimCommandLauncher($container);
+        return new DockerComposeDestinationPimCommandLauncher(new ProcessLauncher(), $container);
     }
 
     public function createBasicDestinationPimCommandLauncher(): BasicDestinationPimCommandLauncher
     {
-        return new BasicDestinationPimCommandLauncher();
+        return new BasicDestinationPimCommandLauncher(new ProcessLauncher());
     }
 }

@@ -6,7 +6,6 @@ namespace Akeneo\PimMigration\Domain\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
-use GitElephant\Repository;
 
 /**
  * Destination Pim.
@@ -18,9 +17,6 @@ class DestinationPim extends AbstractPim
 {
     /** @var string */
     protected $path;
-
-    /** @var Repository */
-    protected $repository;
 
     /** @var string */
     protected $indexName;
@@ -53,7 +49,6 @@ class DestinationPim extends AbstractPim
         $this->path = $path;
         $this->indexName = $indexName;
         $this->indexHosts = $indexHosts;
-        $this->repository = new Repository($path);
     }
 
     public static function fromDestinationPimConfiguration(PimConfiguration $destinationPimConfiguration): DestinationPim
@@ -137,11 +132,6 @@ class DestinationPim extends AbstractPim
     public function getPath(): string
     {
         return $this->path;
-    }
-
-    public function getRepository(): Repository
-    {
-        return $this->repository;
     }
 
     protected static function getPimVersionAllowed(): string

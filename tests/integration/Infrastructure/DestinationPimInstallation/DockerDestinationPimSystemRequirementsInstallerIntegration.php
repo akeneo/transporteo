@@ -6,7 +6,7 @@ namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimInstallat
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DockerDestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\DockerComposeDestinationPimCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\DockerComposeCommandLauncher;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -14,6 +14,8 @@ use Symfony\Component\Process\Process;
 
 /**
  * Integration test to see if docker is really running.
+ *
+ * @group docker-compose
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

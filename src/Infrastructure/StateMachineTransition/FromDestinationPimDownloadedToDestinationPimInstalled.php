@@ -43,7 +43,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
     private $destinationPimSystemRequirementsInstallerFactory;
 
     /** @var LocalCommandLauncherFactory */
-    private $commandLauncherFactory;
+    private $localCommandLauncherFactory;
 
     /** @var DestinationPimConfigurationCheckerFactory */
     private $destinationPimConfigurationCheckerFactory;
@@ -71,7 +71,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $this->pimConfiguratorFactory = $pimConfiguratorFactory;
         $this->fileFetcherFactory = $fileFetcherFactory;
         $this->destinationPimSystemRequirementsInstallerFactory = $destinationPimSystemRequirementsInstallerFactory;
-        $this->commandLauncherFactory = $localCommandLauncherFactory;
+        $this->localCommandLauncherFactory = $localCommandLauncherFactory;
         $this->destinationPimConfigurationCheckerFactory = $destinationPimConfigurationCheckerFactory;
         $this->destinationPimEditionCheckerFactory = $destinationPimEditionCheckerFactory;
         $this->destinationPimSystemRequirementsCheckerFactory = $destinationPimSystemRequirementsCheckerFactory;
@@ -188,7 +188,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         try {
             $this
                 ->destinationPimSystemRequirementsInstallerFactory
-                ->createDockerPimSystemRequirementsInstaller($this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm'))
+                ->createDockerPimSystemRequirementsInstaller($this->localCommandLauncherFactory->createDockerComposeCommandLauncher('fpm'))
                 ->install($stateMachine->getDestinationPim())
             ;
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {
@@ -212,7 +212,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         try {
             $this
                 ->destinationPimSystemRequirementsInstallerFactory
-                ->createBasicPimSystemRequirementsInstaller($this->commandLauncherFactory->createBasicDestinationPimCommandLauncher())
+                ->createBasicPimSystemRequirementsInstaller($this->localCommandLauncherFactory->createBasicDestinationPimCommandLauncher())
                 ->install($stateMachine->getDestinationPim())
             ;
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {
@@ -225,7 +225,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $commandLauncher = $stateMachine->useDocker() ? $this->commandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->commandLauncherFactory->createBasicDestinationPimCommandLauncher();
+        $commandLauncher = $stateMachine->useDocker() ? $this->localCommandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->localCommandLauncherFactory->createBasicDestinationPimCommandLauncher();
         $editionChecker = $this->destinationPimEditionCheckerFactory->createDestinationPimEditionChecker();
         $systemRequirementschecker = $this->destinationPimSystemRequirementsCheckerFactory->createCliDestinationPimSystemRequirementsChecker($commandLauncher);
 

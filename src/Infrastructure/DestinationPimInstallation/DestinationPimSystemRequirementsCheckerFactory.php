@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 
 /**
  * Factory for destination PIM system requirements checker.
@@ -14,7 +14,7 @@ use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
  */
 class DestinationPimSystemRequirementsCheckerFactory
 {
-    public function createCliDestinationPimSystemRequirementsChecker(DestinationPimCommandLauncher $commandLauncher): CliDestinationPimSystemRequirementsChecker
+    public function createCliDestinationPimSystemRequirementsChecker(CommandLauncher $commandLauncher): CliDestinationPimSystemRequirementsChecker
     {
         return new CliDestinationPimSystemRequirementsChecker($commandLauncher);
     }

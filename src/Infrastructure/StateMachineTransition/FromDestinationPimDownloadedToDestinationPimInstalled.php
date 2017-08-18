@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimInstalla
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
-use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncherFactory;
+use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimConfigurationCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimParametersYmlGeneratorFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsInstallerFactory;
@@ -42,7 +42,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
     /** @var DestinationPimSystemRequirementsInstallerFactory */
     private $destinationPimSystemRequirementsInstallerFactory;
 
-    /** @var DestinationPimCommandLauncherFactory */
+    /** @var LocalCommandLauncherFactory */
     private $commandLauncherFactory;
 
     /** @var DestinationPimConfigurationCheckerFactory */
@@ -60,7 +60,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
         DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        DestinationPimCommandLauncherFactory $commandLauncherFactory,
+        LocalCommandLauncherFactory $commandLauncherFactory,
         DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
         DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
         DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory
@@ -89,7 +89,6 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
             'workflow.migration_tool.transition.docker_destination_pim_system_requirements_installation' => 'onDockerDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.guard.local_destination_pim_system_requirements_installation' => 'guardOnLocalDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.transition.local_destination_pim_system_requirements_installation' => 'onLocalDestinationPimSystemRequirementsInstallation',
-            'workflow.migration_tool.guard.destination_pim_check_requirements' => 'guardOnDestinationPimCheckRequirements',
             'workflow.migration_tool.transition.destination_pim_check_requirements' => 'onDestinationPimCheckRequirements',
         ];
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
+use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
@@ -45,7 +46,7 @@ final class ContainerBuilder
         self::loadWorkflowConfiguration($container, $worklowsDefinition['workflows']);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/config'));
-        $loader->load('workflow_events.yml');
+        $loader->load('services.yml');
 
         self::loadTranslatorConfiguration($container);
 
@@ -53,7 +54,20 @@ final class ContainerBuilder
 
         $container->compile();
 
+        self::loadStructureMigrators($container);
+
         return $container;
+    }
+
+    private static function loadStructureMigrators(SymfonyContainerBuilder $containerBuilder)
+    {
+        $definition = $containerBuilder->findDefinition(StructureMigrator::class);
+
+        $tablesStructureMigrators = $containerBuilder->findTaggedServiceIds('migration_tool.structure_migrator');
+
+        foreach ($tablesStructureMigrators as $id => $tags) {
+            $definition->addMethodCall('addStructureMigrator', array(new Reference($id)));
+        }
     }
 
     private static function loadTranslatorConfiguration(SymfonyContainerBuilder $containerBuilder)

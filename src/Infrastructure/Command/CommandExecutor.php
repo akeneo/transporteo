@@ -15,5 +15,5 @@ interface CommandExecutor
     /**
      * @throws UnsuccessfulCommandException
      */
-    public function execute(string $command, ?string $path): void;
+    public function execute(string $command, ?string $path, bool $activateTty): UnixCommandResult;
 }

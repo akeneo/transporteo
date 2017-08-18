@@ -10,7 +10,7 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
- * Migrate the table `akeneo_file_storage_file_info`.
+ * Migrate the structure databases `attribute`, `channel`...
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

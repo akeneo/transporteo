@@ -26,9 +26,17 @@ class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSy
 
     public function install(DestinationPim $destinationPim): void
     {
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineDropDatabaseCommand(), $destinationPim->getPath());
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateDatabaseCommand(), $destinationPim->getPath());
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateSchemaCommand(), $destinationPim->getPath());
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineUpdateSchemaCommand(), $destinationPim->getPath());
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineDropDatabaseCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineCreateDatabaseCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineCreateSchemaCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineUpdateSchemaCommand(), $destinationPim->getPath(), true
+        );
     }
 }

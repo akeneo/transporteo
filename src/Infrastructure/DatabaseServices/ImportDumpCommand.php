@@ -30,7 +30,9 @@ class ImportDumpCommand implements Command
     public function getCommand(): string
     {
         return sprintf(
-            'mysql -u %s -p%s %s < %s',
+            'mysql --host=%s --port=%s -u %s -p%s %s < %s',
+            $this->pim->getMysqlHost(),
+            strval($this->pim->getMysqlPort()),
             $this->pim->getDatabaseUser(),
             $this->pim->getDatabasePassword(),
             $this->pim->getDatabaseName(),

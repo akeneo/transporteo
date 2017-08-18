@@ -18,13 +18,15 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
 {
     public function execute(string $sql, AbstractPim $pim): void
     {
+        $dsn = sprintf(
+            'mysql: host=%s;dbname=%s;port=%s',
+            $pim->getMysqlHost(),
+            $pim->getDatabaseName(),
+            strval($pim->getMysqlPort())
+        );
+
         $pdo = new \PDO(
-            sprintf(
-                'mysql:dbname=%s;host=%s;port=%s',
-                $pim->getDatabaseName(),
-                $pim->getMysqlHost(),
-                $pim->getMysqlPort()
-            ),
+            $dsn,
             $pim->getDatabaseUser(),
             $pim->getDatabasePassword()
         );
@@ -35,11 +37,12 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
             $pdo->exec($sql);
         } catch (\PDOException $exception) {
             throw new QueryException(
-                sprintf(
-                    'Query "%s" occured an error : %s',
-                    $sql, $exception->getMessage(),
-                    $exception->getCode(), $exception)
+                sprintf('Query "%s" occured an error : %s', $sql, $exception->getMessage()),
+                $exception->getCode(),
+                $exception
             );
         }
+
+        $pdo = null;
     }
 }

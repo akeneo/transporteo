@@ -15,5 +15,5 @@ interface CommandLauncher
     /**
      * @throws UnsuccessfulCommandException
      */
-    public function runCommand(Command $command, ?string $path): void;
+    public function runCommand(Command $command, ?string $path, bool $activateTty): UnixCommandResult;
 }

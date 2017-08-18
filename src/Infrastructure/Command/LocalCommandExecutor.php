@@ -15,14 +15,17 @@ use Symfony\Component\Process\Process;
  */
 class LocalCommandExecutor implements CommandExecutor
 {
-    public function execute(string $command, ?string $path): void
+    public function execute(string $command, ?string $path, bool $activateTty): UnixCommandResult
     {
         $process = new Process($command, $path);
 
-        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-            $process->setTty(true);
+        if ($activateTty) {
+            if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+                $process->setTty(true);
+            }
         }
 
+        $process->enableOutput();
         $process->setTimeout(2 * 3600);
 
         try {
@@ -33,8 +36,10 @@ class LocalCommandExecutor implements CommandExecutor
                 130, // Interrupt
             ];
             if (!in_array($e->getProcess()->getExitCode(), $authorizedExitCodes)) {
-                throw new UnsuccessfulCommandException($e->getMessage(), $e->getCode(), $e);
+                throw new UnsuccessfulCommandException($process->getErrorOutput(), $e->getCode(), $e);
             }
         }
+
+        return new UnixCommandResult($process->getExitCode(), $process->getOutput());
     }
 }

@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 
 /**
- * Migrate a table without doing nothing.
+ * Migrate a table without extra process.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

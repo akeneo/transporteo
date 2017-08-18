@@ -10,10 +10,13 @@ namespace Akeneo\PimMigration\Infrastructure\Command;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SshCommandExector implements CommandExecutor
+class SshCommandExecutor implements CommandExecutor
 {
-    public function execute(string $command, ?string $path): void
+    /**
+     * @throws \Exception
+     */
+    public function execute(string $command, ?string $path, bool $activateTty): UnixCommandResult
     {
-        // TODO: Implement execute() method.
+        throw new \Exception('Not Implemented');
     }
 }

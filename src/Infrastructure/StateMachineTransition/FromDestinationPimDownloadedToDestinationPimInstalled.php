@@ -60,7 +60,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
         DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        LocalCommandLauncherFactory $commandLauncherFactory,
+        LocalCommandLauncherFactory $localCommandLauncherFactory,
         DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
         DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
         DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory
@@ -71,7 +71,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStat
         $this->pimConfiguratorFactory = $pimConfiguratorFactory;
         $this->fileFetcherFactory = $fileFetcherFactory;
         $this->destinationPimSystemRequirementsInstallerFactory = $destinationPimSystemRequirementsInstallerFactory;
-        $this->commandLauncherFactory = $commandLauncherFactory;
+        $this->commandLauncherFactory = $localCommandLauncherFactory;
         $this->destinationPimConfigurationCheckerFactory = $destinationPimConfigurationCheckerFactory;
         $this->destinationPimEditionCheckerFactory = $destinationPimEditionCheckerFactory;
         $this->destinationPimSystemRequirementsCheckerFactory = $destinationPimSystemRequirementsCheckerFactory;

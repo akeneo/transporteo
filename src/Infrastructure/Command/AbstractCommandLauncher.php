@@ -23,9 +23,9 @@ abstract class AbstractCommandLauncher implements CommandLauncher
     /**
      * {@inheritdoc}
      */
-    public function runCommand(Command $command, ?string $path): void
+    public function runCommand(Command $command, ?string $path, bool $activateTty): UnixCommandResult
     {
-        $this->commandExecutor->execute($this->getStringCommand($command), $path);
+        return $this->commandExecutor->execute($this->getStringCommand($command), $path, $activateTty);
     }
 
     abstract protected function getStringCommand(Command $command): string;

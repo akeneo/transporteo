@@ -15,7 +15,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class FromDestinationPimRequirementsCheckedToDestinationPimFilesMigrated extends AbstractStateMachineSubscriber implements StateMachineSubscriber
+class FromDestinationPimRequirementsCheckedToDestinationPimFileDatabaseMigrated extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
     /** @var AkeneoFileStorageFileInfoMigrator */
     private $akeneoFileStorageFileInfoMigrator;
@@ -34,11 +34,11 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFilesMigrated extends
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.destination_pim_files_migration' => 'onDestinationPimFilesMigration',
+            'workflow.migration_tool.transition.destination_pim_file_database_migration' => 'onDestinationPimFileDatabaseMigration',
         ];
     }
 
-    public function onDestinationPimFilesMigration(Event $event)
+    public function onDestinationPimFileDatabaseMigration(Event $event)
     {
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();

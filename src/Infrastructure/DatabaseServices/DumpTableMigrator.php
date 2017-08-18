@@ -51,10 +51,10 @@ class DumpTableMigrator implements TableMigrator
         $dumpTableCommand = new DumpTableCommand($sourcePim, $tableName, $dumpPath);
 
         try {
-            $basicCommandLauncher->runCommand($dumpTableCommand, null);
+            $basicCommandLauncher->runCommand($dumpTableCommand, null, false);
         } catch (UnsuccessfulCommandException $exception) {
             throw new DataMigrationException(
-                'Dump Table error: '.$exception->getMessage(),
+                sprintf('Dump Table error %s: %s', $tableName, $exception->getMessage()),
                 $exception->getCode(),
                 $exception
             );
@@ -63,10 +63,10 @@ class DumpTableMigrator implements TableMigrator
         $importCommand = new ImportDumpCommand($destinationPim, $dumpPath);
 
         try {
-            $basicCommandLauncher->runCommand($importCommand, null);
+            $basicCommandLauncher->runCommand($importCommand, null, false);
         } catch (UnsuccessfulCommandException $exception) {
             throw new DataMigrationException(
-                'Dump Table error: '.$exception->getMessage(),
+                sprintf('Import Dump of table %s error: %s', $tableName, $exception->getMessage()),
                 $exception->getCode(),
                 $exception
             );

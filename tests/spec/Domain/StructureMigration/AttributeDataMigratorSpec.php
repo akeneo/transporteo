@@ -58,7 +58,7 @@ class AttributeDataMigratorSpec extends ObjectBehavior
             ->execute('UPDATE pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"', $destinationPim)
             ->willThrow(QueryException::class);
 
-        $this->shouldThrow(new DataMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
+        $this->shouldThrow(new StructureMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_throws_an_exception_due_to_database_query_executor_varchar_to_text(
@@ -79,7 +79,7 @@ class AttributeDataMigratorSpec extends ObjectBehavior
             ->execute('UPDATE pim_catalog_attribute SET backend_type = "text" WHERE backend_type = "varchar"', $destinationPim)
             ->willThrow(QueryException::class);
 
-        $this->shouldThrow(new DataMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
+        $this->shouldThrow(new StructureMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_throws_nothing(

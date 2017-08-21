@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 
 /**
  * Install Pim System Requirements on local.
@@ -16,19 +16,27 @@ use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
  */
 class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
-    /** @var DestinationPimCommandLauncher */
+    /** @var CommandLauncher */
     private $destinationPimCommandLauncher;
 
-    public function __construct(DestinationPimCommandLauncher $destinationPimCommandLauncher)
+    public function __construct(CommandLauncher $destinationPimCommandLauncher)
     {
         $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
     }
 
     public function install(DestinationPim $destinationPim): void
     {
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineDropDatabaseCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateDatabaseCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateSchemaCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineUpdateSchemaCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineDropDatabaseCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineCreateDatabaseCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineCreateSchemaCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineUpdateSchemaCommand(), $destinationPim->getPath(), true
+        );
     }
 }

@@ -54,7 +54,7 @@ phpspec-run:
 
 .PHONY: phpunit
 phpunit:
-	./vendor/bin/phpunit ${ARGS}
+	./vendor/bin/phpunit ${ARGS} --exclude-group 'docker-compose'
 
 .PHONY: phpspec
 phpspec:

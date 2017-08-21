@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsChecker;
-use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 
 /**
  * Check system requirements through CLI.
@@ -16,16 +16,16 @@ use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
  */
 class CliDestinationPimSystemRequirementsChecker implements DestinationPimSystemRequirementsChecker
 {
-    /** @var DestinationPimCommandLauncher */
+    /** @var CommandLauncher */
     private $destinationPimCommandLauncher;
 
-    public function __construct(DestinationPimCommandLauncher $destinationPimCommandLauncher)
+    public function __construct(CommandLauncher $destinationPimCommandLauncher)
     {
         $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
     }
 
     public function check(DestinationPim $destinationPim): void
     {
-        $this->destinationPimCommandLauncher->runCommand(new CheckRequirementsCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(new CheckRequirementsCommand(), $destinationPim->getPath(), true);
     }
 }

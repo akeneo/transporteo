@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimConfigurator;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncherFactory;
+use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimConfigurationCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimEditionCheckerFactory;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimParametersYmlGeneratorFactory;
@@ -40,7 +40,7 @@ class FromDestinationPimDownloadedToDestinationPimInstalledSpec extends ObjectBe
         PimConfiguratorFactory $pimConfiguratorFactory,
         FileFetcherFactory $fileFetcherFactory,
         DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        DestinationPimCommandLauncherFactory $commandLauncherFactory,
+        LocalCommandLauncherFactory $commandLauncherFactory,
         DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
         DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
         DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory,

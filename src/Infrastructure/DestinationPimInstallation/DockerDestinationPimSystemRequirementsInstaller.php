@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\DestinationPimCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Ds\Set;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -20,10 +20,10 @@ use Symfony\Component\Process\Process;
  */
 class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
-    /** @var DestinationPimCommandLauncher */
+    /** @var CommandLauncher */
     private $destinationPimCommandLauncher;
 
-    public function __construct(DestinationPimCommandLauncher $destinationPimCommandLauncher)
+    public function __construct(CommandLauncher $destinationPimCommandLauncher)
     {
         $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
     }
@@ -56,12 +56,24 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
             );
         }
 
-        $this->destinationPimCommandLauncher->runCommand(new ComposerUpdateCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new PrepareRequiredDirectoriesCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineDropDatabaseCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateDatabaseCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineCreateSchemaCommand(), $destinationPim);
-        $this->destinationPimCommandLauncher->runCommand(new DoctrineUpdateSchemaCommand(), $destinationPim);
+        $this->destinationPimCommandLauncher->runCommand(
+            new ComposerUpdateCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new PrepareRequiredDirectoriesCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineDropDatabaseCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineCreateDatabaseCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineCreateSchemaCommand(), $destinationPim->getPath(), true
+        );
+        $this->destinationPimCommandLauncher->runCommand(
+            new DoctrineUpdateSchemaCommand(), $destinationPim->getPath(), true
+        );
     }
 
     protected function dockerComposeInfrastructureIsUp(string $destinationPimPath): bool

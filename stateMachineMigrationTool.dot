@@ -16,6 +16,8 @@ digraph workflow {
   place_destination_pim_detected [label="destination_pim_detected", shape=circle];
   place_destination_pim_system_requirements_installed [label="destination_pim_system_requirements_installed", shape=circle];
   place_destination_pim_requirements_checked [label="destination_pim_requirements_checked", shape=circle];
+  place_destination_pim_file_database_migrated [label="destination_pim_file_database_migrated", shape=circle];
+  place_destination_pim_structure_migrated [label="destination_pim_structure_migrated", shape=circle];
   transition_ask_source_pim_location [label="ask_source_pim_location", shape=box, shape="box", regular="1"];
   transition_local_source_pim_configuration [label="local_source_pim_configuration", shape=box, shape="box", regular="1"];
   transition_distant_source_pim_configuration [label="distant_source_pim_configuration", shape=box, shape="box", regular="1"];
@@ -32,6 +34,8 @@ digraph workflow {
   transition_docker_destination_pim_system_requirements_installation [label="docker_destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
   transition_local_destination_pim_system_requirements_installation [label="local_destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
   transition_destination_pim_check_requirements [label="destination_pim_check_requirements", shape=box, shape="box", regular="1"];
+  transition_destination_pim_file_database_migration [label="destination_pim_file_database_migration", shape=box, shape="box", regular="1"];
+  transition_destination_pim_structure_migration [label="destination_pim_structure_migration", shape=box, shape="box", regular="1"];
   place_ready -> transition_ask_source_pim_location [style="solid"];
   transition_ask_source_pim_location -> place_source_pim_location_guessed [style="solid"];
   place_source_pim_location_guessed -> transition_local_source_pim_configuration [style="solid"];
@@ -64,4 +68,8 @@ digraph workflow {
   transition_local_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
   place_destination_pim_system_requirements_installed -> transition_destination_pim_check_requirements [style="solid"];
   transition_destination_pim_check_requirements -> place_destination_pim_requirements_checked [style="solid"];
+  place_destination_pim_requirements_checked -> transition_destination_pim_file_database_migration [style="solid"];
+  transition_destination_pim_file_database_migration -> place_destination_pim_file_database_migrated [style="solid"];
+  place_destination_pim_file_database_migrated -> transition_destination_pim_structure_migration [style="solid"];
+  transition_destination_pim_structure_migration -> place_destination_pim_structure_migrated [style="solid"];
 }

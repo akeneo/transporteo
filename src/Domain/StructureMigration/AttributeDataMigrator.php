@@ -34,16 +34,18 @@ class AttributeDataMigrator implements DataMigrator
     {
         $tableName = 'pim_catalog_attribute';
 
+        $sqlUpdate = 'UPDATE %s.%s SET backend_type = "%s" WHERE backend_type = "%s"';
+
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
             $this->databaseQueryExecutor->execute(
-                sprintf('UPDATE %s SET backend_type = "textarea" WHERE backend_type = "text"', $tableName),
+                sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text'),
                 $destinationPim
             );
 
             $this->databaseQueryExecutor->execute(
-                sprintf('UPDATE %s SET backend_type = "text" WHERE backend_type = "varchar"', $tableName),
+                sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar'),
                 $destinationPim
             );
         } catch (\Exception $exception) {

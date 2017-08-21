@@ -108,4 +108,26 @@ services:
     class: 'Akeneo\PimMigration\Domain\StructureMigration\AttributeDataMigrator'
     tags: ['migration_tool.structure_migrator']
 
-#  Akeneo\PimMigration\Domain\StructureMigration\AttributeLocal
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeLocal:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_locale'
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeTranslation:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_translation'
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeOption:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_option'
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeOptionValue:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_option_value'
+    tags: ['migration_tool.structure_migrator']

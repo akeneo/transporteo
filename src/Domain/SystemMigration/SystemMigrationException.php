@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\StructureMigration;
+namespace Akeneo\PimMigration\Domain\SystemMigration;
 
 use Akeneo\PimMigration\Domain\MigrationStepException;
 use Throwable;

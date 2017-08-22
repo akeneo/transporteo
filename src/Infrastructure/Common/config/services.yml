@@ -238,3 +238,21 @@ services:
       $supportedTableName: 'pim_api_refresh_token'
     tags: ['migration_tool.system_migrator']
 
+  Akeneo\PimMigration\SystemMigration\PimSession:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_session'
+    tags: ['migration_tool.system_migrator']
+
+  Akeneo\PimMigration\SystemMigration\PimDatagridView:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_datagrid_view'
+    tags: ['migration_tool.system_migrator']
+
+  Akeneo\PimMigration\SystemMigration\PimUserDefaultDatagridView:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_user_default_datagrid_view'
+    tags: ['migration_tool.system_migrator']
+

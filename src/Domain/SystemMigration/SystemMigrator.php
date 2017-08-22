@@ -8,7 +8,6 @@ use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
-use Akeneo\PimMigration\Domain\StructureMigration\SystemMigrationException;
 
 /**
  * System migration `user`, `group`, `role`.

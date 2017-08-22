@@ -256,3 +256,30 @@ services:
       $supportedTableName: 'pim_user_default_datagrid_view'
     tags: ['migration_tool.system_migrator']
 
+### JOB MIGRATOR
+
+  Akeneo\PimMigration\Domain\JobMigration\JobMigrator: ~
+
+  Akeneo\PimMigration\JobMigration\AkeneoBatchJobInstance:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'akeneo_batch_job_instance'
+    tags: ['migration_tool.job_migrator']
+
+  Akeneo\PimMigration\JobMigration\AkeneoBatchJobExecution:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'akeneo_batch_job_execution'
+    tags: ['migration_tool.job_migrator']
+
+  Akeneo\PimMigration\JobMigration\AkeneoBatchStepExecution:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'akeneo_batch_step_execution'
+    tags: ['migration_tool.job_migrator']
+
+  Akeneo\PimMigration\JobMigration\AkeneoBatchWarning:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'akeneo_batch_warning'
+    tags: ['migration_tool.job_migrator']

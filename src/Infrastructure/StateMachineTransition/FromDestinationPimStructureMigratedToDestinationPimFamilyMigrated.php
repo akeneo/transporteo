@@ -43,6 +43,8 @@ class FromDestinationPimStructureMigratedToDestinationPimFamilyMigrated extends 
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_structure_migrated_to_destination_pim_family_migrated.message'));
+
         $this->familyDataMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }
 }

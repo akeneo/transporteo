@@ -43,6 +43,8 @@ class FromDestinationPimSystemMigratedToDestinationPimJobMigrated extends Abstra
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_system_migrated_to_destination_pim_job_migrated.message'));
+
         $this->jobMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
 use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator;
+use Akeneo\PimMigration\Domain\SystemMigration\SystemMigrator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
@@ -54,19 +55,24 @@ final class ContainerBuilder
 
         $container->compile();
 
-        self::loadStructureMigrators($container);
+        self::loadRegistry($container, StructureMigrator::class, 'migration_tool.structure_migrator', 'addStructureMigrator');
+        self::loadRegistry($container, SystemMigrator::class, 'migration_tool.system_migrator', 'addSystemMigrator');
 
         return $container;
     }
 
-    private static function loadStructureMigrators(SymfonyContainerBuilder $containerBuilder)
-    {
-        $definition = $containerBuilder->findDefinition(StructureMigrator::class);
+    private static function loadRegistry(
+        SymfonyContainerBuilder $containerBuilder,
+        string $registyClass,
+        string $tag,
+        string $addMethod
+    ) {
+        $definition = $containerBuilder->findDefinition($registyClass);
 
-        $tablesStructureMigrators = $containerBuilder->findTaggedServiceIds('migration_tool.structure_migrator');
+        $tablesStructureMigrators = $containerBuilder->findTaggedServiceIds($tag);
 
         foreach ($tablesStructureMigrators as $id => $tags) {
-            $definition->addMethodCall('addStructureMigrator', array(new Reference($id)));
+            $definition->addMethodCall($addMethod, array(new Reference($id)));
         }
     }
 

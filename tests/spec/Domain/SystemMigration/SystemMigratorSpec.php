@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\PimMigration\Domain\StructureMigration;
+namespace spec\Akeneo\PimMigration\Domain\SystemMigration;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
-use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrationException;
-use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator;
+use Akeneo\PimMigration\Domain\SystemMigration\SystemMigrationException;
+use Akeneo\PimMigration\Domain\SystemMigration\SystemMigrator;
 use PhpSpec\ObjectBehavior;
 
 /**
- * Structure Migrator Spec.
+ * System Migrator Spec.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class StructureMigratorSpec extends ObjectBehavior
+class SystemMigratorSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->shouldHaveType(StructureMigrator::class);
+        $this->shouldHaveType(SystemMigrator::class);
     }
 
     public function it_calls_several_migrator(
@@ -31,8 +31,8 @@ class StructureMigratorSpec extends ObjectBehavior
         SourcePim $sourcePim,
         DestinationPim $destinationPim
     ) {
-        $this->addStructureMigrator($migratorOne);
-        $this->addStructureMigrator($migratorTwo);
+        $this->addSystemMigrator($migratorOne);
+        $this->addSystemMigrator($migratorTwo);
 
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
@@ -46,12 +46,12 @@ class StructureMigratorSpec extends ObjectBehavior
         SourcePim $sourcePim,
         DestinationPim $destinationPim
     ) {
-        $this->addStructureMigrator($migratorOne);
-        $this->addStructureMigrator($migratorTwo);
+        $this->addSystemMigrator($migratorOne);
+        $this->addSystemMigrator($migratorTwo);
 
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->willThrow(new DataMigrationException());
 
-        $this->shouldThrow(new StructureMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
+        $this->shouldThrow(new SystemMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 }

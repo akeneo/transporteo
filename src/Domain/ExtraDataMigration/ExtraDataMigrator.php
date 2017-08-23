@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\ExtraDataMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Command\CommandLauncher;
 
 /**
  * Migrator for extra data.
@@ -22,13 +22,13 @@ class ExtraDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var DatabaseQueryExecutor */
-    private $databaseQueryExecutor;
+    /** @var CommandLauncher */
+    private $commandLauncher;
 
-    public function __construct(TableMigrator $tableMigrator, DatabaseQueryExecutor $databaseQueryExecutor)
+    public function __construct(TableMigrator $tableMigrator, CommandLauncher $commandLauncher)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->databaseQueryExecutor = $databaseQueryExecutor;
+        $this->commandLauncher = $commandLauncher;
     }
 
     /**
@@ -37,13 +37,13 @@ class ExtraDataMigrator implements DataMigrator
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
         try {
-            $tablesInSourcePim = $this
-                ->databaseQueryExecutor
-                ->query(
-                    'SHOW TABLES',
-                    $sourcePim,
-                    DatabaseQueryExecutor::COLUMN_FETCH
-                );
+            $showTablesCommand = new ShowTablesCommand($sourcePim);
+
+            $result = $this->commandLauncher->runCommand($showTablesCommand, null, false);
+
+            $tablesInSourcePim = array_filter(explode(PHP_EOL, $result->getOutput()), function ($element) {
+                return !empty($element);
+            });
 
             $extraTables = array_diff($tablesInSourcePim, $this->getCeStandardTable());
 

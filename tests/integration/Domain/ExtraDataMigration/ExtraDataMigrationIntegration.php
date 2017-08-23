@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace integration\Akeneo\PimMigration\Domain\ExtraDataMigration;
 
 use Akeneo\PimMigration\Domain\ExtraDataMigration\ExtraDataMigrator;
+use Akeneo\PimMigration\Infrastructure\Command\BasicCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor;
@@ -19,7 +21,10 @@ use integration\Akeneo\PimMigration\DatabaseSetupedTestCase;
 class ExtraDataMigrationIntegration extends DatabaseSetupedTestCase
 {
     public function testItCopyUnknownTable() {
-        $extraDataMigrator = new ExtraDataMigrator(new DumpTableMigrator(new LocalCommandLauncherFactory()), new MySqlQueryExecutor());
+        $extraDataMigrator = new ExtraDataMigrator(
+            new DumpTableMigrator(new LocalCommandLauncherFactory()),
+            new BasicCommandLauncher(new LocalCommandExecutor())
+        );
 
         $this->assertNotContains('acme_reference_data_color', $this->getDestinationPimTables());
         $extraDataMigrator->migrate($this->sourcePim, $this->destinationPim);

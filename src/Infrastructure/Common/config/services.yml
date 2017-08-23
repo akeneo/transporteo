@@ -140,6 +140,12 @@ services:
       $supportedTableName: 'pim_catalog_attribute_option_value'
     tags: ['migration_tool.structure_migrator']
 
+  Akeneo\PimMigration\Domain\StructureMigration\AttributeRequirement:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pim_catalog_attribute_requirement'
+    tags: ['migration_tool.structure_migrator']
+
 ## SYSTEM MIGRATORS
 
   Akeneo\PimMigration\Domain\SystemMigration\SystemMigrator: ~

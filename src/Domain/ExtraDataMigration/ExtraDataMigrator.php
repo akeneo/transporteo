@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\ExtraDataMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
@@ -37,9 +36,7 @@ class ExtraDataMigrator implements DataMigrator
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
         try {
-            $showTablesCommand = new ShowTablesCommand($sourcePim);
-
-            $result = $this->commandLauncher->runCommand($showTablesCommand, null, false);
+            $result = $this->commandLauncher->runCommand(new ShowTablesCommand($sourcePim), null, false);
 
             $tablesInSourcePim = array_filter(explode(PHP_EOL, $result->getOutput()), function ($element) {
                 return !empty($element);
@@ -50,7 +47,7 @@ class ExtraDataMigrator implements DataMigrator
             foreach ($extraTables as $extraTable) {
                 $this->tableMigrator->migrate($sourcePim, $destinationPim, $extraTable);
             }
-        } catch (DataMigrationException $exception) {
+        } catch (\Exception $exception) {
             throw new ExtraDataMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }

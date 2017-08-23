@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\Command;
+namespace Akeneo\PimMigration\Domain\Command;
+
+use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
 
 /**
  * Define public contract for a command launcher.

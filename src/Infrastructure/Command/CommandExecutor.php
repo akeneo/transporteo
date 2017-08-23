@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
+use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+
 /**
  * Execute a Unix Command somewhere.
  *

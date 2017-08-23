@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\Command;
+namespace Akeneo\PimMigration\Domain\Command;
 
 /**
  * Define a unix command launchable via a CommandLauncher.

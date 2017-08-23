@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
+use Akeneo\PimMigration\Domain\Command\CommandLauncher;
 
 /**
  * Factory for destination PIM system requirements checker.

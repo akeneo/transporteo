@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
+use Akeneo\PimMigration\Domain\Command\Command;
+use Akeneo\PimMigration\Domain\Command\CommandLauncher;
+use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+
 /**
  * Generic command launcher.
  *

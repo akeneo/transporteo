@@ -29,8 +29,6 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
                 $exception
             );
         }
-
-        $pdo = null;
     }
 
     public function query(string $sql, AbstractPim $pim, int $fetchMode = self::DATA_FETCH): array
@@ -39,11 +37,7 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
 
         $fetchMode = $fetchMode === self::DATA_FETCH ? \PDO::FETCH_ASSOC : \PDO::FETCH_COLUMN;
 
-        $results = $pdo->query($sql)->fetchAll($fetchMode);
-
-        $pdo = null;
-
-        return $results;
+        return $pdo->query($sql)->fetchAll($fetchMode);
     }
 
     protected function getConnection(AbstractPim $pim): \PDO

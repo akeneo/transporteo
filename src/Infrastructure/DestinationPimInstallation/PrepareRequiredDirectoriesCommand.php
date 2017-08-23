@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Infrastructure\Command\Command;
+use Akeneo\PimMigration\Domain\Command\Command;
 
 /**
  * Prepare required directories command.

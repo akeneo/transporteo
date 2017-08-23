@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
+use Akeneo\PimMigration\Domain\Command\CommandLauncher;
 
 /**
  * Install Pim System Requirements on local.

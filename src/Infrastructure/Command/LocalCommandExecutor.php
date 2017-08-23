@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
+use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

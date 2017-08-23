@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
+use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 
 /**
  * Copy a table as it is using dump from the source PIM to the destination PIM.

@@ -14,7 +14,7 @@ use Akeneo\PimMigration\Domain\ExtraDataMigration\ExtraDataMigrationException;
 use Akeneo\PimMigration\Domain\ExtraDataMigration\ExtraDataMigrator;
 use Akeneo\PimMigration\Domain\ExtraDataMigration\ShowTablesCommand;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
-use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
+use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 use PhpSpec\ObjectBehavior;
 
 /**

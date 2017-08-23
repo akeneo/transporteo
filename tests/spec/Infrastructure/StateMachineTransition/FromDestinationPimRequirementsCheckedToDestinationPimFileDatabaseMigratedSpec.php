@@ -6,6 +6,7 @@ namespace spec\Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\FilesMigration\AkeneoFileStorageFileInfoMigrator;
+use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
@@ -22,9 +23,11 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFileDatabaseMigratedS
 {
     public function let(
         Translator $translator,
-        AkeneoFileStorageFileInfoMigrator $migrator
+        AkeneoFileStorageFileInfoMigrator $migrator,
+        PrinterAndAsker $printerAndAsker
     ) {
         $this->beConstructedWith($translator, $migrator);
+        $this->setPrinterAndAsker($printerAndAsker);
     }
 
     public function it_migrates_file(
@@ -32,11 +35,17 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFileDatabaseMigratedS
         MigrationToolStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        $migrator
+        $migrator,
+        $translator,
+        $printerAndAsker
     ) {
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getSourcePim()->willReturn($sourcePim);
         $stateMachine->getDestinationPim()->willReturn($destinationPim);
+
+        $transResult = "Migrating files data...";
+        $translator->trans('from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated.message')->willReturn($transResult);
+        $printerAndAsker->printMessage($transResult)->shouldBeCalled();
 
         $migrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 

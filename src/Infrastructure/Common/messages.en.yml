@@ -52,3 +52,13 @@ from_all_accesses_granted_to_destination_pim_downloaded:
     local_pim_path_error: "Your local destination PIM path should be an absolute one."
   on_downloading:
     error: "Impossible to download your PIM: %exception%"
+from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated:
+  message: "Migrating files data..."
+from_destination_pim_files_migrated_to_destination_pim_structure_migrated:
+  message: "Migrating structure data..."
+from_destination_pim_structure_migrated_to_destination_pim_family_migrated:
+  message: "Migrating families data..."
+from_destination_pim_family_migrated_to_destination_pim_system_migrated:
+  message: "Migrating system data..."
+from_destination_pim_system_migrated_to_destination_pim_job_migrated:
+  message: "Migrating jobs data..."

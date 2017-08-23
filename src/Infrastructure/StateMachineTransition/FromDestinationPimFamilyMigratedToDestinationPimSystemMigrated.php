@@ -43,6 +43,8 @@ class FromDestinationPimFamilyMigratedToDestinationPimSystemMigrated extends Abs
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_family_migrated_to_destination_pim_system_migrated.message'));
+
         $this->systemMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }
 }

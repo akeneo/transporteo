@@ -43,6 +43,8 @@ class FromDestinationPimRequirementsCheckedToDestinationPimFileDatabaseMigrated 
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated.message'));
+
         $this->akeneoFileStorageFileInfoMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }
 }

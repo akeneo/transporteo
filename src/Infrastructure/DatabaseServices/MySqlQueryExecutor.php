@@ -18,6 +18,36 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
 {
     public function execute(string $sql, AbstractPim $pim): void
     {
+        $pdo = $this->getConnection($pim);
+
+        try {
+            $pdo->exec($sql);
+        } catch (\PDOException $exception) {
+            throw new QueryException(
+                sprintf('Query "%s" occured an error : %s', $sql, $exception->getMessage()),
+                $exception->getCode(),
+                $exception
+            );
+        }
+
+        $pdo = null;
+    }
+
+    public function query(string $sql, AbstractPim $pim, int $fetchMode = self::DATA_FETCH): array
+    {
+        $pdo = $this->getConnection($pim);
+
+        $fetchMode = $fetchMode === self::DATA_FETCH ? \PDO::FETCH_ASSOC : \PDO::FETCH_COLUMN;
+
+        $results = $pdo->query($sql)->fetchAll($fetchMode);
+
+        $pdo = null;
+
+        return $results;
+    }
+
+    protected function getConnection(AbstractPim $pim): \PDO
+    {
         $dsn = sprintf(
             'mysql: host=%s;dbname=%s;port=%s',
             $pim->getMysqlHost(),
@@ -33,16 +63,6 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
 
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        try {
-            $pdo->exec($sql);
-        } catch (\PDOException $exception) {
-            throw new QueryException(
-                sprintf('Query "%s" occured an error : %s', $sql, $exception->getMessage()),
-                $exception->getCode(),
-                $exception
-            );
-        }
-
-        $pdo = null;
+        return $pdo;
     }
 }

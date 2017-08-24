@@ -1,0 +1,15 @@
+Akeneo\Bundle\MigrationBundle\Entity\THE_CLASS_NAME:
+    repositoryClass: Pim\Bundle\ReferenceDataBundle\Doctrine\ORM\Repository\ReferenceDataRepository
+    type: entity
+    table: the_table_name
+    changeTrackingPolicy: DEFERRED_EXPLICIT
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        code:
+            type: string
+            length: 255
+            unique: true

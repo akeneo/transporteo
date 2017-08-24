@@ -36,7 +36,8 @@ class SourcePim extends AbstractPim
         ?string $mongoDatabase,
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
-        bool $hasIvb
+        bool $hasIvb,
+        string $path
     ) {
         parent::__construct(
             $mysqlHost,
@@ -45,7 +46,8 @@ class SourcePim extends AbstractPim
             $databaseUser,
             $databasePassword,
             $isEnterpriseEdition,
-            $enterpriseRepository
+            $enterpriseRepository,
+            $path
         );
 
         $this->mongoDbInformation = $mongoDbInformation;
@@ -116,7 +118,12 @@ class SourcePim extends AbstractPim
             $mongoDbDatabase,
             $isEnterpriseEdition,
             $enterpriseRepository,
-            $hasIvb
+            $hasIvb,
+            realpath(str_replace(
+                DIRECTORY_SEPARATOR.'composer.json',
+                '',
+                $sourcePimConfiguration->getComposerJson()->getPath()
+            ))
         );
     }
 

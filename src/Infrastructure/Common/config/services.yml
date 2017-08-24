@@ -16,6 +16,22 @@ services:
   Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor: ~
   Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor'
 
+### COMMAND
+  Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor: ~
+
+  Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher:
+    class: 'Akeneo\PimMigration\Infrastructure\Command\BasicCommandLauncher'
+    arguments:
+      $commandExecutor: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor'
+
+### DATA MIGRATION HELPERS
+
+  Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalCommandTableNamesFetcher:
+    class: 'Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandTableNamesFetcher'
+    arguments:
+      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+
+
 ### STRUCTURE MIGRATORS
 
   Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator: ~

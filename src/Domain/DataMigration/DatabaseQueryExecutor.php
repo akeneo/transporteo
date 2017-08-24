@@ -14,8 +14,16 @@ use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
  */
 interface DatabaseQueryExecutor
 {
+    public const COLUMN_FETCH = 0;
+    public const DATA_FETCH = 1;
+
     /**
      * @throws QueryException
      */
     public function execute(string $sql, AbstractPim $pim): void;
+
+    /**
+     * @throws QueryException
+     */
+    public function query(string $sql, AbstractPim $pim, int $fetchMode = self::DATA_FETCH): array;
 }

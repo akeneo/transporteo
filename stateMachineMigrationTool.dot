@@ -21,6 +21,7 @@ digraph workflow {
   place_destination_pim_family_migrated [label="destination_pim_family_migrated", shape=circle];
   place_destination_pim_system_migrated [label="destination_pim_system_migrated", shape=circle];
   place_destination_pim_job_migrated [label="destination_pim_job_migrated", shape=circle];
+  place_destination_pim_extra_data_migrated [label="destination_pim_extra_data_migrated", shape=circle];
   transition_ask_source_pim_location [label="ask_source_pim_location", shape=box, shape="box", regular="1"];
   transition_local_source_pim_configuration [label="local_source_pim_configuration", shape=box, shape="box", regular="1"];
   transition_distant_source_pim_configuration [label="distant_source_pim_configuration", shape=box, shape="box", regular="1"];
@@ -42,6 +43,7 @@ digraph workflow {
   transition_destination_pim_family_migration [label="destination_pim_family_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_system_migration [label="destination_pim_system_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_job_migration [label="destination_pim_job_migration", shape=box, shape="box", regular="1"];
+  transition_destination_pim_extra_data_migration [label="destination_pim_extra_data_migration", shape=box, shape="box", regular="1"];
   place_ready -> transition_ask_source_pim_location [style="solid"];
   transition_ask_source_pim_location -> place_source_pim_location_guessed [style="solid"];
   place_source_pim_location_guessed -> transition_local_source_pim_configuration [style="solid"];
@@ -84,4 +86,6 @@ digraph workflow {
   transition_destination_pim_system_migration -> place_destination_pim_system_migrated [style="solid"];
   place_destination_pim_system_migrated -> transition_destination_pim_job_migration [style="solid"];
   transition_destination_pim_job_migration -> place_destination_pim_job_migrated [style="solid"];
+  place_destination_pim_job_migrated -> transition_destination_pim_extra_data_migration [style="solid"];
+  transition_destination_pim_extra_data_migration -> place_destination_pim_extra_data_migrated [style="solid"];
 }

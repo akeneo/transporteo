@@ -25,6 +25,6 @@ class EnterpriseEditionVerificatorFactory
 
         $rsa->load($serverAccessInformation->getSshKey()->getKey());
 
-        return new SshEnterpriseEditionAccessVerificator($ssh, $rsa);
+        return new SshEnterpriseEditionAccessVerificator($ssh, $rsa, $serverAccessInformation);
     }
 }

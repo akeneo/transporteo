@@ -21,14 +21,11 @@ class AkeneoFileStorageFileInfoMigratorIntegration extends DatabaseSetupedTestCa
 {
     public function testItCopyTheAkeneoFileStorageFileInfoTable()
     {
-        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false);
-        $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, 'akeneo_pim', 'localhost', '/a-path');
-
         $akeneoFileStorageFileInfoMigrator = new AkeneoFileStorageFileInfoMigrator(new DumpTableMigrator(new LocalCommandLauncherFactory()));
-        $akeneoFileStorageFileInfoMigrator->migrate($sourcePim, $destinationPim);
+        $akeneoFileStorageFileInfoMigrator->migrate($this->sourcePim, $this->destinationPim);
 
-        $sourcePimConnection = $this->getConnection($sourcePim, true);
-        $destinationPimConnection = $this->getConnection($destinationPim, true);
+        $sourcePimConnection = $this->getConnection($this->sourcePim, true);
+        $destinationPimConnection = $this->getConnection($this->destinationPim, true);
 
         $sourcePimRecords = $sourcePimConnection->query('SELECT * FROM akeneo_pim.akeneo_file_storage_file_info')->fetchAll();
         $destinationPimRecords = $destinationPimConnection->query('SELECT * FROM akeneo_pim.akeneo_file_storage_file_info')->fetchAll();

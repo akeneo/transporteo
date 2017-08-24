@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
+namespace integration\Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;

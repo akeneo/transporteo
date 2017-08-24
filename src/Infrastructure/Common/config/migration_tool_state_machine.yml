@@ -28,6 +28,7 @@ workflows:
             - 'destination_pim_family_migrated'
             - 'destination_pim_system_migrated'
             - 'destination_pim_job_migrated'
+            - 'destination_pim_extra_data_migrated'
         transitions:
             ask_source_pim_location:
                 from: 'ready'
@@ -89,3 +90,6 @@ workflows:
             destination_pim_job_migration:
                 from: 'destination_pim_system_migrated'
                 to: 'destination_pim_job_migrated'
+            destination_pim_extra_data_migration:
+                from: 'destination_pim_job_migrated'
+                to: 'destination_pim_extra_data_migrated'

@@ -62,7 +62,9 @@ from_destination_pim_family_migrated_to_destination_pim_system_migrated:
   message: "Migrating system data..."
 from_destination_pim_system_migrated_to_destination_pim_job_migrated:
   message: "Migrating jobs data..."
-from_destination_pim_job_migrated_to_destination_pim_extra_data_migrated:
+from_destination_pim_job_migrated_to_destination_pim_group_migrated:
+  message: "Migrating groups data..."
+from_destination_pim_group_migrated_to_destination_pim_extra_data_migrated:
   message: "Migrating extra data..."
 from_destination_pim_extra_data_migrated_to_destination_pim_reference_data_migrated:
   message: "Migrating reference data..."

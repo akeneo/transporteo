@@ -15,7 +15,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class FromDestinationPimJobMigratedToDestinationPimExtraDataMigrated extends AbstractStateMachineSubscriber implements StateMachineSubscriber
+class FromDestinationPimGroupMigratedToDestinationPimExtraDataMigrated extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
     /** @var ExtraDataMigrator */
     private $extraDataMigrator;
@@ -43,7 +43,7 @@ class FromDestinationPimJobMigratedToDestinationPimExtraDataMigrated extends Abs
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_job_migrated_to_destination_pim_extra_data_migrated.message'));
+        $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_group_migrated_to_destination_pim_extra_data_migrated.message'));
 
         $this->extraDataMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
     }

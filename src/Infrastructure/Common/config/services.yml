@@ -31,6 +31,29 @@ services:
     arguments:
       $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
 
+  Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityMappingChecker:
+    arguments:
+      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+
+  Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityMappingChecker'
+
+  Akeneo\PimMigration\Infrastructure\CommandBundleConfigFetcher:
+    arguments:
+      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+
+  Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher: '@Akeneo\PimMigration\Infrastructure\CommandBundleConfigFetcher'
+
+  Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityTableNameFetcher:
+    arguments:
+      $sourcePimFileFetcher: '@Akeneo\PimMigration\Infrastructure\LocalFileFetcher'
+      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+
+  Akeneo\PimMigration\Domain\DataMigration\EntityTableNameFetcher: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityTableNameFetcher'
+
+### FILE System
+
+  Akeneo\PimMigration\Infrastructure\LocalFileFetcher: ~
+  Akeneo\PimMigration\Domain\FileSystem: ~
 
 ### STRUCTURE MIGRATORS
 
@@ -311,3 +334,11 @@ services:
   Akeneo\PimMigration\Domain\ExtraDataMigration\ExtraDataMigrator:
     arguments:
       $tableNamesFetcher: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalCommandTableNamesFetcher'
+
+### REFERENCE DATA MIGRATOR
+
+  Akeneo\PimMigration\Domain\ReferenceDataMigration\MigrationBundleInstaller: ~
+  Akeneo\PimMigration\Domain\ReferenceDataMigration\ReferenceDataConfigurator: ~
+
+
+

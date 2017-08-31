@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Infrastructure\Command\Command;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
  * Check Pim Requirements command.
@@ -16,6 +17,6 @@ class CheckRequirementsCommand implements Command
 {
     public function getCommand(): string
     {
-        return 'php bin/console pim:installer:check-requirements';
+        return sprintf('%s bin/console pim:installer:check-requirements', (new PhpExecutableFinder())->find());
     }
 }

@@ -29,7 +29,8 @@ class SourcePimSpec extends ObjectBehavior
             null,
             false,
             null,
-            false
+            false,
+            '/a-path'
         );
         $this->shouldHaveType(SourcePim::class);
     }
@@ -41,7 +42,7 @@ class SourcePimSpec extends ObjectBehavior
         $composerJson->getRepositoryName()->willReturn('a-repo');
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromSourcePimConfiguration', [$sourcePimConfiguration]);
+        $this->beConstructedThrough('fromSourcePimConfiguration', ['/source-pim-real-path', $sourcePimConfiguration]);
         $this->shouldThrow(
             new SourcePimDetectionException(
                 'Your PIM distribution should be either "akeneo/pim-community-standard" or "akeneo/pim-enterprise-standard". It appears you try to migrate a "a-repo" instead.'
@@ -56,7 +57,7 @@ class SourcePimSpec extends ObjectBehavior
         $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '~1.6']));
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromSourcePimConfiguration', [$sourcePimConfiguration]);
+        $this->beConstructedThrough('fromSourcePimConfiguration', ['/source-pim-real-path', $sourcePimConfiguration]);
 
         $this->shouldThrow(
             new SourcePimDetectionException(

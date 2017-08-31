@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Infrastructure\Command\Command;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
  * Prepare required directories command.
@@ -16,6 +17,6 @@ class PrepareRequiredDirectoriesCommand implements Command
 {
     public function getCommand(): string
     {
-        return 'php bin/console pim:installer:prepare-required-directories';
+        return sprintf('%s bin/console pim:installer:prepare-required-directories', (new PhpExecutableFinder())->find());
     }
 }

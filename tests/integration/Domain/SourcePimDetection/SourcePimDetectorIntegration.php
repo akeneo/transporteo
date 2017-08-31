@@ -22,7 +22,7 @@ class SourcePimDetectorIntegration extends TestCase
 {
     public function testSimpleCommunityStandardEdition()
     {
-        $sourcePim = SourcePim::fromSourcePimConfiguration($this->getPimConfiguration('simple-pim-community-standard'));
+        $sourcePim = SourcePim::fromSourcePimConfiguration('/source-pim-real-path', $this->getPimConfiguration('simple-pim-community-standard'));
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
         $this->assertEquals($sourcePim->getMysqlHost(), 'localhost');
@@ -37,7 +37,7 @@ class SourcePimDetectorIntegration extends TestCase
 
     public function testEnterpriseStandardEditionMongoIvb()
     {
-        $sourcePim = SourcePim::fromSourcePimConfiguration($this->getPimConfiguration('ivb-mongo-pim-entreprise-standard'));
+        $sourcePim = SourcePim::fromSourcePimConfiguration('/source-pim-real-path', $this->getPimConfiguration('ivb-mongo-pim-entreprise-standard'));
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
         $this->assertEquals($sourcePim->getMysqlHost(), 'localhost');

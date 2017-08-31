@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
 use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
+use Akeneo\PimMigration\Domain\PimConfiguration\PimServerInformation;
 use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
@@ -56,6 +57,9 @@ class MigrationToolStateMachine
 
     /** @var bool */
     protected $useDocker;
+
+    /** @var PimServerInformation */
+    protected $sourcePimServerInformation;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -188,5 +192,20 @@ class MigrationToolStateMachine
     public function useDocker(): bool
     {
         return $this->useDocker;
+    }
+
+    public function setSourcePimServerInformation(PimServerInformation $pimServerInformation): void
+    {
+        $this->sourcePimServerInformation = $pimServerInformation;
+    }
+
+    public function getSourcePimRealPath(): string
+    {
+        return str_replace(DIRECTORY_SEPARATOR.'composer.json', '', $this->sourcePimServerInformation->getComposerJsonPath());
+    }
+
+    public function getSourcePimServerInformation(): PimServerInformation
+    {
+        return $this->sourcePimServerInformation;
     }
 }

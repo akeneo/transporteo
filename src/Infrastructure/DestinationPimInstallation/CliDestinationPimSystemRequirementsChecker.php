@@ -26,6 +26,6 @@ class CliDestinationPimSystemRequirementsChecker implements DestinationPimSystem
 
     public function check(DestinationPim $destinationPim): void
     {
-        $this->destinationPimCommandLauncher->runCommand(new CheckRequirementsCommand(), $destinationPim->getPath(), true);
+        $this->destinationPimCommandLauncher->runCommand(new CheckRequirementsCommand(), $destinationPim->absolutePath(), true);
     }
 }

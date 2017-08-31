@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
+use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -39,7 +40,11 @@ class FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
         ParametersYml $parametersYml
     ) {
         $event->getSubject()->willReturn($stateMachine);
+        $sourcePimRealPath = '/source-pim-real-path';
 
+        $composerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
+
+        $composerJson->getPath()->willReturn($composerJsonPath);
         $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => 'v1.7.6']));
         $composerJson->getRepositoryName()->willReturn('akeneo/pim-community-standard');
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
@@ -56,6 +61,7 @@ class FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
         $sourcePimConfiguration->getParametersYml()->willReturn($parametersYml);
 
         $stateMachine->getSourcePimConfiguration()->willReturn($sourcePimConfiguration);
+        $stateMachine->getSourcePimRealPath()->willReturn($sourcePimRealPath);
 
         $stateMachine->setSourcePim(new SourcePim(
             'database_host',
@@ -67,7 +73,8 @@ class FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
             null,
             false,
             null,
-            false
+            false,
+            $sourcePimRealPath
         ))->shouldBeCalled();
 
         $this->onSourcePimDetection($event);

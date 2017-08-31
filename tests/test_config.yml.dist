@@ -1,0 +1,15 @@
+parameters:
+    pim_community_standard_one_dot_seven_with_reference_data:
+        absolute_path: ~
+        database_host: ~
+        database_name: ~
+        database_port: ~
+        database_user: ~
+        database_password: ~
+    pim_community_standard_two_dot_zero:
+        absolute_path: ~
+        database_host: ~
+        database_name: ~
+        database_port: ~
+        database_user: ~
+        database_password: ~

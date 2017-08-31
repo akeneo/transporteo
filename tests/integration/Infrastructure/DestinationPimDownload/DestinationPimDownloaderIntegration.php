@@ -53,7 +53,8 @@ class DestinationPimDownloaderIntegration extends TestCase
             null,
             false,
             null,
-            false
+            false,
+            '/a-path'
         );
 
         $downloader->download($sourcePim, 'test-project');

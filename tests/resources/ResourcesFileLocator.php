@@ -118,4 +118,9 @@ final class ResourcesFileLocator
             DIRECTORY_SEPARATOR
         );
     }
+
+    public static final function getSrcDir(): string
+    {
+        return dirname(realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'composer.json')) . DIRECTORY_SEPARATOR . 'src';
+    }
 }

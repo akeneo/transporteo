@@ -154,8 +154,10 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $printerAndAsker->askSimpleQuestion($composerJsonQuestion, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
-        $sourcePimConfigurator->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))->willReturn($sourcePimConfiguration);
+        $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
+        $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
 
+        $sourcePimConfigurator->configure($sourcePimServerInformation)->willReturn($sourcePimConfiguration);
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldBeCalled();
 
         $this->onDistantConfiguration($event);
@@ -184,8 +186,11 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $fileFetcherFactory->createLocalFileFetcher()->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
 
-        $sourcePimConfigurator->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))->willReturn($sourcePimConfiguration);
+        $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
 
+        $sourcePimConfigurator->configure($sourcePimServerInformation)->willReturn($sourcePimConfiguration);
+
+        $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldBeCalled();
 
         $this->onLocalConfiguration($event);
@@ -243,8 +248,10 @@ class FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $printerAndAsker->askSimpleQuestion($composerJsonQuestion, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $fileFetcherFactory->createSshFileFetcher($serverAccessInformation)->willReturn($fileFetcher);
         $sourcePimConfiguratorFactory->createPimConfigurator($fileFetcher)->willReturn($sourcePimConfigurator);
+        $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
+        $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
         $sourcePimConfigurator
-            ->configure(new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project'))
+            ->configure($sourcePimServerInformation)
             ->willThrow($exception);
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldNotBeCalled();

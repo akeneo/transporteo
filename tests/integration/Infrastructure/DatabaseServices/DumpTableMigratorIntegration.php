@@ -23,7 +23,7 @@ class DumpTableMigratorIntegration extends DatabaseSetupedTestCase
     {
         $this->expectException(DataMigrationException::class);
 
-        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false);
+        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false, '/a-path');
         $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, 'akeneo_pim', 'localhost', '/a-path');
 
         $dumpTableMigrator = new DumpTableMigrator(new LocalCommandLauncherFactory());

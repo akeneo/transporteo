@@ -204,6 +204,8 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
 
+        $stateMachine->setSourcePimServerInformation($pimServerInformation);
+
         $pimConfigurator = $this
             ->pimConfiguratorFactory
             ->createPimConfigurator(
@@ -252,6 +254,8 @@ class FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber impl
             ->createPimConfigurator(
                 $this->fileFetcherFactory->createLocalFileFetcher()
             );
+
+        $stateMachine->setSourcePimServerInformation($pimServerInformation);
 
         try {
             $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);

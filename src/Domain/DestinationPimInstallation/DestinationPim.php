@@ -43,10 +43,10 @@ class DestinationPim extends AbstractPim
             $databaseUser,
             $databasePassword,
             $isEnterpriseEdition,
-            $enterpriseRepository
+            $enterpriseRepository,
+            $path
         );
 
-        $this->path = $path;
         $this->indexName = $indexName;
         $this->indexHosts = $indexHosts;
     }
@@ -127,11 +127,6 @@ class DestinationPim extends AbstractPim
                 $destinationPimConfiguration->getComposerJson()->getPath()
             ))
         );
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 
     protected static function getPimVersionAllowed(): string

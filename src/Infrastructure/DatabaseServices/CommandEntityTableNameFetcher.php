@@ -32,11 +32,11 @@ class CommandEntityTableNameFetcher implements EntityTableNameFetcher
 
     public function fetchTableName(AbstractPim $pim, string $entityNamespace): string
     {
-        $mappingFilePath = $pim->getPath();
+        $mappingFilePath = $pim->absolutePath();
 
         $this->commandLauncher->runCommand(
             new DoctrineMappingConvertCommand($entityNamespace, 'yml', $mappingFilePath),
-            $pim->getPath(), false
+            $pim->absolutePath(), false
         );
 
         $generatedFilePath = sprintf(

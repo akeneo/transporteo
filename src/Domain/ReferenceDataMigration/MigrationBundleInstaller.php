@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\ReferenceDataMigration;
 
-use Akeneo\PimMigration\Domain\FileSystem;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
 
 /**
@@ -15,10 +15,10 @@ use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
  */
 class MigrationBundleInstaller
 {
-    /** @var FileSystem */
+    /** @var FileSystemHelper */
     private $fileSystem;
 
-    public function __construct(FileSystem $fileSystem)
+    public function __construct(FileSystemHelper $fileSystem)
     {
         $this->fileSystem = $fileSystem;
     }
@@ -33,12 +33,12 @@ class MigrationBundleInstaller
     {
         $appKernelPath = sprintf(
             '%s%sapp%sAppKernel.php',
-            $pim->getPath(),
+            $pim->absolutePath(),
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
         );
 
-        $appKernelEmptyLine = $this->fileSystem->getFileLine($appKernelPath, 22);
+        $appKernelEmptyLine = $this->fileSystem->getFileLine($appKernelPath, 23);
 
         $indentation = '            ';
         $lineAfterClone = $indentation.'// your app bundles should be registered here'.PHP_EOL;
@@ -48,26 +48,20 @@ class MigrationBundleInstaller
             throw new \InvalidArgumentException('The AppKernel is not a raw kernel');
         }
 
-        $this->fileSystem->updateLineInFile($appKernelPath, 22, $lineToAdd);
+        $this->fileSystem->updateLineInFile($appKernelPath, 23, $lineToAdd);
     }
 
     private function copySources(AbstractPim $pim): void
     {
-        $from = $this->fileSystem->getRealPath(
-            sprintf(
-                '%s%sconfig%sakeneo_migration_bundle.tar.gz',
-                __DIR__,
-                DIRECTORY_SEPARATOR,
-                DIRECTORY_SEPARATOR
-            )
-        );
-
-        $to = sprintf(
-            '%s%sAkeneo',
-            sprintf('%s%ssrc', $pim->getPath(), DIRECTORY_SEPARATOR),
+        $from = sprintf(sprintf(
+            '%s%sconfig%sAkeneo',
+            __DIR__,
+            DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
-        );
+        ));
 
-        $this->fileSystem->extractArchive($from, $to);
+        $to = sprintf('%s%ssrc%sAkeneo', $pim->absolutePath(), DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR);
+
+        $this->fileSystem->copyDirectory($from, $to);
     }
 }

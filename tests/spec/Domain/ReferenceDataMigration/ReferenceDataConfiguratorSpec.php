@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\ReferenceDataMigration;
 
-use Akeneo\PimMigration\Domain\FileSystem;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
 use Akeneo\PimMigration\Domain\ReferenceDataMigration\ReferenceDataConfigurator;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
-use \Symfony\Component\Filesystem\Filesystem as SfFileSystem;
 
 /**
  * Spec for Reference Data Configurator.
@@ -19,7 +18,7 @@ use \Symfony\Component\Filesystem\Filesystem as SfFileSystem;
  */
 class ReferenceDataConfiguratorSpec extends ObjectBehavior
 {
-    public function let(FileSystem $fileSystem)
+    public function let(FileSystemHelper $fileSystem)
     {
         $this->beConstructedWith($fileSystem);
     }
@@ -31,11 +30,10 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
 
     public function it_configures(
         AbstractPim $pim,
-        SfFileSystem $sfFileSystem,
         $fileSystem
     ) {
         $destinationPimPath = '/a-path';
-        $pim->getPath()->willReturn($destinationPimPath);
+        $pim->absolutePath()->willReturn($destinationPimPath);
 
         $referenceDataMigrationConfigDir = sprintf(
             '%s%sDomain%sReferenceDataMigration%sconfig',
@@ -51,40 +49,56 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
             DIRECTORY_SEPARATOR
         );
 
-        $referenceDataConfig = <<<YAML
-THE_CLASS_NAME:
-    repositoryClass: Pim\Bundle\ReferenceDataBundle\Doctrine\ORM\Repository\ReferenceDataRepository
-    type: entity
-    table: the_table_name
-    changeTrackingPolicy: DEFERRED_EXPLICIT
-    fields:
-        id:
-            type: integer
-            id: true
-            generator:
-                strategy: AUTO
-        code:
-            type: string
-            length: 255
-            unique: true
-    lifecycleCallbacks: {  }
+        $referenceDataConfig = [
+            'THE_CLASS_NAME' => [
+                'repositoryClass' => 'Pim\Bundle\ReferenceDataBundle\Doctrine\ORM\Repository\ReferenceDataRepository',
+                'type' => 'entity',
+                'table' => 'the_table_name',
+                'changeTrackingPolicy' => 'DEFERRED_EXPLICIT',
+                'fields' => [
+                    'id' => [
+                        'type' => 'integer',
+                        'id' => true,
+                        'generator' => [
+                            'strategy' => 'AUTO'
+                        ]
+                    ],
+                    'code' => [
+                        'type' => 'string',
+                        'length' => 255,
+                        'unique' => true,
+                    ]
+                ],
+                'lifecycleCallbacks' => []
+            ]
+        ];
 
-YAML;
+        $fileSystem->getYamlContent($sampleOrmPath)->willReturn($referenceDataConfig);
 
-        $fileSystem->getFileContent($sampleOrmPath)->willReturn($referenceDataConfig);
 
-        $finalValue = <<<YAML
-Akeneo\Bundle\MigrationBundle\Entity\Fabric:
-    repositoryClass: Pim\Bundle\ReferenceDataBundle\Doctrine\ORM\Repository\ReferenceDataRepository
-    type: entity
-    table: acme_reference_data_fabric
-    changeTrackingPolicy: DEFERRED_EXPLICIT
-    fields: { id: { type: integer, id: true, generator: { strategy: AUTO } }, code: { type: string, length: 255, unique: true } }
-    lifecycleCallbacks: {  }
-
-YAML;
-
-        $fileSystem->getFileSystem()->willReturn($sfFileSystem);
+        $finalValue = [
+            'Akeneo\Bundle\MigrationBundle\Entity\Fabric' => [
+                'repositoryClass' => 'Pim\Bundle\ReferenceDataBundle\Doctrine\ORM\Repository\ReferenceDataRepository',
+                'type' => 'entity',
+                'table' => 'acme_reference_data_fabric',
+                'changeTrackingPolicy' => 'DEFERRED_EXPLICIT',
+                'fields' => [
+                    'id' => [
+                        'type' => 'integer',
+                        'id' => true,
+                        'generator' => [
+                            'strategy' => 'AUTO'
+                        ]
+                    ],
+                    'code' => [
+                        'type' => 'string',
+                        'length' => 255,
+                        'unique' => true
+                    ]
+                ],
+                'lifecycleCallbacks' => []
+            ]
+        ];
 
         $destinationEntityDefinitionPath = sprintf(
             '%s%ssrc%sAkeneo%sBundle%sMigrationBundle%sResources%sconfig%sdoctrine%s%s.orm.yml',
@@ -100,7 +114,7 @@ YAML;
             'Fabric'
         );
 
-        $sfFileSystem->dumpFile($destinationEntityDefinitionPath, $finalValue)->shouldBeCalled();
+        $fileSystem->dumpYamlInFile($destinationEntityDefinitionPath, $finalValue)->shouldBeCalled();
 
         $sampleEntityPath = sprintf('%s%sEntity.php', $referenceDataMigrationConfigDir, DIRECTORY_SEPARATOR);
 
@@ -114,11 +128,11 @@ YAML;
             str_replace('\\', DIRECTORY_SEPARATOR, $newClassPath)
         );
 
-        $fileSystem->getFileLine($destinationEntityPath, 14)->willReturn('class THE_CLASS_NAME extends AbstractReferenceData implements ReferenceDataInterface');
+        $fileSystem->getFileLine($destinationEntityPath, 15)->willReturn('class THE_CLASS_NAME extends AbstractReferenceData implements ReferenceDataInterface');
 
-        $sfFileSystem->copy($sampleEntityPath, $destinationEntityPath)->shouldBeCalled();
+        $fileSystem->copyFile($sampleEntityPath, $destinationEntityPath, true)->shouldBeCalled();
 
-        $fileSystem->updateLineInFile($destinationEntityPath, 14, 'class Fabric extends AbstractReferenceData implements ReferenceDataInterface')->shouldBeCalled();
+        $fileSystem->updateLineInFile($destinationEntityPath, 15, 'class Fabric extends AbstractReferenceData implements ReferenceDataInterface')->shouldBeCalled();
 
         $fabricClassPath = 'Acme\Bundle\AppBundle\Entity\Fabric';
         $fabric = [
@@ -134,31 +148,34 @@ YAML;
             DIRECTORY_SEPARATOR
         );
 
-        $config = <<<YAML
-pim_reference_data: ~
-akeneo_storage_utils: null
-akeneo_elasticsearch:
-    index_name: '%index_name%'
-    hosts: '%index_hosts%'
-    configuration_files: '%elasticsearch_index_configuration_files%'
-YAML;
+        $config = [
+            'pim_reference_data' => null,
+            'akeneo_storage_utils' => null,
+            'akeneo_elasticsearch' => [
+                'index_name' => '%index_name%',
+                'hosts' => '%index_hosts%',
+                'configuration_files' => '%elasticsearch_index_configuration_files%'
+            ]
+        ];
 
-        $fileSystem->getFileContent($configFilePath)->willReturn($config);
+        $fileSystem->getYamlContent($configFilePath)->willReturn($config);
 
-        $configResult = <<<YAML
-pim_reference_data:
-    -
-        class: Akeneo\Bundle\MigrationBundle\Entity\Fabric
-        type: multi
-akeneo_storage_utils: null
-akeneo_elasticsearch:
-    index_name: '%index_name%'
-    hosts: '%index_hosts%'
-    configuration_files: '%elasticsearch_index_configuration_files%'
+        $configResult = [
+            'pim_reference_data' => [
+                0 => [
+                    'class' => 'Akeneo\Bundle\MigrationBundle\Entity\Fabric',
+                    'type' => 'multi',
+                ]
+            ],
+            'akeneo_storage_utils' => null,
+            'akeneo_elasticsearch' => [
+                'index_name' => '%index_name%',
+                'hosts' => '%index_hosts%',
+                'configuration_files' => '%elasticsearch_index_configuration_files%',
+            ]
+        ];
 
-YAML;
-
-        $sfFileSystem->dumpFile($configFilePath, $configResult)->shouldBeCalled();
+        $fileSystem->dumpYamlInFile($configFilePath, $configResult)->shouldBeCalled();
 
         $this->configure($fabric, 'acme_reference_data_fabric', $pim)->shouldReturn('Akeneo\\Bundle\\MigrationBundle\\Entity\\Fabric');
     }

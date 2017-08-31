@@ -72,37 +72,6 @@ class ReferenceDataMigratorSpec extends ObjectBehavior
 
         $entityMappingChecker->check($destinationPim, $newClassNamespace)->shouldBeCalled();
 
-//        //copy migration bundle part
-//        $archivePath = sprintf(
-//            '%s%sDomain%sReferenceDataMigration%sconfig%sakeneo_migration_bundle.tar.gz',
-//            $srcDir,
-//            DIRECTORY_SEPARATOR,
-//            DIRECTORY_SEPARATOR,
-//            DIRECTORY_SEPARATOR,
-//            DIRECTORY_SEPARATOR
-//        );
-//        $fileSystem->getRealPath($archivePath)->willReturn($archivePath);
-//        $fileSystem->extractArchive($archivePath, '/a-path/src/Akeneo')->shouldBeCalled();
-//
-//
-//        //update kernel part
-//        $appKernelPath = sprintf(
-//            '%s%sapp%sAppKernel.php',
-//            $destinationPimPath,
-//            DIRECTORY_SEPARATOR,
-//            DIRECTORY_SEPARATOR
-//        );
-//
-//        $fileSystem->getFileLine($appKernelPath, 22)->willReturn(
-//            '            // your app bundles should be registered here'.PHP_EOL
-//        );
-//
-//        $lineToAdd = "            new Akeneo\Bundle\MigrationBundle\AkeneoMigrationBundle(),".PHP_EOL;
-//
-//        $fileSystem->updateLineInFile($appKernelPath, 22, $lineToAdd)->shouldBeCalled();
-//
-//        //Setup Reference data part
-//
         $this->migrate($sourcePim, $destinationPim);
     }
 }

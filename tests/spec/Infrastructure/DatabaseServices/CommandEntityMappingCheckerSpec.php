@@ -44,7 +44,7 @@ Found 53 mapped entities:
 
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
-        $pim->getPath()->willReturn('/a-path');
+        $pim->absolutePath()->willReturn('/a-path');
         $commandLauncher->runCommand(new DoctrineMappingInfoCommand(), '/a-path', false)->willReturn($commandResult);
 
         $this->check($pim, 'Pim\Bundle\CatalogBundle\Entity\Family');
@@ -63,7 +63,7 @@ Found 53 mapped entities:
 
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
-        $pim->getPath()->willReturn('/a-path');
+        $pim->absolutePath()->willReturn('/a-path');
         $commandLauncher->runCommand(new DoctrineMappingInfoCommand(), '/a-path', false)->willReturn($commandResult);
 
         $this
@@ -87,7 +87,7 @@ Found 53 mapped entities:
 
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
-        $pim->getPath()->willReturn('/a-path');
+        $pim->absolutePath()->willReturn('/a-path');
         $commandLauncher->runCommand(new DoctrineMappingInfoCommand(), '/a-path', false)->willReturn($commandResult);
 
         $this
@@ -102,7 +102,7 @@ TXT;
         $commandLauncher
     ) {
         $pimPath = '/a-path';
-        $pim->getPath()->willReturn($pimPath);
+        $pim->absolutePath()->willReturn($pimPath);
 
         $commandLauncher->runCommand(
             new DoctrineMappingInfoCommand(),

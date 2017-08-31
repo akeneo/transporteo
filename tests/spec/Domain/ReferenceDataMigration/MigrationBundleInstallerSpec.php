@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\ReferenceDataMigration;
 
-use Akeneo\PimMigration\Domain\FileSystem;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
 use Akeneo\PimMigration\Domain\ReferenceDataMigration\MigrationBundleInstaller;
 use PhpSpec\ObjectBehavior;
@@ -18,7 +18,7 @@ use resources\Akeneo\PimMigration\ResourcesFileLocator;
  */
 class MigrationBundleInstallerSpec extends ObjectBehavior
 {
-    public function let(FileSystem $fileSystem)
+    public function let(FileSystemHelper $fileSystem)
     {
         $this->beConstructedWith($fileSystem);
     }
@@ -33,7 +33,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
         $fileSystem
     ) {
         $destinationPimPath = '/a-path';
-        $pim->getPath()->willReturn($destinationPimPath);
+        $pim->absolutePath()->willReturn($destinationPimPath);
 
         $referenceDataMigrationConfigDir = sprintf(
             '%s%sDomain%sReferenceDataMigration%sconfig',
@@ -44,12 +44,11 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
         );
 
         $archivePath = sprintf(
-            '%s%sakeneo_migration_bundle.tar.gz',
+            '%s%sAkeneo',
             $referenceDataMigrationConfigDir,
             DIRECTORY_SEPARATOR
         );
-        $fileSystem->getRealPath($archivePath)->willReturn($archivePath);
-        $fileSystem->extractArchive($archivePath, '/a-path/src/Akeneo')->shouldBeCalled();
+        $fileSystem->copyDirectory($archivePath, '/a-path/src/Akeneo')->shouldBeCalled();
 
 
         $appKernelPath = sprintf(
@@ -59,13 +58,13 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
             DIRECTORY_SEPARATOR
         );
 
-        $fileSystem->getFileLine($appKernelPath, 22)->willReturn(
+        $fileSystem->getFileLine($appKernelPath, 23)->willReturn(
             '            // your app bundles should be registered here'.PHP_EOL
         );
 
         $lineToAdd = "            new Akeneo\Bundle\MigrationBundle\AkeneoMigrationBundle(),".PHP_EOL;
 
-        $fileSystem->updateLineInFile($appKernelPath, 22, $lineToAdd)->shouldBeCalled();
+        $fileSystem->updateLineInFile($appKernelPath, 23, $lineToAdd)->shouldBeCalled();
 
         $this->install($pim);
     }
@@ -75,7 +74,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
         $fileSystem
     ) {
         $destinationPimPath = '/a-path';
-        $pim->getPath()->willReturn($destinationPimPath);
+        $pim->absolutePath()->willReturn($destinationPimPath);
 
         $referenceDataMigrationConfigDir = sprintf(
             '%s%sDomain%sReferenceDataMigration%sconfig',
@@ -86,12 +85,11 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
         );
 
         $archivePath = sprintf(
-            '%s%sakeneo_migration_bundle.tar.gz',
+            '%s%sAkeneo',
             $referenceDataMigrationConfigDir,
             DIRECTORY_SEPARATOR
         );
-        $fileSystem->getRealPath($archivePath)->willReturn($archivePath);
-        $fileSystem->extractArchive($archivePath, '/a-path/src/Akeneo')->shouldBeCalled();
+        $fileSystem->copyDirectory($archivePath, '/a-path/src/Akeneo')->shouldBeCalled();
 
 
         $appKernelPath = sprintf(
@@ -101,7 +99,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
             DIRECTORY_SEPARATOR
         );
 
-        $fileSystem->getFileLine($appKernelPath, 22)->willReturn(
+        $fileSystem->getFileLine($appKernelPath, 23)->willReturn(
             '          A weird line'.PHP_EOL
         );
 

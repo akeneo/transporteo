@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Command;
 
+use Symfony\Component\Process\PhpExecutableFinder;
+
 /**
  * Debug Config Command.
  *
@@ -23,7 +25,8 @@ class DebugConfigCommand implements Command
     public function getCommand(): string
     {
         return sprintf(
-            'php app/console debug:config %s',
+            '%s app/console debug:config %s',
+            (new PhpExecutableFinder())->find(),
             $this->bundleName
         );
     }

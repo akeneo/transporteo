@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Infrastructure\Command\Command;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
  * Export an entity config to a file.
@@ -33,7 +34,8 @@ class DoctrineMappingConvertCommand implements Command
     public function getCommand(): string
     {
         return sprintf(
-            'php app/console doctrine:mapping:convert --force --filter="%s" %s %s',
+            '%s app/console doctrine:mapping:convert --force --filter="%s" %s %s',
+            (new PhpExecutableFinder())->find(),
             $this->entityNamespace,
             $this->format,
             $this->mappingFilePath

@@ -34,7 +34,7 @@ class CommandBundleConfigFetcherSpec extends ObjectBehavior
         UnixCommandResult $commandResult,
         $commandLauncher
     ) {
-        $sourcePim->getPath()->willReturn('/a-path');
+        $sourcePim->absolutePath()->willReturn('/a-path');
 
         $yaml = <<<YAML
 # Current configuration for "a-bundle-name"

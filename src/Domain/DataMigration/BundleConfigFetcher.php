@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Domain\DataMigration;
 use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
 
 /**
- * Bundle config fetcher.
+ * Fetch the current config of a given bundle in a PIM.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

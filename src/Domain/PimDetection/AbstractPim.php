@@ -38,7 +38,7 @@ abstract class AbstractPim
     private $enterpriseRepository;
 
     /** @var string */
-    private $path;
+    private $absolutePath;
 
     public function __construct(
         string $mysqlHost,
@@ -48,7 +48,7 @@ abstract class AbstractPim
         string $databasePassword,
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
-        string $path
+        string $absolutePath
     ) {
         $this->mysqlHost = $mysqlHost;
         $this->mysqlPort = $mysqlPort;
@@ -57,7 +57,7 @@ abstract class AbstractPim
         $this->databasePassword = $databasePassword;
         $this->isEnterpriseEdition = $isEnterpriseEdition;
         $this->enterpriseRepository = $enterpriseRepository;
-        $this->path = $path;
+        $this->absolutePath = $absolutePath;
     }
 
     abstract protected static function getPimVersionAllowed(): string;
@@ -97,8 +97,8 @@ abstract class AbstractPim
         return $this->enterpriseRepository;
     }
 
-    public function getPath(): string
+    public function absolutePath(): string
     {
-        return $this->path;
+        return $this->absolutePath;
     }
 }

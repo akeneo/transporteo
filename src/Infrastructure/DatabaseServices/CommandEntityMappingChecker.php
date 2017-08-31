@@ -33,7 +33,7 @@ class CommandEntityMappingChecker implements EntityMappingChecker
     public function check(AbstractPim $pim, string $entityClassPath): void
     {
         try {
-            $commandResult = $this->commandLauncher->runCommand(new DoctrineMappingInfoCommand(), $pim->getPath(), false);
+            $commandResult = $this->commandLauncher->runCommand(new DoctrineMappingInfoCommand(), $pim->absolutePath(), false);
         } catch (UnsuccessfulCommandException $exception) {
             throw new EntityMappingException($exception->getMessage(), $exception->getCode(), $exception);
         }

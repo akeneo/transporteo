@@ -32,13 +32,13 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
     {
         $dockerComposeDistFilePath = sprintf(
             '%s%sdocker-compose.yml.dist',
-            $destinationPim->getPath(),
+            $destinationPim->absolutePath(),
             DIRECTORY_SEPARATOR
         );
 
         $dockerComposeDestinationPath = sprintf(
             '%s%sdocker-compose.yml',
-            $destinationPim->getPath(),
+            $destinationPim->absolutePath(),
             DIRECTORY_SEPARATOR
         );
 
@@ -46,33 +46,33 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
 
         $fs->copy($dockerComposeDistFilePath, $dockerComposeDestinationPath);
 
-        $launchDockerComposeDaemon = new Process('docker-compose up -d', $destinationPim->getPath());
+        $launchDockerComposeDaemon = new Process('docker-compose up -d', $destinationPim->absolutePath());
 
         $launchDockerComposeDaemon->run();
 
-        if (!$this->dockerComposeInfrastructureIsUp($destinationPim->getPath())) {
+        if (!$this->dockerComposeInfrastructureIsUp($destinationPim->absolutePath())) {
             throw new DestinationPimSystemRequirementsNotBootable(
-                'Docker cannot boot the install system, please check `docker-compose ps` in '.$destinationPim->getPath()
+                'Docker cannot boot the install system, please check `docker-compose ps` in '.$destinationPim->absolutePath()
             );
         }
 
         $this->destinationPimCommandLauncher->runCommand(
-            new ComposerUpdateCommand(), $destinationPim->getPath(), true
+            new ComposerUpdateCommand(), $destinationPim->absolutePath(), true
         );
         $this->destinationPimCommandLauncher->runCommand(
-            new PrepareRequiredDirectoriesCommand(), $destinationPim->getPath(), true
+            new PrepareRequiredDirectoriesCommand(), $destinationPim->absolutePath(), true
         );
         $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineDropDatabaseCommand(), $destinationPim->getPath(), true
+            new DoctrineDropDatabaseCommand(), $destinationPim->absolutePath(), true
         );
         $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineCreateDatabaseCommand(), $destinationPim->getPath(), true
+            new DoctrineCreateDatabaseCommand(), $destinationPim->absolutePath(), true
         );
         $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineCreateSchemaCommand(), $destinationPim->getPath(), true
+            new DoctrineCreateSchemaCommand(), $destinationPim->absolutePath(), true
         );
         $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineUpdateSchemaCommand(), $destinationPim->getPath(), true
+            new DoctrineUpdateSchemaCommand(), $destinationPim->absolutePath(), true
         );
     }
 

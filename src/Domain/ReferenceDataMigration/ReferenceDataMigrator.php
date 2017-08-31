@@ -56,9 +56,11 @@ class ReferenceDataMigrator implements DataMigrator
      */
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $bundleName = 'PimReferenceDataBundle';
-
-        $referenceDataConfig = $this->bundleConfigFetcher->fetch($sourcePim, $bundleName);
+        try {
+            $referenceDataConfig = $this->bundleConfigFetcher->fetch($sourcePim, 'PimReferenceDataBundle');
+        } catch (\Exception $exception) {
+            throw new ReferenceDataMigrationException($exception->getMessage(), $exception->getCode(), $exception);
+        }
 
         if (!isset($referenceDataConfig[self::REFERENCE_DATA_CONFIG_KEY])) {
             return;

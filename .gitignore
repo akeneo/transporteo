@@ -2,3 +2,4 @@
 /var/*
 !.gitkeep
 .php_cs.cache
+tests/test_config.yml

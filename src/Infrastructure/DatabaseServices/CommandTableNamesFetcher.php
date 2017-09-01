@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Domain\DataMigration\TableNamesFetcher;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 
 /**
  * Give table name fetcher .

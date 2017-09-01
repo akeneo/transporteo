@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\DebugConfigCommand;
 use Symfony\Component\Yaml\Yaml;

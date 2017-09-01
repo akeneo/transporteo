@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\ParametersYmlGenerator;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\ParametersYmlGenerator;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\DebugConfigCommand;
 use Akeneo\PimMigration\Infrastructure\Command\UnixCommandResult;

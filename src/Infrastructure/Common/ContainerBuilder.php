@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
-use Akeneo\PimMigration\Domain\GroupMigration\GroupMigrator;
-use Akeneo\PimMigration\Domain\JobMigration\JobMigrator;
-use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator;
-use Akeneo\PimMigration\Domain\SystemMigration\SystemMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s70_StructureMigration\StructureMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s90_SystemMigration\SystemMigrator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;

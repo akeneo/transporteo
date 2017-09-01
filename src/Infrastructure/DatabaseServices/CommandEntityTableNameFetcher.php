@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\EntityTableNameFetcher;
 use Akeneo\PimMigration\Domain\FileFetcher;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Symfony\Component\Yaml\Yaml;
 

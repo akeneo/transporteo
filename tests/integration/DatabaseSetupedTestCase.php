@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
 use PHPUnit\Framework\TestCase;
 
 /**

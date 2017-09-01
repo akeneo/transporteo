@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimEditionChecker;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimEditionChecker;
 
 /**
  * Factory for edition PIM checker.

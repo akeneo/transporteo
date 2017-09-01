@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingException;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\UnixCommandResult;
 use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;

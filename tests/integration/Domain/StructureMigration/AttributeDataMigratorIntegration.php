@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\StructureMigration;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
-use Akeneo\PimMigration\Domain\StructureMigration\AttributeDataMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\MigrationStep\s70_StructureMigration\AttributeDataMigrator;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor;

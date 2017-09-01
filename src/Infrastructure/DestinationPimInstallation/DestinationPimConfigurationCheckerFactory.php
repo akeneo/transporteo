@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimEditionChecker;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsChecker;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimConfigurationChecker;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimEditionChecker;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimSystemRequirementsChecker;
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimConfigurationChecker;
 
 /**
  * Factory for Destination Pim Configuration Checker.

@@ -329,6 +329,40 @@ services:
       $supportedTableName: 'akeneo_batch_warning'
     tags: ['migration_tool.job_migrator']
 
+### GROUP MIGRATOR
+
+  Akeneo\PimMigration\Domain\GroupMigration\GroupMigrator: ~
+
+  Akeneo\PimMigration\GroupMigration\GroupType:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pim_catalog_group_type'
+      tags: ['migration_tool.group_migrator']
+
+  Akeneo\PimMigration\GroupMigration\GroupTypeTranslation:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pim_catalog_group_type_translation'
+      tags: ['migration_tool.group_migrator']
+
+  Akeneo\PimMigration\GroupMigration\Group:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pim_catalog_group'
+      tags: ['migration_tool.group_migrator']
+
+  Akeneo\PimMigration\GroupMigration\GroupTranslation:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pim_catalog_group_translation'
+      tags: ['migration_tool.group_migrator']
+
+  Akeneo\PimMigration\GroupMigration\GroupAttribute:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pim_catalog_group_attribute'
+      tags: ['migration_tool.group_migrator']
+
 ### EXTRA DATA MIGRATOR
 
   Akeneo\PimMigration\Domain\ExtraDataMigration\ExtraDataMigrator:

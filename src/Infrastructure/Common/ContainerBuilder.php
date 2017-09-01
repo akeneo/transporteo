@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
+use Akeneo\PimMigration\Domain\GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\JobMigration\JobMigrator;
 use Akeneo\PimMigration\Domain\StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\SystemMigration\SystemMigrator;
@@ -59,6 +60,7 @@ final class ContainerBuilder
         self::loadRegistry($container, StructureMigrator::class, 'migration_tool.structure_migrator', 'addStructureMigrator');
         self::loadRegistry($container, SystemMigrator::class, 'migration_tool.system_migrator', 'addSystemMigrator');
         self::loadRegistry($container, JobMigrator::class, 'migration_tool.job_migrator', 'addJobMigrator');
+        self::loadRegistry($container, GroupMigrator::class, 'migration_tool.group_migrator', 'addGroupMigrator');
 
         return $container;
     }

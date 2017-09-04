@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration;
 
 use Akeneo\PimMigration\Domain\FileSystemHelper;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\MigrationBundleInstaller;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use PhpSpec\ObjectBehavior;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 
@@ -29,7 +29,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
     }
 
     public function it_installs(
-        AbstractPim $pim,
+        Pim $pim,
         $fileSystem
     ) {
         $destinationPimPath = '/a-path';
@@ -71,7 +71,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
     }
 
     public function it_throws_an_exception(
-        AbstractPim $pim,
+        Pim $pim,
         $fileSystem
     ) {
         $destinationPimPath = '/a-path';

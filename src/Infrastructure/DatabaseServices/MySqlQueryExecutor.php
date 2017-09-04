@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\QueryException;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * MySQL command launcher.
@@ -16,7 +16,7 @@ use Akeneo\PimMigration\Domain\Pim\AbstractPim;
  */
 class MySqlQueryExecutor implements DatabaseQueryExecutor
 {
-    public function execute(string $sql, AbstractPim $pim): void
+    public function execute(string $sql, Pim $pim): void
     {
         $pdo = $this->getConnection($pim);
 
@@ -31,7 +31,7 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
         }
     }
 
-    public function query(string $sql, AbstractPim $pim, int $fetchMode = self::DATA_FETCH): array
+    public function query(string $sql, Pim $pim, int $fetchMode = self::DATA_FETCH): array
     {
         $pdo = $this->getConnection($pim);
 
@@ -40,7 +40,7 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
         return $pdo->query($sql)->fetchAll($fetchMode);
     }
 
-    protected function getConnection(AbstractPim $pim): \PDO
+    protected function getConnection(Pim $pim): \PDO
     {
         $dsn = sprintf(
             'mysql: host=%s;dbname=%s;port=%s',

@@ -7,7 +7,7 @@ namespace integration\Akeneo\PimMigration\Domain\StructureMigration;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Domain\MigrationStep\s70_StructureMigration\AttributeDataMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeDataMigrator;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor;

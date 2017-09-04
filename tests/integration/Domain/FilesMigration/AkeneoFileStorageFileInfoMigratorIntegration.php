@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace integration\Akeneo\PimMigration\Domain\FilesMigration;
 
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\MigrationStep\s60_FilesMigration\AkeneoFileStorageFileInfoMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s060_FilesMigration\AkeneoFileStorageFileInfoMigrator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;

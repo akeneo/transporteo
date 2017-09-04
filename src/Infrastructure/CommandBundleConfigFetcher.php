@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\DebugConfigCommand;
 use Symfony\Component\Yaml\Yaml;
@@ -26,7 +26,7 @@ class CommandBundleConfigFetcher implements BundleConfigFetcher
         $this->commandLauncher = $commandLauncher;
     }
 
-    public function fetch(AbstractPim $pim, string $bundleName): array
+    public function fetch(Pim $pim, string $bundleName): array
     {
         $commandResult = $this
             ->commandLauncher

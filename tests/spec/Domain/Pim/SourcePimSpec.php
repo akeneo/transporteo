@@ -4,7 +4,7 @@ namespace spec\Akeneo\PimMigration\Domain\Pim;
 
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePimDetectionException;
+use Akeneo\PimMigration\Domain\MigrationStep\s020_SourcePimDetection\SourcePimDetectionException;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;

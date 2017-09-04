@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s30_AccessVerification\AccessVerificator;
+use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator;
 use Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;

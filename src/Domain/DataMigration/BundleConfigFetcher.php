@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Fetch the current config of a given bundle in a PIM.
@@ -14,5 +14,5 @@ use Akeneo\PimMigration\Domain\Pim\AbstractPim;
  */
 interface BundleConfigFetcher
 {
-    public function fetch(AbstractPim $pim, string $bundleName): array;
+    public function fetch(Pim $pim, string $bundleName): array;
 }

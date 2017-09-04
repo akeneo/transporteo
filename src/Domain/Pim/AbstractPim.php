@@ -10,7 +10,7 @@ namespace Akeneo\PimMigration\Domain\Pim;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-abstract class AbstractPim
+abstract class AbstractPim implements Pim
 {
     protected const PIM_ENTERPRISE_STANDARD = 'akeneo/pim-enterprise-standard';
     protected const PIM_COMMUNITY_STANDARD = 'akeneo/pim-community-standard';

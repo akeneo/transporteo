@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\ParametersYmlGenerator;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
 
 /**
  * Create PreConfigurator for a destination pim.

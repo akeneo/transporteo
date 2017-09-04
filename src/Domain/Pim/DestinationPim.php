@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Pim;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimDetectionException;
-use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimDetectionException;
 
 /**
  * Destination Pim.
@@ -14,7 +12,7 @@ use Akeneo\PimMigration\Domain\Pim\AbstractPim;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class DestinationPim extends AbstractPim
+class DestinationPim extends AbstractPim implements Pim
 {
     /** @var string */
     protected $path;

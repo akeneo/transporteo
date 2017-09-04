@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker;
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingException;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
 
@@ -30,7 +30,7 @@ class CommandEntityMappingChecker implements EntityMappingChecker
      * @throws EntityMappingException
      * @throws \InvalidArgumentException
      */
-    public function check(AbstractPim $pim, string $entityClassPath): void
+    public function check(Pim $pim, string $entityClassPath): void
     {
         try {
             $commandResult = $this->commandLauncher->runCommand(new DoctrineMappingInfoCommand(), $pim->absolutePath(), false);

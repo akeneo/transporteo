@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\Command;
 
 /**
@@ -15,7 +15,7 @@ use Akeneo\PimMigration\Infrastructure\Command\Command;
  */
 class DumpTableCommand implements Command
 {
-    /** @var AbstractPim */
+    /** @var Pim */
     private $pim;
 
     /** @var string */
@@ -24,7 +24,7 @@ class DumpTableCommand implements Command
     /** @var string */
     private $dumpLocation;
 
-    public function __construct(AbstractPim $pim, string $tableName, string $dumpLocation)
+    public function __construct(Pim $pim, string $tableName, string $dumpLocation)
     {
         $this->pim = $pim;
         $this->tableName = $tableName;

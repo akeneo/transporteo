@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingException;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\UnixCommandResult;
 use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
@@ -32,7 +32,7 @@ class CommandEntityMappingCheckerSpec extends ObjectBehavior
     }
 
     public function it_does_nothing_if_its_green(
-        AbstractPim $pim,
+        Pim $pim,
         UnixCommandResult $commandResult,
         $commandLauncher
     ) {
@@ -51,7 +51,7 @@ TXT;
     }
 
     public function it_throws_an_exception_for_a_non_existing_entity(
-        AbstractPim $pim,
+        Pim $pim,
         UnixCommandResult $commandResult,
         $commandLauncher
     ) {
@@ -74,7 +74,7 @@ TXT;
     }
 
     public function it_throws_an_exception_if_the_mapping_is_not_ok(
-        AbstractPim $pim,
+        Pim $pim,
         UnixCommandResult $commandResult,
         $commandLauncher
     )
@@ -98,7 +98,7 @@ TXT;
     }
 
     public function it_throws_an_exception_due_to_command_launcher(
-        AbstractPim $pim,
+        Pim $pim,
         $commandLauncher
     ) {
         $pimPath = '/a-path';

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration;
 
 use Akeneo\PimMigration\Domain\FileSystemHelper;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Activate the Migration Bundle.
@@ -23,13 +23,13 @@ class MigrationBundleInstaller
         $this->fileSystem = $fileSystem;
     }
 
-    public function install(AbstractPim $pim): void
+    public function install(Pim $pim): void
     {
         $this->copySources($pim);
         $this->setupKernel($pim);
     }
 
-    private function setupKernel(AbstractPim $pim): void
+    private function setupKernel(Pim $pim): void
     {
         $appKernelPath = sprintf(
             '%s%sapp%sAppKernel.php',
@@ -51,7 +51,7 @@ class MigrationBundleInstaller
         $this->fileSystem->updateLineInFile($appKernelPath, 23, $lineToAdd);
     }
 
-    private function copySources(AbstractPim $pim): void
+    private function copySources(Pim $pim): void
     {
         $from = sprintf(sprintf(
             '%s%sconfig%sAkeneo',

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Helper to fetch table names of a pim.
@@ -14,5 +14,5 @@ use Akeneo\PimMigration\Domain\Pim\AbstractPim;
  */
 interface TableNamesFetcher
 {
-    public function getTableNames(AbstractPim $pim): array;
+    public function getTableNames(Pim $pim): array;
 }

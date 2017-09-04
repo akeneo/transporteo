@@ -3,7 +3,7 @@
 namespace spec\Akeneo\PimMigration\Domain\Pim;
 
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimDetectionException;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimDetectionException;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;

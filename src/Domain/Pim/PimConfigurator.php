@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Domain\Pim;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileNotFoundException;
-use Akeneo\PimMigration\Domain\MigrationStep\s10_SourcePimConfiguration\SourcePimConfigurationException;
+use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurationException;
 use Ds\Map;
 
 /**

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\PimConfiguration;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimConfigurator;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
 
 class PimConfiguratorFactory

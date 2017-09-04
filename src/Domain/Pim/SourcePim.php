@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Pim;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePimDetectionException;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
-use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
+use Akeneo\PimMigration\Domain\MigrationStep\s020_SourcePimDetection\SourcePimDetectionException;
 
 /**
  * Class to represent the source PIM state.
@@ -14,7 +12,7 @@ use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SourcePim extends AbstractPim
+class SourcePim extends AbstractPim implements Pim
 {
     /** @var null|string */
     private $mongoDbInformation;

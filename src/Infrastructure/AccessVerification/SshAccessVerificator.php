@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\AccessVerification;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s30_AccessVerification\AccessException;
-use Akeneo\PimMigration\Domain\MigrationStep\s30_AccessVerification\AccessVerificator;
+use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessException;
+use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
 use phpseclib\Crypt\RSA;

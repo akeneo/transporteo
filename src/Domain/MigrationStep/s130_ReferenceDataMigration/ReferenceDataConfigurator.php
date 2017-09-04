@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration;
 
 use Akeneo\PimMigration\Domain\FileSystemHelper;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Configures a reference data.
@@ -23,7 +23,7 @@ class ReferenceDataConfigurator
         $this->fileSystem = $fileSystem;
     }
 
-    public function configure(array $referenceDataConfig, string $tableName, AbstractPim $pim): string
+    public function configure(array $referenceDataConfig, string $tableName, Pim $pim): string
     {
         $classPath = $referenceDataConfig['class'];
 

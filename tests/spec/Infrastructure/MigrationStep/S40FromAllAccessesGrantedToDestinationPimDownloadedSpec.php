@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownloaderFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S40FromAllAccessesGrantedToDestinationPimDownloaded;

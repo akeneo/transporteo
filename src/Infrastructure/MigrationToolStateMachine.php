@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 

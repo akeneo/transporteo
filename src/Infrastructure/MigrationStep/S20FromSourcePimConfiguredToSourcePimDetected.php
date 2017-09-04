@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Symfony\Component\Workflow\Event\Event;
 

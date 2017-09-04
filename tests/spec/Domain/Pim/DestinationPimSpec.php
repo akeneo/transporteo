@@ -1,8 +1,8 @@
 <?php
 
-namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation;
+namespace spec\Akeneo\PimMigration\Domain\Pim;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimDetectionException;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;

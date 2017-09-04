@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimDetectionException;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimEditionCheckerFactory;
 use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimInstallationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;

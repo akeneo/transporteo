@@ -6,8 +6,8 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s90_SystemMigration;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Domain\MigrationStep\s90_SystemMigration\SystemMigrationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s90_SystemMigration\SystemMigrator;
 use PhpSpec\ObjectBehavior;

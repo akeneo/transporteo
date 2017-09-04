@@ -7,10 +7,10 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration;
 use Akeneo\PimMigration\Domain\DataMigration\TableNamesFetcher;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
 use PhpSpec\ObjectBehavior;
 

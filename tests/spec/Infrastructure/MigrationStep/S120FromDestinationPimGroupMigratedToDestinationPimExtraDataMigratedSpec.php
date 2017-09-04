@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Infrastructure\StateMachineTransition;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\StateMachineTransition\S120FromDestinationPimGroupMigratedToDestinationPimExtraDataMigrated;

@@ -6,9 +6,9 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use PhpSpec\ObjectBehavior;
 

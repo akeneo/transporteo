@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation;
+namespace Akeneo\PimMigration\Domain\Pim;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPimDetectionException;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 

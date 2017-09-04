@@ -7,7 +7,7 @@ namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\PimMigration\Domain\MigrationStep\s30_AccessVerification\AccessException;
 use Akeneo\PimMigration\Domain\MigrationStep\s30_AccessVerification\AccessVerificator;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator;
 use Akeneo\PimMigration\Infrastructure\EnterpriseEditionVerificatorFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S30FromSourcePimDetectedToAllAccessesGranted;

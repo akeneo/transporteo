@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**
  * Contract to check if the requirements of the PIM are good.

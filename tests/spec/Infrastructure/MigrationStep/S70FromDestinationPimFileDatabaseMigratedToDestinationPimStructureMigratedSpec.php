@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s70_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S70FromDestinationPimFileDatabaseMigratedToDestinationPimStructureMigrated;

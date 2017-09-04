@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S20FromSourcePimConfiguredToSourcePimDetected;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Ds\Map;

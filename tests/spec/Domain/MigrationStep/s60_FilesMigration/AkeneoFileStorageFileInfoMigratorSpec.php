@@ -6,9 +6,9 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s60_FilesMigration;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s60_FilesMigration\FilesMigrationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
 
 /**

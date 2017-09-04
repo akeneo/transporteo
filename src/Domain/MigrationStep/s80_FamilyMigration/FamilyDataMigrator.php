@@ -7,8 +7,8 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s80_FamilyMigration;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s50_DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\MigrationStep\s20_SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 
 /**
  * Migrator for family.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;
 
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -20,17 +21,32 @@ class JobMigrator
     /** @var array */
     private $jobMigrators = [];
 
+    /** @var DatabaseQueryExecutor */
+    private $databaseQueryExecutor;
+
+    public function __construct(DatabaseQueryExecutor $databaseQueryExecutor)
+    {
+        $this->databaseQueryExecutor = $databaseQueryExecutor;
+    }
+
     /**
      * @throws JobMigrationException
      */
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        foreach ($this->jobMigrators as $jobMigrator) {
-            try {
+        try {
+            foreach ($this->jobMigrators as $jobMigrator) {
                 $jobMigrator->migrate($sourcePim, $destinationPim);
-            } catch (DataMigrationException $exception) {
-                throw new JobMigrationException($exception->getMessage(), $exception->getCode(), $exception);
             }
+
+            $query = sprintf(
+                'ALTER TABLE %s.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file',
+                $destinationPim->getDatabaseName()
+            );
+
+            $this->databaseQueryExecutor->execute($query, $destinationPim);
+        } catch (DataMigrationException $exception) {
+            throw new JobMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 

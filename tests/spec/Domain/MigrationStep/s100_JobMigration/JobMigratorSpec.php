@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;;
 
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -20,22 +21,35 @@ use PhpSpec\ObjectBehavior;
  */
 class JobMigratorSpec extends ObjectBehavior
 {
+    public function let(DatabaseQueryExecutor $databaseQueryExecutor)
+    {
+        $this->beConstructedWith($databaseQueryExecutor);
+    }
+
     public function it_is_initializable()
     {
         $this->shouldHaveType(JobMigrator::class);
     }
 
-    public function it_calls_several_migrator(
+    public function it_successfully_migrates_jobs(
         DataMigrator $migratorOne,
         DataMigrator $migratorTwo,
         SourcePim $sourcePim,
-        DestinationPim $destinationPim
+        DestinationPim $destinationPim,
+        $databaseQueryExecutor
     ) {
         $this->addJobMigrator($migratorOne);
         $this->addJobMigrator($migratorTwo);
 
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
+
+        $destinationPim->getDatabaseName()->willReturn('database_name');
+
+        $databaseQueryExecutor->execute(
+            'ALTER TABLE database_name.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file',
+            $destinationPim
+        )->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
     }

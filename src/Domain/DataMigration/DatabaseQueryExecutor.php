@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Interface to represent a query executor dedicated to a database.
@@ -20,10 +20,10 @@ interface DatabaseQueryExecutor
     /**
      * @throws QueryException
      */
-    public function execute(string $sql, AbstractPim $pim): void;
+    public function execute(string $sql, Pim $pim): void;
 
     /**
      * @throws QueryException
      */
-    public function query(string $sql, AbstractPim $pim, int $fetchMode = self::DATA_FETCH): array;
+    public function query(string $sql, Pim $pim, int $fetchMode = self::DATA_FETCH): array;
 }

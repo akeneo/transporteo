@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\SourcePimDetection;
 
-use Akeneo\PimMigration\Domain\PimConfiguration\ComposerJson;
-use Akeneo\PimMigration\Domain\PimConfiguration\ParametersYml;
-use Akeneo\PimMigration\Domain\PimConfiguration\PimConfiguration;
-use Akeneo\PimMigration\Domain\PimConfiguration\PimParameters;
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\ComposerJson;
+use Akeneo\PimMigration\Domain\Pim\ParametersYml;
+use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
+use Akeneo\PimMigration\Domain\Pim\PimParameters;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 

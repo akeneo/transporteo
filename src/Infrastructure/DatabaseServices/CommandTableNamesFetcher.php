@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Domain\DataMigration\TableNamesFetcher;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
 
 /**
  * Give table name fetcher .
@@ -24,7 +24,7 @@ class CommandTableNamesFetcher implements TableNamesFetcher
         $this->commandLauncher = $commandLauncher;
     }
 
-    public function getTableNames(AbstractPim $pim): array
+    public function getTableNames(Pim $pim): array
     {
         $commandResult = $this->commandLauncher->runCommand(new ShowTablesCommand($pim), null, false);
 

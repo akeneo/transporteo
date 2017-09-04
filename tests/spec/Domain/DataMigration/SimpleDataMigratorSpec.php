@@ -6,8 +6,8 @@ namespace spec\Akeneo\PimMigration\Domain\DataMigration;
 
 use Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
 
 /**

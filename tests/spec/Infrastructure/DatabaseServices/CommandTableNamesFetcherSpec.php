@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\UnixCommandResult;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandTableNamesFetcher;

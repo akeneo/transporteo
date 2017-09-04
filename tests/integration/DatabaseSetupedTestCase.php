@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
-use Akeneo\PimMigration\Domain\SourcePimDetection\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,7 +37,7 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
 
     }
 
-    protected function getConnection(AbstractPim $pim, bool $useDb): \PDO {
+    protected function getConnection(Pim $pim, bool $useDb): \PDO {
         $dsn = sprintf(
             'mysql: host=%s;port=%s',
             '127.0.0.1',

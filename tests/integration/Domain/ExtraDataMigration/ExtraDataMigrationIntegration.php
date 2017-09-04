@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\ExtraDataMigration;
 
-use Akeneo\PimMigration\Domain\ExtraDataMigration\ExtraDataMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator;
 use Akeneo\PimMigration\Infrastructure\Command\BasicCommandLauncher;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;

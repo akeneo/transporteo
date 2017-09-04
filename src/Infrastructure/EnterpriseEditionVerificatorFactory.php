@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Domain\EnterpriseEditionAccessVerification\EnterpriseEditionAccessVerificator;
-use Akeneo\PimMigration\Infrastructure\EnterpriseEditionAccessVerification\SshEnterpriseEditionAccessVerificator;
+use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator;
+use Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
 
@@ -19,12 +19,12 @@ class EnterpriseEditionVerificatorFactory
 {
     public function createSshEnterpriseVerificator(
         ServerAccessInformation $serverAccessInformation
-    ): EnterpriseEditionAccessVerificator {
+    ): AccessVerificator {
         $ssh = new SSH2($serverAccessInformation->getHost(), $serverAccessInformation->getPort());
         $rsa = new RSA();
 
         $rsa->load($serverAccessInformation->getSshKey()->getKey());
 
-        return new SshEnterpriseEditionAccessVerificator($ssh, $rsa, $serverAccessInformation);
+        return new SshAccessVerificator($ssh, $rsa, $serverAccessInformation);
     }
 }

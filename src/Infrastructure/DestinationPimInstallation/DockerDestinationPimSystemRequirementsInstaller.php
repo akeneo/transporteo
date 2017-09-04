@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Ds\Set;
 use Symfony\Component\Filesystem\Filesystem;

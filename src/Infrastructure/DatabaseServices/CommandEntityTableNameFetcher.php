@@ -6,7 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
 use Akeneo\PimMigration\Domain\DataMigration\EntityTableNameFetcher;
 use Akeneo\PimMigration\Domain\FileFetcher;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
 use Symfony\Component\Yaml\Yaml;
 
@@ -30,7 +30,7 @@ class CommandEntityTableNameFetcher implements EntityTableNameFetcher
         $this->commandLauncher = $commandLauncher;
     }
 
-    public function fetchTableName(AbstractPim $pim, string $entityNamespace): string
+    public function fetchTableName(Pim $pim, string $entityNamespace): string
     {
         $mappingFilePath = $pim->absolutePath();
 

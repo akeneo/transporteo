@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Check if an entity is well mapped.
@@ -17,5 +17,5 @@ interface EntityMappingChecker
     /**
      * @throws EntityMappingException
      */
-    public function check(AbstractPim $pim, string $entityClassPath): void;
+    public function check(Pim $pim, string $entityClassPath): void;
 }

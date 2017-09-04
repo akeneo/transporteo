@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Infrastructure\Command\Command;
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
 
 /**
  * Command to get tables name of a PIM project.
@@ -15,10 +15,10 @@ use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
  */
 class ShowTablesCommand implements Command
 {
-    /** @var AbstractPim */
+    /** @var Pim */
     private $pim;
 
-    public function __construct(AbstractPim $pim)
+    public function __construct(Pim $pim)
     {
         $this->pim = $pim;
     }

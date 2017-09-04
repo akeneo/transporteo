@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Able to get a table name from an entity namespace.
@@ -14,5 +14,5 @@ use Akeneo\PimMigration\Domain\PimDetection\AbstractPim;
  */
 interface EntityTableNameFetcher
 {
-    public function fetchTableName(AbstractPim $pim, string $entityNamespace): string;
+    public function fetchTableName(Pim $pim, string $entityNamespace): string;
 }

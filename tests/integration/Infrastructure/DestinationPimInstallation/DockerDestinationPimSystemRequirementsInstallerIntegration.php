@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\DestinationPimInstallation\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DockerDestinationPimSystemRequirementsInstaller;
 use Akeneo\PimMigration\Infrastructure\Command\DockerComposeCommandLauncher;
 use PHPUnit\Framework\TestCase;

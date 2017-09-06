@@ -7,6 +7,9 @@ namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\QueryException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
  * MySQL command launcher.
@@ -14,7 +17,7 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class MySqlQueryExecutor implements DatabaseQueryExecutor
+class LocalMySqlQueryExecutor extends AbstractMysqlQueryExecutor implements DatabaseQueryExecutor
 {
     public function execute(string $sql, Pim $pim): void
     {
@@ -58,5 +61,10 @@ class MySqlQueryExecutor implements DatabaseQueryExecutor
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
+    }
+
+    public function supports(PimConnection $connection): bool
+    {
+        return $connection instanceof Localhost || $connection instanceof DockerConnection;
     }
 }

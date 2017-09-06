@@ -62,6 +62,11 @@ abstract class AbstractPim implements Pim
 
     abstract protected static function getPimVersionAllowed(): string;
 
+    public function version(): string
+    {
+        return self::getPimVersionAllowed();
+    }
+
     public function getMysqlHost(): string
     {
         return $this->mysqlHost;

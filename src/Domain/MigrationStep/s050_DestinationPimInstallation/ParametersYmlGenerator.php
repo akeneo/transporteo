@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation;
 
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 
 /**
  * Generate a default parameters yaml file.
@@ -15,19 +14,19 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ParametersYmlGenerator
 {
-    /** @var string */
-    private $destinationPimPath;
+    /** @var FileSystemHelper */
+    private $fileSystemHelper;
 
-    public function __construct(string $destinationPimPath)
+    public function __construct(FileSystemHelper $fileSystemHelper)
     {
-        $this->destinationPimPath = $destinationPimPath;
+        $this->fileSystemHelper = $fileSystemHelper;
     }
 
-    public function preconfigure(): void
+    public function preconfigure(string $pimPath): void
     {
         $configPath = sprintf(
             '%s%sapp%sconfig',
-            $this->destinationPimPath,
+            $pimPath,
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
         );
@@ -44,18 +43,15 @@ class ParametersYmlGenerator
             DIRECTORY_SEPARATOR
         );
 
-        $fs = new Filesystem();
+        $this->fileSystemHelper->copyFile($parametersYamlDistPath, $parametersYamlPath, true);
 
-        $fs->copy($parametersYamlDistPath, $parametersYamlPath);
-
-        $parameters = Yaml::parse(file_get_contents($parametersYamlPath));
+        $parameters = $this->fileSystemHelper->getYamlContent($parametersYamlPath);
 
         $parameters['parameters']['database_host'] = 'mysql';
         $parameters['parameters']['database_port'] = 3306;
         $parameters['parameters']['index_name'] = 'akeneo_pim';
         $parameters['parameters']['index_hosts'] = "'elasticsearch: 9200'";
 
-        $parametersYaml = Yaml::dump($parameters);
-        file_put_contents($parametersYamlPath, $parametersYaml);
+        $this->fileSystemHelper->dumpYamlInFile($parametersYamlPath, $parameters);
     }
 }

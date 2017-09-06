@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification;
 
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 
 /**
  * Check if a PIM is an EnterpriseEdition it can connect to distribution server.
@@ -15,9 +15,7 @@ use Akeneo\PimMigration\Domain\Pim\SourcePim;
 interface AccessVerificator
 {
     /**
-     * @param SourcePim $sourcePim the Pim to check the access to
-     *
      * @throws AccessException when the access is not successful
      */
-    public function verify(SourcePim $sourcePim): void;
+    public function verify(PimConnection $connection): void;
 }

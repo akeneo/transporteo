@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurationException;
-use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
-use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
-use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
+use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
@@ -27,21 +27,16 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     private const LOCAL_SOURCE_PIM = 'locally';
     private const REMOTE_SOURCE_PIM = 'on a remote server';
 
-    /** @var FileFetcherFactory */
-    private $fileFetcherFactory;
-
-    /** @var PimConfiguratorFactory */
-    private $pimConfiguratorFactory;
+    /** @var SourcePimConfigurator */
+    private $pimConfigurator;
 
     public function __construct(
         Translator $translator,
-        FileFetcherFactory $fileFfileFetcherFactory,
-        PimConfiguratorFactory $sourcePimConfiguratorFactory
+        SourcePimConfigurator $pimConfigurator
     ) {
         parent::__construct($translator);
 
-        $this->fileFetcherFactory = $fileFfileFetcherFactory;
-        $this->pimConfiguratorFactory = $sourcePimConfiguratorFactory;
+        $this->pimConfigurator = $pimConfigurator;
     }
 
     /**
@@ -178,9 +173,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
                 }
             );
 
-        $sshKeySourcePimServer = new SshKey($sshPath);
-        $stateMachine->setSshKey($sshKeySourcePimServer);
-        $serverAccessInformation = new ServerAccessInformation($host, $port, $user, $sshKeySourcePimServer);
+        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user, new SshKey($sshPath)));
 
         $composerJsonPath = $this
             ->printerAndAsker
@@ -206,14 +199,8 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 
         $stateMachine->setSourcePimServerInformation($pimServerInformation);
 
-        $pimConfigurator = $this
-            ->pimConfiguratorFactory
-            ->createSourcePimConfigurator(
-                $this->fileFetcherFactory->createSshFileFetcher($serverAccessInformation)
-            );
-
         try {
-            $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
+            $sourcePimConfiguration = $this->pimConfigurator->configure($pimServerInformation);
         } catch (\Exception $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
@@ -243,22 +230,16 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
                 }
             );
 
+        $stateMachine->setSourcePimConnection(new Localhost());
+
         try {
             $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
         } catch (\Exception $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
 
-        $pimConfigurator = $this
-            ->pimConfiguratorFactory
-            ->createSourcePimConfigurator(
-                $this->fileFetcherFactory->createLocalFileFetcher()
-            );
-
-        $stateMachine->setSourcePimServerInformation($pimServerInformation);
-
         try {
-            $sourcePimConfiguration = $pimConfigurator->configure($pimServerInformation);
+            $sourcePimConfiguration = $this->pimConfigurator->configure($pimServerInformation);
         } catch (\Exception $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }

@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurationChecker;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimDetectionException;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimEditionCheckerFactory;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimInstallationException;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimConfigurationCheckerFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimParametersYmlGeneratorFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsInstallerFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsCheckerFactory;
-use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
-use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -30,51 +26,31 @@ use Symfony\Component\Workflow\Event\GuardEvent;
  */
 class S050FromDestinationPimDownloadedToDestinationPimInstalled extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
-    /** @var DestinationPimParametersYmlGeneratorFactory */
-    private $destinationPimParametersYmlGeneratorFactory;
+    /** @var DestinationPimConfigurator */
+    private $destinationPimConfigurator;
 
-    /** @var PimConfiguratorFactory */
-    private $pimConfiguratorFactory;
+    /** @var DestinationPimSystemRequirementsInstallerHelper */
+    private $destinationPimSystemRequirementsInstallerHelper;
 
-    /** @var FileFetcherFactory */
-    private $fileFetcherFactory;
+    /** @var DestinationPimConfigurationChecker */
+    private $destinationPimConfigurationChecker;
 
-    /** @var DestinationPimSystemRequirementsInstallerFactory */
-    private $destinationPimSystemRequirementsInstallerFactory;
-
-    /** @var LocalCommandLauncherFactory */
-    private $localCommandLauncherFactory;
-
-    /** @var DestinationPimConfigurationCheckerFactory */
-    private $destinationPimConfigurationCheckerFactory;
-
-    /** @var DestinationPimEditionCheckerFactory */
-    private $destinationPimEditionCheckerFactory;
-
-    /** @var DestinationPimSystemRequirementsCheckerFactory */
-    private $destinationPimSystemRequirementsCheckerFactory;
+    /** @var ParametersYmlGenerator */
+    private $parametersYmlGenerator;
 
     public function __construct(
         Translator $translator,
-        DestinationPimParametersYmlGeneratorFactory $destinationPimPreConfiguratorFactory,
-        PimConfiguratorFactory $pimConfiguratorFactory,
-        FileFetcherFactory $fileFetcherFactory,
-        DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        LocalCommandLauncherFactory $localCommandLauncherFactory,
-        DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
-        DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
-        DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory
+        DestinationPimConfigurator $destinationPimConfigurator,
+        DestinationPimSystemRequirementsInstallerHelper $destinationPimSystemRequirementsInstallerHelper,
+        DestinationPimConfigurationChecker $destinationPimConfigurationChecker,
+        ParametersYmlGenerator $parametersYmlGenerator
     ) {
         parent::__construct($translator);
 
-        $this->destinationPimParametersYmlGeneratorFactory = $destinationPimPreConfiguratorFactory;
-        $this->pimConfiguratorFactory = $pimConfiguratorFactory;
-        $this->fileFetcherFactory = $fileFetcherFactory;
-        $this->destinationPimSystemRequirementsInstallerFactory = $destinationPimSystemRequirementsInstallerFactory;
-        $this->localCommandLauncherFactory = $localCommandLauncherFactory;
-        $this->destinationPimConfigurationCheckerFactory = $destinationPimConfigurationCheckerFactory;
-        $this->destinationPimEditionCheckerFactory = $destinationPimEditionCheckerFactory;
-        $this->destinationPimSystemRequirementsCheckerFactory = $destinationPimSystemRequirementsCheckerFactory;
+        $this->destinationPimConfigurator = $destinationPimConfigurator;
+        $this->destinationPimSystemRequirementsInstallerHelper = $destinationPimSystemRequirementsInstallerHelper;
+        $this->destinationPimConfigurationChecker = $destinationPimConfigurationChecker;
+        $this->parametersYmlGenerator = $parametersYmlGenerator;
     }
 
     public static function getSubscribedEvents()
@@ -115,9 +91,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $preConfigurator = $this->destinationPimParametersYmlGeneratorFactory->createDestinationPimParametersYmlGenerator($stateMachine->getCurrentDestinationPimLocation());
-
-        $preConfigurator->preconfigure();
+        $this->parametersYmlGenerator->preconfigure($stateMachine->getCurrentDestinationPimLocation());
     }
 
     public function guardOnDestinationPimConfiguration(GuardEvent $event)
@@ -149,9 +123,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             DIRECTORY_SEPARATOR
         );
 
-        $pimConfigurator = $this->pimConfiguratorFactory->createDestinationPimConfigurator($this->fileFetcherFactory->createWithoutCopyLocalFileFetcher());
-
-        $destinationPimConfiguration = $pimConfigurator->configure(new PimServerInformation($composerJsonPath, $projectName));
+        $destinationPimConfiguration = $this->destinationPimConfigurator->configure(new PimServerInformation($composerJsonPath, $projectName));
 
         $stateMachine->setDestinationPimConfiguration($destinationPimConfiguration);
     }
@@ -186,11 +158,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $stateMachine = $event->getSubject();
 
         try {
-            $this
-                ->destinationPimSystemRequirementsInstallerFactory
-                ->createDockerPimSystemRequirementsInstaller($this->localCommandLauncherFactory->createDockerComposeCommandLauncher('fpm'))
-                ->install($stateMachine->getDestinationPim())
-            ;
+            $this->destinationPimSystemRequirementsInstallerHelper->install($stateMachine->getDestinationPim());
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
@@ -210,11 +178,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $stateMachine = $event->getSubject();
 
         try {
-            $this
-                ->destinationPimSystemRequirementsInstallerFactory
-                ->createBasicPimSystemRequirementsInstaller($this->localCommandLauncherFactory->createBasicDestinationPimCommandLauncher())
-                ->install($stateMachine->getDestinationPim())
-            ;
+            $this->destinationPimSystemRequirementsInstallerHelper->install($stateMachine->getDestinationPim());
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
@@ -225,14 +189,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $commandLauncher = $stateMachine->useDocker() ? $this->localCommandLauncherFactory->createDockerComposeCommandLauncher('fpm') : $this->localCommandLauncherFactory->createBasicDestinationPimCommandLauncher();
-        $editionChecker = $this->destinationPimEditionCheckerFactory->createDestinationPimEditionChecker();
-        $systemRequirementschecker = $this->destinationPimSystemRequirementsCheckerFactory->createCliDestinationPimSystemRequirementsChecker($commandLauncher);
-
-        $pimConfigurationChecker = $this->destinationPimConfigurationCheckerFactory->createDestinationPimConfigurationChecker($editionChecker, $systemRequirementschecker);
-
         try {
-            $pimConfigurationChecker->check($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+            $this->destinationPimConfigurationChecker->check($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
         } catch (\Exception $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }

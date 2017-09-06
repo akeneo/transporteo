@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloadException;
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownloaderFactory;
+use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Archive;
+use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Git;
+use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Local;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -23,13 +28,14 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
     private const TAR_GZ_INSTALL = 1;
     private const DESTINATION_PIM_ALREADY_INSTALLED = 2;
 
-    /** @var DestinationPimDownloaderFactory */
-    protected $destinationPimDownloaderFactory;
+    /** @var DestinationPimDownloaderHelper */
+    private $destinationPimDownloaderHelper;
 
-    public function __construct(Translator $translator, DestinationPimDownloaderFactory $destinationPimDownloaderFactory)
+    public function __construct(Translator $translator, DestinationPimDownloaderHelper $destinationPimDownloaderHelper)
     {
         parent::__construct($translator);
-        $this->destinationPimDownloaderFactory = $destinationPimDownloaderFactory;
+        $this->translator = $translator;
+        $this->destinationPimDownloaderHelper = $destinationPimDownloaderHelper;
     }
 
     /**
@@ -67,7 +73,8 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
 
         switch ($destination) {
             case self::DOCKER_COMPOSE_INSTALL:
-                $stateMachine->setUseDocker(true);
+                $stateMachine->setDownloadMethod(new Git());
+                $stateMachine->setDestinationPimConnection(new DockerConnection());
                 break;
             case self::TAR_GZ_INSTALL:
                 $destinationPath = $this->printerAndAsker->askSimpleQuestion(
@@ -87,8 +94,8 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
                         return $answer;
                     }
                 );
-                $stateMachine->setUseDocker(true);
-                $stateMachine->setDestinationPathPimLocation($destinationPath);
+                $stateMachine->setDestinationPimConnection(new DockerConnection());
+                $stateMachine->setDownloadMethod(new Archive($destinationPath));
                 break;
             case self::DESTINATION_PIM_ALREADY_INSTALLED:
                 $destinationPath = $this->printerAndAsker->askSimpleQuestion(
@@ -108,12 +115,11 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
                         return $answer;
                     }
                 );
-                $stateMachine->setUseDocker(false);
-                $stateMachine->setDestinationPathPimLocation($destinationPath);
+                $stateMachine->setDownloadMethod(new Local($destinationPath));
+                $stateMachine->setDestinationPimConnection(new Localhost());
+
                 break;
         }
-
-        $stateMachine->setDestinationPimLocation($destination);
     }
 
     public function onDownloadingTransition(Event $event)
@@ -121,28 +127,8 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $destinationPimLocation = $stateMachine->getDestinationPimLocation();
-        $destinationPathPimLocation = $stateMachine->getDestinationPathPimLocation();
-
-        $downloader = null;
-
-        if (self::DESTINATION_PIM_ALREADY_INSTALLED === $destinationPimLocation) {
-            $stateMachine->setCurrentDestinationPimLocation($destinationPathPimLocation);
-
-            return;
-        }
-
-        switch ($destinationPimLocation) {
-            case self::DOCKER_COMPOSE_INSTALL:
-                $downloader = $this->destinationPimDownloaderFactory->createGitDestinationPimDownloader();
-                break;
-            case self::TAR_GZ_INSTALL:
-                $downloader = $this->destinationPimDownloaderFactory->createLocalArchiveDestinationPimDownloader($destinationPathPimLocation);
-                break;
-        }
-
         try {
-            $destinationPim = $downloader->download($stateMachine->getSourcePim(), $stateMachine->getProjectName());
+            $destinationPim = $this->destinationPimDownloaderHelper->download($stateMachine->getSourcePim(), $stateMachine->getProjectName());
         } catch (\Exception $exception) {
             throw new DestinationPimDownloadException(
                 $this->translator->trans(

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessException;
-use Akeneo\PimMigration\Infrastructure\EnterpriseEditionVerificatorFactory;
+use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
-use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
+use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
@@ -22,13 +22,13 @@ use Symfony\Component\Workflow\Event\GuardEvent;
  */
 class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
-    /** @var EnterpriseEditionVerificatorFactory */
-    private $enterpriseEditionVerificatorFactory;
+    /** @var AccessVerificator */
+    private $accessVerificator;
 
-    public function __construct(Translator $translator, EnterpriseEditionVerificatorFactory $enterpriseEditionVerificatorFactory)
+    public function __construct(Translator $translator, AccessVerificator $accessVerificator)
     {
         parent::__construct($translator);
-        $this->enterpriseEditionVerificatorFactory = $enterpriseEditionVerificatorFactory;
+        $this->accessVerificator = $accessVerificator;
     }
 
     public static function getSubscribedEvents()
@@ -52,22 +52,18 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
             return;
         }
 
-        $sshKey = $stateMachine->getSshKey();
+        $sourcePimLocation = $stateMachine->getSourcePimConnection();
 
-        if (null === $sshKey) {
+        if (!$sourcePimLocation instanceof SshConnection) {
             $event->setBlocked(true);
 
             return;
         }
 
-        $sourcePim = $stateMachine->getSourcePim();
-
-        $serverAccessInformation = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
-
-        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation);
+        $sshConnection = SshConnection::fromString($sourcePim->getEnterpriseRepository(), $sourcePimLocation->getSshKey());
 
         try {
-            $sshVerificator->verify($sourcePim);
+            $this->accessVerificator->verify($sshConnection);
         } catch (AccessException $exception) {
             $this->printerAndAsker->printMessage(
                 $this->translator->trans(
@@ -101,9 +97,7 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
                 }
             );
 
-        $sshKey = new SshKey($sshPath);
-
-        $stateMachine->setSshKey($sshKey);
+        $stateMachine->setEnterpriseAccessAllowedKey(new SshKey($sshPath));
     }
 
     public function grantEeAccesses(GuardEvent $event)
@@ -112,11 +106,10 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
         $stateMachine = $event->getSubject();
         $sourcePim = $stateMachine->getSourcePim();
 
-        $sshKey = $stateMachine->getSshKey();
-        $serverAccessInformation = ServerAccessInformation::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
+        $sshKey = $stateMachine->getEnterpriseAccessAllowedKey();
+        $serverAccessInformation = SshConnection::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
 
-        $sshVerificator = $this->enterpriseEditionVerificatorFactory->createSshEnterpriseVerificator($serverAccessInformation);
-        $sshVerificator->verify($sourcePim);
+        $this->accessVerificator->verify($serverAccessInformation);
     }
 
     public function onAllAccessesGranted(Event $event)

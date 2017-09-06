@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
 use Akeneo\PimMigration\Domain\Command\Console;
-use Akeneo\PimMigration\Domain\Command\UnixCommand;
-use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+use Akeneo\PimMigration\Domain\Command\Command;
+use Akeneo\PimMigration\Domain\Command\CommandResult;
 use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
@@ -23,7 +22,7 @@ use Symfony\Component\Process\Process;
  */
 class LocalConsole extends AbstractConsole implements Console
 {
-    public function execute(UnixCommand $command, AbstractPim $pim, PimConnection $connection): UnixCommandResult
+    public function execute(Command $command, Pim $pim, PimConnection $connection): CommandResult
     {
         $commandToLaunch = $this->getProcessedCommand($command, $pim);
         $process = new Process($commandToLaunch, '');
@@ -43,7 +42,7 @@ class LocalConsole extends AbstractConsole implements Console
             }
         }
 
-        return new UnixCommandResult($process->getExitCode(), $process->getOutput());
+        return new CommandResult($process->getExitCode(), $process->getOutput());
     }
 
     public function supports(PimConnection $connection): bool
@@ -53,6 +52,6 @@ class LocalConsole extends AbstractConsole implements Console
 
     protected function getPrefixPath(Pim $pim): string
     {
-        return $pim->absolutePath() . DIRECTORY_SEPARATOR;
+        return $pim->absolutePath().DIRECTORY_SEPARATOR;
     }
 }

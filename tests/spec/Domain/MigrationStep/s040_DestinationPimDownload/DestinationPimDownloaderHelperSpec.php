@@ -34,13 +34,12 @@ class DestinationPimDownloaderHelperSpec extends ObjectBehavior
     ) {
         $this->addDestinationPimDownloader($destinationPimDownloader1);
         $this->addDestinationPimDownloader($destinationPimDownloader2);
-        $this->setDownloadMethod($downloadMethod);
 
         $destinationPimDownloader1->supports($downloadMethod)->willReturn(false);
         $destinationPimDownloader2->supports($downloadMethod)->willReturn(true);
         $destinationPimDownloader2->download($downloadMethod, $pim, 'a-project-name')->willReturn('something');
 
-        $this->download($pim, 'a-project-name')->shouldReturn('something');
+        $this->download($downloadMethod, $pim, 'a-project-name')->shouldReturn('something');
     }
 
     public function it_throws_an_exception_if_there_is_no_console_supporting_the_connection(
@@ -51,13 +50,12 @@ class DestinationPimDownloaderHelperSpec extends ObjectBehavior
     ) {
         $this->addDestinationPimDownloader($destinationPimDownloader1);
         $this->addDestinationPimDownloader($destinationPimDownloader2);
-        $this->setDownloadMethod($downloadMethod);
 
         $destinationPimDownloader1->supports($downloadMethod)->willReturn(false);
         $destinationPimDownloader2->supports($downloadMethod)->willReturn(false);
 
         $this
             ->shouldThrow(new \InvalidArgumentException('The download method is not supported by any DestinationPimDownloader'))
-            ->during('download', [$pim, 'a-project-name']);
+            ->during('download', [$downloadMethod, $pim, 'a-project-name']);
     }
 }

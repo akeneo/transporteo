@@ -10,7 +10,7 @@ namespace Akeneo\PimMigration\Domain\Command;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-abstract class AbstractUnixCommand implements UnixCommand
+abstract class AbstractCommand implements Command
 {
     /** @var string */
     private $command;

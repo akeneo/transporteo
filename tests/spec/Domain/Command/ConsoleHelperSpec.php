@@ -6,7 +6,7 @@ namespace spec\Akeneo\PimMigration\Domain\Command;
 
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
-use Akeneo\PimMigration\Domain\Command\UnixCommand;
+use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
@@ -29,11 +29,12 @@ class ConsoleHelperSpec extends ObjectBehavior
         Console $console2,
         PimConnection $sourcePimConnection,
         SourcePim $pim,
-        UnixCommand $unixCommand
+        Command $unixCommand
     ) {
         $this->addConsole($console1);
         $this->addConsole($console2);
-        $this->connectSourcePim($sourcePimConnection);
+
+        $pim->getConnection()->willReturn($sourcePimConnection);
 
         $console1->supports($sourcePimConnection)->willReturn(false);
         $console2->supports($sourcePimConnection)->willReturn(true);
@@ -48,11 +49,12 @@ class ConsoleHelperSpec extends ObjectBehavior
         Console $console2,
         PimConnection $pimConnection,
         SourcePim $pim,
-        UnixCommand $unixCommand
+        Command $unixCommand
     ) {
         $this->addConsole($console1);
         $this->addConsole($console2);
-        $this->connectSourcePim($pimConnection);
+
+        $pim->getConnection()->willReturn($pimConnection);
 
         $console1->supports($pimConnection)->willReturn(false);
         $console2->supports($pimConnection)->willReturn(false);

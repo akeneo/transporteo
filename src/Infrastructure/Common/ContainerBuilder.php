@@ -12,15 +12,12 @@ use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
-use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloadMethodAware;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator;
-use Akeneo\PimMigration\Domain\Pim\DestinationPimConnectionAware;
-use Akeneo\PimMigration\Domain\Pim\SourcePimConnectionAware;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
@@ -73,9 +70,6 @@ final class ContainerBuilder
         $container->registerForAutoconfiguration(DatabaseQueryExecutor::class)->addTag('migration_tool.database_query_executor');
         $container->registerForAutoconfiguration(DestinationPimDownloader::class)->addTag('migration_tool.destination_pim_downloader');
         $container->registerForAutoconfiguration(DestinationPimSystemRequirementsInstaller::class)->addTag('migration_tool.destination_pim_system_requirements_installer');
-        $container->registerForAutoconfiguration(DestinationPimConnectionAware::class)->addTag('migration_tool.destination_pim_connection_aware');
-        $container->registerForAutoconfiguration(SourcePimConnectionAware::class)->addTag('migration_tool.source_pim_connection_aware');
-        $container->registerForAutoconfiguration(DestinationPimDownloadMethodAware::class)->addTag('migration_tool.destinatiom_pim_download_method_aware');
 
         $container->compile();
 

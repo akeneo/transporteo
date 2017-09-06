@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Command;
 
-use Akeneo\PimMigration\Domain\Pim\DestinationPimConnected;
-use Akeneo\PimMigration\Domain\Pim\DestinationPimConnectionAware;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Domain\Pim\SourcePimConnected;
-use Akeneo\PimMigration\Domain\Pim\SourcePimConnectionAware;
 
 /**
  * Console helper which known where are located the pims to execute command on them.
@@ -18,19 +13,14 @@ use Akeneo\PimMigration\Domain\Pim\SourcePimConnectionAware;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class ConsoleHelper implements SourcePimConnectionAware, DestinationPimConnectionAware
+class ConsoleHelper
 {
-    use SourcePimConnected;
-    use DestinationPimConnected;
-
     /** @var Console[] */
     private $consoles = [];
 
-    public function execute(Pim $pim, UnixCommand $command): UnixCommandResult
+    public function execute(Pim $pim, Command $command): CommandResult
     {
-        $connection = $pim instanceof SourcePim ? $this->sourcePimConnection : $this->destinationPimConnection;
-
-        return $this->get($connection)->execute($command, $pim, $connection);
+        return $this->get($pim->getConnection())->execute($command, $pim, $pim->getConnection());
     }
 
     public function addConsole(Console $console): void

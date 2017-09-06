@@ -31,7 +31,8 @@ class DatabaseQueryExecutorRegistrySpec extends ObjectBehavior
     ) {
         $this->addDatabaseQueryExecutor($databaseQueryExecutor1);
         $this->addDatabaseQueryExecutor($databaseQueryExecutor2);
-        $this->connectSourcePim($sourcePimConnection);
+
+        $pim->getConnection()->willReturn($sourcePimConnection);
 
         $databaseQueryExecutor1->supports($sourcePimConnection)->willReturn(false);
         $databaseQueryExecutor2->supports($sourcePimConnection)->willReturn(true);
@@ -48,7 +49,8 @@ class DatabaseQueryExecutorRegistrySpec extends ObjectBehavior
     ) {
         $this->addDatabaseQueryExecutor($databaseQueryExecutor1);
         $this->addDatabaseQueryExecutor($databaseQueryExecutor2);
-        $this->connectSourcePim($pimConnection);
+
+        $pim->getConnection()->willReturn($pimConnection);
 
         $databaseQueryExecutor1->supports($pimConnection)->willReturn(false);
         $databaseQueryExecutor2->supports($pimConnection)->willReturn(false);

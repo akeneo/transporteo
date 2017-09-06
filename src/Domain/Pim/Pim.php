@@ -27,4 +27,6 @@ interface Pim
     public function getEnterpriseRepository(): ?string;
 
     public function absolutePath(): string;
+
+    public function getConnection(): PimConnection;
 }

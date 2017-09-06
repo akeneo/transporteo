@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure;
 
-use Akeneo\PimMigration\Infrastructure\Common\ContainerBuilder;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -20,9 +18,9 @@ use Symfony\Component\Workflow\Transition;
  */
 class MigrationToolStateMachineSpec extends ObjectBehavior
 {
-    public function let(StateMachine $stateMachine, Container $containerBuilder)
+    public function let(StateMachine $stateMachine)
     {
-        $this->beConstructedWith($stateMachine, $containerBuilder);
+        $this->beConstructedWith($stateMachine);
         $this->currentState = 'ready';
     }
 

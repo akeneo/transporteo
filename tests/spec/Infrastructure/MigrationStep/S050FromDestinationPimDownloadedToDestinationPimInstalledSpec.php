@@ -11,6 +11,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Par
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
@@ -153,6 +154,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     public function it_configures_the_destination_pim(
         Event $event,
         MigrationToolStateMachine $stateMachine,
+        PimConnection $pimConnection,
         PimConfiguration $pimConfiguration,
         $destinationPimConfigurator
     )
@@ -167,8 +169,9 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
         );
 
         $stateMachine->getCurrentDestinationPimLocation()->willReturn($currentDestinationPimLocation);
+        $stateMachine->getDestinationPimConnection()->willReturn($pimConnection);
 
-        $destinationPimConfigurator->configure(new PimServerInformation(
+        $destinationPimConfigurator->configure($pimConnection, new PimServerInformation(
             sprintf(
                 '%s%scomposer.json',
                 $currentDestinationPimLocation,

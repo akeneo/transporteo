@@ -47,7 +47,7 @@ class TableMigrator
             );
         }
 
-        $this->fileFetcherRegistry->fetch($sourcePim, $sourceDatabaseQueryExecutory->getPimTableNameDumpPath($sourcePim, $tableName), true);
+        $this->fileFetcherRegistry->fetch($sourcePim->getConnection(), $sourceDatabaseQueryExecutory->getPimTableNameDumpPath($sourcePim, $tableName), true);
 
         try {
             $destinationPimQueryExecutor->importTable($tableName, $destinationPim);

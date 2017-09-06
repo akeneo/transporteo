@@ -7,6 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallati
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\Pim\AbstractPimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 
 /**
  * Configurator for a destination PIM.
@@ -24,8 +25,8 @@ class DestinationPimConfigurator extends AbstractPimConfigurator implements PimC
         $this->fileFetcherRegistry = $fileFetcherRegistry;
     }
 
-    protected function fetch(string $path): string
+    protected function fetch(PimConnection $connection, string $path): string
     {
-        return $this->fileFetcherRegistry->fetchDestination($path, false);
+        return $this->fileFetcherRegistry->fetch($connection, $path, false);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Git;
@@ -65,15 +66,17 @@ class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBeh
     public function it_asks_to_download_the_pim_with_docker(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        $destinationPimDownloaderHelper,
-        SourcePim $sourcePim
+        SourcePim $sourcePim,
+        DownloadMethod $downloadMethod,
+        $destinationPimDownloaderHelper
     ) {
         $event->getSubject()->willReturn($stateMachine);
 
         $stateMachine->getSourcePim()->willReturn($sourcePim);
         $stateMachine->getProjectName()->willReturn('a-super-project');
+        $stateMachine->getDownloadMethod()->willReturn($downloadMethod);
 
-        $destinationPimDownloaderHelper->download($sourcePim, 'a-super-project')->willReturn('/home/pim');
+        $destinationPimDownloaderHelper->download($downloadMethod, $sourcePim, 'a-super-project')->willReturn('/home/pim');
 
         $stateMachine->setCurrentDestinationPimLocation('/home/pim')->shouldBeCalled();
 

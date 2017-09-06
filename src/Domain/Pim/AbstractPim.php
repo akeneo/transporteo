@@ -40,6 +40,9 @@ abstract class AbstractPim implements Pim
     /** @var string */
     private $absolutePath;
 
+    /** @var PimConnection */
+    private $pimConnection;
+
     public function __construct(
         string $mysqlHost,
         int $mysqlPort,
@@ -48,7 +51,8 @@ abstract class AbstractPim implements Pim
         string $databasePassword,
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
-        string $absolutePath
+        string $absolutePath,
+        PimConnection $pimConnection
     ) {
         $this->mysqlHost = $mysqlHost;
         $this->mysqlPort = $mysqlPort;
@@ -58,6 +62,7 @@ abstract class AbstractPim implements Pim
         $this->isEnterpriseEdition = $isEnterpriseEdition;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->absolutePath = $absolutePath;
+        $this->pimConnection = $pimConnection;
     }
 
     abstract protected static function getPimVersionAllowed(): string;
@@ -105,5 +110,10 @@ abstract class AbstractPim implements Pim
     public function absolutePath(): string
     {
         return $this->absolutePath;
+    }
+
+    public function getConnection(): PimConnection
+    {
+        return $this->pimConnection;
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
 use Akeneo\PimMigration\Domain\Command\Console;
-use Akeneo\PimMigration\Domain\Command\UnixCommand;
+use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlDumpCommand;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryCommand;
 use Akeneo\PimMigration\Infrastructure\DatabaseServices\MysqlRawCommand;
@@ -21,11 +21,11 @@ use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
  */
 abstract class AbstractConsole implements Console
 {
-    protected function getProcessedCommand(UnixCommand $command, Pim $pim): string
+    protected function getProcessedCommand(Command $command, Pim $pim): string
     {
         if ($command instanceof SymfonyCommand) {
             if ($pim instanceof DestinationPim) {
-                return sprintf('%sbin/console %s',$this->getPrefixPath($pim), $command->getCommand());
+                return sprintf('%sbin/console %s', $this->getPrefixPath($pim), $command->getCommand());
             }
 
             return sprintf('%sapp/console %s', $this->getPrefixPath($pim), $command->getCommand());
@@ -67,8 +67,8 @@ abstract class AbstractConsole implements Console
             );
         }
 
-        throw new \InvalidArgumentException(sprintf('Not supported command of class %s'. get_class($command)));
+        throw new \InvalidArgumentException(sprintf('Not supported command of class %s'.get_class($command)));
     }
 
-    protected abstract function getPrefixPath(Pim $pim): string;
+    abstract protected function getPrefixPath(Pim $pim): string;
 }

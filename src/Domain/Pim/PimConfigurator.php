@@ -12,5 +12,5 @@ namespace Akeneo\PimMigration\Domain\Pim;
  */
 interface PimConfigurator
 {
-    public function configure(PimServerInformation $pimServerInfo): PimConfiguration;
+    public function configure(PimConnection $pimConnection, PimServerInformation $pimServerInfo): PimConfiguration;
 }

@@ -33,7 +33,8 @@ class DestinationPim extends AbstractPim implements Pim
         ?string $enterpriseRepository,
         string $indexName = 'akeneo_pim',
         string $indexHosts,
-        string $path
+        string $path,
+        PimConnection $pimConnection
     ) {
         parent::__construct(
             $mysqlHost,
@@ -43,14 +44,15 @@ class DestinationPim extends AbstractPim implements Pim
             $databasePassword,
             $isEnterpriseEdition,
             $enterpriseRepository,
-            $path
+            $path,
+            $pimConnection
         );
 
         $this->indexName = $indexName;
         $this->indexHosts = $indexHosts;
     }
 
-    public static function fromDestinationPimConfiguration(PimConfiguration $destinationPimConfiguration): DestinationPim
+    public static function fromDestinationPimConfiguration(PimConnection $pimConnection, PimConfiguration $destinationPimConfiguration): DestinationPim
     {
         $composerJsonRepositoryName = $destinationPimConfiguration->getComposerJson()->getRepositoryName();
 
@@ -124,7 +126,8 @@ class DestinationPim extends AbstractPim implements Pim
                 DIRECTORY_SEPARATOR.'composer.json',
                 '',
                 $destinationPimConfiguration->getComposerJson()->getPath()
-            ))
+            )),
+            $pimConnection
         );
     }
 

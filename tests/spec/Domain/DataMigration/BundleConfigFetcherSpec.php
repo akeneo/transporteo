@@ -7,7 +7,7 @@ namespace spec\Akeneo\PimMigration\Domain\DataMigration;
 use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
 use Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+use Akeneo\PimMigration\Domain\Command\CommandResult;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use PhpSpec\ObjectBehavior;
 
@@ -31,7 +31,7 @@ class BundleConfigFetcherSpec extends ObjectBehavior
 
     public function it_fetches_the_config(
         SourcePim $sourcePim,
-        UnixCommandResult $commandResult,
+        CommandResult $commandResult,
         $consoleHelper
     ) {
         $sourcePim->absolutePath()->willReturn('/a-path');

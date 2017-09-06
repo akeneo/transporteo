@@ -10,6 +10,7 @@ use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use PhpSpec\ObjectBehavior;
@@ -48,8 +49,10 @@ class DestinationPimConfiguratorSpec extends ObjectBehavior
         $this->shouldHaveType(DestinationPimConfigurator::class);
     }
 
-    public function it_returns_the_good_configuration($fileFetcherRegistry)
-    {
+    public function it_returns_the_good_configuration(
+        PimConnection $pimConnection,
+        $fileFetcherRegistry
+    ) {
         $localComposerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $localParameterYmlPath = ResourcesFileLocator::getStepOneAbsoluteParametersYamlLocalPath();
         $localPimParametersPath = ResourcesFileLocator::getStepOneAbsolutePimParametersLocalPath();
@@ -60,9 +63,9 @@ class DestinationPimConfiguratorSpec extends ObjectBehavior
         $destinationParametersYmlPath = ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath();
         $destinationPimParametersPath = ResourcesFileLocator::getAbsolutePimParametersDestinationPath();
 
-        $fileFetcherRegistry->fetchDestination($localComposerJsonPath, false)->willReturn($destinationComposerJsonPath);
-        $fileFetcherRegistry->fetchDestination($localParameterYmlPath, false)->willReturn($destinationParametersYmlPath);
-        $fileFetcherRegistry->fetchDestination($localPimParametersPath, false)->willReturn($destinationPimParametersPath);
+        $fileFetcherRegistry->fetch($pimConnection, $localComposerJsonPath, false)->willReturn($destinationComposerJsonPath);
+        $fileFetcherRegistry->fetch($pimConnection, $localParameterYmlPath, false)->willReturn($destinationParametersYmlPath);
+        $fileFetcherRegistry->fetch($pimConnection, $localPimParametersPath, false)->willReturn($destinationPimParametersPath);
 
         $sourcePimConfiguration = new PimConfiguration(
             new ComposerJson($destinationComposerJsonPath),
@@ -71,7 +74,7 @@ class DestinationPimConfiguratorSpec extends ObjectBehavior
             'nanou-migration'
         );
 
-        $this->configure($pimServerInfo)->shouldBeASourcePimConfigurationLike($sourcePimConfiguration);
+        $this->configure($pimConnection, $pimServerInfo)->shouldBeASourcePimConfigurationLike($sourcePimConfiguration);
     }
 
     public function getMatchers()

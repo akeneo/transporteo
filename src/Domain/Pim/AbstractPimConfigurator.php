@@ -16,7 +16,7 @@ use Ds\Map;
  */
 abstract class AbstractPimConfigurator implements PimConfigurator
 {
-    public function configure(PimServerInformation $pimServerInfo): PimConfiguration
+    public function configure(PimConnection $connection, PimServerInformation $pimServerInfo): PimConfiguration
     {
         $filesToFetch = new Map([
             ComposerJson::class => $pimServerInfo->getComposerJsonPath(),
@@ -25,9 +25,9 @@ abstract class AbstractPimConfigurator implements PimConfigurator
         ]);
 
         $fetchedFile = $filesToFetch
-            ->map(function (string $class, string $path) {
+            ->map(function (string $class, string $path) use ($connection) {
                 try {
-                    return new $class($this->fetch($path));
+                    return new $class($this->fetch($connection, $path));
                 } catch (FileNotFoundException $exception) {
                     throw new SourcePimConfigurationException(
                         "The file {$exception->getFilePath()} is not reachable or readable",
@@ -45,5 +45,5 @@ abstract class AbstractPimConfigurator implements PimConfigurator
         );
     }
 
-    abstract protected function fetch(string $path): string;
+    abstract protected function fetch(PimConnection $connection, string $path): string;
 }

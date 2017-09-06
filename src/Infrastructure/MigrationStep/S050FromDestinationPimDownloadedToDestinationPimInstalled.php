@@ -123,7 +123,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             DIRECTORY_SEPARATOR
         );
 
-        $destinationPimConfiguration = $this->destinationPimConfigurator->configure(new PimServerInformation($composerJsonPath, $projectName));
+        $destinationPimConfiguration = $this->destinationPimConfigurator->configure($stateMachine->getDestinationPimConnection(), new PimServerInformation($composerJsonPath, $projectName));
 
         $stateMachine->setDestinationPimConfiguration($destinationPimConfiguration);
     }
@@ -134,7 +134,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $stateMachine = $event->getSubject();
 
         try {
-            $destinationPim = DestinationPim::fromDestinationPimConfiguration($stateMachine->getDestinationPimConfiguration());
+            $destinationPim = DestinationPim::fromDestinationPimConfiguration($stateMachine->getDestinationPimConnection(), $stateMachine->getDestinationPimConfiguration());
         } catch (DestinationPimDetectionException $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }

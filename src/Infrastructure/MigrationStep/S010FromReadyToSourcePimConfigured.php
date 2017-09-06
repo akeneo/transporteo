@@ -200,7 +200,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         $stateMachine->setSourcePimServerInformation($pimServerInformation);
 
         try {
-            $sourcePimConfiguration = $this->pimConfigurator->configure($pimServerInformation);
+            $sourcePimConfiguration = $this->pimConfigurator->configure($stateMachine->getSourcePimConnection(), $pimServerInformation);
         } catch (\Exception $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
@@ -241,7 +241,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         $stateMachine->setSourcePimServerInformation($pimServerInformation);
 
         try {
-            $sourcePimConfiguration = $this->pimConfigurator->configure($pimServerInformation);
+            $sourcePimConfiguration = $this->pimConfigurator->configure($stateMachine->getSourcePimConnection(), $pimServerInformation);
         } catch (\Exception $exception) {
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }

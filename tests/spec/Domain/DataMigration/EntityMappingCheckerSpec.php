@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
-use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+use Akeneo\PimMigration\Domain\Command\CommandResult;
 use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker;
 use PhpSpec\ObjectBehavior;
@@ -33,7 +33,7 @@ class EntityMappingCheckerSpec extends ObjectBehavior
 
     public function it_does_nothing_if_its_green(
         Pim $pim,
-        UnixCommandResult $commandResult,
+        CommandResult $commandResult,
         $consoleHelper
     ) {
         $resultOutput = <<<TXT
@@ -52,7 +52,7 @@ TXT;
 
     public function it_throws_an_exception_for_a_non_existing_entity(
         Pim $pim,
-        UnixCommandResult $commandResult,
+        CommandResult $commandResult,
         $consoleHelper
     ) {
         $resultOutput = <<<TXT
@@ -75,7 +75,7 @@ TXT;
 
     public function it_throws_an_exception_if_the_mapping_is_not_ok(
         Pim $pim,
-        UnixCommandResult $commandResult,
+        CommandResult $commandResult,
         $consoleHelper
     )
     {

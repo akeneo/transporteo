@@ -31,7 +31,7 @@ class S020FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachin
 
         $sourcePimConfiguration = $stateMachine->getSourcePimConfiguration();
 
-        $sourcePim = SourcePim::fromSourcePimConfiguration($stateMachine->getSourcePimRealPath(), $sourcePimConfiguration);
+        $sourcePim = SourcePim::fromSourcePimConfiguration($stateMachine->getSourcePimConnection(), $stateMachine->getSourcePimRealPath(), $sourcePimConfiguration);
 
         $stateMachine->setSourcePim($sourcePim);
     }

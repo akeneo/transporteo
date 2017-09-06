@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Archive;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -38,7 +39,8 @@ class DestinationPimDownloaderIntegration extends TestCase
             false,
             null,
             false,
-            '/a-path'
+            '/a-path',
+            new Localhost()
         );
 
         $downloader->download(

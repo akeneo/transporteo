@@ -36,7 +36,8 @@ class SourcePim extends AbstractPim implements Pim
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
         bool $hasIvb,
-        string $path
+        string $path,
+        PimConnection $pimConnection
     ) {
         parent::__construct(
             $mysqlHost,
@@ -46,7 +47,8 @@ class SourcePim extends AbstractPim implements Pim
             $databasePassword,
             $isEnterpriseEdition,
             $enterpriseRepository,
-            $path
+            $path,
+            $pimConnection
         );
 
         $this->mongoDbInformation = $mongoDbInformation;
@@ -54,7 +56,7 @@ class SourcePim extends AbstractPim implements Pim
         $this->hasIvb = $hasIvb;
     }
 
-    public static function fromSourcePimConfiguration(string $realPath, PimConfiguration $sourcePimConfiguration): SourcePim
+    public static function fromSourcePimConfiguration(PimConnection $pimConnection, string $realPath, PimConfiguration $sourcePimConfiguration): SourcePim
     {
         $composerJsonRepositoryName = $sourcePimConfiguration->getComposerJson()->getRepositoryName();
 
@@ -118,7 +120,8 @@ class SourcePim extends AbstractPim implements Pim
             $isEnterpriseEdition,
             $enterpriseRepository,
             $hasIvb,
-            $realPath
+            $realPath,
+            $pimConnection
         );
     }
 

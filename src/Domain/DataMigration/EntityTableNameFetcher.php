@@ -60,7 +60,7 @@ class EntityTableNameFetcher
             str_replace('\\', '.', $entityNamespace)
         );
 
-        $localConfigPath = $this->fileFetcherRegistry->fetch($pim, $generatedFilePath, true);
+        $localConfigPath = $this->fileFetcherRegistry->fetch($pim->getConnection(), $generatedFilePath, true);
 
         return $this->fileSystemHelper->getYamlContent($localConfigPath)[$entityNamespace]['table'];
     }

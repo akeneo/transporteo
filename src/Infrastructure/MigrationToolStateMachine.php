@@ -12,8 +12,6 @@ use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -67,19 +65,18 @@ class MigrationToolStateMachine
     /** @var PimServerInformation */
     protected $sourcePimServerInformation;
 
-    /** @var ContainerBuilder */
-    protected $container;
-
     /** @var PimConnection */
     protected $sourcePimConnection;
 
     /** @var PimConnection */
     protected $destinationPimConnection;
 
-    public function __construct(StateMachine $stateMachine, Container $container)
+    /** @var DownloadMethod */
+    protected $downloadMethod;
+
+    public function __construct(StateMachine $stateMachine)
     {
         $this->stateMachineMarker = $stateMachine;
-        $this->container = $container;
     }
 
     public function start(): void
@@ -199,8 +196,6 @@ class MigrationToolStateMachine
     {
         $this->sourcePimConnection = $connection;
 
-        $this->makeAwareOf('migration_tool.source_pim_connection_aware', 'connectSourcePim', $connection);
-
         if ($connection instanceof SshConnection) {
             $this->setEnterpriseAccessAllowedKey($connection->getSshKey());
         }
@@ -214,23 +209,20 @@ class MigrationToolStateMachine
     public function setDestinationPimConnection(PimConnection $connection): void
     {
         $this->destinationPimConnection = $connection;
+    }
 
-        $this->makeAwareOf('migration_tool.destination_pim_connection_aware', 'connectDestinationPim', $connection);
+    public function getDestinationPimConnection(): PimConnection
+    {
+        return $this->destinationPimConnection;
     }
 
     public function setDownloadMethod(DownloadMethod $downloadMethod): void
     {
         $this->downloadMethod = $downloadMethod;
-
-        $this->makeAwareOf('migration_tool.destinatiom_pim_download_method_aware', 'setDownloadMethod', $downloadMethod);
     }
 
-    protected function makeAwareOf(string $tagToAware, string $awareMethod, $objectToAware)
+    public function getDownloadMethod(): DownloadMethod
     {
-        $servicesToAware = $this->container->findTaggedServiceIds($tagToAware);
-
-        foreach ($servicesToAware as $id => $tags) {
-            $this->container->get($id)->$awareMethod($objectToAware);
-        }
+        return $this->downloadMethod;
     }
 }

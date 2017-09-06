@@ -128,7 +128,7 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
         $stateMachine = $event->getSubject();
 
         try {
-            $destinationPim = $this->destinationPimDownloaderHelper->download($stateMachine->getSourcePim(), $stateMachine->getProjectName());
+            $destinationPim = $this->destinationPimDownloaderHelper->download($stateMachine->getDownloadMethod(), $stateMachine->getSourcePim(), $stateMachine->getProjectName());
         } catch (\Exception $exception) {
             throw new DestinationPimDownloadException(
                 $this->translator->trans(

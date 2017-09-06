@@ -7,6 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\Pim\AbstractPimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 
 /**
  * Configurator for the Source Pim.
@@ -24,8 +25,8 @@ class SourcePimConfigurator extends AbstractPimConfigurator implements PimConfig
         $this->fileFetcherRegistry = $fileFetcherRegistry;
     }
 
-    protected function fetch(string $path): string
+    protected function fetch(PimConnection $connection, string $path): string
     {
-        return $this->fileFetcherRegistry->fetchSource($path, true);
+        return $this->fileFetcherRegistry->fetch($connection, $path, true);
     }
 }

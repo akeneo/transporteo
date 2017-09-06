@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurationException;
@@ -149,12 +150,13 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sshKey = new SshKey($sshKeyPath);
         $serverAccessInformation = new SshConnection('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
         $stateMachine->setSourcePimConnection($serverAccessInformation)->shouldBeCalled();
+        $stateMachine->getSourcePimConnection()->willReturn($serverAccessInformation);
 
         $printerAndAsker->askSimpleQuestion($composerJsonQuestion, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
         $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
         $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
 
-        $sourcePimConfigurator->configure($sourcePimServerInformation)->willReturn($sourcePimConfiguration);
+        $sourcePimConfigurator->configure($serverAccessInformation, $sourcePimServerInformation)->willReturn($sourcePimConfiguration);
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldBeCalled();
 
         $this->onDistantConfiguration($event);
@@ -179,10 +181,14 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
         $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
 
-        $sourcePimConfigurator->configure($sourcePimServerInformation)->willReturn($sourcePimConfiguration);
+        $sourcePimConnection = new Localhost();
+        $stateMachine->setSourcePimConnection($sourcePimConnection)->shouldBeCalled();
+        $stateMachine->getSourcePimConnection()->willReturn($sourcePimConnection);
 
-        $stateMachine->setSourcePimConnection(new Localhost())->shouldBeCalled();
+        $sourcePimConfigurator->configure($sourcePimConnection, $sourcePimServerInformation)->willReturn($sourcePimConfiguration);
+
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldBeCalled();
+        $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
 
         $this->onLocalConfiguration($event);
     }
@@ -229,6 +235,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sshKey = new SshKey($sshKeyPath);
         $serverAccessInformation = new SshConnection('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
         $stateMachine->setSourcePimConnection($serverAccessInformation)->shouldBeCalled();
+        $stateMachine->getSourcePimConnection()->willReturn($serverAccessInformation);
 
         $exception = new ImpossibleConnectionException('Impossible to login to akeneo@my-super-pim.akeneo.com:22 using this ssh key : '. $sshKeyPath);
 
@@ -236,7 +243,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
         $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
         $sourcePimConfigurator
-            ->configure($sourcePimServerInformation)
+            ->configure($serverAccessInformation, $sourcePimServerInformation)
             ->willThrow($exception);
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration)->shouldNotBeCalled();

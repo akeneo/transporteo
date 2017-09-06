@@ -23,8 +23,6 @@ class ExtraDataMigrationIntegration extends DatabaseSetupedTestCase
     public function testItCopyUnknownTable() {
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
-        $fileFetcherRegistry->connectSourcePim(new Localhost());
-        $fileFetcherRegistry->connectDestinationPim(new Localhost());
 
         $tableMigrator = new TableMigrator($this->databaseQueryExectuorRegistry, $fileFetcherRegistry);
 

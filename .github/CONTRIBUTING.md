@@ -26,8 +26,8 @@ If you have updated the workflow, please update the generated graph:
 
 ## HOW IT WORKS BEHIND THE SCENE
 
-This project tries to respect Hexagonal Architecture (Ports and Adapters), if you want to discover more about that, you can
-check these links (by Alistair Cockburn (inventor of the concept Hexagonal architecture)
+This project tries to respect Ports and Adapters Architecture, if you want to discover more about that, you can
+check these links (by Alistair Cockburn (inventor of the concept)
 - [Video 1](https://www.youtube.com/watch?v=th4AgBcrEHA)
 - [Video 2](https://www.youtube.com/watch?v=iALcE8BPs94)
 - [Video 3](https://www.youtube.com/watch?v=DAe0Bmcyt-4)
@@ -84,7 +84,7 @@ Here is some links to understand and see how it works Symfony Framework is not u
 
 Source Pim designates the Pim we want to migrate from and Destination Pim designates the Pim we want to migrate to.
 
-For development purpose both Pim are installed locally with Mysql 5.7 but the goal is:
+For development purpose both Pim are installed locally with Mysql 5.7 but the goal is to have several possible locations.
 
 For the SourcePim:
 - Locally
@@ -92,7 +92,6 @@ For the SourcePim:
 
 For the Destination Pim:
 - Locally
-- Installed by the tool through docker-compose
 
 
 The rule is : "THE SOURCE PIM SHOULD NEVER BE TOUCHED".

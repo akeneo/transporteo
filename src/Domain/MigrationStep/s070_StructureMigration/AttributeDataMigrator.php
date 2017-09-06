@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -21,13 +21,13 @@ class AttributeDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var DatabaseQueryExecutor */
-    private $databaseQueryExecutor;
+    /** @var DatabaseQueryExecutorRegistry */
+    private $databaseQueryExecutorRegistry;
 
-    public function __construct(TableMigrator $naiveMigrator, DatabaseQueryExecutor $executor)
+    public function __construct(TableMigrator $naiveMigrator, DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
     {
         $this->tableMigrator = $naiveMigrator;
-        $this->databaseQueryExecutor = $executor;
+        $this->databaseQueryExecutorRegistry = $databaseQueryExecutorRegistry;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -39,12 +39,12 @@ class AttributeDataMigrator implements DataMigrator
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
-            $this->databaseQueryExecutor->execute(
+            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
                 sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text'),
                 $destinationPim
             );
 
-            $this->databaseQueryExecutor->execute(
+            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
                 sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar'),
                 $destinationPim
             );

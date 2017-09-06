@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -19,12 +19,12 @@ class GroupMigrator implements DataMigrator
 {
     private $groupMigrators = [];
 
-    /** @var DatabaseQueryExecutor */
-    private $databaseQueryExecutor;
+    /** @var DatabaseQueryExecutorRegistry */
+    private $databaseQueryExecutorRegistry;
 
-    public function __construct(DatabaseQueryExecutor $databaseQueryExecutor)
+    public function __construct(DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
     {
-        $this->databaseQueryExecutor = $databaseQueryExecutor;
+        $this->databaseQueryExecutorRegistry = $databaseQueryExecutorRegistry;
     }
 
     public function addGroupMigrator(DataMigrator $groupMigrator): void
@@ -43,7 +43,7 @@ class GroupMigrator implements DataMigrator
                 $groupMigrator->migrate($sourcePim, $destinationPim);
             }
 
-            $this->databaseQueryExecutor->execute(
+            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
                 sprintf('UPDATE %s.pim_catalog_group_type SET is_variant = 0', $destinationPim->getDatabaseName()),
                 $destinationPim
             );

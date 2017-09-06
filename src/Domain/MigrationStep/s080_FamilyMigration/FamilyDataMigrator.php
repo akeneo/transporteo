@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s080_FamilyMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -21,13 +21,13 @@ class FamilyDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var DatabaseQueryExecutor */
-    private $databaseQueryExecutor;
+    /** @var DatabaseQueryExecutorRegistry */
+    private $databaseQueryExecutorRegistry;
 
-    public function __construct(TableMigrator $tableMigrator, DatabaseQueryExecutor $databaseQueryExecutor)
+    public function __construct(TableMigrator $tableMigrator, DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->databaseQueryExecutor = $databaseQueryExecutor;
+        $this->databaseQueryExecutorRegistry = $databaseQueryExecutorRegistry;
     }
 
     /**
@@ -44,7 +44,7 @@ class FamilyDataMigrator implements DataMigrator
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
-            $this->databaseQueryExecutor->execute(
+            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
                 sprintf(
                     'ALTER TABLE %s.%s %s, %s, %s',
                     $destinationPim->getDatabaseName(),

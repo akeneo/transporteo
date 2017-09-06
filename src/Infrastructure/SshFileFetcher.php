@@ -6,6 +6,8 @@ namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileNotFoundException;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SFTP;
 
@@ -17,36 +19,28 @@ use phpseclib\Net\SFTP;
  */
 class SshFileFetcher implements FileFetcher
 {
-    /** @var ServerAccessInformation */
-    private $serverAccessInformation;
-
-    /** @var SFTP */
-    private $sftp;
-
-    /** @var RSA */
-    private $key;
-
-    public function __construct(ServerAccessInformation $serverAccessInformation, SFTP $sftp, RSA $key)
-    {
-        $this->serverAccessInformation = $serverAccessInformation;
-        $this->sftp = $sftp;
-        $this->key = $key;
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function fetch(string $filePath): string
+    public function fetch(PimConnection $connection, string $filePath, bool $withLocalCopy): string
     {
-        if (!$this->sftp->isConnected()) {
-            if (!$this->sftp->login($this->serverAccessInformation->getUsername(), $this->key)) {
+        if (!$connection instanceof SshConnection) {
+            throw new \InvalidArgumentException(sprintf('Expected %s, %s given', SshConnection::class, get_class($connection)));
+        }
+
+        $key = new RSA();
+        $key->load($connection->getSshKey()->getKey());
+        $sftp = new SFTP($connection->getHost(), $connection->getPort());
+
+        if (!$sftp->isConnected()) {
+            if (!$sftp->login($connection->getUsername(), $key)) {
                 throw new ImpossibleConnectionException(
                     sprintf(
                         'Impossible to login to %s@%s:%d using this ssh key : %s',
-                        $this->serverAccessInformation->getUsername(),
-                        $this->serverAccessInformation->getHost(),
-                        $this->serverAccessInformation->getPort(),
-                        $this->serverAccessInformation->getSshKey()->getPath()
+                        $connection->getUsername(),
+                        $connection->getHost(),
+                        $connection->getPort(),
+                        $connection->getSshKey()->getPath()
                     )
                 );
             }
@@ -55,7 +49,7 @@ class SshFileFetcher implements FileFetcher
         $pathInfo = pathinfo($filePath);
         $fileName = $pathInfo['basename'];
 
-        $subList = $this->sftp->nlist($pathInfo['dirname']);
+        $subList = $sftp->nlist($pathInfo['dirname']);
 
         $filesMatchingName = array_filter($subList, function ($element) use ($fileName) {
             return $element == $fileName;
@@ -75,12 +69,17 @@ class SshFileFetcher implements FileFetcher
 
         $localPath = realpath($varDir).DIRECTORY_SEPARATOR.$fileName;
 
-        $result = $this->sftp->get($filePath, $localPath);
+        $result = $sftp->get($filePath, $localPath);
 
         if (false === $result) {
             throw new FileNotFoundException("The file {$filePath} is not reachable", $filePath);
         }
 
         return $localPath;
+    }
+
+    public function supports(PimConnection $pimConnection): bool
+    {
+        return $pimConnection instanceof SshConnection;
     }
 }

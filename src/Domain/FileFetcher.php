@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain;
 
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+
 /**
  * Ability to fetch a file.
  *
@@ -18,5 +20,7 @@ interface FileFetcher
      * @throws FileNotFoundException when the file to fetch does not exist
      * @throws \RuntimeException     when something else happen
      */
-    public function fetch(string $filePath): string;
+    public function fetch(PimConnection $connection, string $filePath, bool $withLocalCopy): string;
+
+    public function supports(PimConnection $pimConnection): bool;
 }

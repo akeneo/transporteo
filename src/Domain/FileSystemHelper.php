@@ -29,6 +29,11 @@ class FileSystemHelper
         return $result;
     }
 
+    public function fileExists(string $path): bool
+    {
+        return $this->getFileSystem()->exists($path);
+    }
+
     /**
      * @throws \InvalidArgumentException
      */

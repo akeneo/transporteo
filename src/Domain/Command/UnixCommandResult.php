@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\Command;
+namespace Akeneo\PimMigration\Domain\Command;
 
 /**
- * Represent a result created by a command launcher.
+ * Represent a result after the execution of a UnixCommand on a console.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

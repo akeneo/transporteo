@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\Command;
+namespace Akeneo\PimMigration\Infrastructure\Cli;
 
+use Akeneo\PimMigration\Domain\Command\Console;
+use Akeneo\PimMigration\Domain\Command\UnixCommand;
+use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
+use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -13,17 +20,12 @@ use Symfony\Component\Process\Process;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class LocalCommandExecutor implements CommandExecutor
+class LocalConsole extends AbstractConsole implements Console
 {
-    public function execute(string $command, ?string $path, bool $activateTty): UnixCommandResult
+    public function execute(UnixCommand $command, AbstractPim $pim, PimConnection $connection): UnixCommandResult
     {
-        $process = new Process($command, $path);
-
-        if ($activateTty) {
-            if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-                $process->setTty(true);
-            }
-        }
+        $commandToLaunch = $this->getProcessedCommand($command, $pim);
+        $process = new Process($commandToLaunch, '');
 
         $process->enableOutput();
         $process->setTimeout(2 * 3600);
@@ -41,5 +43,10 @@ class LocalCommandExecutor implements CommandExecutor
         }
 
         return new UnixCommandResult($process->getExitCode(), $process->getOutput());
+    }
+
+    public function supports(PimConnection $connection): bool
+    {
+        return $connection instanceof Localhost;
     }
 }

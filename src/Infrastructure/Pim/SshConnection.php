@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure;
+namespace Akeneo\PimMigration\Infrastructure\Pim;
+
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\SshKey;
 
 /**
  * Your Class description.
@@ -10,7 +13,7 @@ namespace Akeneo\PimMigration\Infrastructure;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class ServerAccessInformation
+class SshConnection implements PimConnection
 {
     /** @var string */
     private $host;

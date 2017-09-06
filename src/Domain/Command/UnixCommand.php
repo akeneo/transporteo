@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\Command;
+namespace Akeneo\PimMigration\Domain\Command;
 
 /**
- * Define a unix command launchable via a CommandLauncher.
+ * Representation of what a console is able to execute.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-interface Command
+interface UnixCommand
 {
     public function getCommand(): string;
 }

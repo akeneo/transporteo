@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurationChecker;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
@@ -36,27 +39,19 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 {
     public function let(
         Translator $translator,
-        DestinationPimParametersYmlGeneratorFactory $destinationPimPreConfiguratorFactory,
-        PimConfiguratorFactory $pimConfiguratorFactory,
-        FileFetcherFactory $fileFetcherFactory,
-        DestinationPimSystemRequirementsInstallerFactory $destinationPimSystemRequirementsInstallerFactory,
-        LocalCommandLauncherFactory $commandLauncherFactory,
-        DestinationPimConfigurationCheckerFactory $destinationPimConfigurationCheckerFactory,
-        DestinationPimEditionCheckerFactory $destinationPimEditionCheckerFactory,
-        DestinationPimSystemRequirementsCheckerFactory $destinationPimSystemRequirementsCheckerFactory,
+        DestinationPimConfigurator $destinationPimConfigurator,
+        DestinationPimSystemRequirementsInstallerHelper $destinationPimSystemRequirementsInstallerHelper,
+        DestinationPimConfigurationChecker $destinationPimConfigurationChecker,
+        ParametersYmlGenerator $parametersYmlGenerator,
         PrinterAndAsker $printerAndAsker
     )
     {
         $this->beConstructedWith(
             $translator,
-            $destinationPimPreConfiguratorFactory,
-            $pimConfiguratorFactory,
-            $fileFetcherFactory,
-            $destinationPimSystemRequirementsInstallerFactory,
-            $commandLauncherFactory,
-            $destinationPimConfigurationCheckerFactory,
-            $destinationPimEditionCheckerFactory,
-            $destinationPimSystemRequirementsCheckerFactory
+            $destinationPimConfigurator,
+            $destinationPimSystemRequirementsInstallerHelper,
+            $destinationPimConfigurationChecker,
+            $parametersYmlGenerator
         );
 
         $this->setPrinterAndAsker($printerAndAsker);
@@ -104,8 +99,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     public function it_preconfigures_the_destination_pim(
         Event $event,
         MigrationToolStateMachine $migrationToolStateMachine,
-        ParametersYmlGenerator $destinationPimPreConfigurator,
-        $destinationPimPreConfiguratorFactory
+        $parametersYmlGenerator
     )
     {
         $event->getSubject()->willReturn($migrationToolStateMachine);
@@ -115,13 +109,9 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
             DIRECTORY_SEPARATOR
         );
 
-        $migrationToolStateMachine->getCurrentDestinationPimLocation()->willReturn($currentDestinationPimPath);
+        $migrationToolStateMachine->getCurrentDestinationPimLocation()->willReturn($currentDestinationPimPath);;
 
-        $destinationPimPreConfiguratorFactory
-            ->createDestinationPimParametersYmlGenerator($currentDestinationPimPath)
-            ->willReturn($destinationPimPreConfigurator);
-
-        $destinationPimPreConfigurator->preconfigure()->shouldBeCalled();
+        $parametersYmlGenerator->preconfigure($currentDestinationPimPath)->shouldBeCalled();
 
         $this->onDestinationPimPreConfiguration($event);
     }
@@ -163,11 +153,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     public function it_configures_the_destination_pim(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        PimConfigurator $pimConfigurator,
-        FileFetcher $fileFetcher,
         PimConfiguration $pimConfiguration,
-        $pimConfiguratorFactory,
-        $fileFetcherFactory
+        $destinationPimConfigurator
     )
     {
         $event->getSubject()->willReturn($stateMachine);
@@ -181,9 +168,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 
         $stateMachine->getCurrentDestinationPimLocation()->willReturn($currentDestinationPimLocation);
 
-        $fileFetcherFactory->createWithoutCopyLocalFileFetcher()->willReturn($fileFetcher);
-        $pimConfiguratorFactory->createDestinationPimConfigurator($fileFetcher)->willReturn($pimConfigurator);
-        $pimConfigurator->configure(new PimServerInformation(
+        $destinationPimConfigurator->configure(new PimServerInformation(
             sprintf(
                 '%s%scomposer.json',
                 $currentDestinationPimLocation,

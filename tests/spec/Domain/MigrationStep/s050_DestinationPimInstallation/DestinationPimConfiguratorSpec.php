@@ -1,10 +1,11 @@
 <?php
 
-namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration;
+namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
@@ -16,12 +17,12 @@ use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Spec for SourcePimConfigurator.
+ * Spec for DestinationPimConfigurator.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SourcePimConfiguratorSpec extends ObjectBehavior
+class DestinationPimConfiguratorSpec extends ObjectBehavior
 {
     public function let(FileFetcherRegistry $fileFetcherRegistry)
     {
@@ -44,7 +45,7 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(SourcePimConfigurator::class);
+        $this->shouldHaveType(DestinationPimConfigurator::class);
     }
 
     public function it_returns_the_good_configuration($fileFetcherRegistry)
@@ -59,9 +60,9 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
         $destinationParametersYmlPath = ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath();
         $destinationPimParametersPath = ResourcesFileLocator::getAbsolutePimParametersDestinationPath();
 
-        $fileFetcherRegistry->fetchSource($localComposerJsonPath, true)->willReturn($destinationComposerJsonPath);
-        $fileFetcherRegistry->fetchSource($localParameterYmlPath, true)->willReturn($destinationParametersYmlPath);
-        $fileFetcherRegistry->fetchSource($localPimParametersPath, true)->willReturn($destinationPimParametersPath);
+        $fileFetcherRegistry->fetchDestination($localComposerJsonPath, false)->willReturn($destinationComposerJsonPath);
+        $fileFetcherRegistry->fetchDestination($localParameterYmlPath, false)->willReturn($destinationParametersYmlPath);
+        $fileFetcherRegistry->fetchDestination($localPimParametersPath, false)->willReturn($destinationPimParametersPath);
 
         $sourcePimConfiguration = new PimConfiguration(
             new ComposerJson($destinationComposerJsonPath),

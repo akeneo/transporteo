@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\DestinationPimInstallation;
 
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
@@ -51,8 +52,8 @@ class ParametersYmlGeneratorIntegration extends TestCase
 
     public function testItCopyTheParametersYamlDist()
     {
-        $preConfigurator = new ParametersYmlGenerator($this->destinationPimPath);
-        $preConfigurator->preconfigure();
+        $preConfigurator = new ParametersYmlGenerator(new FileSystemHelper());
+        $preConfigurator->preconfigure($this->destinationPimPath);
 
         $parametersYamlPath = sprintf(
             '%s%sapp%sconfig%sparameters.yml',

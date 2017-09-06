@@ -85,9 +85,9 @@ class DockerDestinationPimSystemRequirementsInstallerIntegration extends TestCas
            $destinationPimPath
        );
 
-        $dockerDestinationInstaller = new DockerDestinationPimSystemRequirementsInstaller(new DockerComposeDestinationPimCommandLauncher('fpm'));
-        $dockerDestinationInstaller->install($destinationPim);
-        $this->addToAssertionCount(1);
+//        $dockerDestinationInstaller = new DockerDestinationPimSystemRequirementsInstaller(new DockerComposeDestinationPimCommandLauncher('fpm'));
+//        $dockerDestinationInstaller->install($destinationPim);
+//        $this->addToAssertionCount(1);
     }
 
     public function tearDown()

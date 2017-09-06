@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration;
 
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\TableNamesFetcher;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
@@ -11,7 +13,7 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
+use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 use PhpSpec\ObjectBehavior;
 
 /**
@@ -22,11 +24,11 @@ use PhpSpec\ObjectBehavior;
  */
 class ExtraDataMigratorSpec extends ObjectBehavior
 {
-    public function let(TableMigrator $tableMigrator, TableNamesFetcher $tableNamesFetcher)
+    public function let(TableMigrator $tableMigrator, DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
     {
         $this->beConstructedWith(
             $tableMigrator,
-            $tableNamesFetcher
+            $databaseQueryExecutorRegistry
         );
     }
 
@@ -38,9 +40,12 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_throws_an_exception_during_getting_table(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        $tableNamesFetcher
+        DatabaseQueryExecutor $executor,
+        $databaseQueryExecutorRegistry
     ) {
-        $tableNamesFetcher->getTableNames($sourcePim)->willThrow(new UnsuccessfulCommandException());
+        $databaseQueryExecutorRegistry->get($sourcePim)->willReturn($executor);
+
+        $executor->query('SHOW TABLES', $sourcePim)->willThrow(new UnsuccessfulCommandException());
 
         $this->shouldThrow(new ExtraDataMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
     }
@@ -48,10 +53,12 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_throws_exception_during_migrate(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
+        DatabaseQueryExecutor $executor,
         $tableMigrator,
-        $tableNamesFetcher
+        $databaseQueryExecutorRegistry
     ) {
-        $tableNamesFetcher->getTableNames($sourcePim)->willReturn(['an_unknown_table']);
+        $databaseQueryExecutorRegistry->get($sourcePim)->willReturn($executor);
+        $executor->query('SHOW TABLES', $sourcePim)->willReturn([['table_name' => 'an_unknown_table']]);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'an_unknown_table')->willThrow(new DataMigrationException());
 
@@ -61,10 +68,12 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_migrate_all_tables(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
+        DatabaseQueryExecutor $executor,
         $tableMigrator,
-        $tableNamesFetcher
+        $databaseQueryExecutorRegistry
     ) {
-        $tableNamesFetcher->getTableNames($sourcePim)->willReturn(['an_unknown_table']);
+        $databaseQueryExecutorRegistry->get($sourcePim)->willReturn($executor);
+        $executor->query('SHOW TABLES', $sourcePim)->willReturn([['table_name' => 'an_unknown_table']]);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'an_unknown_table')->shouldBeCalled();
 

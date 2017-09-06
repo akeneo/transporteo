@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration;
 
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use PHPUnit\Framework\TestCase;
+use Akeneo\PimMigration\Infrastructure\Cli\LocalConsole;
+use Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalMySqlQueryExecutor;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
  * Abstract Test case preparing database.
@@ -20,16 +23,30 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
 {
     protected $sourcePim;
     protected $destinationPim;
+    protected $databaseQueryExectuorRegistry;
 
     public function setUp()
     {
         parent::setUp();
 
+        $consoleHelper = new ConsoleHelper();
+        $consoleHelper->addConsole(new LocalConsole());
+        $consoleHelper->connectSourcePim(new Localhost());
+        $consoleHelper->connectDestinationPim(new Localhost());
+
+        $databaseQueryExecutor = new LocalMySqlQueryExecutor($consoleHelper);
+        $databaseQueryExecutorRegistry = new DatabaseQueryExecutorRegistry();
+        $databaseQueryExecutorRegistry->addDatabaseQueryExecutor($databaseQueryExecutor);
+        $databaseQueryExecutorRegistry->connectSourcePim(new Localhost());
+        $databaseQueryExecutorRegistry->connectDestinationPim(new Localhost());
+
+        $this->databaseQueryExectuorRegistry = $databaseQueryExecutorRegistry;
+
         $sourcePimConfig = $this->getConfig('pim_community_standard_one_seven_with_reference_data');
         $destinationPimConfig = $this->getConfig('pim_community_standard_two');
 
-        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, '/a-path');
-        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, 'akeneo_pim', 'localhost', '/a-path');
+        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path']);
+        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, 'akeneo_pim', 'localhost', $destinationPimConfig['absolute_path']);
 
         $connection = $this->getConnection($this->destinationPim, false);
         $connection->exec('DROP DATABASE IF EXISTS akeneo_pim_two_for_test');

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\FilesMigration;
 
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\FileFetcherRegistry;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s060_FilesMigration\AkeneoFileStorageFileInfoMigrator;
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
+use Akeneo\PimMigration\Infrastructure\LocalFileFetcher;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use integration\Akeneo\PimMigration\DatabaseSetupedTestCase;
 
 /**
@@ -21,7 +22,14 @@ class AkeneoFileStorageFileInfoMigratorIntegration extends DatabaseSetupedTestCa
 {
     public function testItCopyTheAkeneoFileStorageFileInfoTable()
     {
-        $akeneoFileStorageFileInfoMigrator = new AkeneoFileStorageFileInfoMigrator(new DumpTableMigrator(new LocalCommandLauncherFactory()));
+        $fileFetcherRegistry = new FileFetcherRegistry();
+        $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
+        $fileFetcherRegistry->connectSourcePim(new Localhost());
+        $fileFetcherRegistry->connectDestinationPim(new Localhost());
+
+        $tableMigrator = new TableMigrator($this->databaseQueryExectuorRegistry, $fileFetcherRegistry);
+
+        $akeneoFileStorageFileInfoMigrator = new AkeneoFileStorageFileInfoMigrator($tableMigrator);
         $akeneoFileStorageFileInfoMigrator->migrate($this->sourcePim, $this->destinationPim);
 
         $sourcePimConnection = $this->getConnection($this->sourcePim, true);

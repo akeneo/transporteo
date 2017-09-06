@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace integration\Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\FileNotFoundException;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Infrastructure\LocalFileFetcher;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -19,12 +21,12 @@ final class LocalFileFetcherIntegration extends TestCase
 {
     public function testItCopyTheFileCorrectly()
     {
-        $localFileFetcher = new LocalFileFetcher();
+        $localFileFetcher = new LocalFileFetcher(new FileSystemHelper());
 
         $localPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $finalPath = ResourcesFileLocator::getAbsoluteComposerJsonDestinationPath();
 
-        $path = $localFileFetcher->fetch($localPath);
+        $path = $localFileFetcher->fetch(new Localhost(), $localPath, true);
 
         $this->assertFileExists($finalPath);
         $this->assertEquals($path, realpath($finalPath));
@@ -35,11 +37,11 @@ final class LocalFileFetcherIntegration extends TestCase
     {
         $this->expectException(FileNotFoundException::class);
 
-        $localFileFetcher = new LocalFileFetcher();
+        $localFileFetcher = new LocalFileFetcher(new FileSystemHelper());
 
         $localPath = __DIR__ . '/anonexistingfile.json';
 
-        $localFileFetcher->fetch($localPath);
+        $localFileFetcher->fetch(new Localhost(), $localPath, true);
     }
 
     public static function tearDownAfterClass()

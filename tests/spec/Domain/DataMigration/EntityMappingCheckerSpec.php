@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\PimMigration\Infrastructure\DatabaseServices;
+namespace spec\Akeneo\PimMigration\Domain\DataMigration;
 
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\EntityMappingException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
-use Akeneo\PimMigration\Infrastructure\Command\UnixCommandResult;
-use Akeneo\PimMigration\Infrastructure\Command\UnsuccessfulCommandException;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityMappingChecker;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\DoctrineMappingInfoCommand;
+use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
+use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
+use Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker;
 use PhpSpec\ObjectBehavior;
 
 /**
@@ -19,22 +19,22 @@ use PhpSpec\ObjectBehavior;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class CommandEntityMappingCheckerSpec extends ObjectBehavior
+class EntityMappingCheckerSpec extends ObjectBehavior
 {
-    public function let(CommandLauncher $commandLauncher)
+    public function let(ConsoleHelper $consoleHelper)
     {
-        $this->beConstructedWith($commandLauncher);
+        $this->beConstructedWith($consoleHelper);
     }
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(CommandEntityMappingChecker::class);
+        $this->shouldHaveType(EntityMappingChecker::class);
     }
 
     public function it_does_nothing_if_its_green(
         Pim $pim,
         UnixCommandResult $commandResult,
-        $commandLauncher
+        $consoleHelper
     ) {
         $resultOutput = <<<TXT
 Found 53 mapped entities:
@@ -45,7 +45,7 @@ Found 53 mapped entities:
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
         $pim->absolutePath()->willReturn('/a-path');
-        $commandLauncher->runCommand(new DoctrineMappingInfoCommand(), '/a-path', false)->willReturn($commandResult);
+        $consoleHelper->execute($pim, new SymfonyCommand('doctrine:mapping:info'))->willReturn($commandResult);
 
         $this->check($pim, 'Pim\Bundle\CatalogBundle\Entity\Family');
     }
@@ -53,7 +53,7 @@ TXT;
     public function it_throws_an_exception_for_a_non_existing_entity(
         Pim $pim,
         UnixCommandResult $commandResult,
-        $commandLauncher
+        $consoleHelper
     ) {
         $resultOutput = <<<TXT
 Found 53 mapped entities:
@@ -64,7 +64,7 @@ Found 53 mapped entities:
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
         $pim->absolutePath()->willReturn('/a-path');
-        $commandLauncher->runCommand(new DoctrineMappingInfoCommand(), '/a-path', false)->willReturn($commandResult);
+        $consoleHelper->execute($pim, new SymfonyCommand('doctrine:mapping:info'))->willReturn($commandResult);
 
         $this
             ->shouldThrow(
@@ -76,7 +76,7 @@ TXT;
     public function it_throws_an_exception_if_the_mapping_is_not_ok(
         Pim $pim,
         UnixCommandResult $commandResult,
-        $commandLauncher
+        $consoleHelper
     )
     {
         $resultOutput = <<<TXT
@@ -88,7 +88,7 @@ Found 53 mapped entities:
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
         $pim->absolutePath()->willReturn('/a-path');
-        $commandLauncher->runCommand(new DoctrineMappingInfoCommand(), '/a-path', false)->willReturn($commandResult);
+        $consoleHelper->execute($pim, new SymfonyCommand('doctrine:mapping:info'))->willReturn($commandResult);
 
         $this
             ->shouldThrow(
@@ -99,16 +99,12 @@ TXT;
 
     public function it_throws_an_exception_due_to_command_launcher(
         Pim $pim,
-        $commandLauncher
+        $consoleHelper
     ) {
         $pimPath = '/a-path';
         $pim->absolutePath()->willReturn($pimPath);
 
-        $commandLauncher->runCommand(
-            new DoctrineMappingInfoCommand(),
-            $pimPath,
-            false
-        )->willThrow(UnsuccessfulCommandException::class);
+        $consoleHelper->execute($pim, new SymfonyCommand('doctrine:mapping:info'))->willThrow(UnsuccessfulCommandException::class);
 
         $this->shouldThrow(new EntityMappingException())->during('check', [$pim, 'AnEntity']);
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration;
 
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\QueryException;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
@@ -22,9 +23,9 @@ use PhpSpec\ObjectBehavior;
  */
 class AttributeDataMigratorSpec extends ObjectBehavior
 {
-    public function let(TableMigrator $migrator, DatabaseQueryExecutor $executor)
+    public function let(TableMigrator $migrator, DatabaseQueryExecutorRegistry $registry)
     {
-        $this->beConstructedWith($migrator, $executor);
+        $this->beConstructedWith($migrator, $registry);
     }
 
     public function it_is_initializable()
@@ -48,14 +49,17 @@ class AttributeDataMigratorSpec extends ObjectBehavior
     public function it_throws_an_exception_due_to_database_query_executor_text_to_textarea(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
+        DatabaseQueryExecutor $executor,
         $migrator,
-        $executor
+        $registry
     ) {
         $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
 
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_attribute')
             ->shouldBeCalled();
+
+        $registry->get($destinationPim)->willReturn($executor);
 
         $executor
             ->execute('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"', $destinationPim)
@@ -67,14 +71,17 @@ class AttributeDataMigratorSpec extends ObjectBehavior
     public function it_throws_an_exception_due_to_database_query_executor_varchar_to_text(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
+        DatabaseQueryExecutor $executor,
         $migrator,
-        $executor
+        $registry
     ) {
         $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
 
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_attribute')
             ->shouldBeCalled();
+
+        $registry->get($destinationPim)->willReturn($executor);
 
         $executor
             ->execute('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"', $destinationPim)
@@ -90,14 +97,17 @@ class AttributeDataMigratorSpec extends ObjectBehavior
     public function it_throws_nothing(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
+        DatabaseQueryExecutor $executor,
         $migrator,
-        $executor
+        $registry
     ) {
         $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
 
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_attribute')
             ->shouldBeCalled();
+
+        $registry->get($destinationPim)->willReturn($executor);
 
         $executor
             ->execute('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"', $destinationPim)

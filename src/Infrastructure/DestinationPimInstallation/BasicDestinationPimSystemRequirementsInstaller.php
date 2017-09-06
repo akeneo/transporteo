@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
  * Install Pim System Requirements on local.
@@ -16,27 +19,24 @@ use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
  */
 class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
-    /** @var CommandLauncher */
-    private $destinationPimCommandLauncher;
+    /** @var ConsoleHelper */
+    private $consoleHelper;
 
-    public function __construct(CommandLauncher $destinationPimCommandLauncher)
+    public function __construct(ConsoleHelper $consoleHelper)
     {
-        $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
+        $this->consoleHelper = $consoleHelper;
     }
 
-    public function install(DestinationPim $destinationPim): void
+    public function install(DestinationPim $pim): void
     {
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineDropDatabaseCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineCreateDatabaseCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineCreateSchemaCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineUpdateSchemaCommand(), $destinationPim->absolutePath(), true
-        );
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:database:drop --force'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:database:create'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:schema:create'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:schema:update --force'));
+    }
+
+    public function supports(PimConnection $connection): bool
+    {
+        return $connection instanceof Localhost;
     }
 }

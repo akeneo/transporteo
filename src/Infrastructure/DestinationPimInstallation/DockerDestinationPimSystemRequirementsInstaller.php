@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\RawCommand;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
-use Akeneo\PimMigration\Infrastructure\Command\CommandLauncher;
+use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
+use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Ds\Set;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -20,25 +25,32 @@ use Symfony\Component\Process\Process;
  */
 class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
-    /** @var CommandLauncher */
-    private $destinationPimCommandLauncher;
+    /** @var ConsoleHelper */
+    private $consoleHelper;
 
-    public function __construct(CommandLauncher $destinationPimCommandLauncher)
+    public function __construct(ConsoleHelper $consoleHelper)
     {
-        $this->destinationPimCommandLauncher = $destinationPimCommandLauncher;
+        $this->consoleHelper = $consoleHelper;
     }
 
     public function install(DestinationPim $destinationPim): void
     {
+        $this->bootInfrastructure($destinationPim);
+        $this->prepareDependencies($destinationPim);
+        $this->prepareDatabase($destinationPim);
+    }
+
+    protected function bootInfrastructure(Pim $pim)
+    {
         $dockerComposeDistFilePath = sprintf(
             '%s%sdocker-compose.yml.dist',
-            $destinationPim->absolutePath(),
+            $pim->absolutePath(),
             DIRECTORY_SEPARATOR
         );
 
         $dockerComposeDestinationPath = sprintf(
             '%s%sdocker-compose.yml',
-            $destinationPim->absolutePath(),
+            $pim->absolutePath(),
             DIRECTORY_SEPARATOR
         );
 
@@ -46,34 +58,29 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
 
         $fs->copy($dockerComposeDistFilePath, $dockerComposeDestinationPath);
 
-        $launchDockerComposeDaemon = new Process('docker-compose up -d', $destinationPim->absolutePath());
+        $launchDockerComposeDaemon = new Process('docker-compose up -d', $pim->absolutePath());
 
         $launchDockerComposeDaemon->run();
 
-        if (!$this->dockerComposeInfrastructureIsUp($destinationPim->absolutePath())) {
+        if (!$this->dockerComposeInfrastructureIsUp($pim->absolutePath())) {
             throw new DestinationPimSystemRequirementsNotBootable(
-                'Docker cannot boot the install system, please check `docker-compose ps` in '.$destinationPim->absolutePath()
+                'Docker cannot boot the install system, please check `docker-compose ps` in '.$pim->absolutePath()
             );
         }
+    }
 
-        $this->destinationPimCommandLauncher->runCommand(
-            new ComposerUpdateCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new PrepareRequiredDirectoriesCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineDropDatabaseCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineCreateDatabaseCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineCreateSchemaCommand(), $destinationPim->absolutePath(), true
-        );
-        $this->destinationPimCommandLauncher->runCommand(
-            new DoctrineUpdateSchemaCommand(), $destinationPim->absolutePath(), true
-        );
+    protected function prepareDependencies(Pim $pim)
+    {
+        $this->consoleHelper->execute($pim, new RawCommand('composer update'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('pim:installer:prepare-required-directories'));
+    }
+
+    protected function prepareDatabase(Pim $pim)
+    {
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:database:drop --force'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:database:create'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:schema:create'));
+        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:schema:update --force'));
     }
 
     protected function dockerComposeInfrastructureIsUp(string $destinationPimPath): bool
@@ -99,5 +106,10 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
         return $servicesNames->filter(function (string $service) {
             return !empty(trim($service));
         })->contains(...$services);
+    }
+
+    public function supports(PimConnection $connection): bool
+    {
+        return $connection instanceof DockerConnection;
     }
 }

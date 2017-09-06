@@ -4,15 +4,28 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 
 /**
- * Contract to check if the requirements of the PIM are good.
+ * Check system requirements through CLI.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-interface DestinationPimSystemRequirementsChecker
+class DestinationPimSystemRequirementsChecker
 {
-    public function check(DestinationPim $destinationPim): void;
+    /** @var ConsoleHelper */
+    private $consoleHelper;
+
+    public function __construct(ConsoleHelper $consoleHelper)
+    {
+        $this->consoleHelper = $consoleHelper;
+    }
+
+    public function check(Pim $pim): void
+    {
+        $this->consoleHelper->execute($pim, new SymfonyCommand('pim:installer:check-requirements'));
+    }
 }

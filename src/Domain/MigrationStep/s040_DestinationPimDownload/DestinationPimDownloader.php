@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload;
 
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Interface to define contract about downloading the pim.
@@ -14,5 +14,7 @@ use Akeneo\PimMigration\Domain\Pim\SourcePim;
  */
 interface DestinationPimDownloader
 {
-    public function download(SourcePim $pim, string $projectName): string;
+    public function download(DownloadMethod $downloadMethod, Pim $pim, string $projectName): string;
+
+    public function supports(DownloadMethod $downloadMethod): bool;
 }

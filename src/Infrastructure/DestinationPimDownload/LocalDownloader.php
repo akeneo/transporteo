@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\Downloa
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
- * Your Class description.
+ * Representation a localDownloader.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

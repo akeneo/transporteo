@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 
 /**
- * Your Class description.
+ * Representation of a SshConnection.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

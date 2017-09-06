@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
- * Your Class description.
+ * Abstract MySQLQueryExecutor.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

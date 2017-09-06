@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\Command\UnixCommand;
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
 use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 
@@ -27,5 +28,10 @@ class DockerConsole extends AbstractConsole implements Console
     public function supports(PimConnection $connection): bool
     {
         return $connection instanceof DockerConnection;
+    }
+
+    protected function getPrefixPath(Pim $pim): string
+    {
+        // TODO: Implement getPrefixPath() method.
     }
 }

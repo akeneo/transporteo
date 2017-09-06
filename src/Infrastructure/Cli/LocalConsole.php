@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Command\UnixCommand;
 use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
 use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -48,5 +49,10 @@ class LocalConsole extends AbstractConsole implements Console
     public function supports(PimConnection $connection): bool
     {
         return $connection instanceof Localhost;
+    }
+
+    protected function getPrefixPath(Pim $pim): string
+    {
+        return $pim->absolutePath() . DIRECTORY_SEPARATOR;
     }
 }

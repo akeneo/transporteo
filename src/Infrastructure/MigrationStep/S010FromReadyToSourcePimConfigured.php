@@ -238,6 +238,8 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             throw new SourcePimConfigurationException($exception->getMessage(), 0, $exception);
         }
 
+        $stateMachine->setSourcePimServerInformation($pimServerInformation);
+
         try {
             $sourcePimConfiguration = $this->pimConfigurator->configure($pimServerInformation);
         } catch (\Exception $exception) {

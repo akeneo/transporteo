@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\Command\UnixCommand;
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\UnixCommandResult;
 use Akeneo\PimMigration\Domain\Pim\AbstractPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 
@@ -17,7 +18,7 @@ use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class SshConsole implements Console
+class SshConsole extends AbstractConsole implements Console
 {
     public function execute(UnixCommand $command, AbstractPim $pim, PimConnection $connection): UnixCommandResult
     {
@@ -27,5 +28,10 @@ class SshConsole implements Console
     public function supports(PimConnection $connection): bool
     {
         return $connection instanceof SshConnection;
+    }
+
+    protected function getPrefixPath(Pim $pim): string
+    {
+        return $pim->absolutePath() . DIRECTORY_SEPARATOR;
     }
 }

@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 
 /**
- * Your Class description.
+ * Representation of a Git DownloadMethod.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

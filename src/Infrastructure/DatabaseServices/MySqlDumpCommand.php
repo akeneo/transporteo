@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\AbstractUnixCommand;
 use Akeneo\PimMigration\Domain\Command\UnixCommand;
 
 /**
- * Your Class description.
+ * Dump a table and prepend by useful unix symbol.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

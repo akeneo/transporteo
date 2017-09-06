@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\AbstractUnixCommand;
 use Akeneo\PimMigration\Domain\Command\UnixCommand;
 
 /**
- * Your Class description.
+ * Type to define a query, only a query should be used for this class.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

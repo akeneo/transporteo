@@ -29,9 +29,9 @@ services:
 ### COMMAND
 
   Akeneo\PimMigration\Domain\Command\ConsoleHelper: ~
-  Akeneo\PimMigration\Infrastructure\Command\DockerConsole: ~
-  Akeneo\PimMigration\Infrastructure\Command\LocalConsole: ~
-  Akeneo\PimMigration\Infrastructure\Command\SshConsole: ~
+  Akeneo\PimMigration\Infrastructure\Cli\DockerConsole: ~
+  Akeneo\PimMigration\Infrastructure\Cli\LocalConsole: ~
+  Akeneo\PimMigration\Infrastructure\Cli\SshConsole: ~
 
 ### DATA MIGRATION
   Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher: ~
@@ -67,7 +67,7 @@ services:
   Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsChecker: ~
   Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper: ~
   Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYamlGenerator: ~
-  Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\BacisDestinationPimSystemRequirementsInstaller: ~
+  Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\BasicDestinationPimSystemRequirementsInstaller: ~
   Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DockerDestinationPimSystemRequirementsInstaller: ~
 
 ### FILE System

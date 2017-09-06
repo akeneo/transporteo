@@ -14,7 +14,7 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 
 /**
- * Your Class description.
+ * Abstraction of a console.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
@@ -25,10 +25,10 @@ abstract class AbstractConsole implements Console
     {
         if ($command instanceof SymfonyCommand) {
             if ($pim instanceof DestinationPim) {
-                return sprintf('bin/console %s', $command);
+                return sprintf('%sbin/console %s',$this->getPrefixPath($pim), $command->getCommand());
             }
 
-            return sprintf('app/console %s', $command);
+            return sprintf('%sapp/console %s', $this->getPrefixPath($pim), $command->getCommand());
         }
 
         $mysqlConnection = sprintf(
@@ -67,6 +67,8 @@ abstract class AbstractConsole implements Console
             );
         }
 
-        return '';
+        throw new \InvalidArgumentException(sprintf('Not supported command of class %s'. get_class($command)));
     }
+
+    protected abstract function getPrefixPath(Pim $pim): string;
 }

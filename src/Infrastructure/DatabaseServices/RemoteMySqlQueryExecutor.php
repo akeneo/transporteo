@@ -11,7 +11,7 @@ use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 
 /**
- * Your Class description.
+ * Execution of mysql query of setting on a remote server (through ssh).
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

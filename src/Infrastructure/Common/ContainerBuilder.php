@@ -4,10 +4,23 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
+use Akeneo\PimMigration\Domain\Command\Console;
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
+use Akeneo\PimMigration\Domain\FileFetcher;
+use Akeneo\PimMigration\Domain\FileFetcherRegistry;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloadMethodAware;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator;
+use Akeneo\PimMigration\Domain\Pim\DestinationPimConnectionAware;
+use Akeneo\PimMigration\Domain\Pim\SourcePimConnectionAware;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
@@ -55,12 +68,27 @@ final class ContainerBuilder
 
         $container->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('kernel.event_subscriber');
 
+        $container->registerForAutoconfiguration(Console::class)->addTag('migration_tool.console');
+        $container->registerForAutoconfiguration(FileFetcher::class)->addTag('migration_tool.file_fetcher');
+        $container->registerForAutoconfiguration(DatabaseQueryExecutor::class)->addTag('migration_tool.database_query_executor');
+        $container->registerForAutoconfiguration(DestinationPimDownloader::class)->addTag('migration_tool.destination_pim_downloader');
+        $container->registerForAutoconfiguration(DestinationPimSystemRequirementsInstaller::class)->addTag('migration_tool.destination_pim_system_requirements_installer');
+        $container->registerForAutoconfiguration(DestinationPimConnectionAware::class)->addTag('migration_tool.destination_pim_connection_aware');
+        $container->registerForAutoconfiguration(SourcePimConnectionAware::class)->addTag('migration_tool.source_pim_connection_aware');
+        $container->registerForAutoconfiguration(DestinationPimDownloadMethodAware::class)->addTag('migration_tool.destinatiom_pim_download_method_aware');
+
         $container->compile();
 
         self::loadRegistry($container, StructureMigrator::class, 'migration_tool.structure_migrator', 'addStructureMigrator');
         self::loadRegistry($container, SystemMigrator::class, 'migration_tool.system_migrator', 'addSystemMigrator');
         self::loadRegistry($container, JobMigrator::class, 'migration_tool.job_migrator', 'addJobMigrator');
         self::loadRegistry($container, GroupMigrator::class, 'migration_tool.group_migrator', 'addGroupMigrator');
+
+        self::loadRegistry($container, ConsoleHelper::class, 'migration_tool.console', 'addConsole');
+        self::loadRegistry($container, FileFetcherRegistry::class, 'migration_tool.file_fetcher', 'addFileFetcher');
+        self::loadRegistry($container, DatabaseQueryExecutorRegistry::class, 'migration_tool.database_query_executor', 'addDatabaseQueryExecutor');
+        self::loadRegistry($container, DestinationPimDownloaderHelper::class, 'migration_tool.destination_pim_downloader', 'addDestinationPimDownloader');
+        self::loadRegistry($container, DestinationPimSystemRequirementsInstallerHelper::class, 'migration_tool.destination_pim_system_requirements_installer', 'addDestinationPimSystemRequirementsInstaller');
 
         return $container;
     }

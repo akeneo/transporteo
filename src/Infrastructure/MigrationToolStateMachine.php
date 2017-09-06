@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -32,7 +38,7 @@ class MigrationToolStateMachine
     protected $sourcePimLocation;
 
     /** @var null|SshKey */
-    protected $sshKey;
+    protected $enterpriseAccessAllowedKey;
 
     /** @var PimConfiguration */
     protected $sourcePimConfiguration;
@@ -61,9 +67,19 @@ class MigrationToolStateMachine
     /** @var PimServerInformation */
     protected $sourcePimServerInformation;
 
-    public function __construct(StateMachine $stateMachine)
+    /** @var ContainerBuilder */
+    protected $container;
+
+    /** @var PimConnection */
+    protected $sourcePimConnection;
+
+    /** @var PimConnection */
+    protected $destinationPimConnection;
+
+    public function __construct(StateMachine $stateMachine, Container $container)
     {
         $this->stateMachineMarker = $stateMachine;
+        $this->container = $container;
     }
 
     public function start(): void
@@ -104,14 +120,14 @@ class MigrationToolStateMachine
         return $this->sourcePimLocation;
     }
 
-    public function getSshKey(): ?SshKey
+    public function getEnterpriseAccessAllowedKey(): ?SshKey
     {
-        return $this->sshKey;
+        return $this->enterpriseAccessAllowedKey;
     }
 
-    public function setSshKey(SshKey $sshKey): void
+    public function setEnterpriseAccessAllowedKey(SshKey $sshKey): void
     {
-        $this->sshKey = $sshKey;
+        $this->enterpriseAccessAllowedKey = $sshKey;
     }
 
     public function getSourcePimConfiguration(): PimConfiguration
@@ -144,26 +160,6 @@ class MigrationToolStateMachine
         return $this->destinationPim;
     }
 
-    public function setDestinationPimLocation(int $destinationPimLocation): void
-    {
-        $this->destinationPimLocation = $destinationPimLocation;
-    }
-
-    public function getDestinationPimLocation(): int
-    {
-        return $this->destinationPimLocation;
-    }
-
-    public function setDestinationPathPimLocation(string $destinationPath): void
-    {
-        $this->destinationPathPimLocation = $destinationPath;
-    }
-
-    public function getDestinationPathPimLocation(): ?string
-    {
-        return $this->destinationPathPimLocation ?? null;
-    }
-
     public function setCurrentDestinationPimLocation(string $currentDestinationPimLocation): void
     {
         $this->currentDestinationPimLocation = $currentDestinationPimLocation;
@@ -184,14 +180,9 @@ class MigrationToolStateMachine
         return $this->destinationPimConfiguration;
     }
 
-    public function setUseDocker(bool $useDocker): void
-    {
-        $this->useDocker = $useDocker;
-    }
-
     public function useDocker(): bool
     {
-        return $this->useDocker;
+        return $this->destinationPimConnection instanceof DockerConnection;
     }
 
     public function setSourcePimServerInformation(PimServerInformation $pimServerInformation): void
@@ -204,8 +195,42 @@ class MigrationToolStateMachine
         return str_replace(DIRECTORY_SEPARATOR.'composer.json', '', $this->sourcePimServerInformation->getComposerJsonPath());
     }
 
-    public function getSourcePimServerInformation(): PimServerInformation
+    public function setSourcePimConnection(PimConnection $connection): void
     {
-        return $this->sourcePimServerInformation;
+        $this->sourcePimConnection = $connection;
+
+        $this->makeAwareOf('migration_tool.source_pim_connection_aware', 'connectSourcePim', $connection);
+
+        if ($connection instanceof SshConnection) {
+            $this->setEnterpriseAccessAllowedKey($connection->getSshKey());
+        }
+    }
+
+    public function getSourcePimConnection(): PimConnection
+    {
+        return $this->sourcePimConnection;
+    }
+
+    public function setDestinationPimConnection(PimConnection $connection): void
+    {
+        $this->destinationPimConnection = $connection;
+
+        $this->makeAwareOf('migration_tool.destination_pim_connection_aware', 'connectDestinationPim', $connection);
+    }
+
+    public function setDownloadMethod(DownloadMethod $downloadMethod): void
+    {
+        $this->downloadMethod = $downloadMethod;
+
+        $this->makeAwareOf('migration_tool.destinatiom_pim_download_method_aware', 'setDownloadMethod', $downloadMethod);
+    }
+
+    protected function makeAwareOf(string $tagToAware, string $awareMethod, $objectToAware)
+    {
+        $servicesToAware = $this->container->findTaggedServiceIds($tagToAware);
+
+        foreach ($servicesToAware as $id => $tags) {
+            $this->container->get($id)->$awareMethod($objectToAware);
+        }
     }
 }

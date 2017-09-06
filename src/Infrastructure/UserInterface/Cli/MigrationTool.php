@@ -28,7 +28,7 @@ final class MigrationTool extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'));
+        $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'), $this->container);
 
         $cliQuestionAsker = new ConsolePrinterAndAsker($input, $output, $this->getHelper('question'));
 

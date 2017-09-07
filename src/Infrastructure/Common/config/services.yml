@@ -10,8 +10,6 @@ services:
       tags: ['migration_tool.console']
     Akeneo\PimMigration\Domain\FileFetcher:
       tags: ['migration_tool.file_fetcher']
-    Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor:
-      tags: ['migration_tool.database_query_executor']
     Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader:
       tags: ['migration_tool.destination_pim_downloader']
     Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller:
@@ -29,13 +27,9 @@ services:
 
 ### DATA MIGRATION
   Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher: ~
-  Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry: ~
   Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker: ~
   Akeneo\PimMigration\Domain\DataMigration\EntityTableNameFetcher: ~
   Akeneo\PimMigration\Domain\DataMigration\TableMigrator: ~
-
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalMySqlQueryExecutor: ~
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\RemoteMySqlQueryExecutor: ~
 
 ### SOURCE PIM CONFIGURATION
 

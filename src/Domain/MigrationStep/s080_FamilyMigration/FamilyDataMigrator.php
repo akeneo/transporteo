@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s080_FamilyMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -21,13 +22,13 @@ class FamilyDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var DatabaseQueryExecutorRegistry */
-    private $databaseQueryExecutorRegistry;
+    /** @var ConsoleHelper */
+    private $consoleHelper;
 
-    public function __construct(TableMigrator $tableMigrator, DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
+    public function __construct(TableMigrator $tableMigrator, ConsoleHelper $consoleHelper)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->databaseQueryExecutorRegistry = $databaseQueryExecutorRegistry;
+        $this->consoleHelper = $consoleHelper;
     }
 
     /**
@@ -44,16 +45,16 @@ class FamilyDataMigrator implements DataMigrator
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
-            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
-                sprintf(
+            $this->consoleHelper->execute(
+                $destinationPim,
+                new MySqlExecuteCommand(sprintf(
                     'ALTER TABLE %s.%s %s, %s, %s',
                     $destinationPim->getDatabaseName(),
                     $tableName,
                     $sqlAddColumnPart,
                     $sqlAddAttributeFkPart,
                     $sqlAddKeyPart
-                ),
-                $destinationPim
+                ))
             );
 
             $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_family_attribute');

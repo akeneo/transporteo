@@ -7,6 +7,8 @@ namespace Akeneo\PimMigration\Infrastructure\Cli;
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
+use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
@@ -22,8 +24,26 @@ use Symfony\Component\Process\Process;
  */
 class LocalConsole extends AbstractConsole implements Console
 {
+    /** @var LocalMySqlQueryExecutor */
+    private $localMySqlQueryExecutor;
+
+    public function __construct(LocalMySqlQueryExecutor $localMySqlQueryExecutor)
+    {
+        $this->localMySqlQueryExecutor = $localMySqlQueryExecutor;
+    }
+
     public function execute(Command $command, Pim $pim, PimConnection $connection): CommandResult
     {
+        if ($command instanceof MySqlExecuteCommand) {
+            $this->localMySqlQueryExecutor->execute($command->getCommand(), $pim);
+
+            return new CommandResult(1, '');
+        }
+
+        if ($command instanceof MySqlQueryCommand) {
+            return new CommandResult(1, $this->localMySqlQueryExecutor->query($command->getCommand(), $pim));
+        }
+
         $commandToLaunch = $this->getProcessedCommand($command, $pim);
         $process = new Process($commandToLaunch, '');
 
@@ -48,10 +68,5 @@ class LocalConsole extends AbstractConsole implements Console
     public function supports(PimConnection $connection): bool
     {
         return $connection instanceof Localhost;
-    }
-
-    protected function getPrefixPath(Pim $pim): string
-    {
-        return $pim->absolutePath().DIRECTORY_SEPARATOR;
     }
 }

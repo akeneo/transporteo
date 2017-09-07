@@ -28,9 +28,4 @@ class DockerConsole extends AbstractConsole implements Console
     {
         return $connection instanceof DockerConnection;
     }
-
-    protected function getPrefixPath(Pim $pim): string
-    {
-        // TODO: Implement getPrefixPath() method.
-    }
 }

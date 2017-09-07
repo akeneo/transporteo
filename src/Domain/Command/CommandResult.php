@@ -15,27 +15,21 @@ class CommandResult
     /** @var int */
     private $resultCode;
 
-    /** @var string */
+    /** @var mixed */
     private $output;
 
-    public function __construct(int $resultCode, string $output)
+    public function __construct(int $resultCode, $output)
     {
         $this->resultCode = $resultCode;
         $this->output = $output;
     }
 
-    /**
-     * @return int
-     */
     public function getResultCode(): int
     {
         return $this->resultCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getOutput(): string
+    public function getOutput()
     {
         return $this->output;
     }

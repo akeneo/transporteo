@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -21,13 +22,13 @@ class AttributeDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var DatabaseQueryExecutorRegistry */
-    private $databaseQueryExecutorRegistry;
+    /** @var ConsoleHelper */
+    private $consoleHelper;
 
-    public function __construct(TableMigrator $naiveMigrator, DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
+    public function __construct(TableMigrator $naiveMigrator, ConsoleHelper $consoleHelper)
     {
         $this->tableMigrator = $naiveMigrator;
-        $this->databaseQueryExecutorRegistry = $databaseQueryExecutorRegistry;
+        $this->consoleHelper = $consoleHelper;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -39,14 +40,14 @@ class AttributeDataMigrator implements DataMigrator
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
-            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
-                sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text'),
-                $destinationPim
+            $this->consoleHelper->execute(
+                $destinationPim,
+                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text'))
             );
 
-            $this->databaseQueryExecutorRegistry->get($destinationPim)->execute(
-                sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar'),
-                $destinationPim
+            $this->consoleHelper->execute(
+                $destinationPim,
+                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar'))
             );
         } catch (\Exception $exception) {
             throw new StructureMigrationException($exception->getMessage(), $exception->getCode(), $exception);

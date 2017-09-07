@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration;
 
+use Akeneo\PimMigration\Domain\Command\CommandResult;
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
+use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\TableNamesFetcher;
@@ -24,11 +28,11 @@ use PhpSpec\ObjectBehavior;
  */
 class ExtraDataMigratorSpec extends ObjectBehavior
 {
-    public function let(TableMigrator $tableMigrator, DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry)
+    public function let(TableMigrator $tableMigrator, ConsoleHelper $consoleHelper)
     {
         $this->beConstructedWith(
             $tableMigrator,
-            $databaseQueryExecutorRegistry
+            $consoleHelper
         );
     }
 
@@ -40,12 +44,10 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_throws_an_exception_during_getting_table(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        DatabaseQueryExecutor $executor,
-        $databaseQueryExecutorRegistry
+        $consoleHelper
     ) {
-        $databaseQueryExecutorRegistry->get($sourcePim)->willReturn($executor);
 
-        $executor->query('SHOW TABLES', $sourcePim)->willThrow(new UnsuccessfulCommandException());
+        $consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->willThrow(new UnsuccessfulCommandException());
 
         $this->shouldThrow(new ExtraDataMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
     }
@@ -53,12 +55,12 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_throws_exception_during_migrate(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        DatabaseQueryExecutor $executor,
-        $tableMigrator,
-        $databaseQueryExecutorRegistry
+        CommandResult $commandResult,
+        $consoleHelper,
+        $tableMigrator
     ) {
-        $databaseQueryExecutorRegistry->get($sourcePim)->willReturn($executor);
-        $executor->query('SHOW TABLES', $sourcePim)->willReturn([['table_name' => 'an_unknown_table']]);
+        $commandResult->getOutput()->willReturn([['table_name' => 'an_unknown_table']]);
+        $consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->willReturn($commandResult);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'an_unknown_table')->willThrow(new DataMigrationException());
 
@@ -68,12 +70,12 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_migrate_all_tables(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        DatabaseQueryExecutor $executor,
-        $tableMigrator,
-        $databaseQueryExecutorRegistry
+        CommandResult $commandResult,
+        $consoleHelper,
+        $tableMigrator
     ) {
-        $databaseQueryExecutorRegistry->get($sourcePim)->willReturn($executor);
-        $executor->query('SHOW TABLES', $sourcePim)->willReturn([['table_name' => 'an_unknown_table']]);
+        $commandResult->getOutput()->willReturn([['table_name' => 'an_unknown_table']]);
+        $consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->willReturn($commandResult);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'an_unknown_table')->shouldBeCalled();
 

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\MySqlExportTableCommand;
+use Akeneo\PimMigration\Domain\Command\MySqlImportTableCommand;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -17,16 +20,16 @@ use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
  */
 class TableMigrator
 {
-    /** @var DatabaseQueryExecutorRegistry */
-    private $databaseQueryExecutorRegistry;
-
     /** @var FileFetcherRegistry */
     private $fileFetcherRegistry;
 
-    public function __construct(DatabaseQueryExecutorRegistry $databaseQueryExecutorRegistry, FileFetcherRegistry $fileFetcherRegistry)
+    /** @var ConsoleHelper */
+    private $consoleHelper;
+
+    public function __construct(ConsoleHelper $consoleHelper, FileFetcherRegistry $fileFetcherRegistry)
     {
-        $this->databaseQueryExecutorRegistry = $databaseQueryExecutorRegistry;
         $this->fileFetcherRegistry = $fileFetcherRegistry;
+        $this->consoleHelper = $consoleHelper;
     }
 
     public function migrate(
@@ -34,11 +37,12 @@ class TableMigrator
         DestinationPim $destinationPim,
         string $tableName
     ): void {
-        $sourceDatabaseQueryExecutory = $this->databaseQueryExecutorRegistry->get($sourcePim);
-        $destinationPimQueryExecutor = $this->databaseQueryExecutorRegistry->get($destinationPim);
+        $exportPath = MySqlExportTableCommand::getPimTableNameDumpPath($sourcePim, $tableName);
+
+        $exportCommand = new MySqlExportTableCommand($tableName, $exportPath);
 
         try {
-            $sourceDatabaseQueryExecutory->exportTable($tableName, $sourcePim);
+            $this->consoleHelper->execute($sourcePim, $exportCommand);
         } catch (\Exception $exception) {
             throw new DataMigrationException(
                 sprintf('Dump Table error %s: %s', $tableName, $exception->getMessage()),
@@ -47,10 +51,12 @@ class TableMigrator
             );
         }
 
-        $this->fileFetcherRegistry->fetch($sourcePim->getConnection(), $sourceDatabaseQueryExecutory->getPimTableNameDumpPath($sourcePim, $tableName), true);
+        $this->fileFetcherRegistry->fetch($sourcePim->getConnection(), $exportPath, true);
+
+        $importCommand = new MySqlImportTableCommand(MySqlImportTableCommand::getLocalTableDumpPath($tableName));
 
         try {
-            $destinationPimQueryExecutor->importTable($tableName, $destinationPim);
+            $this->consoleHelper->execute($destinationPim, $importCommand);
         } catch (UnsuccessfulCommandException $exception) {
             throw new DataMigrationException(
                 sprintf('Import Dump of table %s error: %s', $tableName, $exception->getMessage()),

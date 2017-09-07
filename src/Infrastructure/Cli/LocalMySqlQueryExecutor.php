@@ -2,22 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
+namespace Akeneo\PimMigration\Infrastructure\Cli;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\QueryException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
-use Akeneo\PimMigration\Domain\Pim\PimConnection;
-use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
-use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
- * MySQL command launcher.
+ * @internal
+ *
+ * MySQL command launcher for Local using PDO
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class LocalMySqlQueryExecutor extends AbstractMysqlQueryExecutor implements DatabaseQueryExecutor
+class LocalMySqlQueryExecutor
 {
     public function execute(string $sql, Pim $pim): void
     {
@@ -34,13 +32,11 @@ class LocalMySqlQueryExecutor extends AbstractMysqlQueryExecutor implements Data
         }
     }
 
-    public function query(string $sql, Pim $pim, int $fetchMode = self::DATA_FETCH): array
+    public function query(string $sql, Pim $pim): array
     {
         $pdo = $this->getConnection($pim);
 
-        $fetchMode = $fetchMode === self::DATA_FETCH ? \PDO::FETCH_ASSOC : \PDO::FETCH_COLUMN;
-
-        return $pdo->query($sql)->fetchAll($fetchMode);
+        return $pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     protected function getConnection(Pim $pim): \PDO
@@ -61,10 +57,5 @@ class LocalMySqlQueryExecutor extends AbstractMysqlQueryExecutor implements Data
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
-    }
-
-    public function supports(PimConnection $connection): bool
-    {
-        return $connection instanceof Localhost || $connection instanceof DockerConnection;
     }
 }

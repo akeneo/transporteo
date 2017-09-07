@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
-
-use Akeneo\PimMigration\Domain\Command\AbstractCommand;
-use Akeneo\PimMigration\Domain\Command\Command;
+namespace Akeneo\PimMigration\Domain\Command;
 
 /**
  * Type to define a query, only a query should be used for this class.

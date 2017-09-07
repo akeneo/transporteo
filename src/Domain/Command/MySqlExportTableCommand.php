@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Infrastructure\DatabaseServices;
+namespace Akeneo\PimMigration\Domain\Command;
 
-use Akeneo\PimMigration\Domain\Command\AbstractCommand;
-use Akeneo\PimMigration\Domain\Command\Command;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Dump a table and prepend by useful unix symbol.
@@ -13,7 +12,7 @@ use Akeneo\PimMigration\Domain\Command\Command;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class MySqlDumpCommand extends AbstractCommand implements Command
+class MySqlExportTableCommand extends AbstractCommand implements Command
 {
     public function __construct(string $tableName, string $path)
     {
@@ -24,5 +23,10 @@ class MySqlDumpCommand extends AbstractCommand implements Command
                 $path
             )
         );
+    }
+
+    public static function getPimTableNameDumpPath(Pim $pim, string $tableName): string
+    {
+        return sprintf('%s%smigration_tool_%s.sql', $pim->absolutePath(), DIRECTORY_SEPARATOR, $tableName);
     }
 }

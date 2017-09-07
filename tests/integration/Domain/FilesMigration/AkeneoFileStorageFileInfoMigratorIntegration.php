@@ -25,7 +25,7 @@ class AkeneoFileStorageFileInfoMigratorIntegration extends DatabaseSetupedTestCa
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
 
-        $tableMigrator = new TableMigrator($this->databaseQueryExectuorRegistry, $fileFetcherRegistry);
+        $tableMigrator = new TableMigrator($this->consoleHelper, $fileFetcherRegistry);
 
         $akeneoFileStorageFileInfoMigrator = new AkeneoFileStorageFileInfoMigrator($tableMigrator);
         $akeneoFileStorageFileInfoMigrator->migrate($this->sourcePim, $this->destinationPim);

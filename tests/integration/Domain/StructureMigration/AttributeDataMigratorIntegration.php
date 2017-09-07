@@ -30,7 +30,7 @@ class AttributeDataMigratorIntegration extends DatabaseSetupedTestCase
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
 
-        $tableMigrator = new TableMigrator($this->databaseQueryExectuorRegistry, $fileFetcherRegistry);
+        $tableMigrator = new TableMigrator($this->consoleHelper, $fileFetcherRegistry);
 
         $this->dumpTableMigrator = $tableMigrator;
         $this->dumpTableMigrator->migrate($this->sourcePim, $this->destinationPim, 'pim_catalog_attribute_group');
@@ -38,7 +38,7 @@ class AttributeDataMigratorIntegration extends DatabaseSetupedTestCase
 
     public function testAttributeDataMigrator()
     {
-        $attributeDataMigrator = new AttributeDataMigrator($this->dumpTableMigrator, $this->databaseQueryExectuorRegistry);
+        $attributeDataMigrator = new AttributeDataMigrator($this->dumpTableMigrator, $this->consoleHelper);
         $containingTextElementsInSource = $this->getConnection($this->sourcePim, true)->query('SELECT id FROM pim_catalog_attribute WHERE backend_type="text"')->fetchAll();
         $idsOldText = (new Vector($containingTextElementsInSource))->map(function (array $values) {
             return $values['id'];

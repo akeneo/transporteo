@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Cli\LocalConsole;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalMySqlQueryExecutor;
+use Akeneo\PimMigration\Infrastructure\Cli\LocalMySqlQueryExecutor;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
@@ -23,20 +23,14 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
 {
     protected $sourcePim;
     protected $destinationPim;
-    protected $databaseQueryExectuorRegistry;
+    protected $consoleHelper;
 
     public function setUp()
     {
         parent::setUp();
 
-        $consoleHelper = new ConsoleHelper();
-        $consoleHelper->addConsole(new LocalConsole());
-
-        $databaseQueryExecutor = new LocalMySqlQueryExecutor($consoleHelper);
-        $databaseQueryExecutorRegistry = new DatabaseQueryExecutorRegistry();
-        $databaseQueryExecutorRegistry->addDatabaseQueryExecutor($databaseQueryExecutor);
-
-        $this->databaseQueryExectuorRegistry = $databaseQueryExecutorRegistry;
+        $this->consoleHelper = new ConsoleHelper();
+        $this->consoleHelper->addConsole(new LocalConsole(new LocalMySqlQueryExecutor()));
 
         $sourcePimConfig = $this->getConfig('pim_community_standard_one_seven_with_reference_data');
         $destinationPimConfig = $this->getConfig('pim_community_standard_two');

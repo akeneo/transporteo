@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration;
 
+use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
@@ -20,9 +22,9 @@ use PhpSpec\ObjectBehavior;
  */
 class GroupMigratorSpec extends ObjectBehavior
 {
-    public function let(DatabaseQueryExecutorRegistry $registry)
+    public function let(ConsoleHelper $consoleHelper)
     {
-        $this->beConstructedWith($registry);
+        $this->beConstructedWith($consoleHelper);
     }
 
     public function it_is_initializable()
@@ -35,8 +37,7 @@ class GroupMigratorSpec extends ObjectBehavior
         DataMigrator $groupMigratorTwo,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        DatabaseQueryExecutor $databaseQueryExecutor,
-        $registry
+        $consoleHelper
     ) {
         $this->addGroupMigrator($groupMigratorOne);
         $this->addGroupMigrator($groupMigratorTwo);
@@ -46,11 +47,9 @@ class GroupMigratorSpec extends ObjectBehavior
 
         $destinationPim->getDatabaseName()->willReturn('database_name');
 
-        $registry->get($destinationPim)->willReturn($databaseQueryExecutor);
-
-        $databaseQueryExecutor->execute(
-            'UPDATE database_name.pim_catalog_group_type SET is_variant = 0',
-            $destinationPim
+        $consoleHelper->execute(
+            $destinationPim,
+            new MySqlExecuteCommand('UPDATE database_name.pim_catalog_group_type SET is_variant = 0')
         )->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

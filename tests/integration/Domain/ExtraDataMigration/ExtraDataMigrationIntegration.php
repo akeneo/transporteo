@@ -24,12 +24,9 @@ class ExtraDataMigrationIntegration extends DatabaseSetupedTestCase
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
 
-        $tableMigrator = new TableMigrator($this->databaseQueryExectuorRegistry, $fileFetcherRegistry);
+        $tableMigrator = new TableMigrator($this->consoleHelper, $fileFetcherRegistry);
 
-        $extraDataMigrator = new ExtraDataMigrator(
-            $tableMigrator,
-            $this->databaseQueryExectuorRegistry
-        );
+        $extraDataMigrator = new ExtraDataMigrator($tableMigrator, $this->consoleHelper);
 
         $this->assertNotContains('acme_reference_data_color', $this->getDestinationPimTables());
         $extraDataMigrator->migrate($this->sourcePim, $this->destinationPim);

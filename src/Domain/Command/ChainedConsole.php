@@ -13,14 +13,14 @@ use Akeneo\PimMigration\Domain\Pim\PimConnection;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class ConsoleHelper
+class ChainedConsole implements Console
 {
     /** @var Console[] */
     private $consoles = [];
 
-    public function execute(Pim $pim, Command $command): CommandResult
+    public function execute(Command $command, Pim $pim): CommandResult
     {
-        return $this->get($pim->getConnection())->execute($command, $pim, $pim->getConnection());
+        return $this->get($pim->getConnection())->execute($command, $pim);
     }
 
     public function addConsole(Console $console): void
@@ -40,5 +40,10 @@ class ConsoleHelper
         }
 
         throw new \InvalidArgumentException('The connection is not supported by any consoles');
+    }
+
+    public function supports(PimConnection $connection): bool
+    {
+        return true;
     }
 }

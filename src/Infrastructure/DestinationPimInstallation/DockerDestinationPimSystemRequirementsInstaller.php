@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\RawCommand;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
@@ -25,12 +25,12 @@ use Symfony\Component\Process\Process;
  */
 class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimSystemRequirementsInstaller
 {
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(ConsoleHelper $consoleHelper)
+    public function __construct(ChainedConsole $chainedConsole)
     {
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     public function install(DestinationPim $destinationPim): void
@@ -71,16 +71,16 @@ class DockerDestinationPimSystemRequirementsInstaller implements DestinationPimS
 
     protected function prepareDependencies(Pim $pim)
     {
-        $this->consoleHelper->execute($pim, new RawCommand('composer update'));
-        $this->consoleHelper->execute($pim, new SymfonyCommand('pim:installer:prepare-required-directories'));
+        $this->chainedConsole->execute(new RawCommand('composer update'), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('pim:installer:prepare-required-directories'), $pim);
     }
 
     protected function prepareDatabase(Pim $pim)
     {
-        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:database:drop --force'));
-        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:database:create'));
-        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:schema:create'));
-        $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:schema:update --force'));
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:drop --force'), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:create'), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:create'), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:update --force'), $pim);
     }
 
     protected function dockerComposeInfrastructureIsUp(string $destinationPimPath): bool

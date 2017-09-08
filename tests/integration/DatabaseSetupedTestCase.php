@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -23,14 +23,14 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
 {
     protected $sourcePim;
     protected $destinationPim;
-    protected $consoleHelper;
+    protected $chainedConsole;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->consoleHelper = new ConsoleHelper();
-        $this->consoleHelper->addConsole(new LocalConsole(new LocalMySqlQueryExecutor()));
+        $this->chainedConsole = new ChainedConsole();
+        $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor()));
 
         $sourcePimConfig = $this->getConfig('pim_community_standard_one_seven_with_reference_data');
         $destinationPimConfig = $this->getConfig('pim_community_standard_two');

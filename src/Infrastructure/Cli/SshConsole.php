@@ -31,8 +31,10 @@ class SshConsole extends AbstractConsole implements Console
         throw new \InvalidArgumentException(sprintf('Not supported command of class %s'.get_class($command)));
     }
 
-    public function execute(Command $command, Pim $pim, PimConnection $connection): CommandResult
+    public function execute(Command $command, Pim $pim): CommandResult
     {
+        $connection = $pim->getConnection();
+
         if ($command instanceof MySqlQueryCommand) {
             $query = sprintf(
                 '%s -s -e "%s;"',

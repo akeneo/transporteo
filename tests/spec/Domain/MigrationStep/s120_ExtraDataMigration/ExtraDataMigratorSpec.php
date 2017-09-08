@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration;
 
 use Akeneo\PimMigration\Domain\Command\CommandResult;
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
@@ -28,11 +28,11 @@ use PhpSpec\ObjectBehavior;
  */
 class ExtraDataMigratorSpec extends ObjectBehavior
 {
-    public function let(TableMigrator $tableMigrator, ConsoleHelper $consoleHelper)
+    public function let(TableMigrator $tableMigrator, ChainedConsole $chainedConsole)
     {
         $this->beConstructedWith(
             $tableMigrator,
-            $consoleHelper
+            $chainedConsole
         );
     }
 
@@ -44,10 +44,10 @@ class ExtraDataMigratorSpec extends ObjectBehavior
     public function it_throws_an_exception_during_getting_table(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        $consoleHelper
+        $chainedConsole
     ) {
 
-        $consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->willThrow(new UnsuccessfulCommandException());
+        $chainedConsole->execute(new MySqlQueryCommand('SHOW TABLES'), $sourcePim)->willThrow(new UnsuccessfulCommandException());
 
         $this->shouldThrow(new ExtraDataMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
     }
@@ -56,11 +56,11 @@ class ExtraDataMigratorSpec extends ObjectBehavior
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         CommandResult $commandResult,
-        $consoleHelper,
+        $chainedConsole,
         $tableMigrator
     ) {
         $commandResult->getOutput()->willReturn([['table_name' => 'an_unknown_table']]);
-        $consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->willReturn($commandResult);
+        $chainedConsole->execute(new MySqlQueryCommand('SHOW TABLES'), $sourcePim)->willReturn($commandResult);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'an_unknown_table')->willThrow(new DataMigrationException());
 
@@ -71,11 +71,11 @@ class ExtraDataMigratorSpec extends ObjectBehavior
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         CommandResult $commandResult,
-        $consoleHelper,
+        $chainedConsole,
         $tableMigrator
     ) {
         $commandResult->getOutput()->willReturn([['table_name' => 'an_unknown_table']]);
-        $consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->willReturn($commandResult);
+        $chainedConsole->execute(new MySqlQueryCommand('SHOW TABLES'), $sourcePim)->willReturn($commandResult);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'an_unknown_table')->shouldBeCalled();
 

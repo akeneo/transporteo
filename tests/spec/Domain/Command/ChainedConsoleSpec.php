@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Domain\Command;
 
 use Akeneo\PimMigration\Domain\Command\Console;
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
 
 /**
- * Spec for ConsoleHelper.
+ * Spec for ChainedConsole.
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class ConsoleHelperSpec extends ObjectBehavior
+class ChainedConsoleSpec extends ObjectBehavior
 {
     public function it_is_initializable()
     {
-        $this->shouldHaveType(ConsoleHelper::class);
+        $this->shouldHaveType(ChainedConsole::class);
     }
 
     public function it_executes_on_supportable_console(
@@ -39,9 +39,9 @@ class ConsoleHelperSpec extends ObjectBehavior
         $console1->supports($sourcePimConnection)->willReturn(false);
         $console2->supports($sourcePimConnection)->willReturn(true);
 
-        $console2->execute($unixCommand, $pim, $sourcePimConnection)->shouldBeCalled();
+        $console2->execute($unixCommand, $pim)->shouldBeCalled();
 
-        $this->execute($pim, $unixCommand);
+        $this->execute($unixCommand, $pim);
     }
 
     public function it_throws_an_exception_if_there_is_no_console_supporting_the_connection(
@@ -61,6 +61,6 @@ class ConsoleHelperSpec extends ObjectBehavior
 
         $this
             ->shouldThrow(new \InvalidArgumentException('The connection is not supported by any consoles'))
-            ->during('execute', [$pim, $unixCommand]);
+            ->during('execute', [$unixCommand, $pim]);
     }
 }

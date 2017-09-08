@@ -20,7 +20,7 @@ services:
 
 ### COMMAND
 
-  Akeneo\PimMigration\Domain\Command\ConsoleHelper: ~
+  Akeneo\PimMigration\Domain\Command\ChainedConsole: ~
   Akeneo\PimMigration\Infrastructure\Cli\DockerConsole: ~
   Akeneo\PimMigration\Infrastructure\Cli\LocalConsole: ~
   Akeneo\PimMigration\Infrastructure\Cli\SshConsole: ~

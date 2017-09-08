@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
@@ -17,12 +17,12 @@ use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
  */
 class EntityMappingChecker
 {
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(ConsoleHelper $consoleHelper)
+    public function __construct(ChainedConsole $chainedConsole)
     {
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     /**
@@ -32,7 +32,7 @@ class EntityMappingChecker
     public function check(Pim $pim, string $entityClassPath): void
     {
         try {
-            $commandResult = $this->consoleHelper->execute($pim, new SymfonyCommand('doctrine:mapping:info'));
+            $commandResult = $this->chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info'), $pim);
         } catch (UnsuccessfulCommandException $exception) {
             throw new EntityMappingException($exception->getMessage(), $exception->getCode(), $exception);
         }

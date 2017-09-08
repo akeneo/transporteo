@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
@@ -19,9 +19,9 @@ use PhpSpec\ObjectBehavior;
  */
 class BundleConfigFetcherSpec extends ObjectBehavior
 {
-    public function let(ConsoleHelper $consoleHelper)
+    public function let(ChainedConsole $chainedConsole)
     {
-        $this->beConstructedWith($consoleHelper);
+        $this->beConstructedWith($chainedConsole);
     }
 
     public function it_is_initializable()
@@ -32,7 +32,7 @@ class BundleConfigFetcherSpec extends ObjectBehavior
     public function it_fetches_the_config(
         SourcePim $sourcePim,
         CommandResult $commandResult,
-        $consoleHelper
+        $chainedConsole
     ) {
         $sourcePim->absolutePath()->willReturn('/a-path');
 
@@ -49,7 +49,7 @@ YAML;
 
         $commandResult->getOutput()->willReturn($yaml);
 
-        $consoleHelper->execute($sourcePim, new SymfonyCommand('debug:config a-bundle-name'))->willReturn($commandResult);
+        $chainedConsole->execute(new SymfonyCommand('debug:config a-bundle-name'), $sourcePim)->willReturn($commandResult);
 
         $this->fetch($sourcePim, 'a-bundle-name')->shouldReturn(
             [

@@ -19,7 +19,7 @@ use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
  */
 class DockerConsole extends AbstractConsole implements Console
 {
-    public function execute(Command $command, Pim $pim, PimConnection $connection): CommandResult
+    public function execute(Command $command, Pim $pim): CommandResult
     {
         // TODO: Implement execute() method.
     }

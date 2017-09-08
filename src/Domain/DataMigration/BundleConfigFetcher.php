@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Symfony\Component\Yaml\Yaml;
@@ -17,19 +17,19 @@ use Symfony\Component\Yaml\Yaml;
  */
 class BundleConfigFetcher
 {
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(ConsoleHelper $consoleHelper)
+    public function __construct(ChainedConsole $chainedConsole)
     {
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     public function fetch(Pim $pim, string $bundleName): array
     {
         $commandResult = $this
-            ->consoleHelper
-            ->execute($pim, new SymfonyCommand(sprintf('debug:config %s', $bundleName)));
+            ->chainedConsole
+            ->execute(new SymfonyCommand(sprintf('debug:config %s', $bundleName)), $pim);
 
         $header = sprintf('# Current configuration for "%s"%s', $bundleName, PHP_EOL);
 

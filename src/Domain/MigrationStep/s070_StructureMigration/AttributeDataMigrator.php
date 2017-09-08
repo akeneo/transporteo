@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
@@ -22,13 +22,13 @@ class AttributeDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(TableMigrator $naiveMigrator, ConsoleHelper $consoleHelper)
+    public function __construct(TableMigrator $naiveMigrator, ChainedConsole $chainedConsole)
     {
         $this->tableMigrator = $naiveMigrator;
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -40,14 +40,12 @@ class AttributeDataMigrator implements DataMigrator
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
-            $this->consoleHelper->execute(
-                $destinationPim,
-                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text'))
+            $this->chainedConsole->execute(
+                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text')), $destinationPim
             );
 
-            $this->consoleHelper->execute(
-                $destinationPim,
-                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar'))
+            $this->chainedConsole->execute(
+                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar')), $destinationPim
             );
         } catch (\Exception $exception) {
             throw new StructureMigrationException($exception->getMessage(), $exception->getCode(), $exception);

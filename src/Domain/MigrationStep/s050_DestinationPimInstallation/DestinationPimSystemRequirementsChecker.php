@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 
@@ -16,16 +16,16 @@ use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
  */
 class DestinationPimSystemRequirementsChecker
 {
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(ConsoleHelper $consoleHelper)
+    public function __construct(ChainedConsole $chainedConsole)
     {
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     public function check(Pim $pim): void
     {
-        $this->consoleHelper->execute($pim, new SymfonyCommand('pim:installer:check-requirements'));
+        $this->chainedConsole->execute(new SymfonyCommand('pim:installer:check-requirements'), $pim);
     }
 }

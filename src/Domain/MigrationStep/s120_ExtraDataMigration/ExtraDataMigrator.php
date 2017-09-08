@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
@@ -22,13 +22,13 @@ class ExtraDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(TableMigrator $tableMigrator, ConsoleHelper $consoleHelper)
+    public function __construct(TableMigrator $tableMigrator, ChainedConsole $chainedConsole)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     /**
@@ -37,7 +37,7 @@ class ExtraDataMigrator implements DataMigrator
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
         try {
-            $tablesInSourcePimResults = $this->consoleHelper->execute($sourcePim, new MySqlQueryCommand('SHOW TABLES'))->getOutput();
+            $tablesInSourcePimResults = $this->chainedConsole->execute(new MySqlQueryCommand('SHOW TABLES'), $sourcePim)->getOutput();
 
             $tablesInSourcePim = array_map(function ($element) {
                 return reset($element);

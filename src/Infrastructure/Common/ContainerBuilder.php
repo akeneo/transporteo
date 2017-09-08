@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
 use Akeneo\PimMigration\Domain\Command\Console;
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
@@ -75,7 +75,7 @@ final class ContainerBuilder
         self::loadRegistry($container, JobMigrator::class, 'migration_tool.job_migrator', 'addJobMigrator');
         self::loadRegistry($container, GroupMigrator::class, 'migration_tool.group_migrator', 'addGroupMigrator');
 
-        self::loadRegistry($container, ConsoleHelper::class, 'migration_tool.console', 'addConsole');
+        self::loadRegistry($container, ChainedConsole::class, 'migration_tool.console', 'addConsole');
         self::loadRegistry($container, FileFetcherRegistry::class, 'migration_tool.file_fetcher', 'addFileFetcher');
         self::loadRegistry($container, DestinationPimDownloaderHelper::class, 'migration_tool.destination_pim_downloader', 'addDestinationPimDownloader');
         self::loadRegistry($container, DestinationPimSystemRequirementsInstallerHelper::class, 'migration_tool.destination_pim_system_requirements_installer', 'addDestinationPimSystemRequirementsInstaller');

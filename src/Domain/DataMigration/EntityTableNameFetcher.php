@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -21,8 +21,8 @@ class EntityTableNameFetcher
     /** @var FileFetcherRegistry */
     private $fileFetcherRegistry;
 
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
     /** @var FileSystemHelper */
     private $fileSystemHelper;
@@ -30,9 +30,9 @@ class EntityTableNameFetcher
     public function __construct(
         FileSystemHelper $fileSystemHelper,
         FileFetcherRegistry $fileFetcherRegistry,
-        ConsoleHelper $consoleHelper
+        ChainedConsole $chainedConsole
     ) {
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
         $this->fileFetcherRegistry = $fileFetcherRegistry;
         $this->fileSystemHelper = $fileSystemHelper;
     }
@@ -41,8 +41,7 @@ class EntityTableNameFetcher
     {
         $mappingFilePath = $pim->absolutePath();
 
-        $this->consoleHelper->execute(
-            $pim,
+        $this->chainedConsole->execute(
             new SymfonyCommand(
                 sprintf(
                     'doctrine:mapping:convert --force --filter="%s" %s %s',
@@ -50,7 +49,7 @@ class EntityTableNameFetcher
                     'yml',
                     $mappingFilePath
                 )
-            )
+            ), $pim
         );
 
         $generatedFilePath = sprintf(

@@ -33,7 +33,7 @@ class DumpTableMigratorIntegration extends DatabaseSetupedTestCase
 
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
-        $tableMigrator = new TableMigrator($this->consoleHelper, $fileFetcherRegistry);
+        $tableMigrator = new TableMigrator($this->chainedConsole, $fileFetcherRegistry);
 
         $tableMigrator->migrate($sourcePim, $destinationPim, 'a_non_existing_table');
     }

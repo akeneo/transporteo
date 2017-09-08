@@ -21,7 +21,7 @@ interface Console
     /**
      * @throws UnsuccessfulCommandException
      */
-    public function execute(Command $command, Pim $pim, PimConnection $connection): CommandResult;
+    public function execute(Command $command, Pim $pim): CommandResult;
 
     public function supports(PimConnection $connection): bool;
 }

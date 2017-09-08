@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration;
 
-use Akeneo\PimMigration\Domain\Command\ConsoleHelper;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -20,12 +20,12 @@ class GroupMigrator implements DataMigrator
 {
     private $groupMigrators = [];
 
-    /** @var ConsoleHelper */
-    private $consoleHelper;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(ConsoleHelper $consoleHelper)
+    public function __construct(ChainedConsole $chainedConsole)
     {
-        $this->consoleHelper = $consoleHelper;
+        $this->chainedConsole = $chainedConsole;
     }
 
     public function addGroupMigrator(DataMigrator $groupMigrator): void
@@ -44,9 +44,8 @@ class GroupMigrator implements DataMigrator
                 $groupMigrator->migrate($sourcePim, $destinationPim);
             }
 
-            $this->consoleHelper->execute(
-                $destinationPim,
-                new MySqlExecuteCommand(sprintf('UPDATE %s.pim_catalog_group_type SET is_variant = 0', $destinationPim->getDatabaseName()))
+            $this->chainedConsole->execute(
+                new MySqlExecuteCommand(sprintf('UPDATE %s.pim_catalog_group_type SET is_variant = 0', $destinationPim->getDatabaseName())), $destinationPim
             );
         } catch (\Exception $exception) {
             throw new GroupMigrationException($exception->getMessage(), $exception->getCode(), $exception);

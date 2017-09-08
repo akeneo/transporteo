@@ -15,9 +15,9 @@ abstract class AbstractCommand implements Command
     /** @var string */
     private $command;
 
-    public function __construct(string $tableName)
+    public function __construct(string $command)
     {
-        $this->command = $tableName;
+        $this->command = $command;
     }
 
     public function getCommand(): string

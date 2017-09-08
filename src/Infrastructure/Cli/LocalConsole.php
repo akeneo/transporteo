@@ -34,8 +34,6 @@ class LocalConsole extends AbstractConsole implements Console
 
     public function execute(Command $command, Pim $pim): CommandResult
     {
-        $connection = $pim->getConnection();
-
         if ($command instanceof MySqlExecuteCommand) {
             $this->localMySqlQueryExecutor->execute($command->getCommand(), $pim);
 

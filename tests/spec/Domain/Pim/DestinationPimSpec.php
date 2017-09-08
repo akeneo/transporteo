@@ -7,6 +7,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Des
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
 
@@ -18,7 +19,7 @@ use PhpSpec\ObjectBehavior;
  */
 class DestinationPimSpec extends ObjectBehavior
 {
-    public function it_is_initializable()
+    public function it_is_initializable(PimConnection $connection)
     {
         $this->beConstructedWith(
             'mysql',
@@ -30,20 +31,22 @@ class DestinationPimSpec extends ObjectBehavior
             null,
             'akeneo_pim',
             '\'elasticsearch: 9200\'',
-            '/home/akeneo/pim-destination'
+            '/home/akeneo/pim-destination',
+            $connection
         );
 
         $this->shouldHaveType(DestinationPim::class);
     }
 
     public function it_throws_an_exception_if_it_is_not_a_standard(
+        PimConnection $connection,
         ComposerJson $composerJson,
         PimConfiguration $destinationPimConfiguration
     ) {
         $composerJson->getRepositoryName()->willReturn('a-repo');
         $destinationPimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$destinationPimConfiguration]);
+        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
         $this->shouldThrow(
             new DestinationPimDetectionException(
                 'Your destination PIM name should be either akeneo/pim-community-standard or either akeneo/pim-enterprise-standard, currently a-repo'
@@ -51,6 +54,7 @@ class DestinationPimSpec extends ObjectBehavior
     }
 
     public function it_throws_an_exception_if_it_is_not_a_two_dot_zero(
+        PimConnection $connection,
         ComposerJson $composerJson,
         PimConfiguration $destinationPimConfiguration
     ) {
@@ -58,7 +62,7 @@ class DestinationPimSpec extends ObjectBehavior
         $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '~1.6']));
         $destinationPimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$destinationPimConfiguration]);
+        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
 
         //TODO CORRECT VERSION
         $this->shouldThrow(
@@ -68,6 +72,7 @@ class DestinationPimSpec extends ObjectBehavior
     }
 
     public function it_throws_an_exception_when_elasticsearch_hosts_config_is_not_filled(
+        PimConnection $connection,
         ComposerJson $composerJson,
         ParametersYml $parametersYml,
         PimConfiguration $destinationPimConfiguration
@@ -84,7 +89,7 @@ class DestinationPimSpec extends ObjectBehavior
         $parametersYml->getIndexHosts()->willReturn(null);
         $destinationPimConfiguration->getParametersYml()->willReturn($parametersYml);
 
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$destinationPimConfiguration]);
+        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
 
         $this->shouldThrow(
             new DestinationPimDetectionException(
@@ -93,6 +98,7 @@ class DestinationPimSpec extends ObjectBehavior
     }
 
     public function it_throws_an_exception_when_elasticsearch_index_name_config_is_not_filled(
+        PimConnection $connection,
         ComposerJson $composerJson,
         ParametersYml $parametersYml,
         PimConfiguration $destinationPimConfiguration
@@ -110,7 +116,7 @@ class DestinationPimSpec extends ObjectBehavior
         $parametersYml->getIndexName()->willReturn(null);
         $destinationPimConfiguration->getParametersYml()->willReturn($parametersYml);
 
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$destinationPimConfiguration]);
+        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
 
         $this->shouldThrow(
             new DestinationPimDetectionException(

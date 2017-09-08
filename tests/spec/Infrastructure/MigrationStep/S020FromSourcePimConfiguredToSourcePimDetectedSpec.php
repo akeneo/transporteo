@@ -7,6 +7,7 @@ namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -41,6 +42,7 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
         Event $event,
         MigrationToolStateMachine $stateMachine,
         PimConfiguration $sourcePimConfiguration,
+        PimConnection $sourcePimConnection,
         ComposerJson $composerJson,
         PimParameters $pimParameters,
         ParametersYml $parametersYml
@@ -68,6 +70,7 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
 
         $stateMachine->getSourcePimConfiguration()->willReturn($sourcePimConfiguration);
         $stateMachine->getSourcePimRealPath()->willReturn($sourcePimRealPath);
+        $stateMachine->getSourcePimConnection()->willReturn($sourcePimConnection);
 
         $stateMachine->setSourcePim(new SourcePim(
             'database_host',
@@ -80,7 +83,8 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
             false,
             null,
             false,
-            $sourcePimRealPath
+            $sourcePimRealPath,
+            $sourcePimConnection->getWrappedObject()
         ))->shouldBeCalled();
 
         $this->onSourcePimDetection($event);

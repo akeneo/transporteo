@@ -3,11 +3,13 @@
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
+use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use PhpSpec\ObjectBehavior;
@@ -22,9 +24,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class SourcePimConfiguratorSpec extends ObjectBehavior
 {
-    public function let(FileFetcher $fetcher)
+    public function let(FileFetcherRegistry $fileFetcherRegistry)
     {
-        $this->beConstructedWith($fetcher);
+        $this->beConstructedWith($fileFetcherRegistry);
 
         $fs = new Filesystem();
         $fs->copy(
@@ -46,8 +48,10 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
         $this->shouldHaveType(SourcePimConfigurator::class);
     }
 
-    public function it_returns_the_good_configuration($fetcher)
-    {
+    public function it_returns_the_good_configuration(
+        PimConnection $pimConnection,
+        $fileFetcherRegistry
+    ) {
         $localComposerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
         $localParameterYmlPath = ResourcesFileLocator::getStepOneAbsoluteParametersYamlLocalPath();
         $localPimParametersPath = ResourcesFileLocator::getStepOneAbsolutePimParametersLocalPath();
@@ -58,9 +62,9 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
         $destinationParametersYmlPath = ResourcesFileLocator::getAbsoluteParametersYamlDestinationPath();
         $destinationPimParametersPath = ResourcesFileLocator::getAbsolutePimParametersDestinationPath();
 
-        $fetcher->fetch($localComposerJsonPath)->willReturn($destinationComposerJsonPath);
-        $fetcher->fetch($localParameterYmlPath)->willReturn($destinationParametersYmlPath);
-        $fetcher->fetch($localPimParametersPath)->willReturn($destinationPimParametersPath);
+        $fileFetcherRegistry->fetch($pimConnection, $localComposerJsonPath, true)->willReturn($destinationComposerJsonPath);
+        $fileFetcherRegistry->fetch($pimConnection, $localParameterYmlPath, true)->willReturn($destinationParametersYmlPath);
+        $fileFetcherRegistry->fetch($pimConnection, $localPimParametersPath, true)->willReturn($destinationPimParametersPath);
 
         $sourcePimConfiguration = new PimConfiguration(
             new ComposerJson($destinationComposerJsonPath),
@@ -69,7 +73,7 @@ class SourcePimConfiguratorSpec extends ObjectBehavior
             'nanou-migration'
         );
 
-        $this->configure($pimServerInfo)->shouldBeASourcePimConfigurationLike($sourcePimConfiguration);
+        $this->configure($pimConnection, $pimServerInfo)->shouldBeASourcePimConfigurationLike($sourcePimConfiguration);
     }
 
     public function getMatchers()

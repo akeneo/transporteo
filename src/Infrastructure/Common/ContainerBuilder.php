@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
+use Akeneo\PimMigration\Domain\Command\Console;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\FileFetcher;
+use Akeneo\PimMigration\Domain\FileFetcherRegistry;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
+use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
@@ -55,12 +63,22 @@ final class ContainerBuilder
 
         $container->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('kernel.event_subscriber');
 
+        $container->registerForAutoconfiguration(Console::class)->addTag('migration_tool.console');
+        $container->registerForAutoconfiguration(FileFetcher::class)->addTag('migration_tool.file_fetcher');
+        $container->registerForAutoconfiguration(DestinationPimDownloader::class)->addTag('migration_tool.destination_pim_downloader');
+        $container->registerForAutoconfiguration(DestinationPimSystemRequirementsInstaller::class)->addTag('migration_tool.destination_pim_system_requirements_installer');
+
         $container->compile();
 
         self::loadRegistry($container, StructureMigrator::class, 'migration_tool.structure_migrator', 'addStructureMigrator');
         self::loadRegistry($container, SystemMigrator::class, 'migration_tool.system_migrator', 'addSystemMigrator');
         self::loadRegistry($container, JobMigrator::class, 'migration_tool.job_migrator', 'addJobMigrator');
         self::loadRegistry($container, GroupMigrator::class, 'migration_tool.group_migrator', 'addGroupMigrator');
+
+        self::loadRegistry($container, ChainedConsole::class, 'migration_tool.console', 'addConsole');
+        self::loadRegistry($container, FileFetcherRegistry::class, 'migration_tool.file_fetcher', 'addFileFetcher');
+        self::loadRegistry($container, DestinationPimDownloaderHelper::class, 'migration_tool.destination_pim_downloader', 'addDestinationPimDownloader');
+        self::loadRegistry($container, DestinationPimSystemRequirementsInstallerHelper::class, 'migration_tool.destination_pim_system_requirements_installer', 'addDestinationPimSystemRequirementsInstaller');
 
         return $container;
     }

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\ExtraDataMigration;
 
+use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\FileFetcherRegistry;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator;
-use Akeneo\PimMigration\Infrastructure\Command\BasicCommandLauncher;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandTableNamesFetcher;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor;
+use Akeneo\PimMigration\Infrastructure\LocalFileFetcher;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use integration\Akeneo\PimMigration\DatabaseSetupedTestCase;
 
 /**
@@ -22,10 +21,12 @@ use integration\Akeneo\PimMigration\DatabaseSetupedTestCase;
 class ExtraDataMigrationIntegration extends DatabaseSetupedTestCase
 {
     public function testItCopyUnknownTable() {
-        $extraDataMigrator = new ExtraDataMigrator(
-            new DumpTableMigrator(new LocalCommandLauncherFactory()),
-            new CommandTableNamesFetcher(new BasicCommandLauncher(new LocalCommandExecutor()))
-        );
+        $fileFetcherRegistry = new FileFetcherRegistry();
+        $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
+
+        $tableMigrator = new TableMigrator($this->chainedConsole, $fileFetcherRegistry);
+
+        $extraDataMigrator = new ExtraDataMigrator($tableMigrator, $this->chainedConsole);
 
         $this->assertNotContains('acme_reference_data_color', $this->getDestinationPimTables());
         $extraDataMigrator->migrate($this->sourcePim, $this->destinationPim);

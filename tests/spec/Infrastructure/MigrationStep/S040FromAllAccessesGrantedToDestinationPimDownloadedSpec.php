@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownloaderFactory;
+use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Git;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S040FromAllAccessesGrantedToDestinationPimDownloaded;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use PhpSpec\ObjectBehavior;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -24,10 +26,10 @@ class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBeh
 {
     public function let(
         Translator $translator,
-        DestinationPimDownloaderFactory $destinationPimDownloaderFactory,
+        DestinationPimDownloaderHelper $destinationPimDownloaderHelper,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($translator, $destinationPimDownloaderFactory);
+        $this->beConstructedWith($translator, $destinationPimDownloaderHelper);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 
@@ -36,7 +38,7 @@ class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBeh
         $this->shouldHaveType(S040FromAllAccessesGrantedToDestinationPimDownloaded::class);
     }
 
-    public function it_asks_the_pim_location(
+    public function it_asks_the_pim_location_with_docker(
         Event $event,
         MigrationToolStateMachine $stateMachine,
         $printerAndAsker,
@@ -55,29 +57,26 @@ class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBeh
             'I have already installed a PIM 2.0'
         ])->willReturn('Using docker-compose');
 
-        $stateMachine->setDestinationPimLocation(0)->shouldBeCalled();
-        $stateMachine->setUseDocker(true)->shouldBeCalled();
+        $stateMachine->setDownloadMethod(new Git())->shouldBeCalled();
+        $stateMachine->setDestinationPimConnection(new DockerConnection())->shouldBeCalled();
 
         $this->onAskDestinationPimLocation($event);
     }
 
-    public function it_asks_to_download_the_pim(
+    public function it_asks_to_download_the_pim_with_docker(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        DestinationPimDownloaderFactory $destinationPimDownloaderFactory,
-        GitDestinationPimDownloader $destinationPimDownloader,
-        SourcePim $sourcePim
+        SourcePim $sourcePim,
+        DownloadMethod $downloadMethod,
+        $destinationPimDownloaderHelper
     ) {
         $event->getSubject()->willReturn($stateMachine);
 
         $stateMachine->getSourcePim()->willReturn($sourcePim);
         $stateMachine->getProjectName()->willReturn('a-super-project');
-        $stateMachine->getDestinationPathPimLocation()->willReturn('/home/akeneo/pim');
-        $stateMachine->getDestinationPimLocation()->willReturn(0);
+        $stateMachine->getDownloadMethod()->willReturn($downloadMethod);
 
-        $destinationPimDownloaderFactory->createGitDestinationPimDownloader()->willReturn($destinationPimDownloader);
-
-        $destinationPimDownloader->download($sourcePim, 'a-super-project')->willReturn('/home/pim');
+        $destinationPimDownloaderHelper->download($downloadMethod, $sourcePim, 'a-super-project')->willReturn('/home/pim');
 
         $stateMachine->setCurrentDestinationPimLocation('/home/pim')->shouldBeCalled();
 

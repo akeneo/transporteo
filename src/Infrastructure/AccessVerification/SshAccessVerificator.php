@@ -6,8 +6,8 @@ namespace Akeneo\PimMigration\Infrastructure\AccessVerification;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessException;
 use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator;
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\ServerAccessInformation;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
 
@@ -19,28 +19,21 @@ use phpseclib\Net\SSH2;
  */
 class SshAccessVerificator implements AccessVerificator
 {
-    /** @var SSH2 */
-    private $ssh;
-
-    /** @var RSA */
-    private $rsa;
-
-    /** @var ServerAccessInformation */
-    private $serverAccessInformation;
-
-    public function __construct(SSH2 $ssh, RSA $rsa, ServerAccessInformation $serverAccessInformation)
-    {
-        $this->ssh = $ssh;
-        $this->rsa = $rsa;
-        $this->serverAccessInformation = $serverAccessInformation;
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function verify(SourcePim $sourcePim): void
+    public function verify(PimConnection $pimConnection): void
     {
-        if (!$this->ssh->login($this->serverAccessInformation->getUsername(), $this->rsa)) {
+        if (!$pimConnection instanceof SshConnection) {
+            throw new \InvalidArgumentException('%s expected, %s given', SshConnection::class, get_class($pimConnection));
+        }
+
+        $ssh = new SSH2($pimConnection->getHost(), $pimConnection->getPort());
+        $rsa = new RSA();
+
+        $rsa->load($pimConnection->getSshKey()->getKey());
+
+        if (!$ssh->login($pimConnection->getUsername(), $rsa)) {
             throw new AccessException('You are not allowed to download the EnterpriseEdition');
         }
     }

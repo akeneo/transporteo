@@ -6,8 +6,10 @@ namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Archive;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -20,29 +22,12 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class DestinationPimDownloaderIntegration extends TestCase
 {
-    public function downloaderProvider()
+    public function testItDownloadAPimProperlyViaArchive()
     {
         $resourcesRoot = ResourcesFileLocator::getStepFolder('step_four_download_destination_pim');
 
-        return  [
-//            [new GitDestinationPimDownloader()],
-            [
-                new LocalArchiveDestinationPimDownloader(
-                    sprintf(
-                        '%s%spim_community_standard_2_0.tar.gz',
-                        $resourcesRoot,
-                        DIRECTORY_SEPARATOR
-                    )
-                )
-            ],
-        ];
-    }
+        $downloader = new LocalArchiveDestinationPimDownloader();
 
-    /**
-     * @dataProvider downloaderProvider
-     */
-    public function testItDownloadAPimProperly(DestinationPimDownloader $downloader)
-    {
         $sourcePim = new SourcePim(
             'database_host',
             3306,
@@ -54,10 +39,19 @@ class DestinationPimDownloaderIntegration extends TestCase
             false,
             null,
             false,
-            '/a-path'
+            '/a-path',
+            new Localhost()
         );
 
-        $downloader->download($sourcePim, 'test-project');
+        $downloader->download(
+            new Archive(sprintf(
+                '%s%spim_community_standard_2_0.tar.gz',
+                $resourcesRoot,
+                DIRECTORY_SEPARATOR
+                ))
+            , $sourcePim,
+            'test-project'
+        );
 
         $destinationProjectPath = sprintf(
             '%s%stest-project',

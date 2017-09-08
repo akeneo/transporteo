@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
@@ -19,9 +20,9 @@ use PhpSpec\ObjectBehavior;
  */
 class GroupMigratorSpec extends ObjectBehavior
 {
-    public function let(DatabaseQueryExecutor $databaseQueryExecutor)
+    public function let(ChainedConsole $chainedConsole)
     {
-        $this->beConstructedWith($databaseQueryExecutor);
+        $this->beConstructedWith($chainedConsole);
     }
 
     public function it_is_initializable()
@@ -34,7 +35,7 @@ class GroupMigratorSpec extends ObjectBehavior
         DataMigrator $groupMigratorTwo,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        $databaseQueryExecutor
+        $chainedConsole
     ) {
         $this->addGroupMigrator($groupMigratorOne);
         $this->addGroupMigrator($groupMigratorTwo);
@@ -44,8 +45,8 @@ class GroupMigratorSpec extends ObjectBehavior
 
         $destinationPim->getDatabaseName()->willReturn('database_name');
 
-        $databaseQueryExecutor->execute(
-            'UPDATE database_name.pim_catalog_group_type SET is_variant = 0',
+        $chainedConsole->execute(
+            new MySqlExecuteCommand('UPDATE database_name.pim_catalog_group_type SET is_variant = 0'),
             $destinationPim
         )->shouldBeCalled();
 

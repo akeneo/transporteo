@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 
@@ -22,7 +23,7 @@ class SourcePimDetectorIntegration extends TestCase
 {
     public function testSimpleCommunityStandardEdition()
     {
-        $sourcePim = SourcePim::fromSourcePimConfiguration('/source-pim-real-path', $this->getPimConfiguration('simple-pim-community-standard'));
+        $sourcePim = SourcePim::fromSourcePimConfiguration(new Localhost(), '/source-pim-real-path', $this->getPimConfiguration('simple-pim-community-standard'));
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
         $this->assertEquals($sourcePim->getMysqlHost(), 'localhost');
@@ -37,7 +38,7 @@ class SourcePimDetectorIntegration extends TestCase
 
     public function testEnterpriseStandardEditionMongoIvb()
     {
-        $sourcePim = SourcePim::fromSourcePimConfiguration('/source-pim-real-path', $this->getPimConfiguration('ivb-mongo-pim-entreprise-standard'));
+        $sourcePim = SourcePim::fromSourcePimConfiguration(new Localhost(), '/source-pim-real-path', $this->getPimConfiguration('ivb-mongo-pim-entreprise-standard'));
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
         $this->assertEquals($sourcePim->getMysqlHost(), 'localhost');

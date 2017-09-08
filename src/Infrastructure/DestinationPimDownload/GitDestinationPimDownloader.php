@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 use GitElephant\Repository;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -20,7 +21,7 @@ class GitDestinationPimDownloader implements DestinationPimDownloader
     private const PIM_COMMUNITY_STANDARD_REPOSITORY = 'git@github.com:akeneo/pim-community-standard.git';
     private const PIM_ENTERPRISE_STANDARD_REPOSITORY = 'git@github.com:akeneo/pim-enterprise-standard.git';
 
-    public function download(SourcePim $pim, string $projectName): string
+    public function download(DownloadMethod $downloadMethod, Pim $pim, string $projectName): string
     {
         $fs = new Filesystem();
 
@@ -54,5 +55,10 @@ class GitDestinationPimDownloader implements DestinationPimDownloader
         $repository->checkout('master');
 
         return $repositoryPath;
+    }
+
+    public function supports(DownloadMethod $downloadMethod): bool
+    {
+        return $downloadMethod instanceof Git;
     }
 }

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s080_FamilyMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -21,13 +22,13 @@ class FamilyDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var DatabaseQueryExecutor */
-    private $databaseQueryExecutor;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(TableMigrator $tableMigrator, DatabaseQueryExecutor $databaseQueryExecutor)
+    public function __construct(TableMigrator $tableMigrator, ChainedConsole $chainedConsole)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->databaseQueryExecutor = $databaseQueryExecutor;
+        $this->chainedConsole = $chainedConsole;
     }
 
     /**
@@ -44,16 +45,15 @@ class FamilyDataMigrator implements DataMigrator
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
-            $this->databaseQueryExecutor->execute(
-                sprintf(
+            $this->chainedConsole->execute(
+                new MySqlExecuteCommand(sprintf(
                     'ALTER TABLE %s.%s %s, %s, %s',
                     $destinationPim->getDatabaseName(),
                     $tableName,
                     $sqlAddColumnPart,
                     $sqlAddAttributeFkPart,
                     $sqlAddKeyPart
-                ),
-                $destinationPim
+                )), $destinationPim
             );
 
             $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_family_attribute');

@@ -6,7 +6,10 @@ namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileNotFoundException;
-use Symfony\Component\Filesystem\Filesystem;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
+use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
  * Local file fetcher.
@@ -16,15 +19,25 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class LocalFileFetcher implements FileFetcher
 {
+    /** @var FileSystemHelper */
+    private $fileSystemHelper;
+
+    public function __construct(FileSystemHelper $fileSystemHelper)
+    {
+        $this->fileSystemHelper = $fileSystemHelper;
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function fetch(string $filePath): string
+    public function fetch(PimConnection $connection, string $filePath, bool $withLocalCopy): string
     {
-        $fs = new Filesystem();
-
-        if (!$fs->exists($filePath)) {
+        if (!$this->fileSystemHelper->fileExists($filePath)) {
             throw new FileNotFoundException("The file {$filePath} does not exist");
+        }
+
+        if (false === $withLocalCopy) {
+            return $this->fileSystemHelper->getRealPath($filePath);
         }
 
         $fileName = pathinfo($filePath)['basename'];
@@ -38,8 +51,13 @@ class LocalFileFetcher implements FileFetcher
 
         $localPath = sprintf('%s%s%s', $varDir, DIRECTORY_SEPARATOR, $fileName);
 
-        $fs->copy($filePath, $localPath);
+        $this->fileSystemHelper->copyFile($filePath, $localPath, true);
 
-        return realpath($localPath);
+        return $this->fileSystemHelper->getRealPath($localPath);
+    }
+
+    public function supports(PimConnection $pimConnection): bool
+    {
+        return $pimConnection instanceof Localhost || $pimConnection instanceof DockerConnection;
     }
 }

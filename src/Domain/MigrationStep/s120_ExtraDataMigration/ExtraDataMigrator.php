@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration;
 
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\DataMigration\TableNamesFetcher;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 
@@ -21,13 +22,13 @@ class ExtraDataMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var TableNamesFetcher */
-    private $tableNamesFetcher;
+    /** @var ChainedConsole */
+    private $chainedConsole;
 
-    public function __construct(TableMigrator $tableMigrator, TableNamesFetcher $tableNamesFetcher)
+    public function __construct(TableMigrator $tableMigrator, ChainedConsole $chainedConsole)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->tableNamesFetcher = $tableNamesFetcher;
+        $this->chainedConsole = $chainedConsole;
     }
 
     /**
@@ -36,7 +37,11 @@ class ExtraDataMigrator implements DataMigrator
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
         try {
-            $tablesInSourcePim = $this->tableNamesFetcher->getTableNames($sourcePim);
+            $tablesInSourcePimResults = $this->chainedConsole->execute(new MySqlQueryCommand('SHOW TABLES'), $sourcePim)->getOutput();
+
+            $tablesInSourcePim = array_map(function ($element) {
+                return reset($element);
+            }, $tablesInSourcePimResults);
 
             $extraTables = array_diff($tablesInSourcePim, $this->getSourcePimStandardTables());
 

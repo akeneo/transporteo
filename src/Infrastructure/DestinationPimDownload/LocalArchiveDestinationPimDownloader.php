@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Extract an archive and copy it.
@@ -15,20 +16,11 @@ use Akeneo\PimMigration\Domain\Pim\SourcePim;
  */
 class LocalArchiveDestinationPimDownloader implements DestinationPimDownloader
 {
-    /** @var string */
-    protected $localArchivePath;
-
-    public function __construct(string $localArchivePath)
+    public function download(DownloadMethod $downloadMethod, Pim $pim, string $projectName): string
     {
-        if (!$this->endsByTarDotGz($localArchivePath)) {
-            throw new \InvalidArgumentException('Your archive must be a .tar.gz');
+        if (!$downloadMethod instanceof Archive) {
+            throw new \InvalidArgumentException(sprintf('Expected %s, %s given', Archive::class, get_class($downloadMethod)));
         }
-
-        $this->localArchivePath = $localArchivePath;
-    }
-
-    public function download(SourcePim $pim, string $projectName): string
-    {
         $destinationPath = sprintf(
             '%s%s%s%s%s%s%s%s%s%s',
             __DIR__,
@@ -45,7 +37,7 @@ class LocalArchiveDestinationPimDownloader implements DestinationPimDownloader
 
         $destinationPath = realpath($destinationPath).DIRECTORY_SEPARATOR.$projectName;
 
-        $archive = new \PharData($this->localArchivePath);
+        $archive = new \PharData($downloadMethod->getLocalArchivePath());
 
         try {
             $archive->extractTo($destinationPath, null, true);
@@ -56,10 +48,8 @@ class LocalArchiveDestinationPimDownloader implements DestinationPimDownloader
         return $destinationPath;
     }
 
-    private function endsByTarDotGz(string $localArchivePath): bool
+    public function supports(DownloadMethod $downloadMethod): bool
     {
-        $extension = '.tar.gz';
-
-        return  substr_compare($localArchivePath, $extension, -strlen($extension)) === 0;
+        return $downloadMethod instanceof Archive;
     }
 }

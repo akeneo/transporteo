@@ -6,54 +6,64 @@ services:
   _instanceof:
     Akeneo\PimMigration\Infrastructure\MigrationStep\StateMachineSubscriber:
       tags: ['migration_tool.subscriber']
+    Akeneo\PimMigration\Domain\Command\Console:
+      tags: ['migration_tool.console']
+    Akeneo\PimMigration\Domain\FileFetcher:
+      tags: ['migration_tool.file_fetcher']
+    Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader:
+      tags: ['migration_tool.destination_pim_downloader']
+    Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller:
+      tags: ['migration_tool.destination_pim_system_requirements_installer']
 
   Akeneo\PimMigration\Infrastructure\MigrationStep\:
     resource: './../../MigrationStep/*'
 
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator: ~
-  Akeneo\PimMigration\Domain\DataMigration\TableMigrator: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator'
-
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor: ~
-  Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor'
-
 ### COMMAND
-  Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor: ~
 
-  Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher:
-    class: 'Akeneo\PimMigration\Infrastructure\Command\BasicCommandLauncher'
-    arguments:
-      $commandExecutor: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandExecutor'
+  Akeneo\PimMigration\Domain\Command\ChainedConsole: ~
+  Akeneo\PimMigration\Infrastructure\Cli\DockerConsole: ~
+  Akeneo\PimMigration\Infrastructure\Cli\LocalConsole: ~
+  Akeneo\PimMigration\Infrastructure\Cli\SshConsole: ~
 
-### DATA MIGRATION HELPERS
+### DATA MIGRATION
+  Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher: ~
+  Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker: ~
+  Akeneo\PimMigration\Domain\DataMigration\EntityTableNameFetcher: ~
+  Akeneo\PimMigration\Domain\DataMigration\TableMigrator: ~
 
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalCommandTableNamesFetcher:
-    class: 'Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandTableNamesFetcher'
-    arguments:
-      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+### SOURCE PIM CONFIGURATION
 
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityMappingChecker:
-    arguments:
-      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+  Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator: ~
 
-  Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityMappingChecker'
+### ACCESS VERIFICATOR
 
-  Akeneo\PimMigration\Infrastructure\CommandBundleConfigFetcher:
-    arguments:
-      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+  Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator: '@Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator'
 
-  Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher: '@Akeneo\PimMigration\Infrastructure\CommandBundleConfigFetcher'
+### DESTINATION PIM DOWNLOAD
 
-  Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityTableNameFetcher:
-    arguments:
-      $sourcePimFileFetcher: '@Akeneo\PimMigration\Infrastructure\LocalFileFetcher'
-      $commandLauncher: '@Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncher'
+  Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper: ~
+  Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader: ~
+  Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader: ~
+  Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalDownloader: ~
 
-  Akeneo\PimMigration\Domain\DataMigration\EntityTableNameFetcher: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\CommandEntityTableNameFetcher'
+### DESTINATION PIM INSTALLATION
+
+  Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurationChecker: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimEditionChecker: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsChecker: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYamlGenerator: ~
+  Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\BasicDestinationPimSystemRequirementsInstaller: ~
+  Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DockerDestinationPimSystemRequirementsInstaller: ~
 
 ### FILE System
 
+  Akeneo\PimMigration\Domain\FileSystemHelper: ~
+  Akeneo\PimMigration\Domain\FileFetcherRegistry: ~
   Akeneo\PimMigration\Infrastructure\LocalFileFetcher: ~
-  Akeneo\PimMigration\Domain\FileSystem: ~
+  Akeneo\PimMigration\Infrastructure\SshFileFetcher: ~
 
 ### STRUCTURE MIGRATORS
 
@@ -365,9 +375,7 @@ services:
 
 ### EXTRA DATA MIGRATOR
 
-  Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator:
-    arguments:
-      $tableNamesFetcher: '@Akeneo\PimMigration\Infrastructure\DatabaseServices\LocalCommandTableNamesFetcher'
+  Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator: ~
 
 ### REFERENCE DATA MIGRATOR
 

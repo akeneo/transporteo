@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\StructureMigration;
 
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\Pim\AbstractPim;
-use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\FileFetcherRegistry;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeDataMigrator;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\MySqlQueryExecutor;
+use Akeneo\PimMigration\Infrastructure\LocalFileFetcher;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Ds\Vector;
 use integration\Akeneo\PimMigration\DatabaseSetupedTestCase;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Integration test for Attribute Data Migrator.
@@ -29,13 +27,18 @@ class AttributeDataMigratorIntegration extends DatabaseSetupedTestCase
     {
         parent::setUp();
 
-        $this->dumpTableMigrator = new DumpTableMigrator(new LocalCommandLauncherFactory());
+        $fileFetcherRegistry = new FileFetcherRegistry();
+        $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));
+
+        $tableMigrator = new TableMigrator($this->chainedConsole, $fileFetcherRegistry);
+
+        $this->dumpTableMigrator = $tableMigrator;
         $this->dumpTableMigrator->migrate($this->sourcePim, $this->destinationPim, 'pim_catalog_attribute_group');
     }
 
     public function testAttributeDataMigrator()
     {
-        $attributeDataMigrator = new AttributeDataMigrator($this->dumpTableMigrator, new MySqlQueryExecutor());
+        $attributeDataMigrator = new AttributeDataMigrator($this->dumpTableMigrator, $this->chainedConsole);
         $containingTextElementsInSource = $this->getConnection($this->sourcePim, true)->query('SELECT id FROM pim_catalog_attribute WHERE backend_type="text"')->fetchAll();
         $idsOldText = (new Vector($containingTextElementsInSource))->map(function (array $values) {
             return $values['id'];

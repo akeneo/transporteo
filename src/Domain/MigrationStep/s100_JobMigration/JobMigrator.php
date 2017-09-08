@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;
 
-use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -21,12 +22,12 @@ class JobMigrator
     /** @var array */
     private $jobMigrators = [];
 
-    /** @var DatabaseQueryExecutor */
-    private $databaseQueryExecutor;
+    /** @var ChainedConsole */
+    private $console;
 
-    public function __construct(DatabaseQueryExecutor $databaseQueryExecutor)
+    public function __construct(ChainedConsole $console)
     {
-        $this->databaseQueryExecutor = $databaseQueryExecutor;
+        $this->console = $console;
     }
 
     /**
@@ -44,7 +45,7 @@ class JobMigrator
                 $destinationPim->getDatabaseName()
             );
 
-            $this->databaseQueryExecutor->execute($query, $destinationPim);
+            $this->console->execute(new MySqlExecuteCommand($query), $destinationPim);
         } catch (DataMigrationException $exception) {
             throw new JobMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }

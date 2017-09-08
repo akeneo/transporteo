@@ -44,6 +44,6 @@ class ChainedConsole implements Console
 
     public function supports(PimConnection $connection): bool
     {
-        return true;
+        return false;
     }
 }

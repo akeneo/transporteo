@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;;
 
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
@@ -21,9 +23,9 @@ use PhpSpec\ObjectBehavior;
  */
 class JobMigratorSpec extends ObjectBehavior
 {
-    public function let(DatabaseQueryExecutor $databaseQueryExecutor)
+    public function let(ChainedConsole $console)
     {
-        $this->beConstructedWith($databaseQueryExecutor);
+        $this->beConstructedWith($console);
     }
 
     public function it_is_initializable()
@@ -36,7 +38,7 @@ class JobMigratorSpec extends ObjectBehavior
         DataMigrator $migratorTwo,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        $databaseQueryExecutor
+        $console
     ) {
         $this->addJobMigrator($migratorOne);
         $this->addJobMigrator($migratorTwo);
@@ -46,8 +48,8 @@ class JobMigratorSpec extends ObjectBehavior
 
         $destinationPim->getDatabaseName()->willReturn('database_name');
 
-        $databaseQueryExecutor->execute(
-            'ALTER TABLE database_name.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file',
+        $console->execute(
+            new MySqlExecuteCommand('ALTER TABLE database_name.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file'),
             $destinationPim
         )->shouldBeCalled();
 

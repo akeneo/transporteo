@@ -382,5 +382,7 @@ services:
   Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\MigrationBundleInstaller: ~
   Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\ReferenceDataConfigurator: ~
 
+### PRODUCT MIGRATOR
 
+  Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMigrator: ~
 

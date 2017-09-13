@@ -7,6 +7,7 @@ namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimInstallat
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DockerDestinationPimSystemRequirementsInstaller;
 use Akeneo\PimMigration\Infrastructure\Command\DockerComposeCommandLauncher;
+use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PHPUnit\Framework\TestCase;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -80,9 +81,8 @@ class DockerDestinationPimSystemRequirementsInstallerIntegration extends TestCas
            'akeneo_pim',
            false,
            null,
-           'akeneo_pim',
-           '\'elasticsearch: 9200\'',
-           $destinationPimPath
+           $destinationPimPath,
+           new Localhost()
        );
 
 //        $dockerDestinationInstaller = new DockerDestinationPimSystemRequirementsInstaller(new DockerComposeDestinationPimCommandLauncher('fpm'));

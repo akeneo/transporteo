@@ -14,44 +14,6 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Des
  */
 class DestinationPim extends AbstractPim implements Pim
 {
-    /** @var string */
-    protected $path;
-
-    /** @var string */
-    protected $indexName;
-
-    /** @var string */
-    protected $indexHosts;
-
-    public function __construct(
-        string $mysqlHost = 'mysql',
-        int $mysqlPort = 3306,
-        string $databaseName = 'akeneo_pim',
-        string $databaseUser = 'akeneo_pim',
-        string $databasePassword = 'akeneo_pim',
-        bool $isEnterpriseEdition,
-        ?string $enterpriseRepository,
-        string $indexName = 'akeneo_pim',
-        string $indexHosts,
-        string $path,
-        PimConnection $pimConnection
-    ) {
-        parent::__construct(
-            $mysqlHost,
-            $mysqlPort,
-            $databaseName,
-            $databaseUser,
-            $databasePassword,
-            $isEnterpriseEdition,
-            $enterpriseRepository,
-            $path,
-            $pimConnection
-        );
-
-        $this->indexName = $indexName;
-        $this->indexHosts = $indexHosts;
-    }
-
     public static function fromDestinationPimConfiguration(PimConnection $pimConnection, PimConfiguration $destinationPimConfiguration): DestinationPim
     {
         $composerJsonRepositoryName = $destinationPimConfiguration->getComposerJson()->getRepositoryName();
@@ -88,17 +50,6 @@ class DestinationPim extends AbstractPim implements Pim
         $databaseUser = $destinationPimConfiguration->getParametersYml()->getDatabaseUser();
         $databasePassword = $destinationPimConfiguration->getParametersYml()->getDatabasePassword();
         $databaseName = $destinationPimConfiguration->getParametersYml()->getDatabaseName();
-        $indexHosts = $destinationPimConfiguration->getParametersYml()->getIndexHosts();
-
-        if (null === $indexHosts) {
-            throw new DestinationPimDetectionException('Your configuration should have an index_hosts key in your parameters.yml file');
-        }
-
-        $indexName = $destinationPimConfiguration->getParametersYml()->getIndexName();
-
-        if (null === $indexName) {
-            throw new DestinationPimDetectionException('Your configuration should have an index_name key in your parameters.yml file');
-        }
 
         $enterpriseRepository = null;
 
@@ -120,8 +71,6 @@ class DestinationPim extends AbstractPim implements Pim
             $databasePassword,
             $isEnterpriseEdition,
             $enterpriseRepository,
-            $indexName,
-            $indexHosts,
             realpath(str_replace(
                 DIRECTORY_SEPARATOR.'composer.json',
                 '',

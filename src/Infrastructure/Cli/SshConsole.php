@@ -7,10 +7,14 @@ namespace Akeneo\PimMigration\Infrastructure\Cli;
 use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
+use Akeneo\PimMigration\Infrastructure\ImpossibleConnectionException;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
+use phpseclib\Crypt\RSA;
+use phpseclib\Net\SSH2;
 
 /**
  * Console working through SSH.
@@ -35,14 +39,32 @@ class SshConsole extends AbstractConsole implements Console
     {
         $connection = $pim->getConnection();
 
-        if ($command instanceof MySqlQueryCommand) {
-            $query = sprintf(
-                '%s -s -e "%s;"',
-                $this->getMySqlConnectionChain($pim),
-                $command->getCommand()
-            );
+        if (!$connection instanceof SshConnection) {
+            throw new \InvalidArgumentException('Expected %s, %s given', SshConnection::class, get_class($connection));
+        }
 
-            $output = '';
+        $ssh = new SSH2($connection->getHost(), $connection->getPort());
+        $rsa = new RSA();
+        $rsa->load($connection->getSshKey()->getKey());
+
+        if (!$ssh->isConnected()) {
+            if (!$ssh->login($connection->getUsername(), $rsa)) {
+                throw new ImpossibleConnectionException(
+                    sprintf(
+                        'Impossible to login to %s@%s:%d using this ssh key : %s',
+                        $connection->getUsername(),
+                        $connection->getHost(),
+                        $connection->getPort(),
+                        $connection->getSshKey()->getPath()
+                    )
+                );
+            }
+        }
+
+        if ($command instanceof MySqlQueryCommand || $command instanceof MySqlExecuteCommand) {
+            $query = sprintf('%s -e "%s;"', $this->getMySqlConnectionChain($pim), $command->getCommand());
+
+            $output = $ssh->exec($query);
 
             $lines = array_filter(explode(PHP_EOL, $output), function ($element) {
                 return !empty(trim($element));
@@ -57,10 +79,15 @@ class SshConsole extends AbstractConsole implements Console
                 $results[] = array_combine($columns, $cells);
             }
 
-            return new CommandResult(1, $results);
+
+            return new CommandResult($ssh->getExitStatus(), $results);
         }
 
-        return new CommandResult(1, '');
+        $command = $this->getProcessedCommand($command, $pim);
+
+        $output = $ssh->exec($command);
+
+        return new CommandResult($ssh->getExitStatus(), $output);
     }
 
     public function supports(PimConnection $connection): bool

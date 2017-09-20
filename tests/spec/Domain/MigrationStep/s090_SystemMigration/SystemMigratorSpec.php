@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration;
 
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -20,22 +22,38 @@ use PhpSpec\ObjectBehavior;
  */
 class SystemMigratorSpec extends ObjectBehavior
 {
+    public function let(ChainedConsole $chainedConsole)
+    {
+        $this->beConstructedWith($chainedConsole);
+    }
+
     public function it_is_initializable()
     {
         $this->shouldHaveType(SystemMigrator::class);
     }
 
-    public function it_calls_several_migrator(
+    public function it_migrates_system_successfully(
         DataMigrator $migratorOne,
         DataMigrator $migratorTwo,
         SourcePim $sourcePim,
-        DestinationPim $destinationPim
+        DestinationPim $destinationPim,
+        $chainedConsole
     ) {
         $this->addSystemMigrator($migratorOne);
         $this->addSystemMigrator($migratorTwo);
 
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
+
+        $destinationPim->getDatabaseName()->willReturn('database_name');
+        $chainedConsole
+            ->execute(new MySqlExecuteCommand(
+                'ALTER TABLE database_name.pim_api_access_token
+                ADD COLUMN client int(11) DEFAULT NULL AFTER id,
+                ADD CONSTRAINT FK_BD5E4023C7440455 FOREIGN KEY (client) REFERENCES database_name.pim_api_client (id) ON DELETE CASCADE;'
+            ),
+                $destinationPim)
+            ->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
     }

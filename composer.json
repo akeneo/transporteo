@@ -28,7 +28,9 @@
     "symfony/dependency-injection": "3.3.4",
     "symfony/filesystem": "3.3.4",
     "symfony/workflow": "3.3.4",
-    "symfony/translation": "3.3.4"
+    "symfony/translation": "3.3.4",
+    "akeneo/api-php-client": "~1.0@beta",
+    "php-http/guzzle6-adapter": "~1.1"
   },
   "require-dev": {
     "sebastian/exporter": "^3.1",
@@ -36,5 +38,5 @@
     "phpunit/phpunit": "6.2.*",
     "friendsofphp/php-cs-fixer": "2.3.2"
   },
-  "minimum-stability": "stable"
+  "minimum-stability": "beta"
 }

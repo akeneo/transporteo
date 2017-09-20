@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
@@ -73,6 +74,24 @@ class MigrationToolStateMachine
 
     /** @var DownloadMethod */
     protected $downloadMethod;
+
+    /** @var AkeneoPimClientInterface */
+    protected $sourcePimApiClient;
+
+    /** @var AkeneoPimClientInterface */
+    protected $destinationPimApiClient;
+
+    /** @var string */
+    protected $apiClientId;
+
+    /** @var string */
+    protected $apiSecret;
+
+    /** @var string */
+    protected $apiUserName;
+
+    /** @var string */
+    protected $apiUserPwd;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -224,5 +243,65 @@ class MigrationToolStateMachine
     public function getDownloadMethod(): DownloadMethod
     {
         return $this->downloadMethod;
+    }
+
+    public function getSourcePimApiClient(): AkeneoPimClientInterface
+    {
+        return $this->sourcePimApiClient;
+    }
+
+    public function setSourcePimApiClient(AkeneoPimClientInterface $sourcePimApiClient): void
+    {
+        $this->sourcePimApiClient = $sourcePimApiClient;
+    }
+
+    public function getDestinationPimApiClient(): AkeneoPimClientInterface
+    {
+        return $this->destinationPimApiClient;
+    }
+
+    public function setDestinationPimApiClient(AkeneoPimClientInterface $destinationPimApiClient): void
+    {
+        $this->destinationPimApiClient = $destinationPimApiClient;
+    }
+
+    public function getApiClientId(): string
+    {
+        return $this->apiClientId;
+    }
+
+    public function setApiClientId($apiClientId): void
+    {
+        $this->apiClientId = $apiClientId;
+    }
+
+    public function getApiSecret(): string
+    {
+        return $this->apiSecret;
+    }
+
+    public function setApiSecret($apiSecret): void
+    {
+        $this->apiSecret = $apiSecret;
+    }
+
+    public function getApiUserName(): string
+    {
+        return $this->apiUserName;
+    }
+
+    public function setApiUserName($apiUserName): void
+    {
+        $this->apiUserName = $apiUserName;
+    }
+
+    public function getApiUserPwd(): string
+    {
+        return $this->apiUserPwd;
+    }
+
+    public function setApiUserPwd($apiUserPwd): void
+    {
+        $this->apiUserPwd = $apiUserPwd;
     }
 }

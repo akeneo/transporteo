@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Pim;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\MigrationStep\s020_SourcePimDetection\SourcePimDetectionException;
 
 /**
@@ -37,7 +38,8 @@ class SourcePim extends AbstractPim implements Pim
         ?string $enterpriseRepository,
         bool $hasIvb,
         string $path,
-        PimConnection $pimConnection
+        PimConnection $pimConnection,
+        AkeneoPimClientInterface $apiClient
     ) {
         parent::__construct(
             $mysqlHost,
@@ -48,7 +50,8 @@ class SourcePim extends AbstractPim implements Pim
             $isEnterpriseEdition,
             $enterpriseRepository,
             $path,
-            $pimConnection
+            $pimConnection,
+            $apiClient
         );
 
         $this->mongoDbInformation = $mongoDbInformation;
@@ -56,7 +59,12 @@ class SourcePim extends AbstractPim implements Pim
         $this->hasIvb = $hasIvb;
     }
 
-    public static function fromSourcePimConfiguration(PimConnection $pimConnection, string $realPath, PimConfiguration $sourcePimConfiguration): SourcePim
+    public static function fromSourcePimConfiguration(
+        PimConnection $pimConnection,
+        string $realPath,
+        PimConfiguration $sourcePimConfiguration,
+        AkeneoPimClientInterface $apiClient
+    ): SourcePim
     {
         $composerJsonRepositoryName = $sourcePimConfiguration->getComposerJson()->getRepositoryName();
 
@@ -121,7 +129,8 @@ class SourcePim extends AbstractPim implements Pim
             $enterpriseRepository,
             $hasIvb,
             $realPath,
-            $pimConnection
+            $pimConnection,
+            $apiClient
         );
     }
 

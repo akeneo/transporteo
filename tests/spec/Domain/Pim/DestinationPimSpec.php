@@ -2,10 +2,10 @@
 
 namespace spec\Akeneo\PimMigration\Domain\Pim;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimDetectionException;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
-use Akeneo\PimMigration\Domain\Pim\ParametersYml;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Ds\Map;
@@ -19,7 +19,7 @@ use PhpSpec\ObjectBehavior;
  */
 class DestinationPimSpec extends ObjectBehavior
 {
-    public function it_is_initializable(PimConnection $connection)
+    public function it_is_initializable(PimConnection $connection, AkeneoPimClientInterface $apiClient)
     {
         $this->beConstructedWith(
             'mysql',
@@ -30,7 +30,8 @@ class DestinationPimSpec extends ObjectBehavior
             false,
             null,
             '/home/akeneo/pim-destination',
-            $connection
+            $connection,
+            $apiClient
         );
 
         $this->shouldHaveType(DestinationPim::class);
@@ -39,12 +40,13 @@ class DestinationPimSpec extends ObjectBehavior
     public function it_throws_an_exception_if_it_is_not_a_standard(
         PimConnection $connection,
         ComposerJson $composerJson,
-        PimConfiguration $destinationPimConfiguration
+        PimConfiguration $destinationPimConfiguration,
+        AkeneoPimClientInterface $apiClient
     ) {
         $composerJson->getRepositoryName()->willReturn('a-repo');
         $destinationPimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
+        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration, $apiClient]);
         $this->shouldThrow(
             new DestinationPimDetectionException(
                 'Your destination PIM name should be either akeneo/pim-community-standard or either akeneo/pim-enterprise-standard, currently a-repo'
@@ -54,13 +56,14 @@ class DestinationPimSpec extends ObjectBehavior
     public function it_throws_an_exception_if_it_is_not_a_two_dot_zero(
         PimConnection $connection,
         ComposerJson $composerJson,
-        PimConfiguration $destinationPimConfiguration
+        PimConfiguration $destinationPimConfiguration,
+        AkeneoPimClientInterface $apiClient
     ) {
         $composerJson->getRepositoryName()->willReturn('akeneo/pim-community-standard');
         $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '~1.6']));
         $destinationPimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
+        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration, $apiClient]);
 
         //TODO CORRECT VERSION
         $this->shouldThrow(

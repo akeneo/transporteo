@@ -13,6 +13,7 @@ workflows:
             - 'ready'
             - 'source_pim_location_guessed'
             - 'source_pim_configured'
+            - 'source_pim_api_configured'
             - 'source_pim_detected'
             - 'ee_access_pending'
             - 'all_accesses_granted'
@@ -20,6 +21,7 @@ workflows:
             - 'destination_pim_downloaded'
             - 'destination_pim_pre_configured'
             - 'destination_pim_configured'
+            - 'destination_pim_api_configured'
             - 'destination_pim_detected'
             - 'destination_pim_system_requirements_installed'
             - 'destination_pim_requirements_checked'
@@ -41,8 +43,11 @@ workflows:
             distant_source_pim_configuration:
                 from: 'source_pim_location_guessed'
                 to: 'source_pim_configured'
-            source_pim_detection:
+            source_pim_api_configuration:
                 from: 'source_pim_configured'
+                to: 'source_pim_api_configured'
+            source_pim_detection:
+                from: 'source_pim_api_configured'
                 to: 'source_pim_detected'
             grant_all_accesses:
                 from: 'source_pim_detected'
@@ -65,8 +70,11 @@ workflows:
             destination_pim_configuration:
                 from: ['destination_pim_downloaded', 'destination_pim_pre_configured']
                 to: 'destination_pim_configured'
-            destination_pim_detection:
+            destination_pim_api_configuration:
                 from: 'destination_pim_configured'
+                to: 'destination_pim_api_configured'
+            destination_pim_detection:
+                from: 'destination_pim_api_configured'
                 to: 'destination_pim_detected'
             docker_destination_pim_system_requirements_installation:
                 from: 'destination_pim_detected'

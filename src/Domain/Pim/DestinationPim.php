@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Pim;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimDetectionException;
 
 /**
@@ -14,7 +15,11 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Des
  */
 class DestinationPim extends AbstractPim implements Pim
 {
-    public static function fromDestinationPimConfiguration(PimConnection $pimConnection, PimConfiguration $destinationPimConfiguration): DestinationPim
+    public static function fromDestinationPimConfiguration(
+        PimConnection $pimConnection,
+        PimConfiguration $destinationPimConfiguration,
+        AkeneoPimClientInterface $apiClient
+    ): DestinationPim
     {
         $composerJsonRepositoryName = $destinationPimConfiguration->getComposerJson()->getRepositoryName();
 
@@ -76,7 +81,8 @@ class DestinationPim extends AbstractPim implements Pim
                 '',
                 $destinationPimConfiguration->getComposerJson()->getPath()
             )),
-            $pimConnection
+            $pimConnection,
+            $apiClient
         );
     }
 

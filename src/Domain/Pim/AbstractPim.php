@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Pim;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
+
 /**
  * Abstract PIM representation.
  *
@@ -43,6 +45,9 @@ abstract class AbstractPim implements Pim
     /** @var PimConnection */
     private $pimConnection;
 
+    /** @var AkeneoPimClientInterface */
+    private $apiClient;
+
     public function __construct(
         string $mysqlHost,
         int $mysqlPort,
@@ -52,7 +57,8 @@ abstract class AbstractPim implements Pim
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
         string $absolutePath,
-        PimConnection $pimConnection
+        PimConnection $pimConnection,
+        AkeneoPimClientInterface $apiClient
     ) {
         $this->mysqlHost = $mysqlHost;
         $this->mysqlPort = $mysqlPort;
@@ -63,6 +69,7 @@ abstract class AbstractPim implements Pim
         $this->enterpriseRepository = $enterpriseRepository;
         $this->absolutePath = $absolutePath;
         $this->pimConnection = $pimConnection;
+        $this->apiClient = $apiClient;
     }
 
     abstract protected static function getPimVersionAllowed(): string;
@@ -115,5 +122,10 @@ abstract class AbstractPim implements Pim
     public function getConnection(): PimConnection
     {
         return $this->pimConnection;
+    }
+
+    public function getApiClient(): AkeneoPimClientInterface
+    {
+        return $this->apiClient;
     }
 }

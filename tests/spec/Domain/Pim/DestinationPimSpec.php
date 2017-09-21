@@ -31,6 +31,7 @@ class DestinationPimSpec extends ObjectBehavior
             false,
             null,
             '/home/akeneo/pim-destination',
+            '/home/akeneo/pim-destination/app/file_storage/catalog',
             $connection,
             $apiParameters
         );

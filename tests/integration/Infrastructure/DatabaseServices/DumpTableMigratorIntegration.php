@@ -29,8 +29,8 @@ class DumpTableMigratorIntegration extends DatabaseSetupedTestCase
 
         $apiParameters = new PimApiParameters('', '', '', '', '');
 
-        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false, '/a-path', new Localhost(), $apiParameters);
-        $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, '/a-path', new Localhost(), $apiParameters);
+        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false, '/a-path', '/another-path', new Localhost(), $apiParameters);
+        $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, '/a-path', '/another-path', new Localhost(), $apiParameters);
 
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));

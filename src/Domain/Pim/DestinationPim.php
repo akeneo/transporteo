@@ -66,6 +66,16 @@ class DestinationPim extends AbstractPim implements Pim
                 ->first()['url'];
         }
 
+        $realPath = realpath(str_replace(
+            DIRECTORY_SEPARATOR.'composer.json',
+            '',
+            $destinationPimConfiguration->getComposerJson()->getPath()
+        ));
+
+        $catalogStorageDir = $destinationPimConfiguration->getPimParameters()->getCatalogStorageDir();
+        $kernelRootDir = rtrim($realPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'app';
+        $catalogStorageDir = str_replace('%kernel.root_dir%', $kernelRootDir, $catalogStorageDir);
+
         return new self(
             $databaseHost,
             $databasePort,
@@ -74,11 +84,8 @@ class DestinationPim extends AbstractPim implements Pim
             $databasePassword,
             $isEnterpriseEdition,
             $enterpriseRepository,
-            realpath(str_replace(
-                DIRECTORY_SEPARATOR.'composer.json',
-                '',
-                $destinationPimConfiguration->getComposerJson()->getPath()
-            )),
+            $realPath,
+            $catalogStorageDir,
             $pimConnection,
             $apiParameters
         );

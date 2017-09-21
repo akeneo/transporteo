@@ -39,6 +39,7 @@ class DestinationPimDownloaderIntegration extends TestCase
             null,
             false,
             '/a-path',
+            '/another-path',
             new Localhost(),
             new PimApiParameters('', '', '', '', '')
         );

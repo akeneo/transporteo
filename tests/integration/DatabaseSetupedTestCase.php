@@ -41,9 +41,11 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
         $destinationPimConfig = $this->getConfig('pim_community_standard_two_dot_zero');
 
         $apiParameters = new PimApiParameters('', '', '', '', '');
+        $sourceCatalogStorageDir = sprintf('%s%1$sfile_storage%1$scatalog', $sourcePimConfig['absolute_path'], DIRECTORY_SEPARATOR);
+        $destinationCatalogStorageDir = sprintf('%s%1$sfile_storage%1$scatalog', $destinationPimConfig['absolute_path'], DIRECTORY_SEPARATOR);
 
-        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path'], new Localhost(), $apiParameters);
-        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, $destinationPimConfig['absolute_path'], new Localhost(), $apiParameters);
+        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path'], $sourceCatalogStorageDir, new Localhost(), $apiParameters);
+        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, $destinationPimConfig['absolute_path'], $destinationCatalogStorageDir, new Localhost(), $apiParameters);
 
         $connection = $this->getConnection($this->destinationPim, false);
         $connection->exec('DROP DATABASE IF EXISTS akeneo_pim_two_for_test');

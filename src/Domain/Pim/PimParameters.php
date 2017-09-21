@@ -31,6 +31,11 @@ class PimParameters extends AbstractFile implements File
         return $this->getFullContent()['mongodb_database'] ?? null;
     }
 
+    public function getCatalogStorageDir(): string
+    {
+        return $this->getFullContent()['catalog_storage_dir'];
+    }
+
     protected function loadContent(): array
     {
         return Yaml::parse(file_get_contents($this->getPath()))['parameters'];

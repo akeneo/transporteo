@@ -77,8 +77,9 @@ class ParametersYmlGeneratorIntegration extends TestCase
                 'database_password' => 'akeneo_pim',
                 'locale' => 'en',
                 'secret' => 'ThisTokenIsNotSoSecretChangeIt',
-                'index_name' => 'akeneo_pim',
-                'index_hosts' => '\'elasticsearch: 9200\'',
+                'product_index_name' => 'akeneo_pim_product',
+                'product_and_product_model_index_name' => 'akeneo_pim_product_and_product_model',
+                'index_hosts' => 'localhost: 9200',
             ]
         ];
 

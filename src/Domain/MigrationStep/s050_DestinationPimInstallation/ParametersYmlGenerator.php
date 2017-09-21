@@ -49,8 +49,6 @@ class ParametersYmlGenerator
 
         $parameters['parameters']['database_host'] = 'mysql';
         $parameters['parameters']['database_port'] = 3306;
-        $parameters['parameters']['index_name'] = 'akeneo_pim';
-        $parameters['parameters']['index_hosts'] = "'elasticsearch: 9200'";
 
         $this->fileSystemHelper->dumpYamlInFile($parametersYamlPath, $parameters);
     }

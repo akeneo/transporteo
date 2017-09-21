@@ -29,8 +29,6 @@ class DestinationPimSpec extends ObjectBehavior
             'akeneo_pim',
             false,
             null,
-            'akeneo_pim',
-            '\'elasticsearch: 9200\'',
             '/home/akeneo/pim-destination',
             $connection
         );
@@ -68,59 +66,6 @@ class DestinationPimSpec extends ObjectBehavior
         $this->shouldThrow(
             new DestinationPimDetectionException(
                 'Your destination PIM version should be 1.8.x-dev@dev currently : ~1.6'
-            ))->duringInstantiation();
-    }
-
-    public function it_throws_an_exception_when_elasticsearch_hosts_config_is_not_filled(
-        PimConnection $connection,
-        ComposerJson $composerJson,
-        ParametersYml $parametersYml,
-        PimConfiguration $destinationPimConfiguration
-    ) {
-        $composerJson->getRepositoryName()->willReturn('akeneo/pim-community-standard');
-        $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '1.8.x-dev@dev']));
-        $destinationPimConfiguration->getComposerJson()->willReturn($composerJson);
-
-        $parametersYml->getDatabaseHost()->willReturn('mysql');
-        $parametersYml->getDatabasePort()->willReturn(3306);
-        $parametersYml->getDatabaseUser()->willReturn('akeneo_pim');
-        $parametersYml->getDatabasePassword()->willReturn('akeneo_pim');
-        $parametersYml->getDatabaseName()->willReturn('akeneo_pim');
-        $parametersYml->getIndexHosts()->willReturn(null);
-        $destinationPimConfiguration->getParametersYml()->willReturn($parametersYml);
-
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
-
-        $this->shouldThrow(
-            new DestinationPimDetectionException(
-                'Your configuration should have an index_hosts key in your parameters.yml file'
-            ))->duringInstantiation();
-    }
-
-    public function it_throws_an_exception_when_elasticsearch_index_name_config_is_not_filled(
-        PimConnection $connection,
-        ComposerJson $composerJson,
-        ParametersYml $parametersYml,
-        PimConfiguration $destinationPimConfiguration
-    ) {
-        $composerJson->getRepositoryName()->willReturn('akeneo/pim-community-standard');
-        $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '1.8.x-dev@dev']));
-        $destinationPimConfiguration->getComposerJson()->willReturn($composerJson);
-
-        $parametersYml->getDatabaseHost()->willReturn('mysql');
-        $parametersYml->getDatabasePort()->willReturn(3306);
-        $parametersYml->getDatabaseUser()->willReturn('akeneo_pim');
-        $parametersYml->getDatabasePassword()->willReturn('akeneo_pim');
-        $parametersYml->getDatabaseName()->willReturn('akeneo_pim');
-        $parametersYml->getIndexHosts()->willReturn('\'elasticsearch: 9200\'');
-        $parametersYml->getIndexName()->willReturn(null);
-        $destinationPimConfiguration->getParametersYml()->willReturn($parametersYml);
-
-        $this->beConstructedThrough('fromDestinationPimConfiguration', [$connection, $destinationPimConfiguration]);
-
-        $this->shouldThrow(
-            new DestinationPimDetectionException(
-                'Your configuration should have an index_name key in your parameters.yml file'
             ))->duringInstantiation();
     }
 }

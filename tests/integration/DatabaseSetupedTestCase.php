@@ -32,11 +32,11 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
         $this->chainedConsole = new ChainedConsole();
         $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor()));
 
-        $sourcePimConfig = $this->getConfig('pim_community_standard_one_seven_with_reference_data');
-        $destinationPimConfig = $this->getConfig('pim_community_standard_two');
+        $sourcePimConfig = $this->getConfig('pim_community_standard_one_dot_seven_with_reference_data');
+        $destinationPimConfig = $this->getConfig('pim_community_standard_two_dot_zero');
 
         $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path'], new Localhost());
-        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, 'akeneo_pim', 'localhost', $destinationPimConfig['absolute_path'], new Localhost());
+        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, $destinationPimConfig['absolute_path'], new Localhost());
 
         $connection = $this->getConnection($this->destinationPim, false);
         $connection->exec('DROP DATABASE IF EXISTS akeneo_pim_two_for_test');

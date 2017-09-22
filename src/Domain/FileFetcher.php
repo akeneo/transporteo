@@ -22,5 +22,12 @@ interface FileFetcher
      */
     public function fetch(PimConnection $connection, string $filePath, bool $withLocalCopy): string;
 
+    /**
+     * Fetch all the media files of a given absolute path (i.e. assets and products pictures)
+     *
+     * @throws FileNotFoundException if the source path does not exists
+     */
+    public function fetchMediaFiles(PimConnection $connection, string $sourcePath, string $destinationPath): void;
+
     public function supports(PimConnection $pimConnection): bool;
 }

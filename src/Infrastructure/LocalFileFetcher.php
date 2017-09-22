@@ -60,4 +60,12 @@ class LocalFileFetcher implements FileFetcher
     {
         return $pimConnection instanceof Localhost || $pimConnection instanceof DockerConnection;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchMediaFiles(PimConnection $connection, string $sourcePath, string $destinationPath): void
+    {
+        $this->fileSystemHelper->copyDirectory($sourcePath, $destinationPath);
+    }
 }

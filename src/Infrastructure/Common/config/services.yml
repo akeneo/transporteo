@@ -384,5 +384,15 @@ services:
 
 ### PRODUCT MIGRATOR
 
-  Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMigrator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMigrator:
+    arguments:
+      $batchSize: 100
+      $productMediaMigrator: '@Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMediaMigrator'
+      $productAssociationMigrator: '@Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductAssociationMigrator'
+
+  Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductAssociationMigrator:
+    arguments:
+      $batchSize: 100
+
+  Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMediaMigrator: ~
 

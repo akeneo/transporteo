@@ -52,6 +52,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
     ) {
         $event->getSubject()->willReturn($stateMachine);
         $sourcePimRealPath = '/source-pim-real-path';
+        $sourceCatalogStorageDir = '/source-pim-real-path/app/file_storage/catalog';
 
         $composerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
 
@@ -61,6 +62,10 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
         $sourcePimConfiguration->getPimParameters()->willReturn($pimParameters);
+
+        $pimParameters->getCatalogStorageDir()->willReturn('%kernel.root_dir%/file_storage/catalog');
+        $pimParameters->getMongoDbDatabase()->willReturn(null);
+        $pimParameters->getMongoDbInformation()->willReturn(null);
 
         $parametersYml->getDatabaseHost()->willReturn('database_host');
         $parametersYml->getDatabaseName()->willReturn('database_name');
@@ -88,6 +93,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
             null,
             false,
             $sourcePimRealPath,
+            $sourceCatalogStorageDir,
             $sourcePimConnection->getWrappedObject(),
             $apiParameters->getWrappedObject()
         ))->shouldBeCalled();

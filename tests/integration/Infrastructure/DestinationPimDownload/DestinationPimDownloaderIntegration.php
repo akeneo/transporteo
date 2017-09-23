@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 
-use Akeneo\Pim\AkeneoPimClientBuilder;
-use Akeneo\Pim\AkeneoPimClientInterface;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Archive;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader;
@@ -41,7 +40,7 @@ class DestinationPimDownloaderIntegration extends TestCase
             false,
             '/a-path',
             new Localhost(),
-            $this->getApiClient()
+            new PimApiParameters('', '', '', '', '')
         );
 
         $downloader->download(
@@ -77,12 +76,5 @@ class DestinationPimDownloaderIntegration extends TestCase
 
 
         $fs->remove($destinationProjectPath);
-    }
-
-    private function getApiClient(): AkeneoPimClientInterface
-    {
-        $clientBuilder = new AkeneoPimClientBuilder('http://localhost');
-
-        return $clientBuilder->buildAuthenticatedByPassword('clientId', 'secret', 'userName', 'userPwd');
     }
 }

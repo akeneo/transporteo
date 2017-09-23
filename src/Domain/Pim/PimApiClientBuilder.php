@@ -15,10 +15,15 @@ use Akeneo\Pim\AkeneoPimClientBuilder;
  */
 class PimApiClientBuilder
 {
-    public function buildAuthenticatedByPassword(string $baseUri, string $clientId, string $secret, string $userName, string $userPwd): AkeneoPimClientInterface
+    public function build(PimApiParameters $apiParameters): AkeneoPimClientInterface
     {
-        $clientBuilder = new AkeneoPimClientBuilder($baseUri);
+        $clientBuilder = new AkeneoPimClientBuilder($apiParameters->getBaseUri());
 
-        return $clientBuilder->buildAuthenticatedByPassword($clientId, $secret, $userName, $userPwd);
+        return $clientBuilder->buildAuthenticatedByPassword(
+            $apiParameters->getClientId(),
+            $apiParameters->getSecret(),
+            $apiParameters->getUserName(),
+            $apiParameters->getUserPwd()
+        );
     }
 }

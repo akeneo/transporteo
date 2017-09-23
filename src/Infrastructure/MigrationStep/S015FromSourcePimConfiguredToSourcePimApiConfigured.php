@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s015_SourcePimApiConfiguration\SourcePimApiConfigurationException;
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -40,22 +41,16 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $baseUri = $this->askForBaseUri();
-
-        $clientId = $this->askForClientId();
-        $stateMachine->setApiClientId($clientId);
-
-        $secret = $this->askForSecret();
-        $stateMachine->setApiSecret($secret);
-
-        $userName = $this->askForUserName();
-        $stateMachine->setApiUserName($userName);
-
-        $userPwd = $this->askForUserPwd();
-        $stateMachine->setApiUserPwd($userPwd);
+        $sourceApiParameters = new PimApiParameters(
+            $this->askForBaseUri(),
+            $this->askForClientId(),
+            $this->askForSecret(),
+            $this->askForUserName(),
+            $this->askForUserPwd()
+        );
 
         try {
-            $apiClient = $this->apiClientBuilder->buildAuthenticatedByPassword($baseUri, $clientId, $secret, $userName, $userPwd);
+            $apiClient = $this->apiClientBuilder->build($sourceApiParameters);
 
             // Only to check the API authentication before starting the migration.
             $apiClient->getProductApi()->all(1);
@@ -63,7 +58,7 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
             throw new SourcePimApiConfigurationException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        $stateMachine->setSourcePimApiClient($apiClient);
+        $stateMachine->setSourcePimApiParameters($sourceApiParameters);
     }
 
     private function askForBaseUri(): string

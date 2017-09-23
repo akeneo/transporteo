@@ -20,6 +20,14 @@ use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
  */
 abstract class AbstractConsole implements Console
 {
+    /** @var ApiCommandExecutor */
+    protected $apiCommandExecutor;
+
+    public function __construct(ApiCommandExecutor $apiCommandExecutor)
+    {
+        $this->apiCommandExecutor = $apiCommandExecutor;
+    }
+
     protected function getProcessedCommand(Command $command, Pim $pim): ?string
     {
         if ($command instanceof SymfonyCommand) {

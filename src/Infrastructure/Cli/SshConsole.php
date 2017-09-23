@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
+use Akeneo\PimMigration\Domain\Command\ApiCommand;
 use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
@@ -37,6 +38,10 @@ class SshConsole extends AbstractConsole implements Console
 
     public function execute(Command $command, Pim $pim): CommandResult
     {
+        if ($command instanceof ApiCommand) {
+            return $this->apiCommandExecutor->execute($command, $pim);
+        }
+
         $connection = $pim->getConnection();
 
         if (!$connection instanceof SshConnection) {
@@ -78,7 +83,6 @@ class SshConsole extends AbstractConsole implements Console
                 $cells = str_getcsv($line, "\t");
                 $results[] = array_combine($columns, $cells);
             }
-
 
             return new CommandResult($ssh->getExitStatus(), $results);
         }

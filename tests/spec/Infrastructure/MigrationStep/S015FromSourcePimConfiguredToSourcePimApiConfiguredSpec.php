@@ -7,6 +7,7 @@ namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\Pim\Api\ProductApiInterface;
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S015FromSourcePimConfiguredToSourcePimApiConfigured;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
@@ -81,22 +82,20 @@ class S015FromSourcePimConfiguredToSourcePimApiConfiguredSpec extends ObjectBeha
             ->willReturn($question);
         $printerAndAsker->askSimpleQuestion($question)->willReturn($userPwd);
 
-        $apiClientBuilder->buildAuthenticatedByPassword(
+        $sourceApiParameters = new PimApiParameters(
             $baseUri,
             $clientId,
             $secret,
             $userName,
             $userPwd
-        )->willReturn($apiClient);
+        );
+
+        $apiClientBuilder->build($sourceApiParameters)->willReturn($apiClient);
 
         $apiClient->getProductApi()->willReturn($productApi);
         $productApi->all(1)->shouldBeCalled();
 
-        $stateMachine->setSourcePimApiClient($apiClient)->shouldBeCalled();
-        $stateMachine->setApiClientId($clientId)->shouldBeCalled();
-        $stateMachine->setApiSecret($secret)->shouldBeCalled();
-        $stateMachine->setApiUserName($userName)->shouldBeCalled();
-        $stateMachine->setApiUserPwd($userPwd)->shouldBeCalled();
+        $stateMachine->setSourcePimApiParameters($sourceApiParameters)->shouldBeCalled();
 
         $this->onSourcePimApiConfiguration($event);
     }

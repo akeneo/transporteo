@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\Pim;
 
-use Akeneo\Pim\AkeneoPimClientInterface;
-
 /**
  * Representation of a Pim.
  *
@@ -32,5 +30,5 @@ interface Pim
 
     public function getConnection(): PimConnection;
 
-    public function getApiClient(): AkeneoPimClientInterface;
+    public function getApiParameters(): PimApiParameters;
 }

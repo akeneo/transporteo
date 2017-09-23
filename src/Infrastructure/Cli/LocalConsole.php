@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
+use Akeneo\PimMigration\Domain\Command\ApiCommand;
 use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\Command;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
@@ -27,9 +28,11 @@ class LocalConsole extends AbstractConsole implements Console
     /** @var LocalMySqlQueryExecutor */
     private $localMySqlQueryExecutor;
 
-    public function __construct(LocalMySqlQueryExecutor $localMySqlQueryExecutor)
+    public function __construct(LocalMySqlQueryExecutor $localMySqlQueryExecutor, ApiCommandExecutor $apiCommandExecutor)
     {
         $this->localMySqlQueryExecutor = $localMySqlQueryExecutor;
+
+        parent::__construct($apiCommandExecutor);
     }
 
     public function execute(Command $command, Pim $pim): CommandResult
@@ -42,6 +45,10 @@ class LocalConsole extends AbstractConsole implements Console
 
         if ($command instanceof MySqlQueryCommand) {
             return new CommandResult(1, $this->localMySqlQueryExecutor->query($command->getCommand(), $pim));
+        }
+
+        if ($command instanceof ApiCommand) {
+            return $this->apiCommandExecutor->execute($command, $pim);
         }
 
         $commandToLaunch = $this->getProcessedCommand($command, $pim);

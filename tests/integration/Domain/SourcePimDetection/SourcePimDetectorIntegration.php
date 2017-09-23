@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Domain\SourcePimDetection;
 
-use Akeneo\Pim\AkeneoPimClientBuilder;
-use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -29,7 +28,7 @@ class SourcePimDetectorIntegration extends TestCase
             new Localhost(),
             '/source-pim-real-path',
             $this->getPimConfiguration('simple-pim-community-standard'),
-            $this->getApiClient()
+            new PimApiParameters('', '', '', '', '')
         );
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
@@ -49,7 +48,7 @@ class SourcePimDetectorIntegration extends TestCase
             new Localhost(),
             '/source-pim-real-path',
             $this->getPimConfiguration('ivb-mongo-pim-entreprise-standard'),
-            $this->getApiClient()
+            new PimApiParameters('', '', '', '', '')
         );
 
         $this->assertEquals($sourcePim->getDatabaseName(), 'akeneo_pim_database_name');
@@ -107,12 +106,5 @@ class SourcePimDetectorIntegration extends TestCase
         }
 
         return null;
-    }
-
-    private function getApiClient(): AkeneoPimClientInterface
-    {
-        $clientBuilder = new AkeneoPimClientBuilder('http://localhost');
-
-        return $clientBuilder->buildAuthenticatedByPassword('clientId', 'secret', 'userName', 'userPwd');
     }
 }

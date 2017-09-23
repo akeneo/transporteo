@@ -10,7 +10,10 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutorRegistry;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Akeneo\PimMigration\Infrastructure\Cli\ApiCommandExecutor;
 use Akeneo\PimMigration\Infrastructure\Cli\LocalConsole;
 use Akeneo\PimMigration\Infrastructure\Cli\LocalMySqlQueryExecutor;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
@@ -32,13 +35,15 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
         parent::setUp();
 
         $this->chainedConsole = new ChainedConsole();
-        $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor()));
+        $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor(), new ApiCommandExecutor(new PimApiClientBuilder())));
 
         $sourcePimConfig = $this->getConfig('pim_community_standard_one_dot_seven_with_reference_data');
         $destinationPimConfig = $this->getConfig('pim_community_standard_two_dot_zero');
 
-        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path'], new Localhost(), $this->getApiClient());
-        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, $destinationPimConfig['absolute_path'], new Localhost(), $this->getApiClient());
+        $apiParameters = new PimApiParameters('', '', '', '', '');
+
+        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path'], new Localhost(), $apiParameters);
+        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, $destinationPimConfig['absolute_path'], new Localhost(), $apiParameters);
 
         $connection = $this->getConnection($this->destinationPim, false);
         $connection->exec('DROP DATABASE IF EXISTS akeneo_pim_two_for_test');
@@ -66,12 +71,5 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
-    }
-
-    protected function getApiClient(): AkeneoPimClientInterface
-    {
-        $clientBuilder = new AkeneoPimClientBuilder('http://localhost');
-
-        return $clientBuilder->buildAuthenticatedByPassword('clientId', 'secret', 'userName', 'userPwd');
     }
 }

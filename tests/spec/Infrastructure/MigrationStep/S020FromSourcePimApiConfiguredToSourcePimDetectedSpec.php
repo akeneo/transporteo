@@ -7,6 +7,7 @@ namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
@@ -47,7 +48,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
         ComposerJson $composerJson,
         PimParameters $pimParameters,
         ParametersYml $parametersYml,
-        AkeneoPimClientInterface $apiClient
+        PimApiParameters $apiParameters
     ) {
         $event->getSubject()->willReturn($stateMachine);
         $sourcePimRealPath = '/source-pim-real-path';
@@ -73,7 +74,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
         $stateMachine->getSourcePimConfiguration()->willReturn($sourcePimConfiguration);
         $stateMachine->getSourcePimRealPath()->willReturn($sourcePimRealPath);
         $stateMachine->getSourcePimConnection()->willReturn($sourcePimConnection);
-        $stateMachine->getSourcePimApiClient()->willReturn($apiClient);
+        $stateMachine->getSourcePimApiParameters()->willReturn($apiParameters);
 
         $stateMachine->setSourcePim(new SourcePim(
             'database_host',
@@ -88,7 +89,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
             false,
             $sourcePimRealPath,
             $sourcePimConnection->getWrappedObject(),
-            $apiClient->getWrappedObject()
+            $apiParameters->getWrappedObject()
         ))->shouldBeCalled();
 
         $this->onSourcePimDetection($event);

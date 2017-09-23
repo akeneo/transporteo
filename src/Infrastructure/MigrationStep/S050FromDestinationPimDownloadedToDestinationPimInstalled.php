@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Par
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Symfony\Component\Translation\Translator;
@@ -160,15 +161,17 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
                 }
             );
 
-        $apiClient = $this->apiClientBuilder->buildAuthenticatedByPassword(
+        $sourcePimApiParameters = $stateMachine->getSourcePimApiParameters();
+
+        $destinationPimApiParameters = new PimApiParameters(
             $baseUri,
-            $stateMachine->getApiClientId(),
-            $stateMachine->getApiSecret(),
-            $stateMachine->getApiUserName(),
-            $stateMachine->getApiUserPwd()
+            $sourcePimApiParameters->getClientId(),
+            $sourcePimApiParameters->getSecret(),
+            $sourcePimApiParameters->getUserName(),
+            $sourcePimApiParameters->getUserPwd()
         );
 
-        $stateMachine->setDestinationPimApiClient($apiClient);
+        $stateMachine->setDestinationPimApiParameters($destinationPimApiParameters);
     }
 
     public function onDestinationPimDetection(Event $event)
@@ -180,7 +183,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             $destinationPim = DestinationPim::fromDestinationPimConfiguration(
                 $stateMachine->getDestinationPimConnection(),
                 $stateMachine->getDestinationPimConfiguration(),
-                $stateMachine->getDestinationPimApiClient()
+                $stateMachine->getDestinationPimApiParameters()
             );
         } catch (DestinationPimDetectionException $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
-use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurationChecker;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
@@ -190,7 +190,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     public function it_configures_the_destination_pim_api(
         Event $event,
         MigrationToolStateMachine $stateMachine,
-        AkeneoPimClientInterface $apiClient,
+        PimApiParameters $sourceApiParameters,
         $printerAndAsker,
         $translator,
         $apiClientBuilder
@@ -209,20 +209,16 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
             ->askSimpleQuestion($question, '', Argument::any())
             ->willReturn($baseUri);
 
-        $stateMachine->getApiClientId()->WillReturn('clientId');
-        $stateMachine->getApiSecret()->WillReturn('secret');
-        $stateMachine->getApiUserName()->WillReturn('userName');
-        $stateMachine->getApiUserPwd()->WillReturn('userPwd');
+        $stateMachine->getSourcePimApiParameters()->willReturn($sourceApiParameters);
 
-        $apiClientBuilder->buildAuthenticatedByPassword(
-            $baseUri,
-            'clientId',
-            'secret',
-            'userName',
-            'userPwd'
-        )->willReturn($apiClient);
+        $sourceApiParameters->getClientId()->WillReturn('clientId');
+        $sourceApiParameters->getSecret()->WillReturn('secret');
+        $sourceApiParameters->getUserName()->WillReturn('userName');
+        $sourceApiParameters->getUserPwd()->WillReturn('userPwd');
 
-        $stateMachine->setDestinationPimApiClient($apiClient)->shouldBeCalled();
+        $destinationApiParameters = new PimApiParameters($baseUri, 'clientId', 'secret', 'userName', 'userPwd');
+
+        $stateMachine->setDestinationPimApiParameters($destinationApiParameters)->shouldBeCalled();
 
         $this->onDestinationPimApiConfiguration($event);
     }

@@ -35,7 +35,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
             $stateMachine->getSourcePimConnection(),
             $stateMachine->getSourcePimRealPath(),
             $sourcePimConfiguration,
-            $stateMachine->getSourcePimApiClient()
+            $stateMachine->getSourcePimApiParameters()
         );
 
         $stateMachine->setSourcePim($sourcePim);

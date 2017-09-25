@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s060_FilesMigration\AkeneoFileStorageFileInfoMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,9 +23,10 @@ class S060FromDestinationPimInstalledToDestinationPimFileDatabaseMigrated extend
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         AkeneoFileStorageFileInfoMigrator $akeneoFileStorageFileInfoMigrator
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
         $this->akeneoFileStorageFileInfoMigrator = $akeneoFileStorageFileInfoMigrator;
     }
 
@@ -40,11 +42,15 @@ class S060FromDestinationPimInstalledToDestinationPimFileDatabaseMigrated extend
 
     public function onDestinationPimFileDatabaseMigration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated.message'));
 
         $this->akeneoFileStorageFileInfoMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+
+        $this->logExit(__FUNCTION__);
     }
 }

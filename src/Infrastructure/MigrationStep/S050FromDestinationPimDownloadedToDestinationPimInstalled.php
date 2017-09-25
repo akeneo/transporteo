@@ -16,6 +16,7 @@ use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
 use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Event\GuardEvent;
@@ -45,13 +46,14 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         DestinationPimConfigurator $destinationPimConfigurator,
         DestinationPimSystemRequirementsInstallerHelper $destinationPimSystemRequirementsInstallerHelper,
         DestinationPimConfigurationChecker $destinationPimConfigurationChecker,
         ParametersYmlGenerator $parametersYmlGenerator,
         PimApiClientBuilder $apiClientBuilder
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
 
         $this->destinationPimConfigurator = $destinationPimConfigurator;
         $this->destinationPimSystemRequirementsInstallerHelper = $destinationPimSystemRequirementsInstallerHelper;
@@ -79,6 +81,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
 
     public function guardOnDestinationPimPreConfiguration(GuardEvent $event)
     {
+        $this->logGuardEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -91,19 +95,28 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             DIRECTORY_SEPARATOR
         );
 
-        $event->setBlocked(file_exists($parametersYamlPath));
+        $isBlocking = file_exists($parametersYamlPath);
+        $event->setBlocked($isBlocking);
+
+        $this->logGuardResult(__FUNCTION__, $isBlocking);
     }
 
     public function onDestinationPimPreConfiguration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->parametersYmlGenerator->preconfigure($stateMachine->getCurrentDestinationPimLocation());
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function guardOnDestinationPimConfiguration(GuardEvent $event)
     {
+        $this->logGuardEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -116,11 +129,16 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             DIRECTORY_SEPARATOR
         );
 
-        $event->setBlocked(!file_exists($parametersYamlPath));
+        $isBlocking = !file_exists($parametersYamlPath);
+        $event->setBlocked($isBlocking);
+
+        $this->logGuardResult(__FUNCTION__, $isBlocking);
     }
 
     public function onDestinationPimConfiguration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -134,6 +152,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $destinationPimConfiguration = $this->destinationPimConfigurator->configure($stateMachine->getDestinationPimConnection(), new PimServerInformation($composerJsonPath, $projectName));
 
         $stateMachine->setDestinationPimConfiguration($destinationPimConfiguration);
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function onDestinationPimApiConfiguration(Event $event)
@@ -176,6 +196,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
 
     public function onDestinationPimDetection(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -190,18 +212,27 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         }
 
         $stateMachine->setDestinationPim($destinationPim);
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function guardOnDockerDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
     {
+        $this->logGuardEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $guardEvent->getSubject();
 
-        $guardEvent->setBlocked(false === $stateMachine->useDocker());
+        $isBlocking = false === $stateMachine->useDocker();
+        $guardEvent->setBlocked($isBlocking);
+
+        $this->logGuardResult(__FUNCTION__, $isBlocking);
     }
 
     public function onDockerDestinationPimSystemRequirementsInstallation(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         $this->printerAndAsker->printMessage('Docker is currently installing the destination PIM... Please wait...');
 
         /** @var MigrationToolStateMachine $stateMachine */
@@ -212,18 +243,27 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function guardOnLocalDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
     {
+        $this->logGuardEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $guardEvent->getSubject();
 
-        $guardEvent->setBlocked(true === $stateMachine->useDocker());
+        $isBlocking = true === $stateMachine->useDocker();
+        $guardEvent->setBlocked($isBlocking);
+
+        $this->logGuardResult(__FUNCTION__, $isBlocking);
     }
 
     public function onLocalDestinationPimSystemRequirementsInstallation(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -232,10 +272,14 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function onDestinationPimCheckRequirements(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -244,5 +288,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         } catch (\Exception $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }
+
+        $this->logExit(__FUNCTION__);
     }
 }

@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,9 +23,10 @@ class S100FromDestinationPimSystemMigratedToDestinationPimJobMigrated extends Ab
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         JobMigrator $jobMigrator
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
         $this->jobMigrator = $jobMigrator;
     }
 
@@ -40,11 +42,15 @@ class S100FromDestinationPimSystemMigratedToDestinationPimJobMigrated extends Ab
 
     public function onDestinationPimJobMigration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_system_migrated_to_destination_pim_job_migrated.message'));
 
         $this->jobMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+
+        $this->logExit(__FUNCTION__);
     }
 }

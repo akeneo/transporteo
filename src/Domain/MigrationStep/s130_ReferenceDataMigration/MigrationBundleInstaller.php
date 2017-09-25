@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration;
 
 use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\Pim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Activate the Migration Bundle.
@@ -18,9 +19,13 @@ class MigrationBundleInstaller
     /** @var FileSystemHelper */
     private $fileSystem;
 
-    public function __construct(FileSystemHelper $fileSystem)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(FileSystemHelper $fileSystem, LoggerInterface $logger)
     {
         $this->fileSystem = $fileSystem;
+        $this->logger = $logger;
     }
 
     public function install(Pim $pim): void
@@ -31,6 +36,8 @@ class MigrationBundleInstaller
 
     private function setupKernel(Pim $pim): void
     {
+        $this->logger->debug('MigrationBundleInstaller: Start setup kernel');
+
         $appKernelPath = sprintf(
             '%s%sapp%sAppKernel.php',
             $pim->absolutePath(),
@@ -49,6 +56,8 @@ class MigrationBundleInstaller
         }
 
         $this->fileSystem->updateLineInFile($appKernelPath, 23, $lineToAdd);
+
+        $this->logger->debug('MigrationBundleInstaller: Kernel setup finish');
     }
 
     private function copySources(Pim $pim): void

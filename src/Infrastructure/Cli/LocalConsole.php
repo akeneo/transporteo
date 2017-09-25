@@ -14,6 +14,7 @@ use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -28,15 +29,21 @@ class LocalConsole extends AbstractConsole implements Console
     /** @var LocalMySqlQueryExecutor */
     private $localMySqlQueryExecutor;
 
-    public function __construct(LocalMySqlQueryExecutor $localMySqlQueryExecutor, ApiCommandExecutor $apiCommandExecutor)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LocalMySqlQueryExecutor $localMySqlQueryExecutor, ApiCommandExecutor $apiCommandExecutor, LoggerInterface $logger)
     {
         $this->localMySqlQueryExecutor = $localMySqlQueryExecutor;
+        $this->logger = $logger;
 
         parent::__construct($apiCommandExecutor);
     }
 
     public function execute(Command $command, Pim $pim): CommandResult
     {
+        $this->logger->debug(sprintf('LocalConsole: executing %s command -> %s', get_class($command), $command->getCommand()));
+
         if ($command instanceof MySqlExecuteCommand) {
             $this->localMySqlQueryExecutor->execute($command->getCommand(), $pim);
 

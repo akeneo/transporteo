@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s080_FamilyMigration\FamilyDataMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,9 +23,10 @@ class S080FromDestinationPimStructureMigratedToDestinationPimFamilyMigrated exte
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         FamilyDataMigrator $familyDataMigrator
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
         $this->familyDataMigrator = $familyDataMigrator;
     }
 
@@ -40,11 +42,15 @@ class S080FromDestinationPimStructureMigratedToDestinationPimFamilyMigrated exte
 
     public function onDestinationPimFamilyMigration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_structure_migrated_to_destination_pim_family_migrated.message'));
 
         $this->familyDataMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+
+        $this->logExit(__FUNCTION__);
     }
 }

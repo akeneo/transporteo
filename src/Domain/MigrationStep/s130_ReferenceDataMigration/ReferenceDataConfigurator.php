@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration;
 
 use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\Pim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Configures a reference data.
@@ -17,14 +18,19 @@ class ReferenceDataConfigurator
 {
     /** @var FileSystemHelper */
     private $fileSystem;
+    /** @var LoggerInterface */
+    private $logger;
 
-    public function __construct(FileSystemHelper $fileSystem)
+    public function __construct(FileSystemHelper $fileSystem, LoggerInterface $logger)
     {
         $this->fileSystem = $fileSystem;
+        $this->logger = $logger;
     }
 
     public function configure(array $referenceDataConfig, string $tableName, Pim $pim): string
     {
+        $this->logger->debug('ReferenceDataConfigurator: Start configuring');
+
         $classPath = $referenceDataConfig['class'];
 
         $sampleOrmPath = sprintf(
@@ -90,6 +96,8 @@ class ReferenceDataConfigurator
         $configFile['pim_reference_data'][] = $referenceDataConfig;
 
         $this->fileSystem->dumpYamlInFile($configFilePath, $configFile);
+
+        $this->logger->debug('ReferenceDataConfigurator: Finish configuring');
 
         return $newClassPath;
     }

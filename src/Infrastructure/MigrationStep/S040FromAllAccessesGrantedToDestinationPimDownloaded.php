@@ -12,6 +12,7 @@ use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Local;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -31,10 +32,9 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
     /** @var DestinationPimDownloaderHelper */
     private $destinationPimDownloaderHelper;
 
-    public function __construct(Translator $translator, DestinationPimDownloaderHelper $destinationPimDownloaderHelper)
+    public function __construct(Translator $translator, LoggerInterface $logger, DestinationPimDownloaderHelper $destinationPimDownloaderHelper)
     {
-        parent::__construct($translator);
-        $this->translator = $translator;
+        parent::__construct($translator, $logger);
         $this->destinationPimDownloaderHelper = $destinationPimDownloaderHelper;
     }
 
@@ -51,6 +51,8 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
 
     public function onAskDestinationPimLocation(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -120,10 +122,14 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
 
                 break;
         }
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function onDownloadingTransition(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -143,5 +149,7 @@ class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractState
         }
 
         $stateMachine->setCurrentDestinationPimLocation($destinationPim);
+
+        $this->logExit(__FUNCTION__);
     }
 }

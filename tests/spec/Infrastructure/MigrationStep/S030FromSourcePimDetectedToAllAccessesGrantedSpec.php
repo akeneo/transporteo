@@ -18,6 +18,7 @@ use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -33,10 +34,11 @@ class S030FromSourcePimDetectedToAllAccessesGrantedSpec extends ObjectBehavior
 {
     public function let(
         Translator $translator,
+        LoggerInterface $logger,
         AccessVerificator $enterpriseEditionVerificator,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($translator, $enterpriseEditionVerificator);
+        $this->beConstructedWith($translator, $logger, $enterpriseEditionVerificator);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

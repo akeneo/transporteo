@@ -17,6 +17,7 @@ use Akeneo\PimMigration\Infrastructure\MigrationStep\S020FromSourcePimApiConfigu
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -29,9 +30,9 @@ use Symfony\Component\Workflow\Event\Event;
  */
 class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavior
 {
-    public function let(Translator $translator, PrinterAndAsker $printerAndAsker)
+    public function let(Translator $translator, LoggerInterface $logger, PrinterAndAsker $printerAndAsker)
     {
-        $this->beConstructedWith($translator);
+        $this->beConstructedWith($translator, $logger);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

@@ -23,6 +23,7 @@ use Akeneo\PimMigration\Infrastructure\SshKey;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\FromReadyToSourcePimConfigured;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -38,10 +39,11 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 {
     public function let(
         Translator $translator,
+        LoggerInterface $logger,
         SourcePimConfigurator $sourcePimConfigurator,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($translator, $sourcePimConfigurator);
+        $this->beConstructedWith($translator, $logger, $sourcePimConfigurator);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

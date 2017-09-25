@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\Referen
 use Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\ReferenceDataMigrator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 
 /**
  * Spec for ReferenceDataMigrator.
@@ -27,14 +28,16 @@ class ReferenceDataMigratorSpec extends ObjectBehavior
         EntityTableNameFetcher $entityTableNameFetcher,
         EntityMappingChecker $entityMappingChecker,
         MigrationBundleInstaller $migrationBundleInstaller,
-        ReferenceDataConfigurator $referenceDataConfigurator
+        ReferenceDataConfigurator $referenceDataConfigurator,
+        LoggerInterface $logger
     ) {
         $this->beConstructedWith(
             $bundleConfigFetcher,
             $entityTableNameFetcher,
             $entityMappingChecker,
             $migrationBundleInstaller,
-            $referenceDataConfigurator
+            $referenceDataConfigurator,
+            $logger
         );
     }
 

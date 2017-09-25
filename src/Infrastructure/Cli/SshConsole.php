@@ -16,6 +16,7 @@ use Akeneo\PimMigration\Infrastructure\ImpossibleConnectionException;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
+use Psr\Log\LoggerInterface;
 
 /**
  * Console working through SSH.
@@ -25,6 +26,14 @@ use phpseclib\Net\SSH2;
  */
 class SshConsole extends AbstractConsole implements Console
 {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function getProcessedCommand(Command $command, Pim $pim): string
     {
         $processedCommand = parent::getProcessedCommand($command, $pim);
@@ -65,6 +74,8 @@ class SshConsole extends AbstractConsole implements Console
                 );
             }
         }
+
+        $this->logger->debug(sprintf('SshConsole: executing %s command -> %s', get_class($command), $command->getCommand()));
 
         if ($command instanceof MySqlQueryCommand || $command instanceof MySqlExecuteCommand) {
             $query = sprintf('%s -e "%s;"', $this->getMySqlConnectionChain($pim), $command->getCommand());

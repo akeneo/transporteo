@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -24,9 +25,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class SourcePimConfiguratorSpec extends ObjectBehavior
 {
-    public function let(FileFetcherRegistry $fileFetcherRegistry)
+    public function let(FileFetcherRegistry $fileFetcherRegistry, LoggerInterface $logger)
     {
-        $this->beConstructedWith($fileFetcherRegistry);
+        $this->beConstructedWith($fileFetcherRegistry, $logger);
 
         $fs = new Filesystem();
         $fs->copy(

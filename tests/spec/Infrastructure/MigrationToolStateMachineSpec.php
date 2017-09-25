@@ -7,6 +7,7 @@ namespace spec\Akeneo\PimMigration\Infrastructure;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -18,9 +19,9 @@ use Symfony\Component\Workflow\Transition;
  */
 class MigrationToolStateMachineSpec extends ObjectBehavior
 {
-    public function let(StateMachine $stateMachine)
+    public function let(StateMachine $stateMachine, LoggerInterface $logger)
     {
-        $this->beConstructedWith($stateMachine);
+        $this->beConstructedWith($stateMachine, $logger);
         $this->currentState = 'ready';
     }
 

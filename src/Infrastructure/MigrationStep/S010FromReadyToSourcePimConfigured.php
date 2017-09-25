@@ -11,6 +11,7 @@ use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -32,9 +33,10 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         SourcePimConfigurator $pimConfigurator
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
 
         $this->pimConfigurator = $pimConfigurator;
     }
@@ -56,6 +58,8 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 
     public function leaveReadyPlace(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         $this->printerAndAsker->title('Akeneo Migration Tool');
 
         $this
@@ -69,10 +73,14 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         $this
             ->printerAndAsker
             ->section($this->translator->trans('from_ready_to_source_pim_configured.introduction.start'));
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function askSourcePimLocation(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -103,28 +111,41 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             [self::LOCAL_SOURCE_PIM, self::REMOTE_SOURCE_PIM]
         );
         $stateMachine->setSourcePimLocation($pimLocation);
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function guardLocalSourcePimConfiguration(GuardEvent $event)
     {
+        $this->logGuardEntering(__FUNCTION__);
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $pimSourceLocation = $stateMachine->getSourcePimLocation();
 
-        $event->setBlocked($pimSourceLocation !== self::LOCAL_SOURCE_PIM);
+        $isBlocked = $pimSourceLocation !== self::LOCAL_SOURCE_PIM;
+        $event->setBlocked($isBlocked);
+
+        $this->logGuardResult(__FUNCTION__, $isBlocked);
     }
 
     public function guardDistantSourcePimConfiguration(GuardEvent $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $pimSourceLocation = $stateMachine->getSourcePimLocation();
 
-        $event->setBlocked($pimSourceLocation !== self::REMOTE_SOURCE_PIM);
+        $isBlocked = $pimSourceLocation !== self::REMOTE_SOURCE_PIM;
+        $event->setBlocked($isBlocked);
+
+        $this->logGuardResult(__FUNCTION__, $isBlocked);
     }
 
     public function onDistantConfiguration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -206,10 +227,14 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         }
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function onLocalConfiguration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $transPrefix = 'from_ready_to_source_pim_configured.on_local_configuration.';
@@ -247,5 +272,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         }
 
         $stateMachine->setSourcePimConfiguration($sourcePimConfiguration);
+
+        $this->logExit(__FUNCTION__);
     }
 }

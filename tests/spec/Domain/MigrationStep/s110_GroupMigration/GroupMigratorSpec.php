@@ -48,6 +48,11 @@ class GroupMigratorSpec extends ObjectBehavior
             $destinationPim
         )->shouldBeCalled();
 
+        $chainedConsole->execute(
+            new MySqlExecuteCommand('UPDATE pim_catalog_group_type SET code = "MVARIANT" WHERE code = "VARIANT"'),
+            $destinationPim
+        )->shouldBeCalled();
+
         $this->migrate($sourcePim, $destinationPim);
     }
 

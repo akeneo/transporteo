@@ -3,6 +3,7 @@
 namespace Akeneo\PimMigration\Infrastructure\UserInterface\Cli;
 
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +29,7 @@ final class MigrationTool extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'));
+        $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'), $this->container->get(LoggerInterface::class));
 
         $cliQuestionAsker = new ConsolePrinterAndAsker($input, $output, $this->getHelper('question'));
 

@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
@@ -16,6 +17,8 @@ use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Container;
@@ -34,6 +37,7 @@ use Symfony\Component\Workflow\EventListener\AuditTrailListener;
 use Symfony\Component\Workflow\SupportStrategy\ClassInstanceSupportStrategy;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Yaml\Yaml;
+use Monolog\Handler\StreamHandler;
 
 /**
  * Symfony container configuration.
@@ -60,6 +64,7 @@ final class ContainerBuilder
         $loader->load('services.yml');
 
         self::loadTranslatorConfiguration($container);
+        self::loadLoggerConfiguration($container);
 
         $container->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('kernel.event_subscriber');
 
@@ -106,6 +111,26 @@ final class ContainerBuilder
         $translatorDefinition->addMethodCall('setFallbackLocales', [['en']]);
 
         $containerBuilder->setDefinition('translator', $translatorDefinition);
+    }
+
+    private static function loadLoggerConfiguration(SymfonyContainerBuilder $container)
+    {
+        $fileSystemHelper = new FileSystemHelper();
+
+        $logsDir = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'var'.DIRECTORY_SEPARATOR.'logs';
+
+        $logsFile = $logsDir.DIRECTORY_SEPARATOR.'migration_log.txt';
+
+        if (!$fileSystemHelper->fileExists($logsFile)) {
+            mkdir($logsDir);
+            file_put_contents($logsFile, '');
+        }
+
+        $loggerDefinition = new Definition(Logger::class, ['app']);
+        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsFile)]);
+
+        $container->setDefinition('logger', $loggerDefinition);
+        $container->setAlias(LoggerInterface::class, 'logger');
     }
 
     private static function loadWorkflowConfiguration(SymfonyContainerBuilder $container, $workflows)

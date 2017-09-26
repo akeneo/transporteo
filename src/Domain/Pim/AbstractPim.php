@@ -43,6 +43,9 @@ abstract class AbstractPim implements Pim
     /** @var PimConnection */
     private $pimConnection;
 
+    /** @var PimApiParameters */
+    private $apiParameters;
+
     public function __construct(
         string $mysqlHost,
         int $mysqlPort,
@@ -52,7 +55,8 @@ abstract class AbstractPim implements Pim
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
         string $absolutePath,
-        PimConnection $pimConnection
+        PimConnection $pimConnection,
+        PimApiParameters $apiParameters
     ) {
         $this->mysqlHost = $mysqlHost;
         $this->mysqlPort = $mysqlPort;
@@ -63,6 +67,7 @@ abstract class AbstractPim implements Pim
         $this->enterpriseRepository = $enterpriseRepository;
         $this->absolutePath = $absolutePath;
         $this->pimConnection = $pimConnection;
+        $this->apiParameters = $apiParameters;
     }
 
     abstract protected static function getPimVersionAllowed(): string;
@@ -115,5 +120,10 @@ abstract class AbstractPim implements Pim
     public function getConnection(): PimConnection
     {
         return $this->pimConnection;
+    }
+
+    public function getApiParameters(): PimApiParameters
+    {
+        return $this->apiParameters;
     }
 }

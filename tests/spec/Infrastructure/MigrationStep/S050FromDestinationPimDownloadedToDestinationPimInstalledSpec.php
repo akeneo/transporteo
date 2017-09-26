@@ -8,9 +8,9 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Des
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
-use Akeneo\PimMigration\Domain\FileFetcher;
+use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
-use Akeneo\PimMigration\Domain\Pim\PimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
@@ -23,8 +23,8 @@ use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPim
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S050FromDestinationPimDownloadedToDestinationPimInstalled;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
-use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -44,7 +44,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
         DestinationPimSystemRequirementsInstallerHelper $destinationPimSystemRequirementsInstallerHelper,
         DestinationPimConfigurationChecker $destinationPimConfigurationChecker,
         ParametersYmlGenerator $parametersYmlGenerator,
-        PrinterAndAsker $printerAndAsker
+        PrinterAndAsker $printerAndAsker,
+        PimApiClientBuilder $apiClientBuilder
     )
     {
         $this->beConstructedWith(
@@ -52,7 +53,8 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
             $destinationPimConfigurator,
             $destinationPimSystemRequirementsInstallerHelper,
             $destinationPimConfigurationChecker,
-            $parametersYmlGenerator
+            $parametersYmlGenerator,
+            $apiClientBuilder
         );
 
         $this->setPrinterAndAsker($printerAndAsker);
@@ -183,5 +185,41 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
         $stateMachine->setDestinationPimConfiguration($pimConfiguration)->shouldBeCalled();
 
         $this->onDestinationPimConfiguration($event);
+    }
+
+    public function it_configures_the_destination_pim_api(
+        Event $event,
+        MigrationToolStateMachine $stateMachine,
+        PimApiParameters $sourceApiParameters,
+        $printerAndAsker,
+        $translator,
+        $apiClientBuilder
+    )
+    {
+        $event->getSubject()->willReturn($stateMachine);
+
+        $question = 'What is the base URI to request the API of the destination PIM?';
+        $baseUri = 'http://localhost';
+
+        $translator
+            ->trans('from_destination_pim_downloaded_to_destination_pim_installed.on_destination_pim_api_configuration.base_uri.question')
+            ->willReturn($question);
+
+        $printerAndAsker
+            ->askSimpleQuestion($question, '', Argument::any())
+            ->willReturn($baseUri);
+
+        $stateMachine->getSourcePimApiParameters()->willReturn($sourceApiParameters);
+
+        $sourceApiParameters->getClientId()->WillReturn('clientId');
+        $sourceApiParameters->getSecret()->WillReturn('secret');
+        $sourceApiParameters->getUserName()->WillReturn('userName');
+        $sourceApiParameters->getUserPwd()->WillReturn('userPwd');
+
+        $destinationApiParameters = new PimApiParameters($baseUri, 'clientId', 'secret', 'userName', 'userPwd');
+
+        $stateMachine->setDestinationPimApiParameters($destinationApiParameters)->shouldBeCalled();
+
+        $this->onDestinationPimApiConfiguration($event);
     }
 }

@@ -12,6 +12,8 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Des
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\ParametersYmlGenerator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsNotBootable;
+use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Symfony\Component\Translation\Translator;
@@ -38,12 +40,16 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     /** @var ParametersYmlGenerator */
     private $parametersYmlGenerator;
 
+    /** @var PimApiClientBuilder */
+    private $apiClientBuilder;
+
     public function __construct(
         Translator $translator,
         DestinationPimConfigurator $destinationPimConfigurator,
         DestinationPimSystemRequirementsInstallerHelper $destinationPimSystemRequirementsInstallerHelper,
         DestinationPimConfigurationChecker $destinationPimConfigurationChecker,
-        ParametersYmlGenerator $parametersYmlGenerator
+        ParametersYmlGenerator $parametersYmlGenerator,
+        PimApiClientBuilder $apiClientBuilder
     ) {
         parent::__construct($translator);
 
@@ -51,6 +57,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $this->destinationPimSystemRequirementsInstallerHelper = $destinationPimSystemRequirementsInstallerHelper;
         $this->destinationPimConfigurationChecker = $destinationPimConfigurationChecker;
         $this->parametersYmlGenerator = $parametersYmlGenerator;
+        $this->apiClientBuilder = $apiClientBuilder;
     }
 
     public static function getSubscribedEvents()
@@ -60,6 +67,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             'workflow.migration_tool.transition.destination_pim_pre_configuration' => 'onDestinationPimPreConfiguration',
             'workflow.migration_tool.guard.destination_pim_configuration' => 'guardOnDestinationPimConfiguration',
             'workflow.migration_tool.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
+            'workflow.migration_tool.transition.destination_pim_api_configuration' => 'onDestinationPimApiConfiguration',
             'workflow.migration_tool.transition.destination_pim_detection' => 'onDestinationPimDetection',
             'workflow.migration_tool.guard.docker_destination_pim_system_requirements_installation' => 'guardOnDockerDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.transition.docker_destination_pim_system_requirements_installation' => 'onDockerDestinationPimSystemRequirementsInstallation',
@@ -128,13 +136,55 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $stateMachine->setDestinationPimConfiguration($destinationPimConfiguration);
     }
 
+    public function onDestinationPimApiConfiguration(Event $event)
+    {
+        /** @var MigrationToolStateMachine $stateMachine */
+        $stateMachine = $event->getSubject();
+
+        $baseUri = $this
+            ->printerAndAsker
+            ->askSimpleQuestion(
+                $this
+                    ->translator
+                    ->trans('from_destination_pim_downloaded_to_destination_pim_installed.on_destination_pim_api_configuration.base_uri.question'),
+                '',
+                function ($answer) {
+                    // This URI validation regex is intentionally imperfect.
+                    // It's goal is only to avoid common mistakes like forgetting "http", or adding parameters from a copy/paste.
+                    if (0 === preg_match('~^https?:\/\/[a-z0-9]+[a-z0-9\-\.]*[a-z0-9]+\/?$~i', $answer)) {
+                        throw new \RuntimeException(
+                            $this->translator->trans(
+                                'from_destination_pim_downloaded_to_destination_pim_installed.on_destination_pim_api_configuration.base_uri.error_message'
+                            )
+                        );
+                    }
+                }
+            );
+
+        $sourcePimApiParameters = $stateMachine->getSourcePimApiParameters();
+
+        $destinationPimApiParameters = new PimApiParameters(
+            $baseUri,
+            $sourcePimApiParameters->getClientId(),
+            $sourcePimApiParameters->getSecret(),
+            $sourcePimApiParameters->getUserName(),
+            $sourcePimApiParameters->getUserPwd()
+        );
+
+        $stateMachine->setDestinationPimApiParameters($destinationPimApiParameters);
+    }
+
     public function onDestinationPimDetection(Event $event)
     {
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         try {
-            $destinationPim = DestinationPim::fromDestinationPimConfiguration($stateMachine->getDestinationPimConnection(), $stateMachine->getDestinationPimConfiguration());
+            $destinationPim = DestinationPim::fromDestinationPimConfiguration(
+                $stateMachine->getDestinationPimConnection(),
+                $stateMachine->getDestinationPimConfiguration(),
+                $stateMachine->getDestinationPimApiParameters()
+            );
         } catch (DestinationPimDetectionException $exception) {
             throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
         }

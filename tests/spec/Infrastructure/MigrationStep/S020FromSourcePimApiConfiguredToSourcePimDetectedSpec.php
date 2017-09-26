@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
 use Akeneo\PimMigration\Domain\Pim\ParametersYml;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\MigrationStep\S020FromSourcePimConfiguredToSourcePimDetected;
+use Akeneo\PimMigration\Infrastructure\MigrationStep\S020FromSourcePimApiConfiguredToSourcePimDetected;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
@@ -25,7 +27,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
+class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavior
 {
     public function let(Translator $translator, PrinterAndAsker $printerAndAsker)
     {
@@ -35,7 +37,7 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(S020FromSourcePimConfiguredToSourcePimDetected::class);
+        $this->shouldHaveType(S020FromSourcePimApiConfiguredToSourcePimDetected::class);
     }
 
     public function it_can_detect_source_pim(
@@ -45,7 +47,8 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
         PimConnection $sourcePimConnection,
         ComposerJson $composerJson,
         PimParameters $pimParameters,
-        ParametersYml $parametersYml
+        ParametersYml $parametersYml,
+        PimApiParameters $apiParameters
     ) {
         $event->getSubject()->willReturn($stateMachine);
         $sourcePimRealPath = '/source-pim-real-path';
@@ -71,6 +74,7 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
         $stateMachine->getSourcePimConfiguration()->willReturn($sourcePimConfiguration);
         $stateMachine->getSourcePimRealPath()->willReturn($sourcePimRealPath);
         $stateMachine->getSourcePimConnection()->willReturn($sourcePimConnection);
+        $stateMachine->getSourcePimApiParameters()->willReturn($apiParameters);
 
         $stateMachine->setSourcePim(new SourcePim(
             'database_host',
@@ -84,7 +88,8 @@ class S020FromSourcePimConfiguredToSourcePimDetectedSpec extends ObjectBehavior
             null,
             false,
             $sourcePimRealPath,
-            $sourcePimConnection->getWrappedObject()
+            $sourcePimConnection->getWrappedObject(),
+            $apiParameters->getWrappedObject()
         ))->shouldBeCalled();
 
         $this->onSourcePimDetection($event);

@@ -9,9 +9,8 @@ use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
 use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\DatabaseServices\DumpTableMigrator;
 use Akeneo\PimMigration\Infrastructure\LocalFileFetcher;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use integration\Akeneo\PimMigration\DatabaseSetupedTestCase;
@@ -28,8 +27,10 @@ class DumpTableMigratorIntegration extends DatabaseSetupedTestCase
     {
         $this->expectException(DataMigrationException::class);
 
-        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false, '/a-path', new Localhost());
-        $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, '/a-path', new Localhost());
+        $apiParameters = new PimApiParameters('', '', '', '', '');
+
+        $sourcePim = new SourcePim('localhost', 3310, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', null, null, false, null, false, '/a-path', new Localhost(), $apiParameters);
+        $destinationPim = new DestinationPim('localhost', 3311, 'akeneo_pim', 'akeneo_pim', 'akeneo_pim', false, null, '/a-path', new Localhost(), $apiParameters);
 
         $fileFetcherRegistry = new FileFetcherRegistry();
         $fileFetcherRegistry->addFileFetcher(new LocalFileFetcher(new FileSystemHelper()));

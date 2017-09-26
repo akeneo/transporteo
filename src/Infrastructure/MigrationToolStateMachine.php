@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
@@ -73,6 +74,12 @@ class MigrationToolStateMachine
 
     /** @var DownloadMethod */
     protected $downloadMethod;
+
+    /** @var PimApiParameters */
+    protected $sourcePimApiParameters;
+
+    /** @var PimApiParameters */
+    protected $destinationPimApiParameters;
 
     public function __construct(StateMachine $stateMachine)
     {
@@ -224,5 +231,25 @@ class MigrationToolStateMachine
     public function getDownloadMethod(): DownloadMethod
     {
         return $this->downloadMethod;
+    }
+
+    public function getSourcePimApiParameters(): PimApiParameters
+    {
+        return $this->sourcePimApiParameters;
+    }
+
+    public function setSourcePimApiParameters(PimApiParameters $sourcePimApiParameters): void
+    {
+        $this->sourcePimApiParameters = $sourcePimApiParameters;
+    }
+
+    public function getDestinationPimApiParameters(): PimApiParameters
+    {
+        return $this->destinationPimApiParameters;
+    }
+
+    public function setDestinationPimApiParameters(PimApiParameters $destinationPimApiParameters): void
+    {
+        $this->destinationPimApiParameters = $destinationPimApiParameters;
     }
 }

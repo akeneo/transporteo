@@ -24,6 +24,15 @@ from_ready_to_source_pim_configured:
   on_local_configuration:
     composer_json_path_question: "What is the absolute path of the source PIM composer.json on your computer? "
     composer_json_path_error: "Your composer.json path should be an absolute one."
+from_source_pim_configured_to_source_pim_api_configured:
+  on_source_pim_api_configuration:
+    base_uri:
+      question: "What is the base URI to request the API of the source PIM?"
+      error_message: "You should provide a valid URI without parameters."
+    client_id_question: "What is the client id to use to authenticate to the API of the source PIM?"
+    secret_question: "What is the secret associated to this client?"
+    user_name_question: "What is the username to use to authenticate to the API of the source PIM?"
+    user_pwd_question: "What is the password associated to this username?"
 from_source_pim_configured_to_source_pim_detected:
   on_source_pim_detected:
     result: "You want to migrate from %edition% edition with %storage% storage%inner%."
@@ -52,6 +61,11 @@ from_all_accesses_granted_to_destination_pim_downloaded:
     local_pim_path_error: "Your local destination PIM path should be an absolute one."
   on_downloading:
     error: "Impossible to download your PIM: %exception%"
+from_destination_pim_downloaded_to_destination_pim_installed:
+  on_destination_pim_api_configuration:
+    base_uri:
+      question: "What is the base URI to request the API of the destination PIM?"
+      error_message: "You should provide a valid URI without parameters."
 from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated:
   message: "Migrating files data..."
 from_destination_pim_files_migrated_to_destination_pim_structure_migrated:

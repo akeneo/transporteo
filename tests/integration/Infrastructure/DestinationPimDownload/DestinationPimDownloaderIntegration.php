@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace integration\Akeneo\PimMigration\Infrastructure\DestinationPimDownload;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Archive;
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\GitDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\LocalArchiveDestinationPimDownloader;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +39,8 @@ class DestinationPimDownloaderIntegration extends TestCase
             null,
             false,
             '/a-path',
-            new Localhost()
+            new Localhost(),
+            new PimApiParameters('', '', '', '', '')
         );
 
         $downloader->download(

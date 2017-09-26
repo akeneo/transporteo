@@ -14,7 +14,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class S020FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachineSubscriber implements StateMachineSubscriber
+class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
     public static function getSubscribedEvents()
     {
@@ -31,7 +31,12 @@ class S020FromSourcePimConfiguredToSourcePimDetected extends AbstractStateMachin
 
         $sourcePimConfiguration = $stateMachine->getSourcePimConfiguration();
 
-        $sourcePim = SourcePim::fromSourcePimConfiguration($stateMachine->getSourcePimConnection(), $stateMachine->getSourcePimRealPath(), $sourcePimConfiguration);
+        $sourcePim = SourcePim::fromSourcePimConfiguration(
+            $stateMachine->getSourcePimConnection(),
+            $stateMachine->getSourcePimRealPath(),
+            $sourcePimConfiguration,
+            $stateMachine->getSourcePimApiParameters()
+        );
 
         $stateMachine->setSourcePim($sourcePim);
     }

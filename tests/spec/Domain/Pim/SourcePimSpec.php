@@ -3,6 +3,7 @@
 namespace spec\Akeneo\PimMigration\Domain\Pim;
 
 use Akeneo\PimMigration\Domain\Pim\ComposerJson;
+use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\MigrationStep\s020_SourcePimDetection\SourcePimDetectionException;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
@@ -18,7 +19,7 @@ use PhpSpec\ObjectBehavior;
  */
 class SourcePimSpec extends ObjectBehavior
 {
-    public function it_is_initializable(PimConnection $connection)
+    public function it_is_initializable(PimConnection $connection, PimApiParameters $apiParameters)
     {
         $this->beConstructedWith(
             'mysql_host',
@@ -32,7 +33,8 @@ class SourcePimSpec extends ObjectBehavior
             null,
             false,
             '/a-path',
-            $connection
+            $connection,
+            $apiParameters
         );
         $this->shouldHaveType(SourcePim::class);
     }
@@ -40,12 +42,13 @@ class SourcePimSpec extends ObjectBehavior
     public function it_throws_an_exception_if_it_is_not_a_standard(
         PimConnection $connection,
         ComposerJson $composerJson,
-        PimConfiguration $sourcePimConfiguration
+        PimConfiguration $sourcePimConfiguration,
+        PimApiParameters $apiParameters
     ) {
         $composerJson->getRepositoryName()->willReturn('a-repo');
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromSourcePimConfiguration', [$connection, '/source-pim-real-path', $sourcePimConfiguration]);
+        $this->beConstructedThrough('fromSourcePimConfiguration', [$connection, '/source-pim-real-path', $sourcePimConfiguration, $apiParameters]);
         $this->shouldThrow(
             new SourcePimDetectionException(
                 'Your PIM distribution should be either "akeneo/pim-community-standard" or "akeneo/pim-enterprise-standard". It appears you try to migrate a "a-repo" instead.'
@@ -55,13 +58,14 @@ class SourcePimSpec extends ObjectBehavior
     public function it_throws_an_exception_if_it_is_not_a_one_dot_seven(
         PimConnection $connection,
         ComposerJson $composerJson,
-        PimConfiguration $sourcePimConfiguration
+        PimConfiguration $sourcePimConfiguration,
+        PimApiParameters $apiParameters
     ) {
         $composerJson->getRepositoryName()->willReturn('akeneo/pim-community-standard');
         $composerJson->getDependencies()->willReturn(new Map(['akeneo/pim-community-dev' => '~1.6']));
         $sourcePimConfiguration->getComposerJson()->willReturn($composerJson);
 
-        $this->beConstructedThrough('fromSourcePimConfiguration', [$connection, '/source-pim-real-path', $sourcePimConfiguration]);
+        $this->beConstructedThrough('fromSourcePimConfiguration', [$connection, '/source-pim-real-path', $sourcePimConfiguration, $apiParameters]);
 
         $this->shouldThrow(
             new SourcePimDetectionException(

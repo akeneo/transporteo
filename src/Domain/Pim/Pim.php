@@ -29,4 +29,6 @@ interface Pim
     public function absolutePath(): string;
 
     public function getConnection(): PimConnection;
+
+    public function getApiParameters(): PimApiParameters;
 }

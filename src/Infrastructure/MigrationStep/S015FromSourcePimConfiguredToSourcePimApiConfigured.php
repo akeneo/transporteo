@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s015_SourcePimApiConfiguration\Sour
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
 use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,9 +23,9 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
     /** @var PimApiClientBuilder */
     private $apiClientBuilder;
 
-    public function __construct(Translator $translator, PimApiClientBuilder $apiClientBuilder)
+    public function __construct(Translator $translator, LoggerInterface $logger, PimApiClientBuilder $apiClientBuilder)
     {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
 
         $this->apiClientBuilder = $apiClientBuilder;
     }

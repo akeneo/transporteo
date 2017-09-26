@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMigrator;
+use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -19,9 +21,9 @@ class S140FromDestinationPimReferenceDataMigratedToDestinationPimProductMigrated
     /** @var ProductMigrator */
     private $productMigrator;
 
-    public function __construct(Translator $translator, ProductMigrator $productMigrator)
+    public function __construct(Translator $translator, LoggerInterface $logger, ProductMigrator $productMigrator)
     {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
 
         $this->productMigrator = $productMigrator;
     }

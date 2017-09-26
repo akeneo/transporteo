@@ -37,7 +37,7 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
         parent::setUp();
 
         $this->chainedConsole = new ChainedConsole();
-        $this->chainedConsole->addConsole(new LocalConsole(new ApiCommandExecutor(new PimApiClientBuilder()), new LocalMySqlQueryExecutor(), new NullLogger()));
+        $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor(), new ApiCommandExecutor(new PimApiClientBuilder()), new NullLogger()));
 
         $sourcePimConfig = $this->getConfig('pim_community_standard_one_dot_seven_with_reference_data');
         $destinationPimConfig = $this->getConfig('pim_community_standard_two_dot_zero');

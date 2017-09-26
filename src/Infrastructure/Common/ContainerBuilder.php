@@ -121,7 +121,7 @@ final class ContainerBuilder
 
         $logsFiles = [
             'all' => $logsDir.DIRECTORY_SEPARATOR.'migration.log',
-            'error' => $logsDir.DIRECTORY_SEPARATOR.'error.log'
+            'error' => $logsDir.DIRECTORY_SEPARATOR.'error.log',
         ];
 
         if (!is_dir($logsDir)) {

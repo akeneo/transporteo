@@ -63,33 +63,6 @@ class SshFileFetcher implements FileFetcher
         return $pimConnection instanceof SshConnection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fetchMediaFiles(PimConnection $connection, string $sourcePath, string $destinationPath): void
-    {
-        $sftp = $this->createSftpConnection($connection);
-        $files = $sftp->nlist($sourcePath);
-
-        if (!is_array($files)) {
-            throw new FileNotFoundException("The directory {$sourcePath} is not reachable", $sourcePath);
-        }
-
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath);
-        }
-
-        foreach ($files as $file) {
-            $file = (string) $file;
-
-            if (1 === preg_match('/^[a-z0-9]$/', $file)) {
-                $this->fetchMediaFiles($connection, $sourcePath.DIRECTORY_SEPARATOR.$file, $destinationPath.DIRECTORY_SEPARATOR.$file);
-            } elseif ('.' !== $file && '..' !== $file) {
-                $sftp->get($sourcePath.DIRECTORY_SEPARATOR.$file, $destinationPath.DIRECTORY_SEPARATOR.$file);
-            }
-        }
-    }
-
     private function createSftpConnection(PimConnection $connection): SFTP
     {
         if (!$connection instanceof SshConnection) {

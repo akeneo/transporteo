@@ -69,7 +69,7 @@ class DestinationPimSpec extends ObjectBehavior
         //TODO CORRECT VERSION
         $this->shouldThrow(
             new DestinationPimDetectionException(
-                'Your destination PIM version should be 1.8.x-dev@dev currently : ~1.6'
+                'Your destination PIM version should be 2.0.x-dev@dev currently : ~1.6'
             ))->duringInstantiation();
     }
 }

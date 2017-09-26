@@ -33,6 +33,7 @@ workflows:
             - 'destination_pim_group_migrated'
             - 'destination_pim_extra_data_migrated'
             - 'destination_pim_reference_data_migrated'
+            - 'destination_pim_product_migrated'
         transitions:
             ask_source_pim_location:
                 from: 'ready'
@@ -109,3 +110,6 @@ workflows:
             destination_pim_reference_data_migration:
                 from: 'destination_pim_extra_data_migrated'
                 to: 'destination_pim_reference_data_migrated'
+            destination_pim_product_migration:
+                from: 'destination_pim_reference_data_migrated'
+                to: 'destination_pim_product_migrated'

@@ -66,6 +66,12 @@ class DestinationPim extends AbstractPim implements Pim
                 ->first()['url'];
         }
 
+        $realPath = realpath(str_replace(
+            DIRECTORY_SEPARATOR.'composer.json',
+            '',
+            $destinationPimConfiguration->getComposerJson()->getPath()
+        ));
+
         return new self(
             $databaseHost,
             $databasePort,
@@ -74,11 +80,7 @@ class DestinationPim extends AbstractPim implements Pim
             $databasePassword,
             $isEnterpriseEdition,
             $enterpriseRepository,
-            realpath(str_replace(
-                DIRECTORY_SEPARATOR.'composer.json',
-                '',
-                $destinationPimConfiguration->getComposerJson()->getPath()
-            )),
+            $realPath,
             $pimConnection,
             $apiParameters
         );
@@ -87,6 +89,6 @@ class DestinationPim extends AbstractPim implements Pim
     protected static function getPimVersionAllowed(): string
     {
         //TODO PUT 2.0
-        return '1.8.x-dev@dev';
+        return '2.0.x-dev@dev';
     }
 }

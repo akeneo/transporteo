@@ -68,6 +68,13 @@ class LocalFileFetcherSpec extends ObjectBehavior
         $this->fetch($connection, $path, true)->shouldReturn('a-real-path');
     }
 
+    public function it_fetches_the_media_files(PimConnection $connection, $fileSystemHelper)
+    {
+        $fileSystemHelper->copyDirectory('/source/path', '/destination/path')->shouldBeCalled();
+
+        $this->fetchMediaFiles($connection, '/source/path', '/destination/path');
+    }
+    
     function letGo()
     {
         $fs = new Filesystem();

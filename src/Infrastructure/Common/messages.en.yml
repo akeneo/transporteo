@@ -82,3 +82,5 @@ from_destination_pim_group_migrated_to_destination_pim_extra_data_migrated:
   message: "Migrating extra data..."
 from_destination_pim_extra_data_migrated_to_destination_pim_reference_data_migrated:
   message: "Migrating reference data..."
+from_destination_pim_reference_data_migrated_to_destination_pim_product_migrated:
+  message: "Migrating products data..."

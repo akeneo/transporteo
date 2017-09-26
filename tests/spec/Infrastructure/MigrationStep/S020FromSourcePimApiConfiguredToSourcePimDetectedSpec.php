@@ -62,6 +62,10 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
 
         $sourcePimConfiguration->getPimParameters()->willReturn($pimParameters);
 
+        $pimParameters->getCatalogStorageDir()->willReturn('%kernel.root_dir%/file_storage/catalog');
+        $pimParameters->getMongoDbDatabase()->willReturn(null);
+        $pimParameters->getMongoDbInformation()->willReturn(null);
+
         $parametersYml->getDatabaseHost()->willReturn('database_host');
         $parametersYml->getDatabaseName()->willReturn('database_name');
         $parametersYml->getDatabasePort()->willReturn(3306);

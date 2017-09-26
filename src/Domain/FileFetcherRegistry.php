@@ -25,6 +25,11 @@ class FileFetcherRegistry
         return $this->get($connection)->fetch($connection, $filePath, $withLocalCopy);
     }
 
+    public function fetchMediaFiles(PimConnection $connection, string $sourcePath, string $relativeDestinationPath): void
+    {
+        $this->get($connection)->fetchMediaFiles($connection, $sourcePath, $relativeDestinationPath);
+    }
+
     public function addFileFetcher(FileFetcher $fileFetcher): void
     {
         $this->fileFetchers[] = $fileFetcher;

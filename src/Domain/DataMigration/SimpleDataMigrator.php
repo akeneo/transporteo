@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\DataMigration;
 
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Migrate a table without extra process.
@@ -21,10 +22,14 @@ class SimpleDataMigrator implements DataMigrator
     /** @var string */
     private $supportedTableName;
 
-    public function __construct(TableMigrator $tableMigrator, string $supportedTableName)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(TableMigrator $tableMigrator, LoggerInterface $logger, string $supportedTableName)
     {
         $this->tableMigrator = $tableMigrator;
         $this->supportedTableName = $supportedTableName;
+        $this->logger = $logger;
     }
 
     /**
@@ -32,6 +37,8 @@ class SimpleDataMigrator implements DataMigrator
      */
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
+        $this->logger->info(sprintf('SimpleDataMigrator: Migrate table %s', $this->supportedTableName));
         $this->tableMigrator->migrate($sourcePim, $destinationPim, $this->supportedTableName);
+        $this->logger->info(sprintf('SimpleDataMigrator : %s table migrated', $this->supportedTableName));
     }
 }

@@ -17,6 +17,8 @@ use Akeneo\PimMigration\Infrastructure\Cli\ApiCommandExecutor;
 use Akeneo\PimMigration\Infrastructure\Cli\LocalConsole;
 use Akeneo\PimMigration\Infrastructure\Cli\LocalMySqlQueryExecutor;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
+use Monolog\Logger;
+use Psr\Log\NullLogger;
 
 /**
  * Abstract Test case preparing database.
@@ -35,7 +37,7 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
         parent::setUp();
 
         $this->chainedConsole = new ChainedConsole();
-        $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor(), new ApiCommandExecutor(new PimApiClientBuilder())));
+        $this->chainedConsole->addConsole(new LocalConsole(new LocalMySqlQueryExecutor(), new ApiCommandExecutor(new PimApiClientBuilder()), new NullLogger()));
 
         $sourcePimConfig = $this->getConfig('pim_community_standard_one_dot_seven_with_reference_data');
         $destinationPimConfig = $this->getConfig('pim_community_standard_two_dot_zero');

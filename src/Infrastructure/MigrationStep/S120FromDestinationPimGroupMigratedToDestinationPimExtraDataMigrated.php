@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,9 +23,10 @@ class S120FromDestinationPimGroupMigratedToDestinationPimExtraDataMigrated exten
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         ExtraDataMigrator $extraDataMigrator
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
         $this->extraDataMigrator = $extraDataMigrator;
     }
 
@@ -40,11 +42,15 @@ class S120FromDestinationPimGroupMigratedToDestinationPimExtraDataMigrated exten
 
     public function onDestinationPimExtraDataMigration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_group_migrated_to_destination_pim_extra_data_migrated.message'));
 
         $this->extraDataMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+
+        $this->logExit(__FUNCTION__);
     }
 }

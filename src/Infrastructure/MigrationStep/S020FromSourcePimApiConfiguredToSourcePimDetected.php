@@ -26,6 +26,8 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
 
     public function onSourcePimDetection(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -39,10 +41,14 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
         );
 
         $stateMachine->setSourcePim($sourcePim);
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function onSourcePimDetected(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -63,5 +69,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
                 ]
             )
         );
+
+        $this->logExit(__FUNCTION__);
     }
 }

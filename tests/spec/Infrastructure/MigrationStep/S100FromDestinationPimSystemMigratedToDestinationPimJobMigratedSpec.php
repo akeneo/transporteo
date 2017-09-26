@@ -11,6 +11,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S100FromDestinationPimSystemMigratedToDestinationPimJobMigrated;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -24,10 +25,11 @@ class S100FromDestinationPimSystemMigratedToDestinationPimJobMigratedSpec extend
 {
     public function let(
         Translator $translator,
+        LoggerInterface $logger,
         JobMigrator $migrator,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($translator, $migrator);
+        $this->beConstructedWith($translator, $logger, $migrator);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

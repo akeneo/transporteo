@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Infrastructure\MigrationStep\S040FromAllAccessesGrantedT
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -26,10 +27,11 @@ class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBeh
 {
     public function let(
         Translator $translator,
+        LoggerInterface $logger,
         DestinationPimDownloaderHelper $destinationPimDownloaderHelper,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($translator, $destinationPimDownloaderHelper);
+        $this->beConstructedWith($translator, $logger, $destinationPimDownloaderHelper);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

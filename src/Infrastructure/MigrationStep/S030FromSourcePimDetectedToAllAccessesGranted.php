@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerif
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -25,9 +26,9 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
     /** @var AccessVerificator */
     private $accessVerificator;
 
-    public function __construct(Translator $translator, AccessVerificator $accessVerificator)
+    public function __construct(Translator $translator, LoggerInterface $logger, AccessVerificator $accessVerificator)
     {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
         $this->accessVerificator = $accessVerificator;
     }
 
@@ -43,12 +44,16 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
 
     public function grantAllAccesses(GuardEvent $event)
     {
+        $this->logGuardEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $sourcePim = $stateMachine->getSourcePim();
 
         if (false === $sourcePim->isEnterpriseEdition()) {
+            $this->logGuardResult(__FUNCTION__, false);
+
             return;
         }
 
@@ -56,6 +61,8 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
 
         if (!$sourcePimLocation instanceof SshConnection) {
             $event->setBlocked(true);
+
+            $this->logGuardResult(__FUNCTION__, true);
 
             return;
         }
@@ -71,11 +78,15 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
                 )
             );
             $event->setBlocked(true);
+
+            $this->logGuardResult(__FUNCTION__, true);
         }
     }
 
     public function onAskAnSshKey(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -98,10 +109,14 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
             );
 
         $stateMachine->setEnterpriseAccessAllowedKey(new SshKey($sshPath));
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function grantEeAccesses(GuardEvent $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $sourcePim = $stateMachine->getSourcePim();
@@ -110,10 +125,14 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
         $serverAccessInformation = SshConnection::fromString($sourcePim->getEnterpriseRepository(), $sshKey);
 
         $this->accessVerificator->verify($serverAccessInformation);
+
+        $this->logExit(__FUNCTION__);
     }
 
     public function onAllAccessesGranted(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
@@ -133,5 +152,7 @@ class S030FromSourcePimDetectedToAllAccessesGranted extends AbstractStateMachine
                 ]
             )
         );
+
+        $this->logExit(__FUNCTION__);
     }
 }

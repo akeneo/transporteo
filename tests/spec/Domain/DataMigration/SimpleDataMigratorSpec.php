@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 
 /**
  * Spec for Simple Migrator.
@@ -18,8 +19,8 @@ use PhpSpec\ObjectBehavior;
  */
 class SimpleDataMigratorSpec extends ObjectBehavior
 {
-    public function let(TableMigrator $migrator) {
-        $this->beConstructedWith($migrator, 'table_test');
+    public function let(TableMigrator $migrator, LoggerInterface $logger) {
+        $this->beConstructedWith($migrator, $logger, 'table_test');
     }
 
     public function it_is_initializable()

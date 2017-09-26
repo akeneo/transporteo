@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\Transition;
 
@@ -81,14 +82,19 @@ class MigrationToolStateMachine
     /** @var PimApiParameters */
     protected $destinationPimApiParameters;
 
-    public function __construct(StateMachine $stateMachine)
+    /** @var LoggerInterface */
+    protected $logger;
+
+    public function __construct(StateMachine $stateMachine, LoggerInterface $logger)
     {
         $this->stateMachineMarker = $stateMachine;
+        $this->logger = $logger;
     }
 
     public function start(): void
     {
         while (null !== $nextTransition = $this->getNextTransition()) {
+            $this->logger->debug(sprintf('STATE MACHINE: apply %s transition', $nextTransition->getName()));
             $this->stateMachineMarker->apply($this, $nextTransition->getName());
         }
     }

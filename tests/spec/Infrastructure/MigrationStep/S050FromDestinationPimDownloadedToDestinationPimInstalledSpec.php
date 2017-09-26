@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurationChecker;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimConfigurator;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
@@ -14,16 +15,10 @@ use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
-use Akeneo\PimMigration\Infrastructure\Command\LocalCommandLauncherFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimConfigurationCheckerFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimEditionCheckerFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimParametersYmlGeneratorFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsInstallerFactory;
-use Akeneo\PimMigration\Infrastructure\DestinationPimInstallation\DestinationPimSystemRequirementsCheckerFactory;
-use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S050FromDestinationPimDownloadedToDestinationPimInstalled;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use Prophecy\Argument;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 use Symfony\Component\Translation\Translator;
@@ -40,6 +35,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 {
     public function let(
         Translator $translator,
+        LoggerInterface $logger,
         DestinationPimConfigurator $destinationPimConfigurator,
         DestinationPimSystemRequirementsInstallerHelper $destinationPimSystemRequirementsInstallerHelper,
         DestinationPimConfigurationChecker $destinationPimConfigurationChecker,
@@ -50,6 +46,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     {
         $this->beConstructedWith(
             $translator,
+            $logger,
             $destinationPimConfigurator,
             $destinationPimSystemRequirementsInstallerHelper,
             $destinationPimConfigurationChecker,

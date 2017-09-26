@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Infrastructure\MigrationStep\S015FromSourcePimConfigured
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -24,9 +25,9 @@ use Symfony\Component\Workflow\Event\Event;
  */
 class S015FromSourcePimConfiguredToSourcePimApiConfiguredSpec extends ObjectBehavior
 {
-    public function let(Translator $translator, PimApiClientBuilder $apiClientBuilder, PrinterAndAsker $printerAndAsker)
+    public function let(Translator $translator, LoggerInterface $logger, PimApiClientBuilder $apiClientBuilder, PrinterAndAsker $printerAndAsker)
     {
-        $this->beConstructedWith($translator, $apiClientBuilder);
+        $this->beConstructedWith($translator, $logger, $apiClientBuilder);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

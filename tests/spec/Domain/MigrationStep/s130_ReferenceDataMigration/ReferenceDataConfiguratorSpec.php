@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\ReferenceDataConfigurator;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use resources\Akeneo\PimMigration\ResourcesFileLocator;
 
 /**
@@ -18,9 +19,9 @@ use resources\Akeneo\PimMigration\ResourcesFileLocator;
  */
 class ReferenceDataConfiguratorSpec extends ObjectBehavior
 {
-    public function let(FileSystemHelper $fileSystem)
+    public function let(FileSystemHelper $fileSystem, LoggerInterface $logger)
     {
-        $this->beConstructedWith($fileSystem);
+        $this->beConstructedWith($fileSystem, $logger);
     }
 
     public function it_is_initializable()

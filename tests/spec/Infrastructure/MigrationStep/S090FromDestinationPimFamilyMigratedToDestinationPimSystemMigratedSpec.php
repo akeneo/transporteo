@@ -11,6 +11,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S090FromDestinationPimFamilyMigratedToDestinationPimSystemMigrated;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -24,10 +25,11 @@ class S090FromDestinationPimFamilyMigratedToDestinationPimSystemMigratedSpec ext
 {
     public function let(
         Translator $translator,
+        LoggerInterface $logger,
         SystemMigrator $migrator,
         PrinterAndAsker $printerAndAsker
     ) {
-        $this->beConstructedWith($translator, $migrator);
+        $this->beConstructedWith($translator, $logger, $migrator);
         $this->setPrinterAndAsker($printerAndAsker);
     }
 

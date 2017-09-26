@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
@@ -22,9 +23,10 @@ class S110FromDestinationPimJobMigratedToDestinationPimGroupMigrated extends Abs
 
     public function __construct(
         Translator $translator,
+        LoggerInterface $logger,
         GroupMigrator $groupDataMigrator
     ) {
-        parent::__construct($translator);
+        parent::__construct($translator, $logger);
         $this->groupDataMigrator = $groupDataMigrator;
     }
 
@@ -40,11 +42,15 @@ class S110FromDestinationPimJobMigratedToDestinationPimGroupMigrated extends Abs
 
     public function onDestinationPimGroupMigration(Event $event)
     {
+        $this->logEntering(__FUNCTION__);
+
         /** @var MigrationToolStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_job_migrated_to_destination_pim_group_migrated.message'));
 
         $this->groupDataMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+
+        $this->logExit(__FUNCTION__);
     }
 }

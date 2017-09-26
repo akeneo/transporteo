@@ -30,9 +30,6 @@ class ProductMigrator implements DataMigrator
     private $console;
 
     /** @var DataMigrator */
-    private $productMediaMigrator;
-
-    /** @var DataMigrator */
     private $productAssociationMigrator;
 
     /** @var LoggerInterface */
@@ -41,13 +38,11 @@ class ProductMigrator implements DataMigrator
     public function __construct(
         int $batchSize,
         ChainedConsole $console,
-        DataMigrator $productMediaMigrator,
         DataMigrator $productAssociationMigrator,
         ?LoggerInterface $logger
     ) {
         $this->batchSize = $batchSize;
         $this->console = $console;
-        $this->productMediaMigrator = $productMediaMigrator;
         $this->productAssociationMigrator = $productAssociationMigrator;
         $this->logger = $logger;
 
@@ -58,8 +53,6 @@ class ProductMigrator implements DataMigrator
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $this->productMediaMigrator->migrate($sourcePim, $destinationPim);
-
         $this->migrateProducts($sourcePim, $destinationPim);
 
         $this->productAssociationMigrator->migrate($sourcePim, $destinationPim);

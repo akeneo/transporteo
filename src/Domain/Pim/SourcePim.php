@@ -37,7 +37,6 @@ class SourcePim extends AbstractPim implements Pim
         ?string $enterpriseRepository,
         bool $hasIvb,
         string $path,
-        string $catalogStorageDir,
         PimConnection $pimConnection,
         PimApiParameters $apiParameters
     ) {
@@ -50,7 +49,6 @@ class SourcePim extends AbstractPim implements Pim
             $isEnterpriseEdition,
             $enterpriseRepository,
             $path,
-            $catalogStorageDir,
             $pimConnection,
             $apiParameters
         );
@@ -117,10 +115,6 @@ class SourcePim extends AbstractPim implements Pim
                 ->first()['url'];
         }
 
-        $catalogStorageDir = $sourcePimConfiguration->getPimParameters()->getCatalogStorageDir();
-        $kernelRootDir = rtrim($realPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'app';
-        $catalogStorageDir = str_replace('%kernel.root_dir%', $kernelRootDir, $catalogStorageDir);
-
         return new self(
             $databaseHost,
             $databasePort,
@@ -133,7 +127,6 @@ class SourcePim extends AbstractPim implements Pim
             $enterpriseRepository,
             $hasIvb,
             $realPath,
-            $catalogStorageDir,
             $pimConnection,
             $apiParameters
         );

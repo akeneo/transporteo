@@ -33,7 +33,6 @@ class SourcePimSpec extends ObjectBehavior
             null,
             false,
             '/a-path',
-            'another-path',
             $connection,
             $apiParameters
         );

@@ -40,9 +40,6 @@ abstract class AbstractPim implements Pim
     /** @var string */
     private $absolutePath;
 
-    /** @var string */
-    private $catalogStorageDir;
-
     /** @var PimConnection */
     private $pimConnection;
 
@@ -58,7 +55,6 @@ abstract class AbstractPim implements Pim
         bool $isEnterpriseEdition,
         ?string $enterpriseRepository,
         string $absolutePath,
-        string $catalogStorageDir,
         PimConnection $pimConnection,
         PimApiParameters $apiParameters
     ) {
@@ -70,7 +66,6 @@ abstract class AbstractPim implements Pim
         $this->isEnterpriseEdition = $isEnterpriseEdition;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->absolutePath = $absolutePath;
-        $this->catalogStorageDir = $catalogStorageDir;
         $this->pimConnection = $pimConnection;
         $this->apiParameters = $apiParameters;
     }
@@ -130,10 +125,5 @@ abstract class AbstractPim implements Pim
     public function getApiParameters(): PimApiParameters
     {
         return $this->apiParameters;
-    }
-
-    public function getCatalogStorageDir(): string
-    {
-        return $this->catalogStorageDir;
     }
 }

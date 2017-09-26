@@ -31,6 +31,4 @@ interface Pim
     public function getConnection(): PimConnection;
 
     public function getApiParameters(): PimApiParameters;
-
-    public function getCatalogStorageDir(): string;
 }

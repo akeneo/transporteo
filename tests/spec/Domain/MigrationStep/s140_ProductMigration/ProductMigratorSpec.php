@@ -22,9 +22,9 @@ use Psr\Log\LoggerInterface;
  */
 class ProductMigratorSpec extends ObjectBehavior
 {
-    public function let(ChainedConsole $console, DataMigrator $productMediaMigrator, DataMigrator $productAssociationMigrator, LoggerInterface $logger)
+    public function let(ChainedConsole $console,DataMigrator $productAssociationMigrator, LoggerInterface $logger)
     {
-        $this->beConstructedWith(2, $console, $productMediaMigrator, $productAssociationMigrator, $logger);
+        $this->beConstructedWith(2, $console, $productAssociationMigrator, $logger);
     }
 
     public function it_is_initializable()
@@ -39,13 +39,11 @@ class ProductMigratorSpec extends ObjectBehavior
         CommandResult $firstUpsertProductsResult,
         CommandResult $secondUpsertProductsResult,
         $console,
-        $productMediaMigrator,
         $productAssociationMigrator
     )
     {
         $destinationPim->getDatabaseName()->willReturn('destination_database');
 
-        $productMediaMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $productAssociationMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
         $products = $this->getSourceProducts();

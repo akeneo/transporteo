@@ -72,10 +72,6 @@ class DestinationPim extends AbstractPim implements Pim
             $destinationPimConfiguration->getComposerJson()->getPath()
         ));
 
-        $catalogStorageDir = $destinationPimConfiguration->getPimParameters()->getCatalogStorageDir();
-        $kernelRootDir = rtrim($realPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'app';
-        $catalogStorageDir = str_replace('%kernel.root_dir%', $kernelRootDir, $catalogStorageDir);
-
         return new self(
             $databaseHost,
             $databasePort,
@@ -85,7 +81,6 @@ class DestinationPim extends AbstractPim implements Pim
             $isEnterpriseEdition,
             $enterpriseRepository,
             $realPath,
-            $catalogStorageDir,
             $pimConnection,
             $apiParameters
         );

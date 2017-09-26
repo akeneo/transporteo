@@ -119,15 +119,24 @@ final class ContainerBuilder
 
         $logsDir = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'var'.DIRECTORY_SEPARATOR.'logs';
 
-        $logsFile = $logsDir.DIRECTORY_SEPARATOR.'migration_log.txt';
+        $logsFiles = [
+            'all' => $logsDir.DIRECTORY_SEPARATOR.'migration.log',
+            'error' => $logsDir.DIRECTORY_SEPARATOR.'error.log'
+        ];
 
-        if (!$fileSystemHelper->fileExists($logsFile)) {
+        if (!is_dir($logsDir)) {
             mkdir($logsDir);
-            file_put_contents($logsFile, '');
+        }
+
+        foreach ($logsFiles as $logsFile) {
+            if (!$fileSystemHelper->fileExists($logsFile)) {
+                file_put_contents($logsFile, '');
+            }
         }
 
         $loggerDefinition = new Definition(Logger::class, ['app']);
-        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsFile)]);
+        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsFiles['all'])]);
+        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsFiles['error'], Logger::WARNING)]);
 
         $container->setDefinition('logger', $loggerDefinition);
         $container->setAlias(LoggerInterface::class, 'logger');

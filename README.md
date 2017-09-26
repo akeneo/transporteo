@@ -44,8 +44,7 @@ Moreover, if you migrate an _Enterprise Edition_, you'll be asked to provide a *
 ### Install the tool and its dependencies
 
 ```bash
-  $ git clone https://github.com/akeneo/migration-tool.git
-  $ composer.phar install
+  $ composer.phar create-project "akeneo/transporteo":"dev-master"
 ```
 
 ## How to use

@@ -11,7 +11,6 @@ use Akeneo\PimMigration\Domain\Pim\PimConfiguration;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Workflow\StateMachine;
@@ -60,9 +59,6 @@ class MigrationToolStateMachine
 
     /** @var PimConfiguration */
     protected $destinationPimConfiguration;
-
-    /** @var bool */
-    protected $useDocker;
 
     /** @var PimServerInformation */
     protected $sourcePimServerInformation;
@@ -188,11 +184,6 @@ class MigrationToolStateMachine
     public function getDestinationPimConfiguration(): PimConfiguration
     {
         return $this->destinationPimConfiguration;
-    }
-
-    public function useDocker(): bool
-    {
-        return $this->destinationPimConnection instanceof DockerConnection;
     }
 
     public function setSourcePimServerInformation(PimServerInformation $pimServerInformation): void

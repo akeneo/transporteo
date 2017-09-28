@@ -45,7 +45,9 @@ class MigrationBundleInstaller
             DIRECTORY_SEPARATOR
         );
 
-        $appKernelEmptyLine = $this->fileSystem->getFileLine($appKernelPath, 23);
+        $appKernelEmptyLineNumber = $pim->isEnterpriseEdition() ? 31 : 23;
+
+        $appKernelEmptyLine = $this->fileSystem->getFileLine($appKernelPath, $appKernelEmptyLineNumber);
 
         $indentation = '            ';
         $lineAfterClone = $indentation.'// your app bundles should be registered here'.PHP_EOL;
@@ -55,7 +57,7 @@ class MigrationBundleInstaller
             throw new \InvalidArgumentException('The AppKernel is not a raw kernel');
         }
 
-        $this->fileSystem->updateLineInFile($appKernelPath, 23, $lineToAdd);
+        $this->fileSystem->updateLineInFile($appKernelPath, $appKernelEmptyLineNumber, $lineToAdd);
 
         $this->logger->debug('MigrationBundleInstaller: Kernel setup finish');
     }

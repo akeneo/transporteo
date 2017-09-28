@@ -15,8 +15,6 @@ workflows:
             - 'source_pim_configured'
             - 'source_pim_api_configured'
             - 'source_pim_detected'
-            - 'ee_access_pending'
-            - 'all_accesses_granted'
             - 'destination_pim_location_guessed'
             - 'destination_pim_downloaded'
             - 'destination_pim_pre_configured'
@@ -50,17 +48,8 @@ workflows:
             source_pim_detection:
                 from: 'source_pim_api_configured'
                 to: 'source_pim_detected'
-            grant_all_accesses:
-                from: 'source_pim_detected'
-                to: 'all_accesses_granted'
-            ee_ask_an_ssh_key:
-                from: 'source_pim_detected'
-                to: 'ee_access_pending'
-            grant_ee_accesses:
-                from: 'ee_access_pending'
-                to: 'all_accesses_granted'
             ask_destination_pim_location:
-                from: 'all_accesses_granted'
+                from: 'source_pim_detected'
                 to: 'destination_pim_location_guessed'
             download_destination_pim:
                 from: 'destination_pim_location_guessed'

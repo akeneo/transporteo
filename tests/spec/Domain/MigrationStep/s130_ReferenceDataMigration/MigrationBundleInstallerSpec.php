@@ -29,7 +29,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
         $this->shouldHaveType(MigrationBundleInstaller::class);
     }
 
-    public function it_installs(
+    public function it_installs_a_community_edition(
         Pim $pim,
         $fileSystem
     ) {
@@ -59,6 +59,8 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
         );
+
+        $pim->isEnterpriseEdition()->willReturn(false);
 
         $fileSystem->getFileLine($appKernelPath, 23)->willReturn(
             '            // your app bundles should be registered here'.PHP_EOL
@@ -71,7 +73,7 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
         $this->install($pim);
     }
 
-    public function it_throws_an_exception(
+    public function it_throws_an_exception_for_community_edition(
         Pim $pim,
         $fileSystem
     ) {
@@ -101,6 +103,8 @@ class MigrationBundleInstallerSpec extends ObjectBehavior
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
         );
+
+        $pim->isEnterpriseEdition()->willReturn(false);
 
         $fileSystem->getFileLine($appKernelPath, 23)->willReturn(
             '          A weird line'.PHP_EOL

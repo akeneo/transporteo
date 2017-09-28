@@ -34,6 +34,8 @@ class DatabaseComparator extends Command
             ->setName('akeneo-pim:database-comparator')
             ->setDescription('Compare two databases/tables from two databases')
             ->setHelp('You need a local database 1.7 named akeneo_pim and a local database 2.0 named -akeneo_pim_last_version_complete')
+            ->addArgument('source_pim', InputArgument::OPTIONAL, 'The source PIM database name', 'akeneo_pim')
+            ->addArgument('destination_pim', InputArgument::OPTIONAL, 'the destination PIM database name', 'akeneo_pim_last_version_complete')
             ->addArgument('table_name', InputArgument::OPTIONAL);
     }
 
@@ -42,8 +44,8 @@ class DatabaseComparator extends Command
         $io = new SymfonyStyle($input, $output);
         $tableName = $input->getArgument('table_name');
 
-        $sourcePimConnection = $this->getConnection('localhost', 'akeneo_pim');
-        $destinationPimConnection = $this->getConnection('localhost', 'akeneo_pim_last_version_complete');
+        $sourcePimConnection = $this->getConnection('localhost', $input->getArgument('source_pim'));
+        $destinationPimConnection = $this->getConnection('localhost', $input->getArgument('destination_pim'));
 
         if (null !== $tableName) {
             $this->compareTable($sourcePimConnection, $destinationPimConnection, $tableName, $io);

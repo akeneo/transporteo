@@ -201,13 +201,6 @@ services:
       $isEeOnly: true
     tags: ['migration_tool.structure_migrator']
 
-  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetChaennelVariationConfiguration:
-    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
-    arguments:
-      $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
-      $isEeOnly: true
-    tags: ['migration_tool.structure_migrator']
-
 ## SYSTEM MIGRATORS
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator: ~
@@ -397,6 +390,108 @@ services:
 ### EXTRA DATA MIGRATOR
 
   Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator: ~
+
+### ENTERPRISE EDITION DATA MIGRATOR
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EnterpriseEditionDataMigration\EnterpriseEditionDataMigrator: ~
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\RuleEngineRuleDefinition:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'akeneo_rule_engine_rule_definition'
+        $isEeOnly: true
+      tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\RuleEngineRuleRelation:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'akeneo_rule_engine_rule_relation'
+        $isEeOnly: true
+      tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAsset:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pimee_product_asset_asset'
+        $isEeOnly: true
+      tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAssetCategory:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pimee_product_asset_asset_category'
+        $isEeOnly: true
+      tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAssetTag:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pimee_product_asset_asset_category'
+        $isEeOnly: true
+      tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAssetChannelVariationConfiguration:
+      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+      arguments:
+        $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
+        $isEeOnly: true
+      tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetChaennelVariationConfiguration:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetFileMetadata:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_file_metadata'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetReference:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_reference'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetVariation:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_variation'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetCategoryAccess:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_security_asset_category_access'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\TwaProject:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_teamwork_assistant_project'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\TwaProjectStatus:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_teamwork_assistant_project_status'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\TwaProjectUserGroup:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_teamwork_assistant_project_user_group'
+      $isEeOnly: true
+    tags: ['migration_tool.enterprise_edition_data_migrator']
 
 ### REFERENCE DATA MIGRATOR
 

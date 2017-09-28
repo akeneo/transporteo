@@ -180,6 +180,34 @@ services:
       $supportedTableName: 'pim_catalog_attribute_requirement'
     tags: ['migration_tool.structure_migrator']
 
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetCategory:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_category'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetCategoryTranslation:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_category_translation'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetTag:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_tag'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetChaennelVariationConfiguration:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
 ## SYSTEM MIGRATORS
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator: ~

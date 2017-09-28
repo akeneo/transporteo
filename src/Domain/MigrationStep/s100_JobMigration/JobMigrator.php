@@ -48,7 +48,7 @@ class JobMigrator
                 $destinationPim->getDatabaseName()
             );
 
-            $queries += $this->getUpdateJobInstanceQueries($destinationPim);
+            $queries = array_merge($queries, $this->getUpdateJobInstanceQueries($destinationPim));
 
             foreach ($queries as $query) {
                 $this->console->execute(new MySqlExecuteCommand($query), $destinationPim);

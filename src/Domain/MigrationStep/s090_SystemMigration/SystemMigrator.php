@@ -10,7 +10,6 @@ use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Ds\Set;
 
 /**
  * System migration `user`, `group`, `role`.
@@ -51,8 +50,8 @@ class SystemMigrator
                 'CREATE INDEX IDX_BD5E4023C7440455 ON %s.pim_api_access_token (client);',
                 $destinationPim->getDatabaseName()
             );
-            $queries[] = sprintf('
-              UPDATE %s.pim_api_client SET label = id WHERE label IS NULL;',
+            $queries[] = sprintf(
+                'UPDATE %s.pim_api_client SET label = id WHERE label IS NULL;',
                 $destinationPim->getDatabaseName()
             );
 

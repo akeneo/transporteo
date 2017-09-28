@@ -29,7 +29,7 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
         $this->shouldHaveType(ReferenceDataConfigurator::class);
     }
 
-    public function it_configures(
+    public function it_configures_an_usual_reference_data(
         Pim $pim,
         $fileSystem
     ) {
@@ -120,7 +120,7 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
 
         $sampleEntityPath = sprintf('%s%sEntity.php', $referenceDataMigrationConfigDir, DIRECTORY_SEPARATOR);
 
-        $newClassPath = 'Akeneo\\Bundle\\MigrationBundle\\Entity\\Fabric';
+        $newClassPath = 'Akeneo\Bundle\MigrationBundle\Entity\Fabric';
 
         $destinationEntityPath = sprintf(
             '%s%ssrc%s%s.php',
@@ -179,6 +179,18 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
 
         $fileSystem->dumpYamlInFile($configFilePath, $configResult)->shouldBeCalled();
 
-        $this->configure($fabric, 'acme_reference_data_fabric', $pim)->shouldReturn('Akeneo\\Bundle\\MigrationBundle\\Entity\\Fabric');
+        $this->configure($fabric, 'acme_reference_data_fabric', $pim)->shouldReturn('Akeneo\Bundle\MigrationBundle\Entity\Fabric');
+    }
+
+    public function it_does_nothing_for_an_asset(Pim $pim)
+    {
+        $assetClass = 'PimEnterprise\Component\ProductAsset\Model\Asset';
+
+        $asset = [
+            'class' => $assetClass,
+            'type' =>  'multi'
+        ];
+
+        $this->configure($asset, 'pimee_product_asset_asset', $pim)->shouldReturn($assetClass);
     }
 }

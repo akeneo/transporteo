@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
  */
 class ReferenceDataConfigurator
 {
+    public const ASSET_NAMESPACE = 'PimEnterprise\Component\ProductAsset\Model\Asset';
     /** @var FileSystemHelper */
     private $fileSystem;
     /** @var LoggerInterface */
@@ -32,6 +33,12 @@ class ReferenceDataConfigurator
         $this->logger->debug('ReferenceDataConfigurator: Start configuring');
 
         $classPath = $referenceDataConfig['class'];
+
+        if (self::ASSET_NAMESPACE === $classPath && 'pimee_product_asset_asset' === $tableName) {
+            $this->logger->debug('ReferenceDataConfigurator: Finish configuring');
+
+            return $classPath;
+        }
 
         $sampleOrmPath = sprintf(
             '%s%sconfig%sSample.orm.yml',

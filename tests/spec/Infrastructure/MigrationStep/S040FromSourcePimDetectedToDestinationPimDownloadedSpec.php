@@ -8,11 +8,9 @@ use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\Destina
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DownloadMethod;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Git;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Local;
-use Akeneo\PimMigration\Infrastructure\MigrationStep\S040FromAllAccessesGrantedToDestinationPimDownloaded;
+use Akeneo\PimMigration\Infrastructure\MigrationStep\S040FromSourcePimDetectedToDestinationPimDownloaded;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
-use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -26,7 +24,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBehavior
+class S040FromSourcePimDetectedToDestinationPimDownloadedSpec extends ObjectBehavior
 {
     public function let(
         Translator $translator,
@@ -40,7 +38,7 @@ class S040FromAllAccessesGrantedToDestinationPimDownloadedSpec extends ObjectBeh
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(S040FromAllAccessesGrantedToDestinationPimDownloaded::class);
+        $this->shouldHaveType(S040FromSourcePimDetectedToDestinationPimDownloaded::class);
     }
 
     public function it_asks_the_pim_location(

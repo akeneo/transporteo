@@ -8,8 +8,6 @@ digraph workflow {
   place_source_pim_configured [label="source_pim_configured", shape=circle];
   place_source_pim_api_configured [label="source_pim_api_configured", shape=circle];
   place_source_pim_detected [label="source_pim_detected", shape=circle];
-  place_ee_access_pending [label="ee_access_pending", shape=circle];
-  place_all_accesses_granted [label="all_accesses_granted", shape=circle];
   place_destination_pim_location_guessed [label="destination_pim_location_guessed", shape=circle];
   place_destination_pim_downloaded [label="destination_pim_downloaded", shape=circle];
   place_destination_pim_pre_configured [label="destination_pim_pre_configured", shape=circle];
@@ -32,9 +30,6 @@ digraph workflow {
   transition_distant_source_pim_configuration [label="distant_source_pim_configuration", shape=box, shape="box", regular="1"];
   transition_source_pim_api_configuration [label="source_pim_api_configuration", shape=box, shape="box", regular="1"];
   transition_source_pim_detection [label="source_pim_detection", shape=box, shape="box", regular="1"];
-  transition_grant_all_accesses [label="grant_all_accesses", shape=box, shape="box", regular="1"];
-  transition_ee_ask_an_ssh_key [label="ee_ask_an_ssh_key", shape=box, shape="box", regular="1"];
-  transition_grant_ee_accesses [label="grant_ee_accesses", shape=box, shape="box", regular="1"];
   transition_ask_destination_pim_location [label="ask_destination_pim_location", shape=box, shape="box", regular="1"];
   transition_download_destination_pim [label="download_destination_pim", shape=box, shape="box", regular="1"];
   transition_destination_pim_pre_configuration [label="destination_pim_pre_configuration", shape=box, shape="box", regular="1"];
@@ -63,13 +58,7 @@ digraph workflow {
   transition_source_pim_api_configuration -> place_source_pim_api_configured [style="solid"];
   place_source_pim_api_configured -> transition_source_pim_detection [style="solid"];
   transition_source_pim_detection -> place_source_pim_detected [style="solid"];
-  place_source_pim_detected -> transition_grant_all_accesses [style="solid"];
-  transition_grant_all_accesses -> place_all_accesses_granted [style="solid"];
-  place_source_pim_detected -> transition_ee_ask_an_ssh_key [style="solid"];
-  transition_ee_ask_an_ssh_key -> place_ee_access_pending [style="solid"];
-  place_ee_access_pending -> transition_grant_ee_accesses [style="solid"];
-  transition_grant_ee_accesses -> place_all_accesses_granted [style="solid"];
-  place_all_accesses_granted -> transition_ask_destination_pim_location [style="solid"];
+  place_source_pim_detected -> transition_ask_destination_pim_location [style="solid"];
   transition_ask_destination_pim_location -> place_destination_pim_location_guessed [style="solid"];
   place_destination_pim_location_guessed -> transition_download_destination_pim [style="solid"];
   transition_download_destination_pim -> place_destination_pim_downloaded [style="solid"];

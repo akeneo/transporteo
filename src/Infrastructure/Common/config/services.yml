@@ -34,11 +34,6 @@ services:
 
   Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator: ~
 
-### ACCESS VERIFICATOR
-
-  Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator: ~
-  Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator: '@Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator'
-
 ### DESTINATION PIM DOWNLOAD
 
   Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper: ~
@@ -183,6 +178,34 @@ services:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_requirement'
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetCategory:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_category'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetCategoryTranslation:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_category_translation'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetTag:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_tag'
+      $isEeOnly: true
+    tags: ['migration_tool.structure_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetChaennelVariationConfiguration:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
+      $isEeOnly: true
     tags: ['migration_tool.structure_migrator']
 
 ## SYSTEM MIGRATORS

@@ -25,11 +25,15 @@ class SimpleDataMigrator implements DataMigrator
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(TableMigrator $tableMigrator, LoggerInterface $logger, string $supportedTableName)
+    /** @var bool */
+    private $isEeOnly;
+
+    public function __construct(TableMigrator $tableMigrator, LoggerInterface $logger, string $supportedTableName, bool $isEeOnly = false)
     {
         $this->tableMigrator = $tableMigrator;
-        $this->supportedTableName = $supportedTableName;
         $this->logger = $logger;
+        $this->supportedTableName = $supportedTableName;
+        $this->isEeOnly = $isEeOnly;
     }
 
     /**
@@ -37,6 +41,10 @@ class SimpleDataMigrator implements DataMigrator
      */
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
+        if (true === $this->isEeOnly && false === $destinationPim->isEnterpriseEdition()) {
+            return;
+        }
+
         $this->logger->info(sprintf('SimpleDataMigrator: Migrate table %s', $this->supportedTableName));
         $this->tableMigrator->migrate($sourcePim, $destinationPim, $this->supportedTableName);
         $this->logger->info(sprintf('SimpleDataMigrator : %s table migrated', $this->supportedTableName));

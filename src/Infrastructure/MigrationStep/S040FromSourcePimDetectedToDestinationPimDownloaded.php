@@ -20,7 +20,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class S040FromAllAccessesGrantedToDestinationPimDownloaded extends AbstractStateMachineSubscriber implements StateMachineSubscriber
+class S040FromSourcePimDetectedToDestinationPimDownloaded extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
     /** @var DestinationPimDownloaderHelper */
     private $destinationPimDownloaderHelper;

@@ -89,6 +89,6 @@ class DestinationPim extends AbstractPim implements Pim
     protected static function getPimVersionAllowed(): string
     {
         //TODO PUT 2.0
-        return '2.0.x-dev@dev';
+        return '2.0.0-BETA1';
     }
 }

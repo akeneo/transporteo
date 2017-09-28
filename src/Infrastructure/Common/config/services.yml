@@ -34,11 +34,6 @@ services:
 
   Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator: ~
 
-### ACCESS VERIFICATOR
-
-  Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator: ~
-  Akeneo\PimMigration\Domain\MigrationStep\s030_AccessVerification\AccessVerificator: '@Akeneo\PimMigration\Infrastructure\AccessVerification\SshAccessVerificator'
-
 ### DESTINATION PIM DOWNLOAD
 
   Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper: ~

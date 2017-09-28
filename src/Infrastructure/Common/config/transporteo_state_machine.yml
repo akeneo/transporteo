@@ -33,6 +33,7 @@ workflows:
             - 'destination_pim_enterprise_edition_data_migrated'
             - 'destination_pim_reference_data_migrated'
             - 'destination_pim_product_migrated'
+            - 'destination_pim_product_variation_migrated'
             - 'migration_finished'
         transitions:
             ask_source_pim_location:
@@ -104,6 +105,9 @@ workflows:
             destination_pim_product_migration:
                 from: 'destination_pim_reference_data_migrated'
                 to: 'destination_pim_product_migrated'
-            finish_migration:
+            destination_pim_product_variation_migration:
                 from: 'destination_pim_product_migrated'
+                to: 'destination_pim_product_variation_migrated'
+            finish_migration:
+                from: 'destination_pim_product_variation_migrated'
                 to: 'migration_finished'

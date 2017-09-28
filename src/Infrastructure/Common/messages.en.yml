@@ -79,9 +79,10 @@ from_destination_pim_enterprise_edition_data_migrated_to_destination_pim_referen
   message: "Migrating reference data..."
 from_destination_pim_reference_data_migrated_to_destination_pim_product_migrated:
   message: "Migrating products data..."
-from_destination_pim_product_migrated_to_migration_finished:
+from_destination_pim_product_migrated_to_destination_pim_product_variation_migrated:
+  message: "Migrating products variations..."
+from_destination_pim_product_variation_migrated_to_migration_finished:
   end_message: |
     You success to migrate all your data in the new PIM ! You may want to look at the
     logs in "var/logs" folder if there are some errors. If you have any custom code you should
     have a look at the "UPGRADE-2.0.md" file, availaible at the root of Transporteo.
-

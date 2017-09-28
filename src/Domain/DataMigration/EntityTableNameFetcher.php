@@ -39,7 +39,7 @@ class EntityTableNameFetcher
 
     public function fetchTableName(Pim $pim, string $entityNamespace): string
     {
-        $mappingFilePath = $pim->absolutePath();
+        $mappingFilePath = DIRECTORY_SEPARATOR.'tmp';
 
         $this->chainedConsole->execute(
             new SymfonyCommand(

@@ -37,7 +37,7 @@ class TableMigrator
         DestinationPim $destinationPim,
         string $tableName
     ): void {
-        $exportPath = MySqlExportTableCommand::getPimTableNameDumpPath($sourcePim, $tableName);
+        $exportPath = MySqlExportTableCommand::getPimTableNameDumpPath($tableName);
 
         $exportCommand = new MySqlExportTableCommand($tableName, $exportPath);
 

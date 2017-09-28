@@ -25,6 +25,6 @@ class MySqlExportTableCommand extends AbstractCommand implements Command
 
     public static function getPimTableNameDumpPath(string $tableName): string
     {
-        return sprintf('/tmp%smigration_tool_%s.sql', DIRECTORY_SEPARATOR, $tableName);
+        return sprintf('%stmp%smigration_tool_%s.sql', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $tableName);
     }
 }

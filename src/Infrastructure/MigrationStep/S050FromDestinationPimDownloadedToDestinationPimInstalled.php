@@ -71,9 +71,6 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
             'workflow.migration_tool.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
             'workflow.migration_tool.transition.destination_pim_api_configuration' => 'onDestinationPimApiConfiguration',
             'workflow.migration_tool.transition.destination_pim_detection' => 'onDestinationPimDetection',
-            'workflow.migration_tool.guard.docker_destination_pim_system_requirements_installation' => 'guardOnDockerDestinationPimSystemRequirementsInstallation',
-            'workflow.migration_tool.transition.docker_destination_pim_system_requirements_installation' => 'onDockerDestinationPimSystemRequirementsInstallation',
-            'workflow.migration_tool.guard.local_destination_pim_system_requirements_installation' => 'guardOnLocalDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.transition.local_destination_pim_system_requirements_installation' => 'onLocalDestinationPimSystemRequirementsInstallation',
             'workflow.migration_tool.transition.destination_pim_check_requirements' => 'onDestinationPimCheckRequirements',
         ];
@@ -214,50 +211,6 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         $stateMachine->setDestinationPim($destinationPim);
 
         $this->logExit(__FUNCTION__);
-    }
-
-    public function guardOnDockerDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
-    {
-        $this->logGuardEntering(__FUNCTION__);
-
-        /** @var MigrationToolStateMachine $stateMachine */
-        $stateMachine = $guardEvent->getSubject();
-
-        $isBlocking = false === $stateMachine->useDocker();
-        $guardEvent->setBlocked($isBlocking);
-
-        $this->logGuardResult(__FUNCTION__, $isBlocking);
-    }
-
-    public function onDockerDestinationPimSystemRequirementsInstallation(Event $event)
-    {
-        $this->logEntering(__FUNCTION__);
-
-        $this->printerAndAsker->printMessage('Docker is currently installing the destination PIM... Please wait...');
-
-        /** @var MigrationToolStateMachine $stateMachine */
-        $stateMachine = $event->getSubject();
-
-        try {
-            $this->destinationPimSystemRequirementsInstallerHelper->install($stateMachine->getDestinationPim());
-        } catch (DestinationPimSystemRequirementsNotBootable $exception) {
-            throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
-        }
-
-        $this->logExit(__FUNCTION__);
-    }
-
-    public function guardOnLocalDestinationPimSystemRequirementsInstallation(GuardEvent $guardEvent)
-    {
-        $this->logGuardEntering(__FUNCTION__);
-
-        /** @var MigrationToolStateMachine $stateMachine */
-        $stateMachine = $guardEvent->getSubject();
-
-        $isBlocking = true === $stateMachine->useDocker();
-        $guardEvent->setBlocked($isBlocking);
-
-        $this->logGuardResult(__FUNCTION__, $isBlocking);
     }
 
     public function onLocalDestinationPimSystemRequirementsInstallation(Event $event)

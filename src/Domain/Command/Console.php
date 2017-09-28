@@ -8,10 +8,10 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 
 /**
- * A Console is place where we can execute Command (eg:remote or local or docker).
+ * A Console is place where we can execute Command (eg:remote or local or ssh).
  * It executes command like a Terminal and give you the result.
  *
- * Console is considered as part of the domain as we DO need them to interact with the PIM environment, however, the execution is part of the infrastructure ({@see Akeneo\PimMigration\Infrastructure\Cli\DockerConsole})}
+ * Console is considered as part of the domain as we DO need them to interact with the PIM environment, however, the execution is part of the infrastructure ({@see Akeneo\PimMigration\Infrastructure\Cli\LocalConsole})}
  *
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

@@ -8,7 +8,6 @@ use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileNotFoundException;
 use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
-use Akeneo\PimMigration\Infrastructure\Pim\DockerConnection;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
@@ -58,6 +57,6 @@ class LocalFileFetcher implements FileFetcher
 
     public function supports(PimConnection $pimConnection): bool
     {
-        return $pimConnection instanceof Localhost || $pimConnection instanceof DockerConnection;
+        return $pimConnection instanceof Localhost;
     }
 }

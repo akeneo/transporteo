@@ -77,9 +77,6 @@ workflows:
             destination_pim_detection:
                 from: 'destination_pim_api_configured'
                 to: 'destination_pim_detected'
-            docker_destination_pim_system_requirements_installation:
-                from: 'destination_pim_detected'
-                to: 'destination_pim_system_requirements_installed'
             local_destination_pim_system_requirements_installation:
                 from: 'destination_pim_detected'
                 to: 'destination_pim_system_requirements_installed'

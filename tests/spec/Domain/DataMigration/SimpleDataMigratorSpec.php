@@ -28,12 +28,55 @@ class SimpleDataMigratorSpec extends ObjectBehavior
         $this->shouldHaveType(SimpleDataMigrator::class);
     }
 
-    public function it_migrates(
+    public function it_migrates_an_enterprise_edition(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator
     )
     {
+        $destinationPim->isEnterpriseEdition()->willReturn(true);
+
+        $migrator->migrate($sourcePim, $destinationPim, 'table_test')->shouldBeCalled();
+
+        $this->migrate($sourcePim, $destinationPim);
+    }
+
+    public function it_migrates_a_community_edition(
+        SourcePim $sourcePim,
+        DestinationPim $destinationPim,
+        $migrator
+    )
+    {
+        $destinationPim->isEnterpriseEdition()->willReturn(false);
+
+        $migrator->migrate($sourcePim, $destinationPim, 'table_test')->shouldBeCalled();
+
+        $this->migrate($sourcePim, $destinationPim);
+    }
+
+    public function it_does_not_migrate_a_ee_table_if_is_not(
+        TableMigrator $migrator,
+        LoggerInterface $logger,
+        SourcePim $sourcePim,
+        DestinationPim $destinationPim
+    ) {
+        $this->beConstructedWith($migrator, $logger, 'table_test', true);
+        $destinationPim->isEnterpriseEdition()->willReturn(false);
+
+        $migrator->migrate($sourcePim, $destinationPim, 'table_test')->shouldNotBeCalled();
+
+        $this->migrate($sourcePim, $destinationPim);
+    }
+
+    public function it_migrates_an_enterprise_edition_for_an_ee_only_migrator(
+        TableMigrator $migrator,
+        LoggerInterface $logger,
+        SourcePim $sourcePim,
+        DestinationPim $destinationPim
+    ) {
+        $this->beConstructedWith($migrator, $logger, 'table_test', true);
+        $destinationPim->isEnterpriseEdition()->willReturn(true);
+
         $migrator->migrate($sourcePim, $destinationPim, 'table_test')->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

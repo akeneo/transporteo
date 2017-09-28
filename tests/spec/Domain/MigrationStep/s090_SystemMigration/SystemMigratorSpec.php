@@ -55,6 +55,15 @@ class SystemMigratorSpec extends ObjectBehavior
                 $destinationPim)
             ->shouldBeCalled();
 
+        $chainedConsole
+            ->execute(new MySqlExecuteCommand(
+                'CREATE INDEX IDX_BD5E4023C7440455 ON database_name.pim_api_access_token (client);'
+            ), $destinationPim)->shouldBeCalled();
+
+        $chainedConsole->execute(
+            new MySqlExecuteCommand('UPDATE database_name.pim_api_client SET label = id WHERE label IS NULL;'),
+            $destinationPim)->shouldBeCalled();
+
         $this->migrate($sourcePim, $destinationPim);
     }
 

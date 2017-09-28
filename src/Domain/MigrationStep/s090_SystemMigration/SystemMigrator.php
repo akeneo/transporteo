@@ -39,14 +39,25 @@ class SystemMigrator
                 $systemMigrator->migrate($sourcePim, $destinationPim);
             }
 
-            $command = new MySqlExecuteCommand(sprintf(
+            $queries = [];
+            $queries[] = sprintf(
                 'ALTER TABLE %1$s.pim_api_access_token
                 ADD COLUMN client int(11) DEFAULT NULL AFTER id,
                 ADD CONSTRAINT FK_BD5E4023C7440455 FOREIGN KEY (client) REFERENCES %1$s.pim_api_client (id) ON DELETE CASCADE;',
                 $destinationPim->getDatabaseName()
-            ));
+            );
+            $queries[] = sprintf(
+                'CREATE INDEX IDX_BD5E4023C7440455 ON %s.pim_api_access_token (client);',
+                $destinationPim->getDatabaseName()
+            );
+            $queries[] = sprintf(
+                'UPDATE %s.pim_api_client SET label = id WHERE label IS NULL;',
+                $destinationPim->getDatabaseName()
+            );
 
-            $this->console->execute($command, $destinationPim);
+            foreach ($queries as $query) {
+                $this->console->execute(new MySqlExecuteCommand($query), $destinationPim);
+            }
         } catch (DataMigrationException $exception) {
             throw new SystemMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }

@@ -42,7 +42,7 @@ class DestinationPim extends AbstractPim implements Pim
 
         $pimVersion = $dependencies->get(self::PIM_COMMUNITY_DEV);
 
-        if (strpos($pimVersion, self::getPimVersionAllowed()) === false) {
+        if (strpos(self::getPimVersionAllowed(), substr($pimVersion, 0, 2)) === false) {
             throw new DestinationPimDetectionException(
                 'Your destination PIM version should be '.self::getPimVersionAllowed().' currently : '.$pimVersion
             );
@@ -88,7 +88,6 @@ class DestinationPim extends AbstractPim implements Pim
 
     protected static function getPimVersionAllowed(): string
     {
-        //TODO PUT 2.0
-        return '2.0.0-BETA1';
+        return '2.0.x';
     }
 }

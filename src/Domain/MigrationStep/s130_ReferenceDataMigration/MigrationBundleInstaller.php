@@ -57,7 +57,7 @@ class MigrationBundleInstaller
             throw new \InvalidArgumentException('The AppKernel is not a raw kernel');
         }
 
-        $this->fileSystem->updateLineInFile($appKernelPath, 23, $lineToAdd);
+        $this->fileSystem->updateLineInFile($appKernelPath, $appKernelEmptyLineNumber, $lineToAdd);
 
         $this->logger->debug('MigrationBundleInstaller: Kernel setup finish');
     }

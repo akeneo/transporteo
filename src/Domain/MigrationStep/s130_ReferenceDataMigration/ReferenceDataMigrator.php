@@ -90,6 +90,12 @@ class ReferenceDataMigrator implements DataMigrator
                     ->referenceDataConfigurator
                     ->configure($referenceData, $referenceDataTableName, $destinationPim)
                 ;
+
+                //TODO -> TO REMOVE WHEN ASSETS WILL BE MIGRATED
+                if (ReferenceDataConfigurator::ASSET_NAMESPACE === $destinationReferenceDataNamespace) {
+                    return;
+                }
+
                 $this->entityMappingChecker->check($destinationPim, $destinationReferenceDataNamespace);
             }
         } catch (\Exception $exception) {

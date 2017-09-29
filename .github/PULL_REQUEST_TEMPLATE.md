@@ -1,7 +1,7 @@
-[//]: <> (<3 Thanks for taking the time to contribute! You're awesome! <3)
+<!--- (<3 Thanks for taking the time to contribute! You're awesome! <3) --->
 **Description**
 
-[//]: <> (What does this Pull Request do? reference the related issue?)
+<!--- (What does this Pull Request do? reference the related issue?) --->
 
 **Definition Of Done**
 

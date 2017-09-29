@@ -20,8 +20,8 @@ Please run CS-fixer, PHPSpec and PHPUnit before committing. (`make commit` if yo
 If you have updated the workflow, please update the generated graph:
 
 ```
-  $ php MigrationTool.php state-machine:dump
-  $ dot -Tpng stateMachineMigrationTool.dot -o stateMachineMigrationTool.png
+  $ php Transporteo.php state-machine:dump
+  $ dot -Tpng stateMachineTransporteo.dot -o stateMachineTransporteo.png
 ```
 
 ## HOW IT WORKS BEHIND THE SCENE
@@ -39,7 +39,7 @@ Each steps is represented as a folder in Domain
 
 ## The State Machine
 
-The MigrationTool is like managing a whole state of a migration processus, this is the only thing that the tool
+Transporteo is like managing a whole state of a migration processus, this is the only thing that the tool
 is able to do: Migrate.
 
 So, the whole software is a state machine that goes from one state/step to another.
@@ -61,7 +61,7 @@ Some links to understand how works the Symfony Workflow component
 - [Official documentation](https://symfony.com/doc/current/components/workflow.html)
 - [Video tutorials](https://www.google.com)
 
-The MigrationToolStateMachine is the object handled by the state machine but also the state machine itself. Indeed, this state
+The TransporteoStateMachine is the object handled by the state machine but also the state machine itself. Indeed, this state
 machine is able to go from one step to another directly and so it is also where all the context information gathered during
 the migration process are stored.
 

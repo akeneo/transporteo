@@ -374,6 +374,13 @@ services:
       $supportedTableName: 'akeneo_batch_warning'
     tags: ['transporteo.job_migrator']
 
+  Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\EeJobProfileAccess:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_security_job_profile_access'
+      $isEeOnly: true
+    tags: ['transporteo.job_migrator']
+
 ### GROUP MIGRATOR
 
   Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator: ~

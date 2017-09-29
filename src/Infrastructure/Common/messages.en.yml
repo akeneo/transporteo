@@ -18,11 +18,11 @@ from_ready_to_source_pim_configured:
     ssh_user_question:  "What is the SSH user you want to connect with to the source PIM? "
     ssh_key_path_question: "What is the absolute path of the private SSH key able to connect to the source PIM? "
     ssh_key_path_error: "Your SSH key path should be an absolute one."
-    composer_json_path_question: "What is the absolute path of the source PIM composer.json on the server? "
-    composer_json_path_error: "Your composer.json path should be an absolute one."
+    project_path_question: "What is the absolute path of the source PIM on the server? "
+    project_path_error: "Your source PIM path should be an absolute one."
   on_local_configuration:
-    composer_json_path_question: "What is the absolute path of the source PIM composer.json on your computer? "
-    composer_json_path_error: "Your composer.json path should be an absolute one."
+    project_path_question: "What is the absolute path of the source PIM on your computer? "
+    project_path_error: "Your source PIM path should be an absolute one."
 from_source_pim_configured_to_source_pim_api_configured:
   on_source_pim_api_configuration:
     base_uri:

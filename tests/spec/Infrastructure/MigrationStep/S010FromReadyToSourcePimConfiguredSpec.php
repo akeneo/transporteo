@@ -114,7 +114,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $portQuestion = 'What is the SSH port of the source PIM server? ';
         $sshUserQuestion = 'What is the SSH user you want to connect with ? ';
         $sshKeyPathQuestion = 'What is the absolute path of the private SSH key able to connect to the server? ';
-        $composerJsonQuestion = 'What is the absolute path of the composer.json on the server? ';
+        $projectPathQuestion = 'What is the absolute path of the source PIM on the server? ';
 
         $transPrefix = 'from_ready_to_source_pim_configured.on_distant_configuration.';
         $translations = [
@@ -122,7 +122,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
             $transPrefix . 'ssh_port_question' => $portQuestion,
             $transPrefix . 'ssh_user_question' => $sshUserQuestion,
             $transPrefix . 'ssh_key_path_question' => $sshKeyPathQuestion,
-            $transPrefix . 'composer_json_path_question' => $composerJsonQuestion
+            $transPrefix . 'project_path_question' => $projectPathQuestion
         ];
 
         foreach ($translations as $translationKey => $translation) {
@@ -144,7 +144,10 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $stateMachine->setSourcePimConnection($serverAccessInformation)->shouldBeCalled();
         $stateMachine->getSourcePimConnection()->willReturn($serverAccessInformation);
 
-        $printerAndAsker->askSimpleQuestion($composerJsonQuestion, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
+        $composerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
+        $projectPath = str_replace('composer.json', '', $composerJsonPath);
+
+        $printerAndAsker->askSimpleQuestion($projectPathQuestion, Argument::any(), Argument::any())->willReturn($projectPath);
         $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
         $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
 
@@ -165,11 +168,14 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getProjectName()->willReturn('a-super-project');
 
-        $composerJsonQuestion = 'What is the absolute path of the composer.json on your computer? ';
+        $projectPathQuestion = 'What is the absolute path of the source PIM on your computer? ';
 
-        $translator->trans('from_ready_to_source_pim_configured.on_local_configuration.composer_json_path_question')->willReturn($composerJsonQuestion);
+        $translator->trans('from_ready_to_source_pim_configured.on_local_configuration.project_path_question')->willReturn($projectPathQuestion);
 
-        $printerAndAsker->askSimpleQuestion($composerJsonQuestion, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
+        $composerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
+        $projectPath = str_replace('composer.json', '', $composerJsonPath);
+
+        $printerAndAsker->askSimpleQuestion($projectPathQuestion, Argument::any(), Argument::any())->willReturn($projectPath);
 
         $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
 
@@ -201,7 +207,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $portQuestion = 'What is the SSH port of the source PIM server? ';
         $sshUserQuestion = 'What is the SSH user you want to connect with ? ';
         $sshKeyPathQuestion = 'What is the absolute path of the private SSH key able to connect to the server? ';
-        $composerJsonQuestion = 'What is the absolute path of the composer.json on the server? ';
+        $projectPathQuestion = 'What is the absolute path of the source PIM on the server? ';
 
         $transPrefix = 'from_ready_to_source_pim_configured.on_distant_configuration.';
         $translations = [
@@ -209,7 +215,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
             $transPrefix . 'ssh_port_question' => $portQuestion,
             $transPrefix . 'ssh_user_question' => $sshUserQuestion,
             $transPrefix . 'ssh_key_path_question' => $sshKeyPathQuestion,
-            $transPrefix . 'composer_json_path_question' => $composerJsonQuestion
+            $transPrefix . 'project_path_question' => $projectPathQuestion
         ];
 
         foreach ($translations as $translationKey => $translation) {
@@ -231,7 +237,10 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
         $exception = new ImpossibleConnectionException('Impossible to login to akeneo@my-super-pim.akeneo.com:22 using this ssh key : '. $sshKeyPath);
 
-        $printerAndAsker->askSimpleQuestion($composerJsonQuestion, Argument::any(), Argument::any())->willReturn(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath());
+        $composerJsonPath = ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath();
+        $projectPath = str_replace('composer.json', '', $composerJsonPath);
+
+        $printerAndAsker->askSimpleQuestion($projectPathQuestion, Argument::any(), Argument::any())->willReturn($projectPath);
         $sourcePimServerInformation = new PimServerInformation(ResourcesFileLocator::getStepOneAbsoluteComposerJsonLocalPath(), 'a-super-project');
         $stateMachine->setSourcePimServerInformation($sourcePimServerInformation)->shouldBeCalled();
         $sourcePimConfigurator

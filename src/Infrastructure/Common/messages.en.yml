@@ -4,7 +4,7 @@ from_ready_to_source_pim_configured:
        This tool aims to help you to migrate your PIM 1.7 standard edition (either Community or Enterprise) to the new version 2.0.
        All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0.
     rules: |
-       In what follows, \"source PIM\" will refer to your current 1.7 PIM whereas \"destination PIM\" will refer to your future 2.0 PIM.
+       In what follows, "source PIM" will refer to your current 1.7 PIM whereas "destination PIM" will refer to your future 2.0 PIM.
        Moreover, you need to install a PIM 2.0 on your computer to let us fill it with your data.
     start: "Here we are! A few questions before starting to migrate your PIM!"
   ask_source_pim_location:

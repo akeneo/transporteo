@@ -23,6 +23,7 @@ digraph workflow {
   place_destination_pim_job_migrated [label="destination_pim_job_migrated", shape=circle];
   place_destination_pim_group_migrated [label="destination_pim_group_migrated", shape=circle];
   place_destination_pim_extra_data_migrated [label="destination_pim_extra_data_migrated", shape=circle];
+  place_destination_pim_enterprise_edition_data_migrated [label="destination_pim_enterprise_edition_data_migrated", shape=circle];
   place_destination_pim_reference_data_migrated [label="destination_pim_reference_data_migrated", shape=circle];
   place_destination_pim_product_migrated [label="destination_pim_product_migrated", shape=circle];
   transition_ask_source_pim_location [label="ask_source_pim_location", shape=box, shape="box", regular="1"];
@@ -46,6 +47,7 @@ digraph workflow {
   transition_destination_pim_job_migration [label="destination_pim_job_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_group_migration [label="destination_pim_group_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_extra_data_migration [label="destination_pim_extra_data_migration", shape=box, shape="box", regular="1"];
+  transition_destination_pim_enterprise_edition_data_migration [label="destination_pim_enterprise_edition_data_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_reference_data_migration [label="destination_pim_reference_data_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_product_migration [label="destination_pim_product_migration", shape=box, shape="box", regular="1"];
   place_ready -> transition_ask_source_pim_location [style="solid"];
@@ -90,7 +92,9 @@ digraph workflow {
   transition_destination_pim_group_migration -> place_destination_pim_group_migrated [style="solid"];
   place_destination_pim_group_migrated -> transition_destination_pim_extra_data_migration [style="solid"];
   transition_destination_pim_extra_data_migration -> place_destination_pim_extra_data_migrated [style="solid"];
-  place_destination_pim_extra_data_migrated -> transition_destination_pim_reference_data_migration [style="solid"];
+  place_destination_pim_extra_data_migrated -> transition_destination_pim_enterprise_edition_data_migration [style="solid"];
+  transition_destination_pim_enterprise_edition_data_migration -> place_destination_pim_enterprise_edition_data_migrated [style="solid"];
+  place_destination_pim_enterprise_edition_data_migrated -> transition_destination_pim_reference_data_migration [style="solid"];
   transition_destination_pim_reference_data_migration -> place_destination_pim_reference_data_migrated [style="solid"];
   place_destination_pim_reference_data_migrated -> transition_destination_pim_product_migration [style="solid"];
   transition_destination_pim_product_migration -> place_destination_pim_product_migrated [style="solid"];

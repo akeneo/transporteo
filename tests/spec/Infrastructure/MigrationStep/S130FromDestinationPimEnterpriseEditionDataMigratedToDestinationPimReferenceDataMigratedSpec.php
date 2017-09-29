@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\MigrationStep\s130_ReferenceDataMigration\ReferenceDataMigrator;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\MigrationStep\S130FromDestinationPimExtraDataMigratedToDestinationPimReferenceDataMigrated;
+use Akeneo\PimMigration\Infrastructure\MigrationStep\S130FromDestinationPimEnterpriseEditionDataMigratedToDestinationPimReferenceDataMigrated;
 use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\Workflow\Event\Event;
  * @author    Anael Chardan <anael.chardan@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class S130FromDestinationPimExtraDataMigratedToDestinationPimReferenceDataMigratedSpec extends ObjectBehavior
+class S130FromDestinationPimEnterpriseEditionDataMigratedToDestinationPimReferenceDataMigratedSpec extends ObjectBehavior
 {
     public function let(
         Translator $translator,
@@ -35,7 +35,7 @@ class S130FromDestinationPimExtraDataMigratedToDestinationPimReferenceDataMigrat
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(S130FromDestinationPimExtraDataMigratedToDestinationPimReferenceDataMigrated::class);
+        $this->shouldHaveType(S130FromDestinationPimEnterpriseEditionDataMigratedToDestinationPimReferenceDataMigrated::class);
     }
 
     public function it_migrates_reference_data(
@@ -52,7 +52,7 @@ class S130FromDestinationPimExtraDataMigratedToDestinationPimReferenceDataMigrat
         $stateMachine->getDestinationPim()->willReturn($destinationPim);
 
         $transMessage = "Migrating reference data...";
-        $translator->trans('from_destination_pim_extra_data_migrated_to_destination_pim_reference_data_migrated.message')->willReturn($transMessage);
+        $translator->trans('from_destination_pim_enterprise_edition_data_migrated_to_destination_pim_reference_data_migrated.message')->willReturn($transMessage);
         $printerAndAsker->printMessage($transMessage)->shouldBeCalled();
 
         $migrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();

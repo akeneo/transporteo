@@ -17,6 +17,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s125_EnterpriseEditionDataMigration\EnterpriseEditionDataMigrator;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocator;
@@ -79,6 +80,7 @@ final class ContainerBuilder
         self::loadRegistry($container, SystemMigrator::class, 'migration_tool.system_migrator', 'addSystemMigrator');
         self::loadRegistry($container, JobMigrator::class, 'migration_tool.job_migrator', 'addJobMigrator');
         self::loadRegistry($container, GroupMigrator::class, 'migration_tool.group_migrator', 'addGroupMigrator');
+        self::loadRegistry($container, EnterpriseEditionDataMigrator::class, 'migration_tool.enterprise_edition_data_migrator', 'addEnterpriseEditionDataMigrator');
 
         self::loadRegistry($container, ChainedConsole::class, 'migration_tool.console', 'addConsole');
         self::loadRegistry($container, FileFetcherRegistry::class, 'migration_tool.file_fetcher', 'addFileFetcher');

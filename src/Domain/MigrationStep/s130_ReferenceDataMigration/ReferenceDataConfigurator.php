@@ -16,9 +16,11 @@ use Psr\Log\LoggerInterface;
  */
 class ReferenceDataConfigurator
 {
-    public const ASSET_NAMESPACE = 'PimEnterprise\Component\ProductAsset\Model\Asset';
+    public const ASSET_NAMESPACE = 'PimEnterprise\\Component\\ProductAsset\\Model\\Asset';
+
     /** @var FileSystemHelper */
     private $fileSystem;
+
     /** @var LoggerInterface */
     private $logger;
 

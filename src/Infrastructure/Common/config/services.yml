@@ -332,6 +332,27 @@ services:
       $supportedTableName: 'pim_user_default_datagrid_view'
     tags: ['migration_tool.system_migrator']
 
+  Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimEeSecurityAttributeGroupAccess:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_security_attribute_group_access'
+      $isEeOnly: true
+    tags: ['migration_tool.system_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimEeSecurityProductCategoryAccess:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_security_product_category_access'
+      $isEeOnly: true
+    tags: ['migration_tool.system_migrator']
+
+  Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimEeSecurityLocaleAccess:
+    class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
+    arguments:
+      $supportedTableName: 'pimee_security_locale_access'
+      $isEeOnly: true
+    tags: ['migration_tool.system_migrator']
+
 ### JOB MIGRATOR
 
   Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator: ~

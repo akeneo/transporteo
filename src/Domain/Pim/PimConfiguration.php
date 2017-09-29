@@ -21,14 +21,14 @@ class PimConfiguration
     /** @var PimParameters */
     private $pimParameters;
 
-    /** @var string */
+    /** @var string|null */
     private $projectName;
 
     public function __construct(
         ComposerJson $composerJson,
         ParametersYml $parametersYml,
         PimParameters $pimParameters,
-        string $projectName
+        ?string $projectName
     ) {
         $this->composerJson = $composerJson;
         $this->parametersYml = $parametersYml;

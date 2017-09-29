@@ -60,23 +60,13 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
     )
     {
         $event->getSubject()->willReturn($stateMachine);
-        $snakeCaseAlphanumeric = 'snake_case, alphanumeric';
-        $question = 'What is the name of the project you want to migrate (snake_case, alphanumeric)? ';
         $locationQuestion = 'Where is located your PIM? ';
 
-        $translator->trans('from_ready_to_source_pim_configured.ask_source_pim_location.project_name.question')->willReturn($question);
         $translator->trans('from_ready_to_source_pim_configured.ask_source_pim_location.pim_location.question')->willReturn($locationQuestion);
 
-        $printerAndAsker->askSimpleQuestion(
-            $question,
-            '',
-            Argument::any()
-        )->willReturn('a-super-project');
         $printerAndAsker->askChoiceQuestion($locationQuestion, ['locally', 'on a remote server'])->willReturn('locally');
 
-        $stateMachine->setProjectName('a-super-project')->shouldBeCalled();
         $stateMachine->setSourcePimLocation('locally')->shouldBeCalled();
-
 
         $this->askSourcePimLocation($event);
     }

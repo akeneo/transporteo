@@ -14,7 +14,7 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  */
 interface DestinationPimDownloader
 {
-    public function download(DownloadMethod $downloadMethod, Pim $pim, string $projectName): string;
+    public function download(DownloadMethod $downloadMethod, Pim $pim, ?string $projectName): string;
 
     public function supports(DownloadMethod $downloadMethod): bool;
 }

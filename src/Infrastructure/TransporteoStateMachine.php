@@ -30,8 +30,8 @@ class TransporteoStateMachine
     /** @var StateMachine */
     protected $stateMachineMarker;
 
-    /** @var string */
-    protected $projectName;
+    /** @var string|null */
+    protected $projectName = null;
 
     /** @var string */
     protected $sourcePimLocation;
@@ -111,7 +111,7 @@ class TransporteoStateMachine
         $this->projectName = $projectName;
     }
 
-    public function getProjectName(): string
+    public function getProjectName(): ?string
     {
         return $this->projectName;
     }

@@ -84,28 +84,6 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $projectName = $this
-            ->printerAndAsker
-            ->askSimpleQuestion(
-                $this
-                    ->translator
-                    ->trans('from_ready_to_source_pim_configured.ask_source_pim_location.project_name.question'),
-                '',
-                function ($answer) {
-                    if (0 === preg_match('/^[A-Za-z0-9_]+$/', $answer)) {
-                        throw new \RuntimeException(
-                            $this
-                                ->translator
-                                ->trans(
-                                    'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.error_message'
-                                )
-                        );
-                    }
-                }
-            );
-
-        $stateMachine->setProjectName($projectName);
-
         $pimLocation = $this->printerAndAsker->askChoiceQuestion(
             $this->translator->trans('from_ready_to_source_pim_configured.ask_source_pim_location.pim_location.question'),
             [self::LOCAL_SOURCE_PIM, self::REMOTE_SOURCE_PIM]

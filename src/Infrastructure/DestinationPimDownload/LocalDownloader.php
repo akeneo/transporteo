@@ -16,7 +16,7 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  */
 class LocalDownloader implements DestinationPimDownloader
 {
-    public function download(DownloadMethod $downloadMethod, Pim $pim, string $projectName): string
+    public function download(DownloadMethod $downloadMethod, Pim $pim, ?string $projectName): string
     {
         if (!$downloadMethod instanceof  Local) {
             throw new \InvalidArgumentException(sprintf('Expected %s, %s given', Local::class, get_class($downloadMethod)));

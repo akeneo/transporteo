@@ -1,4 +1,4 @@
-# UPGRADE FROM 1.7 to 1.8
+# UPGRADE FROM 1.7 to 2.0
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -13,7 +13,6 @@
 ## Disclaimer
 
 > We assume that you ran Transporteo before, so you have currently two Akeneo PIM running, a 1.7 and a new 2.0
-> While the tool is not stable we do not recommend to use it to setup a Production PIM.
 
 ## Migrate your custom code
 

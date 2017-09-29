@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -19,8 +19,8 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.source_pim_detection' => 'onSourcePimDetection',
-            'workflow.migration_tool.entered.source_pim_detected' => 'onSourcePimDetected',
+            'workflow.transporteo.transition.source_pim_detection' => 'onSourcePimDetection',
+            'workflow.transporteo.entered.source_pim_detected' => 'onSourcePimDetected',
         ];
     }
 
@@ -28,7 +28,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $sourcePimConfiguration = $stateMachine->getSourcePimConfiguration();
@@ -49,7 +49,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetected extends AbstractStateMac
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $sourcePim = $stateMachine->getSourcePim();

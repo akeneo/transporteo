@@ -14,7 +14,7 @@ use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S020FromSourcePimApiConfiguredToSourcePimDetected;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Ds\Map;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
@@ -43,7 +43,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
 
     public function it_can_detect_source_pim(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         PimConfiguration $sourcePimConfiguration,
         PimConnection $sourcePimConnection,
         ComposerJson $composerJson,
@@ -102,7 +102,7 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
 
     public function on_source_pim_detected(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         $printerAndAsker
     ) {

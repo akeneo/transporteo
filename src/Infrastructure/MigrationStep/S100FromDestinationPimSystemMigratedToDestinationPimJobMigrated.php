@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -36,7 +36,7 @@ class S100FromDestinationPimSystemMigratedToDestinationPimJobMigrated extends Ab
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.destination_pim_job_migration' => 'onDestinationPimJobMigration',
+            'workflow.transporteo.transition.destination_pim_job_migration' => 'onDestinationPimJobMigration',
         ];
     }
 
@@ -44,7 +44,7 @@ class S100FromDestinationPimSystemMigratedToDestinationPimJobMigrated extends Ab
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_system_migrated_to_destination_pim_job_migrated.message'));

@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S125FromDestinationPimExtraDataMigratedToDestinationPimEnterpriseEditionDataMigrated;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
@@ -40,7 +40,7 @@ class S125FromDestinationPimExtraDataMigratedToDestinationPimEnterpriseEditionDa
 
     public function it_migrates_enterprise_edition_data_for_an_enterprise_edition(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator,
@@ -64,7 +64,7 @@ class S125FromDestinationPimExtraDataMigratedToDestinationPimEnterpriseEditionDa
 
     public function it_does_nothing_for_a_community_edition(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator

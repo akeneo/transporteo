@@ -15,7 +15,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourceP
 use Akeneo\PimMigration\Infrastructure\FileFetcherFactory;
 use Akeneo\PimMigration\Infrastructure\ImpossibleConnectionException;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S010FromReadyToSourcePimConfigured;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Akeneo\PimMigration\Infrastructure\PimConfiguration\PimConfiguratorFactory;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
@@ -54,7 +54,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
     public function it_asks_source_pim_location(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         $printerAndAsker,
         $translator
     )
@@ -83,7 +83,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
     public function it_guards_the_local_source_pim_configuration(
         GuardEvent $guardEvent,
-        MigrationToolStateMachine $stateMachine
+        TransporteoStateMachine $stateMachine
     ) {
         $guardEvent->getSubject()->willReturn($stateMachine);
 
@@ -99,7 +99,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
     public function it_guards_the_distant_source_pim_configuration(
         GuardEvent $guardEvent,
-        MigrationToolStateMachine $stateMachine
+        TransporteoStateMachine $stateMachine
     ) {
         $guardEvent->getSubject()->willReturn($stateMachine);
 
@@ -114,7 +114,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
     public function it_configures_a_source_pim_from_a_server(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         PimConfiguration $sourcePimConfiguration,
         $sourcePimConfigurator,
         $printerAndAsker,
@@ -166,7 +166,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
     public function it_configures_a_source_pim_from_local(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         PimConfiguration $sourcePimConfiguration,
         $sourcePimConfigurator,
         $printerAndAsker,
@@ -197,7 +197,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
     public function it_throws_business_exception_from_technical(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         PimConfiguration $sourcePimConfiguration,
         $sourcePimConfigurator,
         $printerAndAsker,

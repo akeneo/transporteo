@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s060_FilesMigration\AkeneoFileStorageFileInfoMigrator;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
@@ -34,7 +34,7 @@ class S060FromDestinationPimInstalledToDestinationPimFileDatabaseMigratedSpec ex
 
     public function it_migrates_file(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator,

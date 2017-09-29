@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
 use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S015FromSourcePimConfiguredToSourcePimApiConfigured;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
@@ -38,7 +38,7 @@ class S015FromSourcePimConfiguredToSourcePimApiConfiguredSpec extends ObjectBeha
 
     public function it_configures_a_source_pim_api(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         AkeneoPimClientInterface $apiClient,
         ProductApiInterface $productApi,
         $printerAndAsker,

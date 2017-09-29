@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s125_EnterpriseEditionDataMigration\EnterpriseEditionDataMigrator;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -36,13 +36,13 @@ class S125FromDestinationPimExtraDataMigratedToDestinationPimEnterpriseEditionDa
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.destination_pim_enterprise_edition_data_migration' => 'onDestinationPimEnterpriseEditionDataMigration',
+            'workflow.transporteo.transition.destination_pim_enterprise_edition_data_migration' => 'onDestinationPimEnterpriseEditionDataMigration',
         ];
     }
 
     public function onDestinationPimEnterpriseEditionDataMigration(Event $event)
     {
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         if (!$stateMachine->getDestinationPim()->isEnterpriseEdition()) {

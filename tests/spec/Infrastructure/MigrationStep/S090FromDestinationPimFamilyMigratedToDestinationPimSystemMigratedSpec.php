@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S090FromDestinationPimFamilyMigratedToDestinationPimSystemMigrated;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
@@ -40,7 +40,7 @@ class S090FromDestinationPimFamilyMigratedToDestinationPimSystemMigratedSpec ext
 
     public function it_migrates_system(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator,

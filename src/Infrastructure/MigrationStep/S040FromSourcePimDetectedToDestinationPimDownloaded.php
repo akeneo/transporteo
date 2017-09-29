@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloadException;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Local;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -37,8 +37,8 @@ class S040FromSourcePimDetectedToDestinationPimDownloaded extends AbstractStateM
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.ask_destination_pim_location' => 'onAskDestinationPimLocation',
-            'workflow.migration_tool.transition.download_destination_pim' => 'onDownloadingTransition',
+            'workflow.transporteo.transition.ask_destination_pim_location' => 'onAskDestinationPimLocation',
+            'workflow.transporteo.transition.download_destination_pim' => 'onDownloadingTransition',
         ];
     }
 
@@ -46,7 +46,7 @@ class S040FromSourcePimDetectedToDestinationPimDownloaded extends AbstractStateM
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $transPrefix = 'from_all_accesses_granted_to_destination_pim_downloaded.on_ask_destination_pim_location.';
@@ -78,7 +78,7 @@ class S040FromSourcePimDetectedToDestinationPimDownloaded extends AbstractStateM
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         try {

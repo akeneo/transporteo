@@ -22,7 +22,7 @@ class MySqlImportTableCommand extends AbstractCommand implements Command
     public static function getLocalTableDumpPath(string $tableName): string
     {
         return sprintf(
-            '%s%s..%s..%s..%svar%smigration_tool_%s.sql',
+            '%s%s..%s..%s..%svar%stransporteo_%s.sql',
             __DIR__,
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR,

@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurationException;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
@@ -47,12 +47,12 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.leave.ready' => 'leaveReadyPlace',
-            'workflow.migration_tool.transition.ask_source_pim_location' => 'askSourcePimLocation',
-            'workflow.migration_tool.guard.local_source_pim_configuration' => 'guardLocalSourcePimConfiguration',
-            'workflow.migration_tool.guard.distant_source_pim_configuration' => 'guardDistantSourcePimConfiguration',
-            'workflow.migration_tool.transition.distant_source_pim_configuration' => 'onDistantConfiguration',
-            'workflow.migration_tool.transition.local_source_pim_configuration' => 'onLocalConfiguration',
+            'workflow.transporteo.leave.ready' => 'leaveReadyPlace',
+            'workflow.transporteo.transition.ask_source_pim_location' => 'askSourcePimLocation',
+            'workflow.transporteo.guard.local_source_pim_configuration' => 'guardLocalSourcePimConfiguration',
+            'workflow.transporteo.guard.distant_source_pim_configuration' => 'guardDistantSourcePimConfiguration',
+            'workflow.transporteo.transition.distant_source_pim_configuration' => 'onDistantConfiguration',
+            'workflow.transporteo.transition.local_source_pim_configuration' => 'onLocalConfiguration',
         ];
     }
 
@@ -60,7 +60,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     {
         $this->logEntering(__FUNCTION__);
 
-        $this->printerAndAsker->title('Akeneo Migration Tool');
+        $this->printerAndAsker->title('Transporteo');
 
         $this
             ->printerAndAsker
@@ -81,7 +81,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $projectName = $this
@@ -118,7 +118,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     public function guardLocalSourcePimConfiguration(GuardEvent $event)
     {
         $this->logGuardEntering(__FUNCTION__);
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $pimSourceLocation = $stateMachine->getSourcePimLocation();
 
@@ -132,7 +132,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $pimSourceLocation = $stateMachine->getSourcePimLocation();
 
@@ -146,7 +146,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $transPrefix = 'from_ready_to_source_pim_configured.on_distant_configuration.';
@@ -235,7 +235,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
         $transPrefix = 'from_ready_to_source_pim_configured.on_local_configuration.';
 

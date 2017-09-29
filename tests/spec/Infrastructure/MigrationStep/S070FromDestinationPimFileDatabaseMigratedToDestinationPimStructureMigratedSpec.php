@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S070FromDestinationPimFileDatabaseMigratedToDestinationPimStructureMigrated;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
@@ -41,7 +41,7 @@ class S070FromDestinationPimFileDatabaseMigratedToDestinationPimStructureMigrate
 
     public function it_migrates_structure(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator,

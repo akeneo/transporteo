@@ -15,7 +15,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\Des
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
 use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -65,14 +65,14 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.guard.destination_pim_pre_configuration' => 'guardOnDestinationPimPreConfiguration',
-            'workflow.migration_tool.transition.destination_pim_pre_configuration' => 'onDestinationPimPreConfiguration',
-            'workflow.migration_tool.guard.destination_pim_configuration' => 'guardOnDestinationPimConfiguration',
-            'workflow.migration_tool.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
-            'workflow.migration_tool.transition.destination_pim_api_configuration' => 'onDestinationPimApiConfiguration',
-            'workflow.migration_tool.transition.destination_pim_detection' => 'onDestinationPimDetection',
-            'workflow.migration_tool.transition.local_destination_pim_system_requirements_installation' => 'onLocalDestinationPimSystemRequirementsInstallation',
-            'workflow.migration_tool.transition.destination_pim_check_requirements' => 'onDestinationPimCheckRequirements',
+            'workflow.transporteo.guard.destination_pim_pre_configuration' => 'guardOnDestinationPimPreConfiguration',
+            'workflow.transporteo.transition.destination_pim_pre_configuration' => 'onDestinationPimPreConfiguration',
+            'workflow.transporteo.guard.destination_pim_configuration' => 'guardOnDestinationPimConfiguration',
+            'workflow.transporteo.transition.destination_pim_configuration' => 'onDestinationPimConfiguration',
+            'workflow.transporteo.transition.destination_pim_api_configuration' => 'onDestinationPimApiConfiguration',
+            'workflow.transporteo.transition.destination_pim_detection' => 'onDestinationPimDetection',
+            'workflow.transporteo.transition.local_destination_pim_system_requirements_installation' => 'onLocalDestinationPimSystemRequirementsInstallation',
+            'workflow.transporteo.transition.destination_pim_check_requirements' => 'onDestinationPimCheckRequirements',
         ];
     }
 
@@ -80,7 +80,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logGuardEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $destinationPimPath = $stateMachine->getCurrentDestinationPimLocation();
@@ -102,7 +102,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->parametersYmlGenerator->preconfigure($stateMachine->getCurrentDestinationPimLocation());
@@ -114,7 +114,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logGuardEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $destinationPimPath = $stateMachine->getCurrentDestinationPimLocation();
@@ -136,7 +136,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $projectName = $stateMachine->getProjectName();
@@ -155,7 +155,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
 
     public function onDestinationPimApiConfiguration(Event $event)
     {
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $baseUri = $this
@@ -195,7 +195,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         try {
@@ -217,7 +217,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         try {
@@ -233,7 +233,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         try {

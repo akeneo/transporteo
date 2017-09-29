@@ -43,7 +43,7 @@ If the 1.7 source PIM you will migrate from is installed remotely, you'll be ask
 - [composer](https://getcomposer.org/download/)
 - a SSH client
 
-And the same requirements as the PIM as you need a PIM installed on your computer. [instructions](https://docs.akeneo.com/latest/install_pim/manual/system_requirements/system_requirements.html)
+And the same requirements as the PIM as you need a PIM installed on your computer ([instructions](https://docs.akeneo.com/latest/install_pim/manual/system_requirements/system_requirements.html)).
 As we don't use Elasticsearch in Transporteo, you can install it the way you want.
 
 ### Install the tool and its dependencies
@@ -63,7 +63,7 @@ To launch the tool, run:
 then, let you guide ;) 
 
 At the end of the tool's job, you will have your database setuped with your data but we do not migrate your custom code.
-You will have to migrate it following this [Upgrade file](./UPGRADE-2.0.md)
+You will have to migrate it following this [upgrade file](./UPGRADE-2.0.md).
 
 We plan to automate this part in future release, stay tuned ! :)
 
@@ -75,4 +75,4 @@ Please, have a look on the [CONTRIBUTING](./.github/CONTRIBUTING.md) page.
 
 We will continuously improve this tool, you can follow our plans [here](https://github.com/akeneo/transporteo/projects/1).
 
-You can also have a look on the [changelog](./CHANGELOG.md)
+You can also have a look on the [changelog](./CHANGELOG.md).

@@ -54,7 +54,7 @@ final class ContainerBuilder
 
         $container->addCompilerPass(new RegisterListenersPass());
 
-        $worklowsDefinition = Yaml::parse(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'migration_tool_state_machine.yml'));
+        $worklowsDefinition = Yaml::parse(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'transporteo_state_machine.yml'));
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/config'));
         $loader->load('symfony_framework.xml');
@@ -69,23 +69,23 @@ final class ContainerBuilder
 
         $container->registerForAutoconfiguration(EventSubscriberInterface::class)->addTag('kernel.event_subscriber');
 
-        $container->registerForAutoconfiguration(Console::class)->addTag('migration_tool.console');
-        $container->registerForAutoconfiguration(FileFetcher::class)->addTag('migration_tool.file_fetcher');
-        $container->registerForAutoconfiguration(DestinationPimDownloader::class)->addTag('migration_tool.destination_pim_downloader');
-        $container->registerForAutoconfiguration(DestinationPimSystemRequirementsInstaller::class)->addTag('migration_tool.destination_pim_system_requirements_installer');
+        $container->registerForAutoconfiguration(Console::class)->addTag('transporteo.console');
+        $container->registerForAutoconfiguration(FileFetcher::class)->addTag('transporteo.file_fetcher');
+        $container->registerForAutoconfiguration(DestinationPimDownloader::class)->addTag('transporteo.destination_pim_downloader');
+        $container->registerForAutoconfiguration(DestinationPimSystemRequirementsInstaller::class)->addTag('transporteo.destination_pim_system_requirements_installer');
 
         $container->compile();
 
-        self::loadRegistry($container, StructureMigrator::class, 'migration_tool.structure_migrator', 'addStructureMigrator');
-        self::loadRegistry($container, SystemMigrator::class, 'migration_tool.system_migrator', 'addSystemMigrator');
-        self::loadRegistry($container, JobMigrator::class, 'migration_tool.job_migrator', 'addJobMigrator');
-        self::loadRegistry($container, GroupMigrator::class, 'migration_tool.group_migrator', 'addGroupMigrator');
-        self::loadRegistry($container, EnterpriseEditionDataMigrator::class, 'migration_tool.enterprise_edition_data_migrator', 'addEnterpriseEditionDataMigrator');
+        self::loadRegistry($container, StructureMigrator::class, 'transporteo.structure_migrator', 'addStructureMigrator');
+        self::loadRegistry($container, SystemMigrator::class, 'transporteo.system_migrator', 'addSystemMigrator');
+        self::loadRegistry($container, JobMigrator::class, 'transporteo.job_migrator', 'addJobMigrator');
+        self::loadRegistry($container, GroupMigrator::class, 'transporteo.group_migrator', 'addGroupMigrator');
+        self::loadRegistry($container, EnterpriseEditionDataMigrator::class, 'transporteo.enterprise_edition_data_migrator', 'addEnterpriseEditionDataMigrator');
 
-        self::loadRegistry($container, ChainedConsole::class, 'migration_tool.console', 'addConsole');
-        self::loadRegistry($container, FileFetcherRegistry::class, 'migration_tool.file_fetcher', 'addFileFetcher');
-        self::loadRegistry($container, DestinationPimDownloaderHelper::class, 'migration_tool.destination_pim_downloader', 'addDestinationPimDownloader');
-        self::loadRegistry($container, DestinationPimSystemRequirementsInstallerHelper::class, 'migration_tool.destination_pim_system_requirements_installer', 'addDestinationPimSystemRequirementsInstaller');
+        self::loadRegistry($container, ChainedConsole::class, 'transporteo.console', 'addConsole');
+        self::loadRegistry($container, FileFetcherRegistry::class, 'transporteo.file_fetcher', 'addFileFetcher');
+        self::loadRegistry($container, DestinationPimDownloaderHelper::class, 'transporteo.destination_pim_downloader', 'addDestinationPimDownloader');
+        self::loadRegistry($container, DestinationPimSystemRequirementsInstallerHelper::class, 'transporteo.destination_pim_system_requirements_installer', 'addDestinationPimSystemRequirementsInstaller');
 
         return $container;
     }

@@ -16,7 +16,7 @@ use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S050FromDestinationPimDownloadedToDestinationPimInstalled;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 use Prophecy\Argument;
@@ -63,7 +63,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     }
 
     public function it_allows_the_pre_configuration_when_the_parameters_file_does_not_exist(
-        MigrationToolStateMachine $migrationToolStateMachine,
+        TransporteoStateMachine $migrationToolStateMachine,
         GuardEvent $guardEvent
     )
     {
@@ -80,7 +80,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     }
 
     public function it_blocks_the_pre_configuration_when_the_parameters_file_exists(
-        MigrationToolStateMachine $migrationToolStateMachine,
+        TransporteoStateMachine $migrationToolStateMachine,
         GuardEvent $guardEvent
     )
     {
@@ -98,7 +98,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 
     public function it_preconfigures_the_destination_pim(
         Event $event,
-        MigrationToolStateMachine $migrationToolStateMachine,
+        TransporteoStateMachine $migrationToolStateMachine,
         $parametersYmlGenerator
     )
     {
@@ -118,7 +118,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 
     public function it_blocks_the_configuration_if_parameters_file_does_not_exist(
         GuardEvent $guardEvent,
-        MigrationToolStateMachine $migrationToolStateMachine
+        TransporteoStateMachine $migrationToolStateMachine
     )
     {
         $guardEvent->getSubject()->willReturn($migrationToolStateMachine);
@@ -135,7 +135,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 
     public function it_allows_the_configuration_if_parameters_file_exists(
         GuardEvent $guardEvent,
-        MigrationToolStateMachine $migrationToolStateMachine
+        TransporteoStateMachine $migrationToolStateMachine
     )
     {
         $guardEvent->getSubject()->willReturn($migrationToolStateMachine);
@@ -152,7 +152,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 
     public function it_configures_the_destination_pim(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         PimConnection $pimConnection,
         PimConfiguration $pimConfiguration,
         $destinationPimConfigurator
@@ -186,7 +186,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
 
     public function it_configures_the_destination_pim_api(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         PimApiParameters $sourceApiParameters,
         $printerAndAsker,
         $translator,

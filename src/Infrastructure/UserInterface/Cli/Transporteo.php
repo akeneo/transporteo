@@ -2,14 +2,14 @@
 
 namespace Akeneo\PimMigration\Infrastructure\UserInterface\Cli;
 
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-final class MigrationTool extends Command
+final class Transporteo extends Command
 {
     /** @var ContainerBuilder */
     private $container;
@@ -29,11 +29,11 @@ final class MigrationTool extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $stateMachine = new MigrationToolStateMachine($this->container->get('state_machine.migration_tool'), $this->container->get(LoggerInterface::class));
+        $stateMachine = new TransporteoStateMachine($this->container->get('state_machine.transporteo'), $this->container->get(LoggerInterface::class));
 
         $cliQuestionAsker = new ConsolePrinterAndAsker($input, $output, $this->getHelper('question'));
 
-        $stateMachineSubscribers = $this->container->findTaggedServiceIds('migration_tool.subscriber');
+        $stateMachineSubscribers = $this->container->findTaggedServiceIds('transporteo.subscriber');
 
         foreach ($stateMachineSubscribers as $serviceId => $values) {
             $service = $this->container->get($serviceId);

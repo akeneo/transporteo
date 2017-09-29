@@ -1,5 +1,5 @@
 workflows:
-    migration_tool:
+    transporteo:
         type: 'state_machine'
         audit_trail:
             enabled: false
@@ -8,7 +8,7 @@ workflows:
             arguments:
                 - 'currentState'
         supports:
-            - 'Akeneo\PimMigration\Domain\MigrationToolStateMachine'
+            - 'Akeneo\PimMigration\Domain\TransporteoStateMachine'
         places:
             - 'ready'
             - 'source_pim_location_guessed'

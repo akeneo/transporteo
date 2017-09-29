@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 use Akeneo\PimMigration\Domain\MigrationStep\s015_SourcePimApiConfiguration\SourcePimApiConfigurationException;
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
 use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -33,13 +33,13 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.source_pim_api_configuration' => 'onSourcePimApiConfiguration',
+            'workflow.transporteo.transition.source_pim_api_configuration' => 'onSourcePimApiConfiguration',
         ];
     }
 
     public function onSourcePimApiConfiguration(Event $event)
     {
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $sourceApiParameters = new PimApiParameters(

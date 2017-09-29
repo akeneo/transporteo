@@ -5,15 +5,15 @@ services:
 
   _instanceof:
     Akeneo\PimMigration\Infrastructure\MigrationStep\StateMachineSubscriber:
-      tags: ['migration_tool.subscriber']
+      tags: ['transporteo.subscriber']
     Akeneo\PimMigration\Domain\Command\Console:
-      tags: ['migration_tool.console']
+      tags: ['transporteo.console']
     Akeneo\PimMigration\Domain\FileFetcher:
-      tags: ['migration_tool.file_fetcher']
+      tags: ['transporteo.file_fetcher']
     Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader:
-      tags: ['migration_tool.destination_pim_downloader']
+      tags: ['transporteo.destination_pim_downloader']
     Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller:
-      tags: ['migration_tool.destination_pim_system_requirements_installer']
+      tags: ['transporteo.destination_pim_system_requirements_installer']
 
   Akeneo\PimMigration\Infrastructure\MigrationStep\:
     resource: './../../MigrationStep/*'
@@ -66,140 +66,140 @@ services:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_locale'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\CurrencyStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_currency'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\CategoryStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_category'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\CategoryTranslationStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_category_translation'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeGroupStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_group'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeGroupTranslationStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_group_translation'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\GroupTypeStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_group_type'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\GroupTypeStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_group_type_translation'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\ChannelStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_channel'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\ChannelCurrencyStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_channel_currency'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\ChannelLocaleStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_channel_locale'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\ChannelTranslationStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_channel_translation'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AssociationTypeStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_association_type'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AssociationTypeTranslationStructureMigrator:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_association_type_translation'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeDataMigrator:
     class: 'Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeDataMigrator'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeLocal:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_locale'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeTranslation:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_translation'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeOption:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_option'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeOptionValue:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_option_value'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\AttributeRequirement:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_catalog_attribute_requirement'
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetCategory:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_category'
       $isEeOnly: true
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetCategoryTranslation:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_category_translation'
       $isEeOnly: true
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\EeAssetTag:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_tag'
       $isEeOnly: true
-    tags: ['migration_tool.structure_migrator']
+    tags: ['transporteo.structure_migrator']
 
 ## SYSTEM MIGRATORS
 
@@ -209,142 +209,142 @@ services:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'acl_classes'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\AclSecurityIdentities:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'acl_security_identities'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\AclObjectIdentities:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'acl_object_identities'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\AclEntries:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'acl_entries'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\AclObjectIdentityAncestors:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'acl_object_identity_ancestors'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroAccessGroup:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_access_group'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroAccessRole:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_access_role'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroUserAccessGrouprole:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_user_access_group_role'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroUser:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_user'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroUserAccessGroup:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_user_access_group'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroUserAccessRole:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_user_access_role'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroConfig:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_config'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\OroConfigValue:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'oro_config_value'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimApiAccessToken:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_api_access_token'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimApiAuthCode:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_api_auth_code'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimApiClient:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_api_client'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimApiRefreshToken:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_api_refresh_token'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimSession:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_session'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimDatagridView:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_datagrid_view'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimUserDefaultDatagridView:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pim_user_default_datagrid_view'
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimEeSecurityAttributeGroupAccess:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_security_attribute_group_access'
       $isEeOnly: true
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimEeSecurityProductCategoryAccess:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_security_product_category_access'
       $isEeOnly: true
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\PimEeSecurityLocaleAccess:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_security_locale_access'
       $isEeOnly: true
-    tags: ['migration_tool.system_migrator']
+    tags: ['transporteo.system_migrator']
 
 ### JOB MIGRATOR
 
@@ -354,25 +354,25 @@ services:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'akeneo_batch_job_instance'
-    tags: ['migration_tool.job_migrator']
+    tags: ['transporteo.job_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\AkeneoBatchJobExecution:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'akeneo_batch_job_execution'
-    tags: ['migration_tool.job_migrator']
+    tags: ['transporteo.job_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\AkeneoBatchStepExecution:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'akeneo_batch_step_execution'
-    tags: ['migration_tool.job_migrator']
+    tags: ['transporteo.job_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\AkeneoBatchWarning:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'akeneo_batch_warning'
-    tags: ['migration_tool.job_migrator']
+    tags: ['transporteo.job_migrator']
 
 ### GROUP MIGRATOR
 
@@ -382,31 +382,31 @@ services:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pim_catalog_group_type'
-      tags: ['migration_tool.group_migrator']
+      tags: ['transporteo.group_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupTypeTranslation:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pim_catalog_group_type_translation'
-      tags: ['migration_tool.group_migrator']
+      tags: ['transporteo.group_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\Group:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pim_catalog_group'
-      tags: ['migration_tool.group_migrator']
+      tags: ['transporteo.group_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupTranslation:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pim_catalog_group_translation'
-      tags: ['migration_tool.group_migrator']
+      tags: ['transporteo.group_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupAttribute:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pim_catalog_group_attribute'
-      tags: ['migration_tool.group_migrator']
+      tags: ['transporteo.group_migrator']
 
 ### EXTRA DATA MIGRATOR
 
@@ -421,98 +421,98 @@ services:
       arguments:
         $supportedTableName: 'akeneo_rule_engine_rule_definition'
         $isEeOnly: true
-      tags: ['migration_tool.enterprise_edition_data_migrator']
+      tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\RuleEngineRuleRelation:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'akeneo_rule_engine_rule_relation'
         $isEeOnly: true
-      tags: ['migration_tool.enterprise_edition_data_migrator']
+      tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAsset:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pimee_product_asset_asset'
         $isEeOnly: true
-      tags: ['migration_tool.enterprise_edition_data_migrator']
+      tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAssetCategory:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pimee_product_asset_asset_category'
         $isEeOnly: true
-      tags: ['migration_tool.enterprise_edition_data_migrator']
+      tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAssetTag:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pimee_product_asset_asset_category'
         $isEeOnly: true
-      tags: ['migration_tool.enterprise_edition_data_migrator']
+      tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\PimEeProductAssetAssetChannelVariationConfiguration:
       class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
       arguments:
         $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
         $isEeOnly: true
-      tags: ['migration_tool.enterprise_edition_data_migrator']
+      tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetChaennelVariationConfiguration:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_channel_variation_configuration'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetFileMetadata:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_file_metadata'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetReference:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_reference'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetVariation:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_product_asset_variation'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\EeAssetCategoryAccess:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_security_asset_category_access'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\TwaProject:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_teamwork_assistant_project'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\TwaProjectStatus:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_teamwork_assistant_project_status'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
   Akeneo\PimMigration\Domain\MigrationStep\s125_EntrepriseEditionDataMigration\TwaProjectUserGroup:
     class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
     arguments:
       $supportedTableName: 'pimee_teamwork_assistant_project_user_group'
       $isEeOnly: true
-    tags: ['migration_tool.enterprise_edition_data_migrator']
+    tags: ['transporteo.enterprise_edition_data_migrator']
 
 ### REFERENCE DATA MIGRATOR
 

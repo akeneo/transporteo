@@ -16,7 +16,7 @@ final class ApplicationFactory
     {
         $container = ContainerBuilder::getContainer();
 
-        $application = new Application('Akeneo PIM Migration Tool', '1.0.0', $container);
+        $application = new Application('Transporteo', '1.0.0', $container);
 
         $application->setAutoExit($autoExit);
         $application->setDispatcher($container->get('event_dispatcher'));

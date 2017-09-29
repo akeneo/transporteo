@@ -12,7 +12,7 @@ class Application extends SymfonyApplication
     /** @var Container */
     private $container;
 
-    public function __construct($name = 'Akeneo PIM Migration Tool', $version = '1.0.0', Container $container)
+    public function __construct($name = 'Transporteo', $version = '1.0.0', Container $container)
     {
         $this->container = $container;
 

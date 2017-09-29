@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S100FromDestinationPimSystemMigratedToDestinationPimJobMigrated;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
@@ -40,7 +40,7 @@ class S100FromDestinationPimSystemMigratedToDestinationPimJobMigratedSpec extend
 
     public function it_migrates_jobs(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         $migrator,

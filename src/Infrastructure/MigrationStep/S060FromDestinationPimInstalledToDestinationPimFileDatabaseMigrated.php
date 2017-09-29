@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s060_FilesMigration\AkeneoFileStorageFileInfoMigrator;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -36,7 +36,7 @@ class S060FromDestinationPimInstalledToDestinationPimFileDatabaseMigrated extend
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.destination_pim_file_database_migration' => 'onDestinationPimFileDatabaseMigration',
+            'workflow.transporteo.transition.destination_pim_file_database_migration' => 'onDestinationPimFileDatabaseMigration',
         ];
     }
 
@@ -44,7 +44,7 @@ class S060FromDestinationPimInstalledToDestinationPimFileDatabaseMigrated extend
     {
         $this->logEntering(__FUNCTION__);
 
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated.message'));

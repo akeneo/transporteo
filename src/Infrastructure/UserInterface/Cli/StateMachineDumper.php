@@ -39,7 +39,7 @@ class StateMachineDumper extends Command
     {
         $dumper = new GraphvizDumper();
 
-        $stateMachine = $this->container->get('state_machine.migration_tool');
+        $stateMachine = $this->container->get('state_machine.transporteo');
 
         $content = $dumper->dump(
             $stateMachine->getDefinition(),
@@ -51,8 +51,8 @@ class StateMachineDumper extends Command
 
         $fs = new Filesystem();
 
-        $fs->dumpFile('stateMachineMigrationTool.dot', $content);
+        $fs->dumpFile('stateMachineTransporteo.dot', $content);
 
-        $output->writeln('You now have to run "dot -Tpng stateMachineMigrationTool.dot -o stateMachineMigrationTool.png"');
+        $output->writeln('You now have to run "dot -Tpng stateMachineTransporteo.dot -o stateMachineTransporteo.png"');
     }
 }

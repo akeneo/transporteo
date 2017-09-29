@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductMigrator;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
@@ -31,13 +31,13 @@ class S140FromDestinationPimReferenceDataMigratedToDestinationPimProductMigrated
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.migration_tool.transition.destination_pim_product_migration' => 'onDestinationPimProductMigration',
+            'workflow.transporteo.transition.destination_pim_product_migration' => 'onDestinationPimProductMigration',
         ];
     }
 
     public function onDestinationPimProductMigration(Event $event)
     {
-        /** @var MigrationToolStateMachine $stateMachine */
+        /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_reference_data_migrated_to_destination_pim_product_migrated.message'));

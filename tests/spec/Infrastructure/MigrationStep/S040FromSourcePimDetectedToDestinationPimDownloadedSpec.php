@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\PrinterAndAsker;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Akeneo\PimMigration\Infrastructure\DestinationPimDownload\Local;
 use Akeneo\PimMigration\Infrastructure\MigrationStep\S040FromSourcePimDetectedToDestinationPimDownloaded;
-use Akeneo\PimMigration\Infrastructure\MigrationToolStateMachine;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -43,7 +43,7 @@ class S040FromSourcePimDetectedToDestinationPimDownloadedSpec extends ObjectBeha
 
     public function it_asks_the_pim_location(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         $printerAndAsker,
         $translator
     ) {
@@ -65,7 +65,7 @@ class S040FromSourcePimDetectedToDestinationPimDownloadedSpec extends ObjectBeha
 
     public function it_asks_to_download_the_pim_with_docker(
         Event $event,
-        MigrationToolStateMachine $stateMachine,
+        TransporteoStateMachine $stateMachine,
         SourcePim $sourcePim,
         DownloadMethod $downloadMethod,
         $destinationPimDownloaderHelper

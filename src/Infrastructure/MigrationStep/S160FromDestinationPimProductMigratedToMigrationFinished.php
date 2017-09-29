@@ -23,7 +23,7 @@ class S160FromDestinationPimProductMigratedToMigrationFinished extends AbstractS
 
     public function onFinishMigration(Event $event): void
     {
-        $transPrefix = 'from_destination_pim_product_migrated_to_migration_finished.';
+        $transPrefix = 'from_destination_pim_product_variation_migrated_to_migration_finished.';
 
         $this->printerAndAsker->section($this->translator->trans($transPrefix.'end_message'));
     }

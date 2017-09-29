@@ -539,3 +539,8 @@ services:
   Akeneo\PimMigration\Domain\MigrationStep\s140_ProductMigration\ProductAssociationMigrator:
     arguments:
       $batchSize: 100
+
+## PRODUCT VARIATION MIGRATOR
+
+  Akeneo\PimMigration\Infrastructure\LocalImportFileWriter: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator: ~

@@ -1,4 +1,4 @@
-# Migration Tool
+# Transporteo
 
 **While the tool is not stable we do not recommend to use it to setup a Production PIM.**
 

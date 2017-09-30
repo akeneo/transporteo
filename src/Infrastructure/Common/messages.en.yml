@@ -4,13 +4,10 @@ from_ready_to_source_pim_configured:
        This tool aims to help you to migrate your PIM 1.7 standard edition (either Community or Enterprise) to the new version 2.0.
        All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0.
     rules: |
-       In what follows, \"source PIM\" will refer to your current 1.7 PIM whereas \"destination PIM\" will refer to your future 2.0 PIM.
+       In what follows, "source PIM" will refer to your current 1.7 PIM whereas "destination PIM" will refer to your future 2.0 PIM.
        Moreover, you need to install a PIM 2.0 on your computer to let us fill it with your data.
     start: "Here we are! A few questions before starting to migrate your PIM!"
   ask_source_pim_location:
-    project_name:
-      question: "What is the name of the project you want to migrate? Please choose a name with snake_case and alphanumeric characters. "
-      error_message: "Your project name should use only alphanumeric and snake_case characters."
     pim_location:
       question: "Where is located your source PIM? "
   on_distant_configuration:
@@ -21,11 +18,11 @@ from_ready_to_source_pim_configured:
     ssh_user_question:  "What is the SSH user you want to connect with to the source PIM? "
     ssh_key_path_question: "What is the absolute path of the private SSH key able to connect to the source PIM? "
     ssh_key_path_error: "Your SSH key path should be an absolute one."
-    composer_json_path_question: "What is the absolute path of the source PIM composer.json on the server? "
-    composer_json_path_error: "Your composer.json path should be an absolute one."
+    project_path_question: "What is the absolute path of the source PIM on the server? "
+    project_path_error: "Your source PIM path should be an absolute one."
   on_local_configuration:
-    composer_json_path_question: "What is the absolute path of the source PIM composer.json on your computer? "
-    composer_json_path_error: "Your composer.json path should be an absolute one."
+    project_path_question: "What is the absolute path of the source PIM on your computer? "
+    project_path_error: "Your source PIM path should be an absolute one."
 from_source_pim_configured_to_source_pim_api_configured:
   on_source_pim_api_configuration:
     base_uri:
@@ -82,3 +79,9 @@ from_destination_pim_enterprise_edition_data_migrated_to_destination_pim_referen
   message: "Migrating reference data..."
 from_destination_pim_reference_data_migrated_to_destination_pim_product_migrated:
   message: "Migrating products data..."
+from_destination_pim_product_migrated_to_migration_finished:
+  end_message: |
+    You success to migrate all your data in the new PIM ! You may want to look at the
+    logs in "var/logs" folder if there are some errors. If you have any custom code you should
+    have a look at the "UPGRADE-2.0.md" file, availaible at the root of Transporteo.
+

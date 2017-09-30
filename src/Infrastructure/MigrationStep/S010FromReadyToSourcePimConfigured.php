@@ -84,28 +84,6 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
-        $projectName = $this
-            ->printerAndAsker
-            ->askSimpleQuestion(
-                $this
-                    ->translator
-                    ->trans('from_ready_to_source_pim_configured.ask_source_pim_location.project_name.question'),
-                '',
-                function ($answer) {
-                    if (0 === preg_match('/^[A-Za-z0-9_]+$/', $answer)) {
-                        throw new \RuntimeException(
-                            $this
-                                ->translator
-                                ->trans(
-                                    'from_ready_to_source_pim_configured.ask_source_pim_location.project_name.error_message'
-                                )
-                        );
-                    }
-                }
-            );
-
-        $stateMachine->setProjectName($projectName);
-
         $pimLocation = $this->printerAndAsker->askChoiceQuestion(
             $this->translator->trans('from_ready_to_source_pim_configured.ask_source_pim_location.pim_location.question'),
             [self::LOCAL_SOURCE_PIM, self::REMOTE_SOURCE_PIM]
@@ -196,21 +174,28 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 
         $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user, new SshKey($sshPath)));
 
-        $composerJsonPath = $this
+        $pimProjectPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                $this->translator->trans($transPrefix.'composer_json_path_question'),
+                $this->translator->trans($transPrefix.'project_path_question'),
                 '',
                 function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
                     if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException($this->translator->trans($transPrefix.'composer_json_path_error'));
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'project_path_error'));
                     }
 
                     return $answer;
                 }
             );
+
+        $composerJsonPath = sprintf(
+            '%s%s%s',
+            $pimProjectPath,
+            DIRECTORY_SEPARATOR === substr($pimProjectPath, -1) ? '' : DIRECTORY_SEPARATOR,
+            'composer.json'
+        );
 
         try {
             $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());
@@ -239,16 +224,16 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
         $stateMachine = $event->getSubject();
         $transPrefix = 'from_ready_to_source_pim_configured.on_local_configuration.';
 
-        $composerJsonPath = $this
+        $pimProjectPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
-                $this->translator->trans($transPrefix.'composer_json_path_question'),
+                $this->translator->trans($transPrefix.'project_path_question'),
                 '',
                 function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
                     if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException($this->translator->trans($transPrefix.'composer_json_path_error'));
+                        throw new \RuntimeException($this->translator->trans($transPrefix.'project_path_error'));
                     }
 
                     return $answer;
@@ -256,6 +241,13 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             );
 
         $stateMachine->setSourcePimConnection(new Localhost());
+
+        $composerJsonPath = sprintf(
+            '%s%s%s',
+            $pimProjectPath,
+            DIRECTORY_SEPARATOR === substr($pimProjectPath, -1) ? '' : DIRECTORY_SEPARATOR,
+            'composer.json'
+        );
 
         try {
             $pimServerInformation = new PimServerInformation($composerJsonPath, $stateMachine->getProjectName());

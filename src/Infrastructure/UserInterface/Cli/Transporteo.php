@@ -41,7 +41,5 @@ final class Transporteo extends Command
         }
 
         $stateMachine->start();
-
-        $output->writeln('Migration finished');
     }
 }

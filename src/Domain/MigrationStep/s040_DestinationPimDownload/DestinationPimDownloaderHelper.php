@@ -17,7 +17,7 @@ class DestinationPimDownloaderHelper
     /** @var DestinationPimDownloader[] */
     private $destinationPimDownloaders = [];
 
-    public function download(DownloadMethod $downloadMethod, Pim $pim, string $projectName): string
+    public function download(DownloadMethod $downloadMethod, Pim $pim, ?string $projectName): string
     {
         return $this->get($downloadMethod)->download($downloadMethod, $pim, $projectName);
     }

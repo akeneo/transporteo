@@ -15,10 +15,10 @@ class PimServerInformation
     /** @var string */
     private $composerJsonPath;
 
-    /** @var string */
+    /** @var string|null */
     private $projectName;
 
-    public function __construct(string $composerJsonPath, string $projectName)
+    public function __construct(string $composerJsonPath, ?string $projectName)
     {
         if (!$this->endsByComposerDotJson($composerJsonPath)) {
             throw new \InvalidArgumentException('ComposerJsonPath must end by '.ComposerJson::getFileName());
@@ -57,7 +57,7 @@ class PimServerInformation
         return pathinfo($this->getComposerJsonPath())['dirname'].$path;
     }
 
-    public function getProjectName(): string
+    public function getProjectName(): ?string
     {
         return $this->projectName;
     }

@@ -81,6 +81,9 @@ class TransporteoStateMachine
     /** @var LoggerInterface */
     protected $logger;
 
+    /** @var array */
+    protected $defaultResponses = [];
+
     public function __construct(StateMachine $stateMachine, LoggerInterface $logger)
     {
         $this->stateMachineMarker = $stateMachine;
@@ -248,5 +251,15 @@ class TransporteoStateMachine
     public function setDestinationPimApiParameters(PimApiParameters $destinationPimApiParameters): void
     {
         $this->destinationPimApiParameters = $destinationPimApiParameters;
+    }
+
+    public function setDefaultResponses(array $defaultResponses): void
+    {
+        $this->defaultResponses = $defaultResponses;
+    }
+
+    public function getDefaultResponse(string $question): string
+    {
+        return $this->defaultResponses[$question] ?? '';
     }
 }

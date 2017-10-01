@@ -164,7 +164,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
                 $this
                     ->translator
                     ->trans('from_destination_pim_downloaded_to_destination_pim_installed.on_destination_pim_api_configuration.base_uri.question'),
-                '',
+                $stateMachine->getDefaultResponse('api_base_uri_destination_pim'),
                 function ($answer) {
                     // This URI validation regex is intentionally imperfect.
                     // It's goal is only to avoid common mistakes like forgetting "http", or adding parameters from a copy/paste.

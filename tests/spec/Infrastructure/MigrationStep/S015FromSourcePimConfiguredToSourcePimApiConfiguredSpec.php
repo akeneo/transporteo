@@ -47,6 +47,7 @@ class S015FromSourcePimConfiguredToSourcePimApiConfiguredSpec extends ObjectBeha
     )
     {
         $event->getSubject()->willReturn($stateMachine);
+        $stateMachine->getDefaultResponse(Argument::any())->willReturn('');
 
         $baseUri = 'http://localhost';
         $question = 'What is the base URI to request the API of the source PIM?';
@@ -60,28 +61,28 @@ class S015FromSourcePimConfiguredToSourcePimApiConfiguredSpec extends ObjectBeha
         $translator
             ->trans('from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.client_id_question')
             ->willReturn($question);
-        $printerAndAsker->askSimpleQuestion($question)->willReturn($clientId);
+        $printerAndAsker->askSimpleQuestion($question, '')->willReturn($clientId);
 
         $secret = 'secret';
         $question = 'What is the secret associated to this client?';
         $translator
             ->trans('from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.secret_question')
             ->willReturn($question);
-        $printerAndAsker->askSimpleQuestion($question)->willReturn($secret);
+        $printerAndAsker->askSimpleQuestion($question, '')->willReturn($secret);
 
         $userName = 'userName';
         $question = 'What is the username to use to authenticate to the API of the source PIM?';
         $translator
             ->trans('from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.user_name_question')
             ->willReturn($question);
-        $printerAndAsker->askSimpleQuestion($question)->willReturn($userName);
+        $printerAndAsker->askSimpleQuestion($question, '')->willReturn($userName);
 
         $userPwd = 'userPwd';
         $question = 'What is the password associated to this username?';
         $translator
             ->trans('from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.user_pwd_question')
             ->willReturn($question);
-        $printerAndAsker->askSimpleQuestion($question)->willReturn($userPwd);
+        $printerAndAsker->askSimpleQuestion($question, '')->willReturn($userPwd);
 
         $sourceApiParameters = new PimApiParameters(
             $baseUri,

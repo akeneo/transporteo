@@ -131,7 +131,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 
         $host = $this->printerAndAsker->askSimpleQuestion(
             $this->translator->trans($transPrefix.'hostname_question'),
-            '',
+            $stateMachine->getDefaultResponse('ssh_hostname_source_pim'),
             function ($answer) use ($transPrefix) {
                 if (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $answer)
                     && preg_match('/^.{1,253}$/', $answer)
@@ -145,7 +145,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 
         $port = (int) $this->printerAndAsker->askSimpleQuestion(
             $this->translator->trans($transPrefix.'ssh_port_question'),
-            '22',
+            $stateMachine->getDefaultResponse('ssh_port_source_pim'),
             function ($answer) use ($transPrefix) {
                 if (!is_numeric($answer)) {
                     throw new \RuntimeException($this->translator->trans($transPrefix.'ssh_port_error'));
@@ -154,13 +154,16 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
                 return $answer;
             }
         );
-        $user = $this->printerAndAsker->askSimpleQuestion($this->translator->trans($transPrefix.'ssh_user_question'));
+        $user = $this->printerAndAsker->askSimpleQuestion(
+            $this->translator->trans($transPrefix.'ssh_user_question'),
+            $stateMachine->getDefaultResponse('ssh_user_source_pim')
+        );
 
         $sshPath = $this
             ->printerAndAsker
             ->askSimpleQuestion(
                 $this->translator->trans($transPrefix.'ssh_key_path_question'),
-                '',
+                $stateMachine->getDefaultResponse('ssh_key_path_source_pim'),
                 function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
@@ -178,7 +181,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             ->printerAndAsker
             ->askSimpleQuestion(
                 $this->translator->trans($transPrefix.'project_path_question'),
-                '',
+                $stateMachine->getDefaultResponse('installation_path_source_pim'),
                 function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 
@@ -228,7 +231,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             ->printerAndAsker
             ->askSimpleQuestion(
                 $this->translator->trans($transPrefix.'project_path_question'),
-                '',
+                $stateMachine->getDefaultResponse('installation_path_source_pim'),
                 function ($answer) use ($transPrefix) {
                     $fs = new Filesystem();
 

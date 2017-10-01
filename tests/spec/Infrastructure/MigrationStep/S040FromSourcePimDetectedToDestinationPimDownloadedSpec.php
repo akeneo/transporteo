@@ -53,6 +53,7 @@ class S040FromSourcePimDetectedToDestinationPimDownloadedSpec extends ObjectBeha
         $translator->trans($transPrefix.'local_pim_path_question')->willReturn($localPimPathQuestion);
 
         $event->getSubject()->willReturn($stateMachine);
+        $stateMachine->getDefaultResponse(Argument::any())->willReturn('');
 
         $pimPath = '/an-absolute-pim-path';
         $printerAndAsker->askSimpleQuestion($localPimPathQuestion, '', Argument::any())->willReturn($pimPath);

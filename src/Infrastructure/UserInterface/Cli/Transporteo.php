@@ -30,6 +30,7 @@ final class Transporteo extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $stateMachine = new TransporteoStateMachine($this->container->get('state_machine.transporteo'), $this->container->get(LoggerInterface::class));
+        $stateMachine->setDefaultResponses($this->container->getParameter('default_responses'));
 
         $cliQuestionAsker = new ConsolePrinterAndAsker($input, $output, $this->getHelper('question'));
 

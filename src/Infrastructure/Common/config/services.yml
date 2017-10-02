@@ -542,5 +542,4 @@ services:
 
 ## PRODUCT VARIATION MIGRATOR
 
-  Akeneo\PimMigration\Infrastructure\LocalImportFileWriter: ~
   Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator: ~

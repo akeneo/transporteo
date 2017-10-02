@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\JobExecutionCommand;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
-use Akeneo\PimMigration\Domain\ImportFileWriter;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -25,13 +25,13 @@ class ProductModelImporter
     /** @var ChainedConsole */
     private $console;
 
-    /** @var ImportFileWriter */
-    private $importFileWriter;
+    /** @var FileSystemHelper */
+    private $fileHelper;
 
-    public function __construct(ChainedConsole $console, ImportFileWriter $importFileWriter)
+    public function __construct(ChainedConsole $console, FileSystemHelper $importFileWriter)
     {
         $this->console = $console;
-        $this->importFileWriter = $importFileWriter;
+        $this->fileHelper = $importFileWriter;
     }
 
     public function import(array $productsModels, Pim $pim)
@@ -45,7 +45,7 @@ class ProductModelImporter
             ];
         }
 
-        $this->importFileWriter->write($formattedProducts, self::FILE_PATH);
+        $this->fileHelper->writeImportFile($formattedProducts, self::FILE_PATH);
 
         $this->ensureImportJobExists($pim);
 

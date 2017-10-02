@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\JobExecutionCommand;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
-use Akeneo\PimMigration\Domain\ImportFileWriter;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -25,13 +25,13 @@ class FamilyVariantImporter
     /** @var ChainedConsole */
     private $console;
 
-    /** @var ImportFileWriter */
-    private $importFileWriter;
+    /** @var FileSystemHelper */
+    private $fileHelper;
 
-    public function __construct(ChainedConsole $console, ImportFileWriter $importFileWriter)
+    public function __construct(ChainedConsole $console, FileSystemHelper $fileHelper)
     {
         $this->console = $console;
-        $this->importFileWriter = $importFileWriter;
+        $this->fileHelper = $fileHelper;
     }
 
     /**
@@ -39,7 +39,7 @@ class FamilyVariantImporter
      */
     public function import(array $families, Pim $pim): void
     {
-        $this->importFileWriter->write($families, self::FILE_PATH);
+        $this->fileHelper->writeImportFile($families, self::FILE_PATH);
 
         $this->ensureImportJobExists($pim);
 

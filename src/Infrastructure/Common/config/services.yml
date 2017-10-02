@@ -24,6 +24,9 @@ services:
   Akeneo\PimMigration\Infrastructure\Cli\LocalConsole: ~
   Akeneo\PimMigration\Infrastructure\Cli\SshConsole: ~
 
+  Akeneo\PimMigration\Domain\Command\MysqlEscaper:
+    class: 'Akeneo\PimMigration\Infrastructure\Cli\LocalMysqlEscaper'
+
 ### DATA MIGRATION
   Akeneo\PimMigration\Domain\DataMigration\BundleConfigFetcher: ~
   Akeneo\PimMigration\Domain\DataMigration\EntityMappingChecker: ~

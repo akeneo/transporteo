@@ -39,7 +39,7 @@ class LocalMySqlQueryExecutor
         return $pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    protected function getConnection(Pim $pim): \PDO
+    public function getConnection(Pim $pim): \PDO
     {
         $dsn = sprintf(
             'mysql: host=%s;dbname=%s;port=%s',

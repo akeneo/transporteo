@@ -44,7 +44,7 @@ class JobMigrator
             $queries = [];
 
             $queries[] = sprintf(
-                'ALTER TABLE %s.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file',
+                'ALTER TABLE %s.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time',
                 $destinationPim->getDatabaseName()
             );
 

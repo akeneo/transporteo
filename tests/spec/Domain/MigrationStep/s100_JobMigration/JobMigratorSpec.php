@@ -6,6 +6,7 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;;
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
+use Akeneo\PimMigration\Domain\Command\MysqlEscaper;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DatabaseQueryExecutor;
@@ -26,9 +27,9 @@ use PhpSpec\ObjectBehavior;
  */
 class JobMigratorSpec extends ObjectBehavior
 {
-    public function let(ChainedConsole $console)
+    public function let(ChainedConsole $console, MysqlEscaper $mysqlEscaper)
     {
-        $this->beConstructedWith($console);
+        $this->beConstructedWith($console, $mysqlEscaper);
     }
 
     public function it_is_initializable()
@@ -42,7 +43,8 @@ class JobMigratorSpec extends ObjectBehavior
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
         CommandResult $commandResult,
-        $console
+        $console,
+        $mysqlEscaper
     ) {
         $this->addJobMigrator($migratorOne);
         $this->addJobMigrator($migratorTwo);
@@ -53,7 +55,7 @@ class JobMigratorSpec extends ObjectBehavior
         $destinationPim->getDatabaseName()->willReturn('database_name');
 
         $console->execute(
-            new MySqlExecuteCommand('ALTER TABLE database_name.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file'),
+            new MySqlExecuteCommand('ALTER TABLE database_name.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time'),
             $destinationPim
         )->shouldBeCalled();
 
@@ -70,6 +72,8 @@ class JobMigratorSpec extends ObjectBehavior
         $parameters['user_to_notify'] = null;
         $parameters['is_user_authenticated'] = false;
         $parameters = serialize($parameters);
+
+        $mysqlEscaper->escape($parameters, $destinationPim)->willReturn("'".$parameters."'");
 
         $query = sprintf("UPDATE database_name.akeneo_batch_job_instance SET raw_parameters = '%s' WHERE code = 'add_product_value'", $parameters);
 

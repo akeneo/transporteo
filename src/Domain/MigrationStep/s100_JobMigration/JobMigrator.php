@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration;
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MysqlEscaper;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrationException;
@@ -26,9 +27,13 @@ class JobMigrator
     /** @var ChainedConsole */
     private $console;
 
-    public function __construct(ChainedConsole $console)
+    /** @var MysqlEscaper */
+    private $mysqlEscaper;
+
+    public function __construct(ChainedConsole $console, MysqlEscaper $mysqlEscaper)
     {
         $this->console = $console;
+        $this->mysqlEscaper = $mysqlEscaper;
     }
 
     /**
@@ -44,7 +49,7 @@ class JobMigrator
             $queries = [];
 
             $queries[] = sprintf(
-                'ALTER TABLE %s.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file',
+                'ALTER TABLE %s.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time',
                 $destinationPim->getDatabaseName()
             );
 
@@ -193,9 +198,9 @@ class JobMigrator
 
         return array_map(function ($migratedJobInstance) use ($destinationPim) {
             return sprintf(
-                "UPDATE %s.akeneo_batch_job_instance SET raw_parameters = '%s' WHERE code = '%s'",
+                "UPDATE %s.akeneo_batch_job_instance SET raw_parameters = %s WHERE code = '%s'",
                 $destinationPim->getDatabaseName(),
-                $migratedJobInstance['raw_parameters'],
+                $this->mysqlEscaper->escape($migratedJobInstance['raw_parameters'], $destinationPim),
                 $migratedJobInstance['code']
             );
         }, $migratedJobInstances);

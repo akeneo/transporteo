@@ -53,7 +53,7 @@ class S040FromSourcePimDetectedToDestinationPimDownloaded extends AbstractStateM
 
         $destinationPath = $this->printerAndAsker->askSimpleQuestion(
             $this->translator->trans($transPrefix.'local_pim_path_question'),
-            '',
+            $stateMachine->getDefaultResponse('installation_path_destination_pim'),
             function ($answer) use ($transPrefix) {
                 $fs = new Filesystem();
 

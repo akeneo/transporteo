@@ -43,11 +43,11 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
         $stateMachine = $event->getSubject();
 
         $sourceApiParameters = new PimApiParameters(
-            $this->askForBaseUri(),
-            $this->askForClientId(),
-            $this->askForSecret(),
-            $this->askForUserName(),
-            $this->askForUserPwd()
+            $this->askForBaseUri($stateMachine->getDefaultResponse('api_base_uri_source_pim')),
+            $this->askForClientId($stateMachine->getDefaultResponse('api_client_id')),
+            $this->askForSecret($stateMachine->getDefaultResponse('api_secret')),
+            $this->askForUserName($stateMachine->getDefaultResponse('api_user_name')),
+            $this->askForUserPwd($stateMachine->getDefaultResponse('api_user_pwd'))
         );
 
         try {
@@ -62,7 +62,7 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
         $stateMachine->setSourcePimApiParameters($sourceApiParameters);
     }
 
-    private function askForBaseUri(): string
+    private function askForBaseUri(string $defaultResponse): string
     {
         $question = $this->translator->trans(
             'from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.base_uri.question'
@@ -80,42 +80,42 @@ class S015FromSourcePimConfiguredToSourcePimApiConfigured extends AbstractStateM
             }
         };
 
-        return $this->printerAndAsker->askSimpleQuestion($question, '', $validator);
+        return $this->printerAndAsker->askSimpleQuestion($question, $defaultResponse, $validator);
     }
 
-    private function askForClientId(): string
+    private function askForClientId(string $defaultResponse): string
     {
         $question = $this->translator->trans(
             'from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.client_id_question'
         );
 
-        return $this->printerAndAsker->askSimpleQuestion($question);
+        return $this->printerAndAsker->askSimpleQuestion($question, $defaultResponse);
     }
 
-    private function askForSecret(): string
+    private function askForSecret(string $defaultResponse): string
     {
         $question = $this->translator->trans(
             'from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.secret_question'
         );
 
-        return $this->printerAndAsker->askSimpleQuestion($question);
+        return $this->printerAndAsker->askSimpleQuestion($question, $defaultResponse);
     }
 
-    private function askForUserName(): string
+    private function askForUserName(string $defaultResponse): string
     {
         $question = $this->translator->trans(
             'from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.user_name_question'
         );
 
-        return $this->printerAndAsker->askSimpleQuestion($question);
+        return $this->printerAndAsker->askSimpleQuestion($question, $defaultResponse);
     }
 
-    private function askForUserPwd(): string
+    private function askForUserPwd(string $defaultResponse): string
     {
         $question = $this->translator->trans(
             'from_source_pim_configured_to_source_pim_api_configured.on_source_pim_api_configuration.user_pwd_question'
         );
 
-        return $this->printerAndAsker->askSimpleQuestion($question);
+        return $this->printerAndAsker->askSimpleQuestion($question, $defaultResponse);
     }
 }

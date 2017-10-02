@@ -63,6 +63,7 @@ final class ContainerBuilder
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/config'));
         $loader->load('services.yml');
+        $loader->load('parameters.yml');
 
         self::loadTranslatorConfiguration($container);
         self::loadLoggerConfiguration($container);

@@ -131,9 +131,10 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getProjectName()->willReturn('a-super-project');
+        $stateMachine->getDefaultResponse(Argument::any())->willReturn('');
 
         $printerAndAsker->askSimpleQuestion($hostNameQuestion, Argument::any(), Argument::any())->willReturn('my-super-pim.akeneo.com');
-        $printerAndAsker->askSimpleQuestion($portQuestion, '22', Argument::any())->willReturn('22');
+        $printerAndAsker->askSimpleQuestion($portQuestion, '', Argument::any())->willReturn('22');
         $printerAndAsker->askSimpleQuestion($sshUserQuestion, Argument::any(), Argument::any())->willReturn('akeneo');
         $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
 
@@ -167,6 +168,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
     ) {
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getProjectName()->willReturn('a-super-project');
+        $stateMachine->getDefaultResponse(Argument::any())->willReturn('');
 
         $projectPathQuestion = 'What is the absolute path of the source PIM on your computer? ';
 
@@ -202,6 +204,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
 
         $event->getSubject()->willReturn($stateMachine);
         $stateMachine->getProjectName()->willReturn('a-super-project');
+        $stateMachine->getDefaultResponse(Argument::any())->willReturn('');
 
         $hostNameQuestion = 'What is the hostname of the source PIM server? ';
         $portQuestion = 'What is the SSH port of the source PIM server? ';
@@ -223,7 +226,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         }
 
         $printerAndAsker->askSimpleQuestion($hostNameQuestion, Argument::any(), Argument::any())->willReturn('my-super-pim.akeneo.com');
-        $printerAndAsker->askSimpleQuestion($portQuestion, '22', Argument::any())->willReturn('22');
+        $printerAndAsker->askSimpleQuestion($portQuestion, '', Argument::any())->willReturn('22');
         $printerAndAsker->askSimpleQuestion($sshUserQuestion, Argument::any(), Argument::any())->willReturn('akeneo');
 
         $sshKeyPath = ResourcesFileLocator::getSshKeyPath();

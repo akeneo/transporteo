@@ -1,0 +1,16 @@
+parameters:
+  default_responses:
+    installation_path_source_pim: ''
+    installation_path_destination_pim: ''
+
+    ssh_hostname_source_pim: ''
+    ssh_port_source_pim: '22'
+    ssh_user_source_pim: ''
+    ssh_key_path_source_pim: ''
+
+    api_base_uri_source_pim: ''
+    api_base_uri_destination_pim: ''
+    api_client_id: ''
+    api_secret: ''
+    api_user_name: ''
+    api_user_pwd: ''

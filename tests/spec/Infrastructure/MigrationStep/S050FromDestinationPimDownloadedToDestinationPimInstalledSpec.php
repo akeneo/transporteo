@@ -194,6 +194,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalledSpec extends Obje
     )
     {
         $event->getSubject()->willReturn($stateMachine);
+        $stateMachine->getDefaultResponse(Argument::any())->willReturn('');
 
         $question = 'What is the base URI to request the API of the destination PIM?';
         $baseUri = 'http://localhost';

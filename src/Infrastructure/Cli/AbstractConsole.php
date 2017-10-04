@@ -40,7 +40,7 @@ abstract class AbstractConsole implements Console
 
         if ($command instanceof MySqlImportTableCommand) {
             return sprintf(
-                '%s %s',
+                'mysql %s %s',
                 $this->getMySqlConnectionChain($pim),
                 $command->getCommand()
             );
@@ -48,11 +48,8 @@ abstract class AbstractConsole implements Console
 
         if ($command instanceof MySqlExportTableCommand) {
             return sprintf(
-                'mysqldump --port=%s -u%s -p%s %s %s',
-                strval($pim->getMysqlPort()),
-                $pim->getDatabaseUser(),
-                $pim->getDatabasePassword(),
-                $pim->getDatabaseName(),
+                'mysqldump %s %s',
+                $this->getMySqlConnectionChain($pim),
                 $command->getCommand()
             );
         }
@@ -62,13 +59,27 @@ abstract class AbstractConsole implements Console
 
     protected function getMySqlConnectionChain(Pim $pim): string
     {
-        return sprintf(
-            'mysql --host=%s --port=%s -u%s -p%s %s',
-            $pim->getMysqlHost(),
-            strval($pim->getMysqlPort()),
-            $pim->getDatabaseUser(),
-            $pim->getDatabasePassword(),
-            $pim->getDatabaseName()
-        );
+        $connectionChain = '';
+
+        $host = $pim->getMysqlHost();
+        if (!empty($host) && 'localhost' !== $host) {
+            $connectionChain .= sprintf('--host=%s ', $host);
+        }
+
+        $port = $pim->getMysqlPort();
+        if (!empty($port)) {
+            $connectionChain .= sprintf('--port=%s ', $port);
+        }
+
+        $connectionChain .= sprintf('-u%s ', $pim->getDatabaseUser());
+
+        $password = $pim->getDatabasePassword();
+        if (!empty($password)) {
+            $connectionChain .= sprintf('-p%s ', $password);
+        }
+
+        $connectionChain .= $pim->getDatabaseName();
+
+        return $connectionChain;
     }
 }

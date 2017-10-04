@@ -78,7 +78,7 @@ class SshConsole extends AbstractConsole implements Console
         $this->logger->debug(sprintf('SshConsole: executing %s command -> %s', get_class($command), $command->getCommand()));
 
         if ($command instanceof MySqlQueryCommand || $command instanceof MySqlExecuteCommand) {
-            $query = sprintf('%s -e "%s;"', $this->getMySqlConnectionChain($pim), $command->getCommand());
+            $query = sprintf('mysql %s -e "%s;"', $this->getMySqlConnectionChain($pim), $command->getCommand());
 
             $output = $ssh->exec($query);
 

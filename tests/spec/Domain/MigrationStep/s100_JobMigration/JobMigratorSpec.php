@@ -59,6 +59,11 @@ class JobMigratorSpec extends ObjectBehavior
             $destinationPim
         )->shouldBeCalled();
 
+        $console->execute(
+            new MySqlExecuteCommand("INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants'"),
+            $destinationPim
+        )->shouldBeCalled();
+
         $rawParameters = 'a:7:{s:8:"filePath";s:25:"/tmp/association_type.csv";s:9:"delimiter";s:1:";";s:9:"enclosure";s:1:""";s:6:"escape";s:1:"\";s:10:"withHeader";b:1;s:13:"uploadAllowed";b:1;s:25:"invalid_items_file_format";s:3:"csv";}';
 
         $commandResult->getOutput()->willReturn([['code' => 'add_product_value', 'raw_parameters' => $rawParameters]]);

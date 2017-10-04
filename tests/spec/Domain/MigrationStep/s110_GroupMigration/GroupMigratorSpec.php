@@ -43,10 +43,8 @@ class GroupMigratorSpec extends ObjectBehavior
         $groupMigratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $groupMigratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
-        $destinationPim->getDatabaseName()->willReturn('database_name');
-
         $chainedConsole->execute(
-            new MySqlExecuteCommand('UPDATE database_name.pim_catalog_group_type SET is_variant = 0'),
+            new MySqlExecuteCommand('UPDATE pim_catalog_group_type SET is_variant = 0'),
             $destinationPim
         )->shouldBeCalled();
 

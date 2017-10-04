@@ -47,8 +47,7 @@ class FamilyDataMigrator implements DataMigrator
 
             $this->chainedConsole->execute(
                 new MySqlExecuteCommand(sprintf(
-                    'ALTER TABLE %s.%s %s, %s, %s',
-                    $destinationPim->getDatabaseName(),
+                    'ALTER TABLE %s %s, %s, %s',
                     $tableName,
                     $sqlAddColumnPart,
                     $sqlAddAttributeFkPart,

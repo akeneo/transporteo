@@ -45,7 +45,7 @@ class GroupMigrator implements DataMigrator
             }
 
             $this->chainedConsole->execute(
-                new MySqlExecuteCommand(sprintf('UPDATE %s.pim_catalog_group_type SET is_variant = 0', $destinationPim->getDatabaseName())), $destinationPim
+                new MySqlExecuteCommand('UPDATE pim_catalog_group_type SET is_variant = 0'), $destinationPim
             );
         } catch (\Exception $exception) {
             throw new GroupMigrationException($exception->getMessage(), $exception->getCode(), $exception);

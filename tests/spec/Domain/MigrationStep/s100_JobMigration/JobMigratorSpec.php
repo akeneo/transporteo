@@ -52,10 +52,8 @@ class JobMigratorSpec extends ObjectBehavior
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
-        $destinationPim->getDatabaseName()->willReturn('database_name');
-
         $console->execute(
-            new MySqlExecuteCommand('ALTER TABLE database_name.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time'),
+            new MySqlExecuteCommand('ALTER TABLE akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time'),
             $destinationPim
         )->shouldBeCalled();
 
@@ -80,7 +78,7 @@ class JobMigratorSpec extends ObjectBehavior
 
         $mysqlEscaper->escape($parameters, $destinationPim)->willReturn("'".$parameters."'");
 
-        $query = sprintf("UPDATE database_name.akeneo_batch_job_instance SET raw_parameters = '%s' WHERE code = 'add_product_value'", $parameters);
+        $query = sprintf("UPDATE akeneo_batch_job_instance SET raw_parameters = '%s' WHERE code = 'add_product_value'", $parameters);
 
         $console->execute(new MySqlExecuteCommand($query), $destinationPim)->shouldBeCalled();
 
@@ -211,7 +209,7 @@ class JobMigratorSpec extends ObjectBehavior
         ];
 
         $query = sprintf(
-            'SELECT code, raw_parameters FROM database_name.akeneo_batch_job_instance WHERE code IN (%s)',
+            'SELECT code, raw_parameters FROM akeneo_batch_job_instance WHERE code IN (%s)',
             implode(', ', $jobInstancesCode)
         );
 

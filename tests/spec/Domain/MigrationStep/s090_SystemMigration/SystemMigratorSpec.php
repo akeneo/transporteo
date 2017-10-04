@@ -45,23 +45,22 @@ class SystemMigratorSpec extends ObjectBehavior
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
-        $destinationPim->getDatabaseName()->willReturn('database_name');
         $chainedConsole
             ->execute(new MySqlExecuteCommand(
-                'ALTER TABLE database_name.pim_api_access_token
+                'ALTER TABLE pim_api_access_token
                 ADD COLUMN client int(11) DEFAULT NULL AFTER id,
-                ADD CONSTRAINT FK_BD5E4023C7440455 FOREIGN KEY (client) REFERENCES database_name.pim_api_client (id) ON DELETE CASCADE;'
+                ADD CONSTRAINT FK_BD5E4023C7440455 FOREIGN KEY (client) REFERENCES pim_api_client (id) ON DELETE CASCADE;'
             ),
                 $destinationPim)
             ->shouldBeCalled();
 
         $chainedConsole
             ->execute(new MySqlExecuteCommand(
-                'CREATE INDEX IDX_BD5E4023C7440455 ON database_name.pim_api_access_token (client);'
+                'CREATE INDEX IDX_BD5E4023C7440455 ON pim_api_access_token (client);'
             ), $destinationPim)->shouldBeCalled();
 
         $chainedConsole->execute(
-            new MySqlExecuteCommand('UPDATE database_name.pim_api_client SET label = id WHERE label IS NULL;'),
+            new MySqlExecuteCommand('UPDATE pim_api_client SET label = id WHERE label IS NULL;'),
             $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

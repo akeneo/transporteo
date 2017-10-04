@@ -38,7 +38,6 @@ class FamilyDataMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim,
         $migrator
     ) {
-        $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_family')
             ->willThrow(DataMigrationException::class);
@@ -52,8 +51,6 @@ class FamilyDataMigratorSpec extends ObjectBehavior
         $chainedConsole,
         $migrator
     ) {
-        $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
-
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_family')
             ->shouldBeCalled();
@@ -63,8 +60,7 @@ class FamilyDataMigratorSpec extends ObjectBehavior
         $sqlAddKeyPart = 'ADD KEY `IDX_90632072BC295696` (`image_attribute_id`)';
 
         $sql = sprintf(
-            'ALTER TABLE %s.%s %s, %s, %s',
-            'akeneo_pim_two_for_test',
+            'ALTER TABLE %s %s, %s, %s',
             'pim_catalog_family',
             $sqlAddColumnPart,
             $sqlAddAttributeFkPart,
@@ -83,8 +79,6 @@ class FamilyDataMigratorSpec extends ObjectBehavior
         $chainedConsole,
         $migrator
     ) {
-        $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
-
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_family')
             ->shouldBeCalled();
@@ -95,8 +89,7 @@ class FamilyDataMigratorSpec extends ObjectBehavior
 
         $chainedConsole->execute(
             new MySqlExecuteCommand(sprintf(
-                'ALTER TABLE %s.%s %s, %s, %s',
-                'akeneo_pim_two_for_test',
+                'ALTER TABLE %s %s, %s, %s',
                 'pim_catalog_family',
                 $sqlAddColumnPart,
                 $sqlAddAttributeFkPart,

@@ -52,14 +52,12 @@ class AttributeDataMigratorSpec extends ObjectBehavior
         $migrator,
         $chainedConsole
     ) {
-        $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
-
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_attribute')
             ->shouldBeCalled();
 
         $chainedConsole
-            ->execute(new MySqlExecuteCommand('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"'), $destinationPim)
+            ->execute(new MySqlExecuteCommand('UPDATE pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"'), $destinationPim)
             ->willThrow(QueryException::class);
 
         $this->shouldThrow(new StructureMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
@@ -71,18 +69,16 @@ class AttributeDataMigratorSpec extends ObjectBehavior
         $migrator,
         $chainedConsole
     ) {
-        $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
-
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_attribute')
             ->shouldBeCalled();
 
         $chainedConsole
-            ->execute(new MySqlExecuteCommand('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"'), $destinationPim)
+            ->execute(new MySqlExecuteCommand('UPDATE pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"'), $destinationPim)
             ->shouldBeCalled();
 
         $chainedConsole
-            ->execute(new MySqlExecuteCommand('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "text" WHERE backend_type = "varchar"'), $destinationPim)
+            ->execute(new MySqlExecuteCommand('UPDATE pim_catalog_attribute SET backend_type = "text" WHERE backend_type = "varchar"'), $destinationPim)
             ->willThrow(QueryException::class);
 
         $this->shouldThrow(new StructureMigrationException())->during('migrate', [$sourcePim, $destinationPim]);
@@ -94,18 +90,16 @@ class AttributeDataMigratorSpec extends ObjectBehavior
         $migrator,
         $chainedConsole
     ) {
-        $destinationPim->getDatabaseName()->willReturn('akeneo_pim_two_for_test');
-
         $migrator
             ->migrate($sourcePim, $destinationPim, 'pim_catalog_attribute')
             ->shouldBeCalled();
 
         $chainedConsole
-            ->execute(new MySqlExecuteCommand('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"'), $destinationPim)
+            ->execute(new MySqlExecuteCommand('UPDATE pim_catalog_attribute SET backend_type = "textarea" WHERE backend_type = "text"'), $destinationPim)
             ->shouldBeCalled();
 
         $chainedConsole
-            ->execute(new MySqlExecuteCommand('UPDATE akeneo_pim_two_for_test.pim_catalog_attribute SET backend_type = "text" WHERE backend_type = "varchar"'), $destinationPim)
+            ->execute(new MySqlExecuteCommand('UPDATE pim_catalog_attribute SET backend_type = "text" WHERE backend_type = "varchar"'), $destinationPim)
             ->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

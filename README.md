@@ -1,7 +1,5 @@
 # Transporteo
 
-**While the tool is not stable we do not recommend to use it to setup a Production PIM.**
-
 ## Goal
 
 This tool aims to help you to migrate your *PIM 1.7 standard edition* (either _Community_ or _Enterprise_) to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
@@ -26,10 +24,49 @@ Before proceeding, we strongly encourage you to read our documentation and our f
 - [Offer choice with variants!](https://medium.com/akeneo-labs/offer-choice-with-variants-8460a82fa36), functional blog post
 - [How Akeneo deals products with variants?](https://medium.com/akeneo-labs/how-does-akeneo-deal-with-variants-42bcab83a879), functional blog post
 
+## Scope
 
-### Access to remote servers
+This tool has a dedicated release cycle and we're regularly releasing improvements in new versions.
 
-If the 1.7 source PIM you will migrate from is installed remotely, you'll be asked to provide a *private SSH key* able to connect to this server.
+We count on your feedback to continue to improve it in attempt to cover all your migration needs, don't hesitate to open issues describing your cases.
+
+### Data Migration
+
+Edition    | Model                    | Version      |
+---------- | ------------------------ | ------------ |
+Community  | Association type         | 1.0.0-alpha1 |
+Community  | Attribute                | 1.0.0-alpha1 |
+Community  | Attribute Group          | 1.0.0-alpha1 |
+Community  | Categories               | 1.0.0-alpha1 |
+Community  | Family                   | 1.0.0-alpha1 |
+Community  | Group type               | 1.0.0-alpha1 |
+Community  | Group                    | 1.0.0-alpha1 |
+Community  | Reference Data           | 1.0.0-alpha1 |
+Community  | Product                  | 1.0.0-alpha1 |
+Community  | User                     | 1.0.0-alpha1 |
+Community  | User Roles               | 1.0.0-alpha1 |
+Community  | User Groups              | 1.0.0-alpha1 |
+Community  | Access Control List      | 1.0.0-alpha1 |
+Community  | Variant Group            | WIP          |
+Enterprise | Product Asset            | 1.0.0-alpha1 |
+Enterprise | Product Asset Categories | 1.0.0-alpha1 |
+Enterprise | Product Rules            | 1.0.0-alpha1 |
+Enterprise | Product Draft            | WIP          |
+Enterprise | Published Product        | WIP          |
+
+### Extensions
+
+Extension             | Version                                                       |
+--------------------- | ------------------------------------------------------------- |
+ElasticSearchBundle   | Not relevant as ElasticSearch is now part of the native stack |
+InnerVariationBundle  | WIP to transform variations to models                         |
+CustomEntityBundle    | WIP                                                           |
+
+### Custom Code
+
+For now, the custom code migration is not automated.
+
+Our plan is to enrich Transporteo with a step by step assistant to help you updating your custom code.
 
 ## Installation
 
@@ -53,6 +90,12 @@ As we don't use Elasticsearch in Transporteo, you can install it the way you wan
 ```
 
 ## How to use
+
+### Access to remote servers
+
+If the 1.7 source PIM you will migrate from is installed remotely, you'll be asked to provide a *private SSH key* able to connect to this server.
+
+### Upgrade!
 
 To launch the tool, run:
 

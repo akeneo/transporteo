@@ -8,6 +8,7 @@
 - GITHUB-74 Add possibility to define defaults responses
 - Fix MySQL query parameter that needs to be escaped
 - GITHUB-78 Add support for null as database password
+- GITHUB-84 Fix missing internal job instance
 
 # 1.0.0-alpha1
 

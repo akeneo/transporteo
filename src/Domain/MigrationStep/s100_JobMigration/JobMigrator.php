@@ -53,6 +53,8 @@ class JobMigrator
                 $destinationPim->getDatabaseName()
             );
 
+            $queries[] = "INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants')";
+
             $queries = array_merge($queries, $this->getUpdateJobInstanceQueries($destinationPim));
 
             foreach ($queries as $query) {

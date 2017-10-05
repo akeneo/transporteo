@@ -58,7 +58,7 @@ class JobMigratorSpec extends ObjectBehavior
         )->shouldBeCalled();
 
         $console->execute(
-            new MySqlExecuteCommand("INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants'"),
+            new MySqlExecuteCommand("INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants')"),
             $destinationPim
         )->shouldBeCalled();
 

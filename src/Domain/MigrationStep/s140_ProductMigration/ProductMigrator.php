@@ -121,8 +121,7 @@ class ProductMigrator implements DataMigrator
             $creationDate = new \DateTime($product['created']);
 
             $command = new MySqlExecuteCommand(sprintf(
-                'UPDATE %s.pim_catalog_product SET created = "%s" WHERE identifier = "%s"',
-                $pim->getDatabaseName(),
+                'UPDATE pim_catalog_product SET created = "%s" WHERE identifier = "%s"',
                 $creationDate->format('Y-m-d H:i:s'),
                 $product['identifier']
             ));

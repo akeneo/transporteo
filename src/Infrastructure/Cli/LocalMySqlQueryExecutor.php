@@ -24,11 +24,7 @@ class LocalMySqlQueryExecutor
         try {
             $pdo->exec($sql);
         } catch (\PDOException $exception) {
-            throw new QueryException(
-                sprintf('Query "%s" occured an error : %s', $sql, $exception->getMessage()),
-                $exception->getCode(),
-                $exception
-            );
+            throw new QueryException(sprintf('Query "%s" occured an error : %s', $sql, $exception->getMessage()));
         }
     }
 

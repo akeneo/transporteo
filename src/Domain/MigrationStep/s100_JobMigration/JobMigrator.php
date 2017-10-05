@@ -47,11 +47,7 @@ class JobMigrator
             }
 
             $queries = [];
-
-            $queries[] = sprintf(
-                'ALTER TABLE %s.akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time',
-                $destinationPim->getDatabaseName()
-            );
+            $queries[] = 'ALTER TABLE akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time';
 
             $queries[] = "INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants')";
 
@@ -180,8 +176,7 @@ class JobMigrator
         ];
 
         $query = sprintf(
-            'SELECT code, raw_parameters FROM %s.akeneo_batch_job_instance WHERE code IN (%s)',
-            $destinationPim->getDatabaseName(),
+            'SELECT code, raw_parameters FROM akeneo_batch_job_instance WHERE code IN (%s)',
             implode(', ', $jobInstancesCode)
         );
 
@@ -200,8 +195,7 @@ class JobMigrator
 
         return array_map(function ($migratedJobInstance) use ($destinationPim) {
             return sprintf(
-                "UPDATE %s.akeneo_batch_job_instance SET raw_parameters = %s WHERE code = '%s'",
-                $destinationPim->getDatabaseName(),
+                "UPDATE akeneo_batch_job_instance SET raw_parameters = %s WHERE code = '%s'",
                 $this->mysqlEscaper->escape($migratedJobInstance['raw_parameters'], $destinationPim),
                 $migratedJobInstance['code']
             );

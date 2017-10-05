@@ -42,8 +42,6 @@ class ProductMigratorSpec extends ObjectBehavior
         $productAssociationMigrator
     )
     {
-        $destinationPim->getDatabaseName()->willReturn('destination_database');
-
         $productAssociationMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
         $products = $this->getSourceProducts();
@@ -83,11 +81,11 @@ class ProductMigratorSpec extends ObjectBehavior
         ]);
 
         $console->execute(new MySqlExecuteCommand(
-            'UPDATE destination_database.pim_catalog_product SET created = "2017-09-01 12:45:41" WHERE identifier = "simple_product"'
+            'UPDATE pim_catalog_product SET created = "2017-09-01 12:45:41" WHERE identifier = "simple_product"'
         ), $destinationPim)->shouldBeCalled();
 
         $console->execute(new MySqlExecuteCommand(
-            'UPDATE destination_database.pim_catalog_product SET created = "2017-09-01 12:48:56" WHERE identifier = "product_with_associations"'
+            'UPDATE pim_catalog_product SET created = "2017-09-01 12:48:56" WHERE identifier = "product_with_associations"'
         ), $destinationPim)->shouldBeCalled();
 
         $secondUpsertProducts = new UpsertListProductsCommand([
@@ -105,7 +103,7 @@ class ProductMigratorSpec extends ObjectBehavior
         $secondUpsertProductsResult->getOutput()->willReturn([['status_code' => 201]]);
 
         $console->execute(new MySqlExecuteCommand(
-            'UPDATE destination_database.pim_catalog_product SET created = "2017-09-01 12:49:21" WHERE identifier = "product_with_variant_group"'
+            'UPDATE pim_catalog_product SET created = "2017-09-01 12:49:21" WHERE identifier = "product_with_variant_group"'
         ), $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

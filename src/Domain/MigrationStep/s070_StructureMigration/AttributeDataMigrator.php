@@ -35,17 +35,17 @@ class AttributeDataMigrator implements DataMigrator
     {
         $tableName = 'pim_catalog_attribute';
 
-        $sqlUpdate = 'UPDATE %s.%s SET backend_type = "%s" WHERE backend_type = "%s"';
+        $sqlUpdate = 'UPDATE %s SET backend_type = "%s" WHERE backend_type = "%s"';
 
         try {
             $this->tableMigrator->migrate($sourcePim, $destinationPim, $tableName);
 
             $this->chainedConsole->execute(
-                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'textarea', 'text')), $destinationPim
+                new MySqlExecuteCommand(sprintf($sqlUpdate, $tableName, 'textarea', 'text')), $destinationPim
             );
 
             $this->chainedConsole->execute(
-                new MySqlExecuteCommand(sprintf($sqlUpdate, $destinationPim->getDatabaseName(), $tableName, 'text', 'varchar')), $destinationPim
+                new MySqlExecuteCommand(sprintf($sqlUpdate, $tableName, 'text', 'varchar')), $destinationPim
             );
         } catch (\Exception $exception) {
             throw new StructureMigrationException($exception->getMessage(), $exception->getCode(), $exception);

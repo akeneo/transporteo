@@ -40,20 +40,14 @@ class SystemMigrator
             }
 
             $queries = [];
-            $queries[] = sprintf(
-                'ALTER TABLE %1$s.pim_api_access_token
+            $queries[] =
+                'ALTER TABLE pim_api_access_token
                 ADD COLUMN client int(11) DEFAULT NULL AFTER id,
-                ADD CONSTRAINT FK_BD5E4023C7440455 FOREIGN KEY (client) REFERENCES %1$s.pim_api_client (id) ON DELETE CASCADE;',
-                $destinationPim->getDatabaseName()
-            );
-            $queries[] = sprintf(
-                'CREATE INDEX IDX_BD5E4023C7440455 ON %s.pim_api_access_token (client);',
-                $destinationPim->getDatabaseName()
-            );
-            $queries[] = sprintf(
-                'UPDATE %s.pim_api_client SET label = id WHERE label IS NULL;',
-                $destinationPim->getDatabaseName()
-            );
+                ADD CONSTRAINT FK_BD5E4023C7440455 FOREIGN KEY (client) REFERENCES pim_api_client (id) ON DELETE CASCADE;';
+
+            $queries[] = 'CREATE INDEX IDX_BD5E4023C7440455 ON pim_api_access_token (client);';
+
+            $queries[] = 'UPDATE pim_api_client SET label = id WHERE label IS NULL;';
 
             foreach ($queries as $query) {
                 $this->console->execute(new MySqlExecuteCommand($query), $destinationPim);

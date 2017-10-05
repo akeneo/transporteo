@@ -102,15 +102,18 @@ class InnerVariationFamilyMigrator
         $familyVariantData = $familyVariant->getStandardData();
 
         $familyVariantData['attributes'] = $this->removeVariationParentProductAttribute($familyVariantData['attributes']);
-        $parentFamilyData['attributes'] = array_merge($parentFamilyData['attributes'], $familyVariantData['attributes']);
+
+        $attributesToAdd = array_diff($familyVariantData['attributes'], $parentFamilyData['attributes']);
+        $parentFamilyData['attributes'] = array_merge($parentFamilyData['attributes'], $attributesToAdd);
 
         foreach (array_keys($familyVariantData['attribute_requirements']) as $channel) {
             $familyVariantRequirements = $this->removeVariationParentProductAttribute($familyVariantData['attribute_requirements'][$channel]);
-            $parentFamilyData['attribute_requirements'][$channel] = array_merge($parentFamilyData['attribute_requirements'][$channel], $familyVariantRequirements);
+            $requirementsToAdd = array_diff($familyVariantRequirements, $parentFamilyData['attribute_requirements'][$channel]);
+            $parentFamilyData['attribute_requirements'][$channel] = array_merge($parentFamilyData['attribute_requirements'][$channel], $requirementsToAdd);
         }
 
         try {
-            $this->console->execute(new UpdateFamilyCommand($parentFamilyData), $pim)->getOutput();
+            $this->console->execute(new UpdateFamilyCommand($parentFamilyData), $pim);
         } catch (\Exception $exception) {
             $this->logger->warning(sprintf(
                 'Unable to migrate the attributes of the variant family %s into the parent family %s : %s',

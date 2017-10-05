@@ -62,9 +62,7 @@ class InnerVariationTypeMigrator implements DataMigrator
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $innerVariationTables = $this->innerVariationRetriever->retrieveInnerVariationTables($destinationPim);
-
-        if (empty($innerVariationTables)) {
+        if (!$sourcePim->hasIvb()) {
             $this->logger->info('There is no InnerVariationType to migrate.');
 
             return;

@@ -26,17 +26,6 @@ class InnerVariationRetriever
     }
 
     /**
-     * Retrieves the MySQL tables related to the InnerVariationBundle.
-     */
-    public function retrieveInnerVariationTables(Pim $pim): array
-    {
-        return $this->console->execute(
-            new MySqlQueryCommand('SHOW TABLES LIKE "pim_inner_variation_inner_variation%"'),
-            $pim
-        )->getOutput();
-    }
-
-    /**
      * Retrieves all the InnerVariationType occurrences of a PIM.
      */
     public function retrieveInnerVariationTypes(Pim $pim): array

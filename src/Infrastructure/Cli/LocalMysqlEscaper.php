@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\MysqlEscaper;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
- * Class LocalMysqlEscaper
+ * Class LocalMysqlEscaper.
  *
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

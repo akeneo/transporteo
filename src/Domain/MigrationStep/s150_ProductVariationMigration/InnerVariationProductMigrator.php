@@ -106,9 +106,12 @@ class InnerVariationProductMigrator
         foreach ($productsToBuild as $product) {
             $categories = $this->innerVariationRetriever->retrieveProductCategories((int) $product['id'], $pim);
 
-            $product['family_variant'] = $familyVariant['code'];
-            $product['categories'] = implode(',', $categories);
-            $productsModels[] = $product;
+            $productsModels[] = [
+                'code' => $product['identifier'],
+                'family_variant' => $familyVariant['code'],
+                'categories' => implode(',', $categories),
+                'parent' => '',
+            ];
         }
 
         try {
@@ -117,10 +120,10 @@ class InnerVariationProductMigrator
             $this->logger->warning(sprintf(
                 'Unable to create the products models for the family variant %s : %s', $familyVariant['code'], $exception->getMessage()
             ));
-            $productsModels = [];
+            $productsToBuild = [];
         }
 
-        return $productsModels;
+        return $productsToBuild;
     }
 
     /**

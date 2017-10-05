@@ -36,16 +36,7 @@ class ProductModelImporter
 
     public function import(array $productsModels, Pim $pim)
     {
-        $formattedProducts = [];
-        foreach ($productsModels as $productModel) {
-            $formattedProducts[] = [
-                'code' => $productModel['identifier'],
-                'family_variant' => $productModel['family_variant'],
-                'parent' => '',
-            ];
-        }
-
-        $this->fileHelper->writeImportFile($formattedProducts, self::FILE_PATH);
+        $this->fileHelper->writeImportFile($productsModels, self::FILE_PATH);
 
         $this->ensureImportJobExists($pim);
 

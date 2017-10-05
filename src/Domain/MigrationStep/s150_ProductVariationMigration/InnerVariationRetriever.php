@@ -125,7 +125,7 @@ class InnerVariationRetriever
     public function retrievesFamilyProductsHavingVariants(int $parentFamilyId, int $innerVariationFamilyId, Pim $pim): array
     {
         return $this->console->execute(new MySqlQueryCommand(sprintf(
-            'SELECT id, identifier, raw_values, created FROM pim_catalog_product AS product_model
+            'SELECT id, identifier, created FROM pim_catalog_product AS product_model
             WHERE family_id = %d AND EXISTS(
                 SELECT * FROM pim_catalog_product AS product_variant
                 WHERE product_variant.family_id = %d

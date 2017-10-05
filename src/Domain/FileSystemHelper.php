@@ -155,6 +155,31 @@ class FileSystemHelper
         $archive->extractTo($to, null, true);
     }
 
+    /**
+     * Writes a import CSV file. The file will be emptied if it already exists.
+     */
+    public function writeImportFile(array $data, string $filePath): void
+    {
+        $fileHandle = fopen($filePath, 'w');
+        if (!is_resource($fileHandle)) {
+            throw new \InvalidArgumentException('Unable to open the file '.$filePath);
+        }
+
+        if (empty($data)) {
+            fclose($fileHandle);
+
+            return;
+        }
+
+        fputcsv($fileHandle, array_keys($data[0]), ';');
+
+        foreach ($data as $dataLine) {
+            fputcsv($fileHandle, $dataLine, ';');
+        }
+
+        fclose($fileHandle);
+    }
+
     private function getFileSystem(): SymfonyFilesystem
     {
         return new SymfonyFilesystem();

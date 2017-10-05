@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
+use Akeneo\Pim\AkeneoPimClientInterface;
+use Akeneo\PimMigration\Domain\Command\Api\DeleteProductCommand;
+use Akeneo\PimMigration\Domain\Command\Api\GetFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\Api\ListAllProductsCommand;
+use Akeneo\PimMigration\Domain\Command\Api\UpdateFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\Api\UpsertListProductsCommand;
 use Akeneo\PimMigration\Domain\Command\ApiCommand;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
@@ -30,23 +34,39 @@ class ApiCommandExecutor
     /**
      * Executes an API command on a given PIM.
      */
-    public function execute(ApiCommand $command, Pim $pim)
+    public function execute(ApiCommand $command, Pim $pim): CommandResult
     {
         $apiClient = $this->apiClientBuilder->build($pim->getApiParameters());
+        $apiResult = $this->executeCommandFromApiClient($command, $apiClient);
 
-        // TODO: do a registry if they are more commands
+        return new CommandResult(1, $apiResult);
+    }
+
+    /**
+     * Executes a command through an API client.
+     */
+    private function executeCommandFromApiClient(ApiCommand $command, AkeneoPimClientInterface $apiClient)
+    {
         if ($command instanceof ListAllProductsCommand) {
-            $apiResult = $apiClient->getProductApi()->all($command->getPageSize());
-
-            return new CommandResult(1, $apiResult);
+            return $apiClient->getProductApi()->all($command->getPageSize());
         }
 
         if ($command instanceof UpsertListProductsCommand) {
-            $apiResult = $apiClient->getProductApi()->upsertList($command->getProducts());
-
-            return new CommandResult(1, $apiResult);
+            return $apiClient->getProductApi()->upsertList($command->getProducts());
         }
 
-        throw new \RuntimeException(sprintf('ApiCommand of type %S is not supported', get_class($command)));
+        if ($command instanceof DeleteProductCommand) {
+            return $apiClient->getProductApi()->delete($command->getProductCode());
+        }
+
+        if ($command instanceof GetFamilyCommand) {
+            return $apiClient->getFamilyApi()->get($command->getFamilyCode());
+        }
+
+        if ($command instanceof UpdateFamilyCommand) {
+            return $apiClient->getFamilyApi()->upsert($command->getFamilyCode(), $command->getFamily());
+        }
+
+        throw new \RuntimeException(sprintf('ApiCommand of type %s is not supported', get_class($command)));
     }
 }

@@ -42,7 +42,10 @@ class DestinationPim extends AbstractPim implements Pim
 
         $pimVersion = $dependencies->get(self::PIM_COMMUNITY_DEV);
 
-        if (strpos(self::getPimVersionAllowed(), substr($pimVersion, 0, 2)) === false) {
+        $matches = [];
+        preg_match('/^[^0-9]*([0-9]+\.[0-9]+)/', $pimVersion, $matches);
+
+        if (!isset($matches[1]) || strpos(self::getPimVersionAllowed(), $matches[1]) === false) {
             throw new DestinationPimDetectionException(
                 'Your destination PIM version should be '.self::getPimVersionAllowed().' currently : '.$pimVersion
             );

@@ -47,12 +47,13 @@ Community  | User                     | 1.0.0-alpha1 |
 Community  | User Roles               | 1.0.0-alpha1 |
 Community  | User Groups              | 1.0.0-alpha1 |
 Community  | Access Control List      | 1.0.0-alpha1 |
-Community  | Variant Group            | WIP          |
+Community  | Variant Group            |      WIP     |
+Community  | Product History          |      `-`     |
 Enterprise | Product Asset            | 1.0.0-alpha1 |
 Enterprise | Product Asset Categories | 1.0.0-alpha1 |
 Enterprise | Product Rules            | 1.0.0-alpha1 |
-Enterprise | Product Draft            | WIP          |
-Enterprise | Published Product        | WIP          |
+Enterprise | Product Draft            |      WIP     |
+Enterprise | Published Product        |      WIP     |
 
 ### Extensions
 

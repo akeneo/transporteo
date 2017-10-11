@@ -412,12 +412,6 @@ services:
         $supportedTableName: 'pim_catalog_group_translation'
       tags: ['transporteo.group_migrator']
 
-  Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupAttribute:
-      class: 'Akeneo\PimMigration\Domain\DataMigration\SimpleDataMigrator'
-      arguments:
-        $supportedTableName: 'pim_catalog_group_attribute'
-      tags: ['transporteo.group_migrator']
-
 ### EXTRA DATA MIGRATOR
 
   Akeneo\PimMigration\Domain\MigrationStep\s120_ExtraDataMigration\ExtraDataMigrator: ~

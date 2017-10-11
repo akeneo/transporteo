@@ -43,10 +43,6 @@ class GroupMigrator implements DataMigrator
             foreach ($this->groupMigrators as $groupMigrator) {
                 $groupMigrator->migrate($sourcePim, $destinationPim);
             }
-
-            $this->chainedConsole->execute(
-                new MySqlExecuteCommand('UPDATE pim_catalog_group_type SET is_variant = 0'), $destinationPim
-            );
         } catch (\Exception $exception) {
             throw new GroupMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }

@@ -43,6 +43,10 @@ class GroupMigrator implements DataMigrator
             foreach ($this->groupMigrators as $groupMigrator) {
                 $groupMigrator->migrate($sourcePim, $destinationPim);
             }
+
+            $this->chainedConsole->execute(
+                new MySqlExecuteCommand('ALTER TABLE pim_catalog_group_type DROP COLUMN is_variant'), $destinationPim
+            );
         } catch (\Exception $exception) {
             throw new GroupMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }

@@ -55,7 +55,6 @@ class ExtraDataMigrator implements DataMigrator
 
     protected function getSourcePimStandardTables(): array
     {
-        //TODO add EE tables
         return [
             'acl_classes',
             'acl_entries',

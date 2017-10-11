@@ -48,6 +48,8 @@ class SshConsole extends AbstractConsole implements Console
     public function execute(Command $command, Pim $pim): CommandResult
     {
         if ($command instanceof ApiCommand) {
+            $this->logger->debug(sprintf('LocalConsole: executing ApiCommand -> %s', $command->getCommand()));
+
             return $this->apiCommandExecutor->execute($command, $pim);
         }
 
@@ -75,10 +77,10 @@ class SshConsole extends AbstractConsole implements Console
             }
         }
 
-        $this->logger->debug(sprintf('SshConsole: executing %s command -> %s', get_class($command), $command->getCommand()));
-
         if ($command instanceof MySqlQueryCommand || $command instanceof MySqlExecuteCommand) {
             $query = sprintf('mysql %s -e "%s;"', $this->getMySqlConnectionChain($pim), $command->getCommand());
+
+            $this->logger->debug(sprintf('SshConsole: executing MySqlQueryCommand -> %s', $command->getCommand()));
 
             $output = $ssh->exec($query);
 
@@ -98,9 +100,11 @@ class SshConsole extends AbstractConsole implements Console
             return new CommandResult($ssh->getExitStatus(), $results);
         }
 
-        $command = $this->getProcessedCommand($command, $pim);
+        $processedCommand = $this->getProcessedCommand($command, $pim);
 
-        $output = $ssh->exec($command);
+        $this->logger->debug(sprintf('SshConsole: executing %s command -> %s', get_class($command), $processedCommand));
+
+        $output = $ssh->exec($processedCommand);
 
         return new CommandResult($ssh->getExitStatus(), $output);
     }

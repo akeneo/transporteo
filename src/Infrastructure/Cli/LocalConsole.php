@@ -42,24 +42,31 @@ class LocalConsole extends AbstractConsole implements Console
 
     public function execute(Command $command, Pim $pim): CommandResult
     {
-        $this->logger->debug(sprintf('LocalConsole: executing %s command -> %s', get_class($command), $command->getCommand()));
-
         if ($command instanceof MySqlExecuteCommand) {
+            $this->logger->debug(sprintf('LocalConsole: executing MySqlExecuteCommand -> %s', $command->getCommand()));
+
             $this->localMySqlQueryExecutor->execute($command->getCommand(), $pim);
 
             return new CommandResult(1, '');
         }
 
         if ($command instanceof MySqlQueryCommand) {
+            $this->logger->debug(sprintf('LocalConsole: executing MySqlQueryCommand -> %s', $command->getCommand()));
+
             return new CommandResult(1, $this->localMySqlQueryExecutor->query($command->getCommand(), $pim));
         }
 
         if ($command instanceof ApiCommand) {
+            $this->logger->debug(sprintf('LocalConsole: executing ApiCommand -> %s', $command->getCommand()));
+
             return $this->apiCommandExecutor->execute($command, $pim);
         }
 
-        $commandToLaunch = $this->getProcessedCommand($command, $pim);
-        $process = new Process($commandToLaunch, '');
+        $processedCommand = $this->getProcessedCommand($command, $pim);
+
+        $this->logger->debug(sprintf('LocalConsole: executing %s command -> %s', get_class($command), $processedCommand));
+
+        $process = new Process($processedCommand, '');
 
         $process->enableOutput();
         $process->setTimeout(2 * 3600);

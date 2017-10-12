@@ -39,6 +39,7 @@ class InnerVariationCleaner
      * Cleans the InnerVariationType data in the destination PIM.
      *  - Deletes the deprecated families
      *  - Drops the IVB MySQL tables.
+     *  - Delete the attribute "variation_parent_product".
      */
     public function cleanInnerVariationTypes(array $innerVariationTypes, DestinationPim $pim): void
     {
@@ -48,6 +49,8 @@ class InnerVariationCleaner
         foreach ($innerVariationTypes as $innerVariationType) {
             $this->deleteInnerVariationFamily($innerVariationType, $pim);
         }
+
+        $this->deleteInnerVariationAttribute($pim);
     }
 
     /**
@@ -116,6 +119,22 @@ class InnerVariationCleaner
         } catch (\Exception $exception) {
             $this->logger->warning(sprintf(
                 'Unable to delete the product %s : %s', $productCode, $exception->getMessage()
+            ));
+        }
+    }
+
+    /**
+     * Delete the attribute "variation_parent_product" specific to the IVB.
+     */
+    private function deleteInnerVariationAttribute(Pim $pim)
+    {
+        $deleteAttributeCommand = new MySqlExecuteCommand('DELETE FROM pim_catalog_attribute WHERE code = "variation_parent_product"');
+
+        try {
+            $this->console->execute($deleteAttributeCommand, $pim);
+        } catch (\Exception $exception) {
+            $this->logger->warning(sprintf(
+                'Unable to delete the attribute variation_parent_product : %s', $exception->getMessage()
             ));
         }
     }

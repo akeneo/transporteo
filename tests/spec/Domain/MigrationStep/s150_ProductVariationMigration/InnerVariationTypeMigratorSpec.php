@@ -10,6 +10,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Inne
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationRetriever;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationType;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidInnerVariationTypeException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
@@ -75,6 +76,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
 
+        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
@@ -120,9 +122,10 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($invalidInnerVariationType, $destinationPim)->shouldNotBeCalled();
         $innerVariationProductMigrator->migrate($invalidInnerVariationType, $destinationPim)->shouldNotBeCalled();
 
-        $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType], $destinationPim)->shouldBeCalled();
+        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
+        $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $this->migrate($sourcePim, $destinationPim);
+        $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_does_not_migrate_ivt_having_an_invalid_axes(
@@ -160,9 +163,10 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($invalidInnerVariationType, $destinationPim)->shouldNotBeCalled();
         $innerVariationProductMigrator->migrate($invalidInnerVariationType, $destinationPim)->shouldNotBeCalled();
 
-        $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType], $destinationPim)->shouldBeCalled();
+        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
+        $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $this->migrate($sourcePim, $destinationPim);
+        $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_continues_to_migrate_if_an_exception_is_thrown(
@@ -197,7 +201,8 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
 
-        $innerVariationCleaner->cleanInnerVariationTypes([$secondInnerVariationType], $destinationPim)->shouldBeCalled();
+        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
+        $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
     }

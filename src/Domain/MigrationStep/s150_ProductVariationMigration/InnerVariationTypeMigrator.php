@@ -69,27 +69,30 @@ class InnerVariationTypeMigrator implements DataMigrator
         }
 
         $innerVariationTypes = $this->innerVariationRetriever->retrieveInnerVariationTypes($destinationPim);
-        $migratedInnerVariationTypes = [];
+        $invalidInnerVariationTypes = [];
 
         foreach ($innerVariationTypes as $innerVariationType) {
-            if (true === $this->migrateInnerVariationType($innerVariationType, $destinationPim)) {
-                $migratedInnerVariationTypes[] = $innerVariationType;
+            if ($this->isInnerVariationTypeCanBeMigrated($innerVariationType)) {
+                $this->migrateInnerVariationType($innerVariationType, $destinationPim);
+            } else {
+                $invalidInnerVariationTypes[] = $innerVariationType;
             }
         }
 
-        $this->innerVariationCleaner->cleanInnerVariationTypes($migratedInnerVariationTypes, $destinationPim);
+        $this->innerVariationCleaner->deleteInvalidInnerVariationTypesProducts($invalidInnerVariationTypes, $destinationPim);
+        $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
+
+        if (!empty($invalidInnerVariationTypes)) {
+            throw new InvalidInnerVariationTypeException();
+        }
     }
 
     /**
      * Migrates a given InnerVariationType.
      */
-    private function migrateInnerVariationType(InnerVariationType $innerVariationType, Pim $pim): bool
+    private function migrateInnerVariationType(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $this->logger->debug('Migrate the InnerVariationType '.$innerVariationType->getCode());
-
-        if (!$this->isInnerVariationTypeCanBeMigrated($innerVariationType)) {
-            return false;
-        }
 
         try {
             $this->innerVariationFamilyMigrator->migrate($innerVariationType, $pim);
@@ -98,11 +101,7 @@ class InnerVariationTypeMigrator implements DataMigrator
             $this->logger->warning(sprintf(
                 'The migration of the InnerVariationType %s has failed : %s', $innerVariationType->getCode(), $exception->getMessage()
             ));
-
-            return false;
         }
-
-        return true;
     }
 
     /**

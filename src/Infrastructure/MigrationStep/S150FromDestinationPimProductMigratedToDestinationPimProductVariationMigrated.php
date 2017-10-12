@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidInnerVariationTypeException;
 use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -44,7 +45,11 @@ class S150FromDestinationPimProductMigratedToDestinationPimProductVariationMigra
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_product_migrated_to_destination_pim_product_variation_migrated.message'));
 
-        $this->innerVariationTypeMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+        try {
+            $this->innerVariationTypeMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+        } catch (InvalidInnerVariationTypeException $exception) {
+            $this->printerAndAsker->warning($exception->getMessage());
+        }
 
         $this->logExit(__FUNCTION__);
     }

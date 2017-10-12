@@ -72,4 +72,9 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
     {
         $this->io->writeln($message);
     }
+
+    public function warning(string $message): void
+    {
+        $this->io->warning($message);
+    }
 }

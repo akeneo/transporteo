@@ -23,4 +23,6 @@ interface PrinterAndAsker
     public function note(string $message): void;
 
     public function printMessage(string $message): void;
+
+    public function warning(string $message): void;
 }

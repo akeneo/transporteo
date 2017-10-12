@@ -34,9 +34,6 @@ abstract class AbstractPim implements Pim
     /** @var bool */
     private $isEnterpriseEdition;
 
-    /** @var null|string */
-    private $enterpriseRepository;
-
     /** @var string */
     private $absolutePath;
 
@@ -53,7 +50,6 @@ abstract class AbstractPim implements Pim
         string $databaseUser,
         string $databasePassword,
         bool $isEnterpriseEdition,
-        ?string $enterpriseRepository,
         string $absolutePath,
         PimConnection $pimConnection,
         PimApiParameters $apiParameters
@@ -64,7 +60,6 @@ abstract class AbstractPim implements Pim
         $this->databaseUser = $databaseUser;
         $this->databasePassword = $databasePassword;
         $this->isEnterpriseEdition = $isEnterpriseEdition;
-        $this->enterpriseRepository = $enterpriseRepository;
         $this->absolutePath = $absolutePath;
         $this->pimConnection = $pimConnection;
         $this->apiParameters = $apiParameters;
@@ -105,11 +100,6 @@ abstract class AbstractPim implements Pim
     public function isEnterpriseEdition(): bool
     {
         return $this->isEnterpriseEdition;
-    }
-
-    public function getEnterpriseRepository(): ?string
-    {
-        return $this->enterpriseRepository;
     }
 
     public function absolutePath(): string

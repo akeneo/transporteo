@@ -90,7 +90,6 @@ class S020FromSourcePimApiConfiguredToSourcePimDetectedSpec extends ObjectBehavi
             null,
             null,
             false,
-            null,
             false,
             $sourcePimRealPath,
             $sourcePimConnection->getWrappedObject(),

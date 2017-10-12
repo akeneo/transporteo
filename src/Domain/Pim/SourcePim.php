@@ -34,7 +34,6 @@ class SourcePim extends AbstractPim implements Pim
         ?string $mongoDbInformation,
         ?string $mongoDatabase,
         bool $isEnterpriseEdition,
-        ?string $enterpriseRepository,
         bool $hasIvb,
         string $path,
         PimConnection $pimConnection,
@@ -47,7 +46,6 @@ class SourcePim extends AbstractPim implements Pim
             $databaseUser,
             $databasePassword,
             $isEnterpriseEdition,
-            $enterpriseRepository,
             $path,
             $pimConnection,
             $apiParameters
@@ -103,18 +101,6 @@ class SourcePim extends AbstractPim implements Pim
         $databasePassword = $sourcePimConfiguration->getParametersYml()->getDatabasePassword();
         $databaseName = $sourcePimConfiguration->getParametersYml()->getDatabaseName();
 
-        $enterpriseRepository = null;
-
-        if ($isEnterpriseEdition) {
-            $enterpriseRepository = $sourcePimConfiguration
-                ->getComposerJson()
-                ->getRepositories()
-                ->filter(function ($element) {
-                    return false !== strpos($element['url'], 'enterprise');
-                })
-                ->first()['url'];
-        }
-
         return new self(
             $databaseHost,
             $databasePort,
@@ -124,7 +110,6 @@ class SourcePim extends AbstractPim implements Pim
             $mongoDbInformation,
             $mongoDbDatabase,
             $isEnterpriseEdition,
-            $enterpriseRepository,
             $hasIvb,
             $realPath,
             $pimConnection,

@@ -24,8 +24,6 @@ interface Pim
 
     public function isEnterpriseEdition(): bool;
 
-    public function getEnterpriseRepository(): ?string;
-
     public function absolutePath(): string;
 
     public function getConnection(): PimConnection;

@@ -6,8 +6,8 @@ namespace Akeneo\PimMigration\Infrastructure\Cli;
 
 use Akeneo\PimMigration\Domain\Command\ApiCommand;
 use Akeneo\PimMigration\Domain\Command\Command;
-use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\CommandResult;
+use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -29,8 +29,9 @@ class SshConsole extends AbstractConsole implements Console
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ApiCommandExecutor $apiCommandExecutor, LoggerInterface $logger)
     {
+        parent::__construct($apiCommandExecutor);
         $this->logger = $logger;
     }
 

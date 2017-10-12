@@ -24,7 +24,7 @@ class UpsertListProductsCommand implements ApiCommand
 
     public function getCommand(): string
     {
-        return self::class;
+        return 'Upsert products';
     }
 
     public function getProducts(): array

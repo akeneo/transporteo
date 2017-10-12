@@ -24,7 +24,7 @@ class UpdateFamilyCommand implements ApiCommand
 
     public function getCommand(): string
     {
-        return self::class;
+        return 'Update family '.$this->getFamilyCode();
     }
 
     public function getFamily(): array

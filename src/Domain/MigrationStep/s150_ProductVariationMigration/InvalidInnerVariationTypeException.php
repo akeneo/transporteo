@@ -17,7 +17,9 @@ class InvalidInnerVariationTypeException extends MigrationStepException
     public function __construct()
     {
         parent::__construct(
-            'Not all the inner variation types could be migrated. Their products have not been migrated either. See the file "var/logs/error.log" for more details.'
+            "Some inner variation types can't be automatically migrated. Related products have not been migrated yet."
+            .PHP_EOL."Your catalog structure should be rework, according to the catalog modeling introduced in v2.0 (Authorized axes are attributes of type 'Simple select', 'Reference data simple select', 'Metric', 'Boolean' and maximum 5 attributes per variant level)"
+            .PHP_EOL."See the file 'var/logs/error.log' for more details."
         );
     }
 }

@@ -112,6 +112,11 @@ class InnerVariationCleaner
 
     private function deleteProduct(string $productCode, Pim $pim): void
     {
+        /**
+         * TODO: Do a SQL query when the console command "akeneo:elasticsearch:reset-indexes" can be used.
+         * The problem is that this command ask a confirmation.
+         * This command is available since the version 2.0.2 so we have to ensure that it's the minimal version of the destination PIM.
+         */
         $command = new DeleteProductCommand($productCode);
 
         try {

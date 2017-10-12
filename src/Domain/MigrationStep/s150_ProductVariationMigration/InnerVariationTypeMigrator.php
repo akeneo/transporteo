@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -46,7 +48,11 @@ class InnerVariationTypeMigrator implements DataMigrator
     /** @var InnerVariationCleaner */
     private $innerVariationCleaner;
 
+    /** @var ChainedConsole */
+    private $console;
+
     public function __construct(
+        ChainedConsole $console,
         InnerVariationRetriever $innerVariationRetriever,
         InnerVariationFamilyMigrator $innerVariationFamilyMigrator,
         InnerVariationProductMigrator $innerVariationProductMigrator,
@@ -58,6 +64,7 @@ class InnerVariationTypeMigrator implements DataMigrator
         $this->innerVariationProductMigrator = $innerVariationProductMigrator;
         $this->logger = $logger;
         $this->innerVariationCleaner = $innerVariationCleaner;
+        $this->console = $console;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -81,6 +88,9 @@ class InnerVariationTypeMigrator implements DataMigrator
 
         $this->innerVariationCleaner->deleteInvalidInnerVariationTypesProducts($invalidInnerVariationTypes, $destinationPim);
         $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
+
+        $this->console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim);
+        $this->console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim);
 
         if (!empty($invalidInnerVariationTypes)) {
             throw new InvalidInnerVariationTypeException();

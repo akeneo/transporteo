@@ -28,7 +28,6 @@ class DestinationPimSpec extends ObjectBehavior
             'akeneo_pim',
             'akeneo_pim',
             false,
-            null,
             '/home/akeneo/pim-destination',
             $connection,
             $apiParameters

@@ -57,18 +57,6 @@ class DestinationPim extends AbstractPim implements Pim
         $databasePassword = $destinationPimConfiguration->getParametersYml()->getDatabasePassword();
         $databaseName = $destinationPimConfiguration->getParametersYml()->getDatabaseName();
 
-        $enterpriseRepository = null;
-
-        if ($isEnterpriseEdition) {
-            $enterpriseRepository = $destinationPimConfiguration
-                ->getComposerJson()
-                ->getRepositories()
-                ->filter(function ($element) {
-                    return false !== strpos($element['url'], 'enterprise');
-                })
-                ->first()['url'];
-        }
-
         $realPath = realpath(str_replace(
             DIRECTORY_SEPARATOR.'composer.json',
             '',
@@ -82,7 +70,6 @@ class DestinationPim extends AbstractPim implements Pim
             $databaseUser,
             $databasePassword,
             $isEnterpriseEdition,
-            $enterpriseRepository,
             $realPath,
             $pimConnection,
             $apiParameters

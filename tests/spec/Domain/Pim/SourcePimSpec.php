@@ -30,7 +30,6 @@ class SourcePimSpec extends ObjectBehavior
             null,
             null,
             false,
-            null,
             false,
             '/a-path',
             $connection,

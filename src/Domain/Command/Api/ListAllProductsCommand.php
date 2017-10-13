@@ -24,7 +24,7 @@ class ListAllProductsCommand implements ApiCommand
 
     public function getCommand(): string
     {
-        return self::class;
+        return 'List all products';
     }
 
     public function getPageSize(): int

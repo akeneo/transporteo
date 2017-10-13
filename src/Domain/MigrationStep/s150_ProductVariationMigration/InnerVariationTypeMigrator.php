@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
+use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -46,7 +48,11 @@ class InnerVariationTypeMigrator implements DataMigrator
     /** @var InnerVariationCleaner */
     private $innerVariationCleaner;
 
+    /** @var ChainedConsole */
+    private $console;
+
     public function __construct(
+        ChainedConsole $console,
         InnerVariationRetriever $innerVariationRetriever,
         InnerVariationFamilyMigrator $innerVariationFamilyMigrator,
         InnerVariationProductMigrator $innerVariationProductMigrator,
@@ -58,6 +64,7 @@ class InnerVariationTypeMigrator implements DataMigrator
         $this->innerVariationProductMigrator = $innerVariationProductMigrator;
         $this->logger = $logger;
         $this->innerVariationCleaner = $innerVariationCleaner;
+        $this->console = $console;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -69,27 +76,33 @@ class InnerVariationTypeMigrator implements DataMigrator
         }
 
         $innerVariationTypes = $this->innerVariationRetriever->retrieveInnerVariationTypes($destinationPim);
-        $migratedInnerVariationTypes = [];
+        $invalidInnerVariationTypes = [];
 
         foreach ($innerVariationTypes as $innerVariationType) {
-            if (true === $this->migrateInnerVariationType($innerVariationType, $destinationPim)) {
-                $migratedInnerVariationTypes[] = $innerVariationType;
+            if ($this->isInnerVariationTypeCanBeMigrated($innerVariationType)) {
+                $this->migrateInnerVariationType($innerVariationType, $destinationPim);
+            } else {
+                $invalidInnerVariationTypes[] = $innerVariationType;
             }
         }
 
-        $this->innerVariationCleaner->cleanInnerVariationTypes($migratedInnerVariationTypes, $destinationPim);
+        $this->innerVariationCleaner->deleteInvalidInnerVariationTypesProducts($invalidInnerVariationTypes, $destinationPim);
+        $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
+
+        $this->console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim);
+        $this->console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim);
+
+        if (!empty($invalidInnerVariationTypes)) {
+            throw new InvalidInnerVariationTypeException();
+        }
     }
 
     /**
      * Migrates a given InnerVariationType.
      */
-    private function migrateInnerVariationType(InnerVariationType $innerVariationType, Pim $pim): bool
+    private function migrateInnerVariationType(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $this->logger->debug('Migrate the InnerVariationType '.$innerVariationType->getCode());
-
-        if (!$this->isInnerVariationTypeCanBeMigrated($innerVariationType)) {
-            return false;
-        }
 
         try {
             $this->innerVariationFamilyMigrator->migrate($innerVariationType, $pim);
@@ -98,11 +111,7 @@ class InnerVariationTypeMigrator implements DataMigrator
             $this->logger->warning(sprintf(
                 'The migration of the InnerVariationType %s has failed : %s', $innerVariationType->getCode(), $exception->getMessage()
             ));
-
-            return false;
         }
-
-        return true;
     }
 
     /**

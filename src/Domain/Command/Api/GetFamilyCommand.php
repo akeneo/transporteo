@@ -24,7 +24,7 @@ class GetFamilyCommand implements ApiCommand
 
     public function getCommand(): string
     {
-        return self::class;
+        return 'Get family '.$this->familyCode;
     }
 
     public function getFamilyCode(): string

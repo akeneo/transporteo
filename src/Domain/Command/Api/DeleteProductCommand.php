@@ -24,7 +24,7 @@ class DeleteProductCommand implements ApiCommand
 
     public function getCommand(): string
     {
-        return self::class;
+        return 'Delete product '.$this->productCode;
     }
 
     public function getProductCode(): string

@@ -165,7 +165,7 @@ class InnerVariationRetriever
     /**
      * Retrieves the data of a family variant from its parent families.
      */
-    public function retrieveFamilyVariant(Family $parentFamily, Family $innerVariationFamily, Pim $pim)
+    public function retrieveFamilyVariant(Family $parentFamily, Family $innerVariationFamily, Pim $pim): array
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id, family_id, code FROM pim_catalog_family_variant WHERE code = "%s"',
@@ -173,6 +173,18 @@ class InnerVariationRetriever
         )), $pim)->getOutput();
 
         return empty($sqlResult) ? [] : $sqlResult[0];
+    }
+
+    /**
+     * Retrieves the products variants that have not been migrated.
+     * The simplest way to do it is to find all the product that still have the attribute "variation_parent_product".
+     */
+    public function retrieveNotMigratedProductVariants(Pim $pim): array
+    {
+        return $this->console->execute(new MySqlQueryCommand(
+            "SELECT identifier FROM pim_catalog_product	
+             WHERE JSON_CONTAINS_PATH(raw_values, 'one', '$.variation_parent_product')"
+        ), $pim)->getOutput();
     }
 
     /**

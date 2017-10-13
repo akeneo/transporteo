@@ -53,6 +53,22 @@ class ConsolePrinterAndAsker implements PrinterAndAsker
         );
     }
 
+    public function askHiddenSimpleQuestion(string $question, ?callable $validator = null): string
+    {
+        return $this->io->askHidden($question, function ($answer) use ($validator) {
+            if (empty(trim($answer))) {
+                throw new \RuntimeException('Please provide a value :)');
+            }
+
+            if (null !== $validator) {
+                $validator($answer);
+            }
+
+            return $answer;
+        }
+        );
+    }
+
     public function title(string $message): void
     {
         $this->io->title($message);

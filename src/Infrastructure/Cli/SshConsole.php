@@ -62,6 +62,10 @@ class SshConsole extends AbstractConsole implements Console
 
         $ssh = new SSH2($connection->getHost(), $connection->getPort());
         $rsa = new RSA();
+        if (null !== $connection->getPassword()) {
+            $rsa->setPassword($connection->getPassword());
+        }
+
         $rsa->load($connection->getSshKey()->getKey());
 
         if (!$ssh->isConnected()) {

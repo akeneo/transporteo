@@ -70,6 +70,10 @@ class SshFileFetcher implements FileFetcher
         }
 
         $key = new RSA();
+        if (null !== $connection->getPassword()) {
+            $key->setPassword($connection->getPassword());
+        }
+
         $key->load($connection->getSshKey()->getKey());
         $sftp = new SFTP($connection->getHost(), $connection->getPort());
 

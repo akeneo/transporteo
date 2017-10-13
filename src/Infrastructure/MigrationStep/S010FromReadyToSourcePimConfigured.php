@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurator;
 use Akeneo\PimMigration\Domain\Pim\PimServerInformation;
-use Akeneo\PimMigration\Domain\MigrationStep\s010_SourcePimConfiguration\SourcePimConfigurationException;
-use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 use Akeneo\PimMigration\Infrastructure\Pim\SshConnection;
 use Akeneo\PimMigration\Infrastructure\SshKey;
+use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Translation\Translator;
@@ -27,6 +27,9 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
 {
     private const LOCAL_SOURCE_PIM = 'locally';
     private const REMOTE_SOURCE_PIM = 'on a remote server';
+
+    private const YES = 'yes';
+    private const NO = 'no';
 
     /** @var SourcePimConfigurator */
     private $pimConfigurator;
@@ -175,7 +178,21 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
                 }
             );
 
-        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user, new SshKey($sshPath)));
+        $hasPassword = $this->printerAndAsker->askChoiceQuestion(
+            $this->translator->trans($transPrefix . 'ssh_key_protected'),
+            [self::YES => self::YES, self::NO => self::NO]
+        );
+
+        $password = null;
+        if (self::YES === $hasPassword) {
+            $password = $this
+                ->printerAndAsker
+                ->askHiddenSimpleQuestion(
+                    sprintf($this->translator->trans($transPrefix . 'ssh_key_passphrase'), $sshPath)
+                );
+        }
+
+        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user, new SshKey($sshPath), $password));
 
         $pimProjectPath = $this
             ->printerAndAsker

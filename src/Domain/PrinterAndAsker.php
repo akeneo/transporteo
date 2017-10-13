@@ -16,6 +16,8 @@ interface PrinterAndAsker
 
     public function askSimpleQuestion(string $question, string $default = '', ?callable $validator = null): string;
 
+    public function askHiddenSimpleQuestion(string $question, ?callable $validator = null): string;
+
     public function title(string $message): void;
 
     public function section(string $message): void;

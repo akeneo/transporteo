@@ -27,12 +27,16 @@ class SshConnection implements PimConnection
     /** @var SshKey */
     private $sshKey;
 
-    public function __construct(string $host, int $port, string $username, SshKey $sshKey)
+    /** @var ?string */
+    private $password;
+
+    public function __construct(string $host, int $port, string $username, SshKey $sshKey, ?string $password = null)
     {
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
         $this->sshKey = $sshKey;
+        $this->password = $password;
     }
 
     public static function fromString(string $serverInformation, SshKey $sshKey)
@@ -43,7 +47,8 @@ class SshConnection implements PimConnection
             $parsedServerInformation['host'],
             $parsedServerInformation['port'],
             $parsedServerInformation['user'],
-            $sshKey
+            $sshKey,
+            $parsedServerInformation['password']
         );
     }
 
@@ -65,5 +70,10 @@ class SshConnection implements PimConnection
     public function getSshKey(): SshKey
     {
         return $this->sshKey;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 }

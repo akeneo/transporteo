@@ -18,6 +18,8 @@ from_ready_to_source_pim_configured:
     ssh_user_question:  "What is the SSH user you want to connect with to the source PIM? "
     ssh_key_path_question: "What is the absolute path of the private SSH key able to connect to the source PIM? "
     ssh_key_path_error: "Your SSH key path should be an absolute one."
+    ssh_key_protected: "Is your ssh key protected by a passphrase ? "
+    ssh_key_passphrase: "Enter passphrase for %s "
     project_path_question: "What is the absolute path of the source PIM on the server? "
     project_path_error: "Your source PIM path should be an absolute one."
   on_local_configuration:

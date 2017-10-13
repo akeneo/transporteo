@@ -16,7 +16,6 @@ list:
 	@echo "  $(YELLOW)fix-style$(RESTORE)          > run the PHP-CS-FIXER"
 	@echo "  $(YELLOW)test$(RESTORE)               > run All tests"
 	@echo "  $(YELLOW)phpspec-run$(RESTORE)        > run All PHPSpec tests"
-	@echo "  $(YELLOW)phpspec$(RESTORE)            > run PHPSpec"
 	@echo "  $(YELLOW)phpunit$(RESTORE)            > run All PHPUnit"
 	@echo "  $(YELLOW)launch$(RESTORE)             > Launch the tool"
 	@echo "  $(YELLOW)dump-state-machine$(RESTORE) > Dump the State Machine"
@@ -25,7 +24,6 @@ list:
 	@echo "  $(YELLOW)composer$(RESTORE)      > run composer"
 	@echo "  $(YELLOW)install$(RESTORE)       > install vendors"
 	@echo "  $(YELLOW)update$(RESTORE)        > update vendors"
-	@echo "  $(YELLOW)run$(RESTORE)           > run the tool"
 	@echo "  $(YELLOW)clean$(RESTORE)         > removes the vendors"
 
 .PHONY: commit
@@ -54,10 +52,6 @@ phpspec-run:
 .PHONY: phpunit
 phpunit:
 	./vendor/bin/phpunit ${ARGS} --exclude-group 'docker-compose'
-
-.PHONY: phpspec
-phpspec:
-	./vendor/bin/phpspec ${ARGS}
 
 .PHONY: composer
 composer:

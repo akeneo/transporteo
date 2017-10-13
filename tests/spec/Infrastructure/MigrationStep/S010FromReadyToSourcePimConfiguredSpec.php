@@ -115,6 +115,8 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sshUserQuestion = 'What is the SSH user you want to connect with ? ';
         $sshKeyPathQuestion = 'What is the absolute path of the private SSH key able to connect to the server? ';
         $projectPathQuestion = 'What is the absolute path of the source PIM on the server? ';
+        $sshKeyProtected = 'Is your ssh key protected by a passphrase ? ';
+        $sshKeyPassphrase = 'Enter passphrase for %s ';
 
         $transPrefix = 'from_ready_to_source_pim_configured.on_distant_configuration.';
         $translations = [
@@ -122,7 +124,9 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
             $transPrefix . 'ssh_port_question' => $portQuestion,
             $transPrefix . 'ssh_user_question' => $sshUserQuestion,
             $transPrefix . 'ssh_key_path_question' => $sshKeyPathQuestion,
-            $transPrefix . 'project_path_question' => $projectPathQuestion
+            $transPrefix . 'project_path_question' => $projectPathQuestion,
+            $transPrefix . 'ssh_key_protected' => $sshKeyProtected,
+            $transPrefix . 'ssh_key_passphrase' => $sshKeyPassphrase,
         ];
 
         foreach ($translations as $translationKey => $translation) {
@@ -139,6 +143,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
 
         $printerAndAsker->askSimpleQuestion($sshKeyPathQuestion, Argument::any(), Argument::any())->willReturn($sshKeyPath);
+        $printerAndAsker->askChoiceQuestion($sshKeyProtected, ['yes' => 'yes', 'no' => 'no'])->willReturn('no');
 
         $sshKey = new SshKey($sshKeyPath);
         $serverAccessInformation = new SshConnection('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);
@@ -211,6 +216,8 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sshUserQuestion = 'What is the SSH user you want to connect with ? ';
         $sshKeyPathQuestion = 'What is the absolute path of the private SSH key able to connect to the server? ';
         $projectPathQuestion = 'What is the absolute path of the source PIM on the server? ';
+        $sshKeyProtected = 'Is your ssh key protected by a passphrase ? ';
+        $sshKeyPassphrase = 'Enter passphrase for %s ';
 
         $transPrefix = 'from_ready_to_source_pim_configured.on_distant_configuration.';
         $translations = [
@@ -218,7 +225,9 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
             $transPrefix . 'ssh_port_question' => $portQuestion,
             $transPrefix . 'ssh_user_question' => $sshUserQuestion,
             $transPrefix . 'ssh_key_path_question' => $sshKeyPathQuestion,
-            $transPrefix . 'project_path_question' => $projectPathQuestion
+            $transPrefix . 'project_path_question' => $projectPathQuestion,
+            $transPrefix . 'ssh_key_protected' => $sshKeyProtected,
+            $transPrefix . 'ssh_key_passphrase' => $sshKeyPassphrase,
         ];
 
         foreach ($translations as $translationKey => $translation) {
@@ -232,6 +241,7 @@ class S010FromReadyToSourcePimConfiguredSpec extends ObjectBehavior
         $sshKeyPath = ResourcesFileLocator::getSshKeyPath();
 
         $printerAndAsker->askSimpleQuestion($sshKeyPathQuestion, Argument::any(), Argument::any())->willReturn($sshKeyPath);
+        $printerAndAsker->askChoiceQuestion($sshKeyProtected, ['yes' => 'yes', 'no' => 'no'])->willReturn('no');
 
         $sshKey = new SshKey($sshKeyPath);
         $serverAccessInformation = new SshConnection('my-super-pim.akeneo.com', 22, 'akeneo', $sshKey);

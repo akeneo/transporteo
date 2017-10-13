@@ -60,8 +60,20 @@ Enterprise | Published Product        |      WIP     |
 Extension             | Version                                                       |
 --------------------- | ------------------------------------------------------------- |
 ElasticSearchBundle   | Not relevant as ElasticSearch is now part of the native stack |
-InnerVariationBundle  | WIP to transform variations to models                         |
+InnerVariationBundle  | 1.0.0-alpha3                                                  |
 CustomEntityBundle    | WIP                                                           |
+
+#### InnerVariationBundle
+
+The modeling of the variations with the IVB must be well structured to be fully handled by Transporteo. In the PIM 2.0, a family variant can't have more than 5 axis, and this axis should be one of the following types: 
+- Simple select
+- Reference data simple select
+- Metric
+- Yes/No
+
+If one these conditions is not fulfilled, the products concerned won't be migrated. You will have to think about a better modeling for these products and migrate them manually.
+
+You can find the details of the errors in the file "var/logs/error.log".
 
 ### Custom Code
 
@@ -110,6 +122,8 @@ At the end of the tool's job, you will have your database setuped with your data
 You will have to migrate it following this [upgrade file](./UPGRADE-2.0.md).
 
 We plan to automate this part in future release, stay tuned ! :)
+
+*Tip: You can define the default responses in the file "src/Infrastructure/Common/config/parameters.yml"*
 
 ## How to contribute
 

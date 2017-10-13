@@ -1,3 +1,17 @@
+# 1.0.0-alpha3
+
+## Improvements
+
+- MIG-1 Migration of products variations from InnerVariationBundle
+- MIG-71 SSH with passphrase
+- MIG-69 PIM 2.0.2 compatibility
+
+## Bug fixes
+
+- GITHUB-93 Fix destination pim version check
+- GITHUB-89 Error when reading Composer repositories
+- GITHUB-95 Fix SshConsole constructor
+
 # 1.0.0-alpha2
 
 ## Improvements

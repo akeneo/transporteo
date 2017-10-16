@@ -51,7 +51,10 @@ class FamilyVariantImporter
      */
     private function ensureImportJobExists(Pim $pim): void
     {
-        $commandResult = $this->console->execute(new SymfonyCommand('akeneo:batch:list-jobs -t import'), $pim);
+        $commandResult = $this->console->execute(
+            new SymfonyCommand('akeneo:batch:list-jobs -t import', SymfonyCommand::PROD),
+            $pim
+        );
 
         if (false === strpos($commandResult->getOutput(), static::JOB_CODE)) {
             $command = new SymfonyCommand(sprintf(
@@ -63,7 +66,7 @@ class FamilyVariantImporter
                     'enclosure' => '"',
                 ]),
                 self::JOB_LABEL
-            ));
+            ), SymfonyCommand::PROD);
 
             $this->console->execute($command, $pim);
         }

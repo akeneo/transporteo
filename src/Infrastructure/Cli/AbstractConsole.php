@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
-use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\Command;
+use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\MySqlExportTableCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlImportTableCommand;
+use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
-use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 
 /**
  * Abstraction of a console.
@@ -32,10 +32,20 @@ abstract class AbstractConsole implements Console
     {
         if ($command instanceof SymfonyCommand) {
             if ($pim instanceof DestinationPim) {
-                return sprintf('%sbin/console %s', $pim->absolutePath().DIRECTORY_SEPARATOR, $command->getCommand());
+                return sprintf(
+                    '%sbin/console %s -e %s',
+                    $pim->absolutePath() . DIRECTORY_SEPARATOR,
+                    $command->getCommand(),
+                    $command->getEnv()
+                );
             }
 
-            return sprintf('%sapp/console %s', $pim->absolutePath().DIRECTORY_SEPARATOR, $command->getCommand());
+            return sprintf(
+                '%sapp/console %s -e %s',
+                $pim->absolutePath() . DIRECTORY_SEPARATOR,
+                $command->getCommand(),
+                $command->getEnv()
+            );
         }
 
         if ($command instanceof MySqlImportTableCommand) {

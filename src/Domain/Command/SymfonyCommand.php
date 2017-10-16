@@ -12,4 +12,20 @@ namespace Akeneo\PimMigration\Domain\Command;
  */
 class SymfonyCommand extends AbstractCommand implements Command
 {
+    const PROD = 'prod';
+    const DEV = 'dev';
+
+    /** @var string */
+    private $env;
+
+    public function __construct(string $command, string $env = self::DEV)
+    {
+        parent::__construct($command);
+        $this->env = $env;
+    }
+
+    public function getEnv(): string
+    {
+        return $this->env;
+    }
 }

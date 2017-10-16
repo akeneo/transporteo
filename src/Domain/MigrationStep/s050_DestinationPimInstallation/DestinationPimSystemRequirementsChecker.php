@@ -26,6 +26,6 @@ class DestinationPimSystemRequirementsChecker
 
     public function check(Pim $pim): void
     {
-        $this->chainedConsole->execute(new SymfonyCommand('pim:installer:check-requirements'), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('pim:installer:check-requirements', SymfonyCommand::PROD), $pim);
     }
 }

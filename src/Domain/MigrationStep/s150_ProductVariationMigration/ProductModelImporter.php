@@ -66,7 +66,7 @@ class ProductModelImporter
                     'enabledComparison' => true,
                 ]),
                 self::JOB_LABEL
-            ));
+            ), SymfonyCommand::PROD);
 
             $this->console->execute($command, $pim);
         }

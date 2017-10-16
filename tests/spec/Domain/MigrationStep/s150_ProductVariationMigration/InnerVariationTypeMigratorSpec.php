@@ -83,8 +83,8 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
     }
@@ -133,8 +133,8 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
         $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
     }
@@ -178,8 +178,8 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
         $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
     }
@@ -220,8 +220,8 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
+        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
     }

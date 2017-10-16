@@ -48,7 +48,8 @@ class EntityTableNameFetcher
                     $entityNamespace,
                     'yml',
                     $mappingFilePath
-                )
+                ),
+                SymfonyCommand::PROD
             ), $pim
         );
 

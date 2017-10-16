@@ -16,7 +16,7 @@ class JobExecutionCommand extends SymfonyCommand
     {
         // TODO: what email to use ?
         parent::__construct(sprintf(
-            "akeneo:batch:job --env=prod --email='admin@example.com' %s --config='%s'", $jobCode, json_encode($config)
-        ));
+            "akeneo:batch:job --email='admin@example.com' %s --config='%s'", $jobCode, json_encode($config)
+        ), SymfonyCommand::PROD);
     }
 }

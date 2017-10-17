@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain;
 
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -111,6 +113,17 @@ class FileSystemHelper
         $content = Yaml::dump($content, 4);
 
         $this->dumpFile($path, $content);
+    }
+
+    public function remove(Finder $files): void
+    {
+        $fileSystem = $this->getFileSystem();
+
+        try {
+            $fileSystem->remove($files);
+        } catch (IOException $io) {
+            throw new \InvalidArgumentException(sprintf("Unable to delete the following path: '%s'", $io->getPath()));
+        }
     }
 
     /**

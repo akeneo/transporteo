@@ -49,7 +49,9 @@ Community  | User Groups              | 1.0.0-alpha1 |
 Community  | Access Control List      | 1.0.0-alpha1 |
 Community  | Variant Group            |      WIP     |
 Community  | Product History          |      `-`     |
+Community  | Image files              |      WIP     |
 Enterprise | Product Asset            | 1.0.0-alpha1 |
+Enterprise | Asset files              |      WIP     |
 Enterprise | Product Asset Categories | 1.0.0-alpha1 |
 Enterprise | Product Rules            | 1.0.0-alpha1 |
 Enterprise | Product Draft            |      WIP     |

@@ -89,8 +89,8 @@ class InnerVariationTypeMigrator implements DataMigrator
         $this->innerVariationCleaner->deleteInvalidInnerVariationTypesProducts($invalidInnerVariationTypes, $destinationPim);
         $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
 
-        $this->console->execute(new SymfonyCommand('pim:product:index --all'), $destinationPim);
-        $this->console->execute(new SymfonyCommand('pim:product-model:index --all'), $destinationPim);
+        $this->console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim);
+        $this->console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim);
 
         if (!empty($invalidInnerVariationTypes)) {
             throw new InvalidInnerVariationTypeException();

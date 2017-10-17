@@ -29,10 +29,10 @@ class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSy
 
     public function install(DestinationPim $pim): void
     {
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:drop --force'), $pim);
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:create'), $pim);
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:create'), $pim);
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:update --force'), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:drop --force', SymfonyCommand::PROD), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:create',SymfonyCommand::PROD), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:create', SymfonyCommand::PROD), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:update --force',SymfonyCommand::PROD), $pim);
     }
 
     public function supports(PimConnection $connection): bool

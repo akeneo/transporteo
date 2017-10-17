@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\DataMigration;
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
-use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\Command\UnsuccessfulCommandException;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Check if the mapping of an entity is good.
@@ -32,7 +32,10 @@ class EntityMappingChecker
     public function check(Pim $pim, string $entityClassPath): void
     {
         try {
-            $commandResult = $this->chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info'), $pim);
+            $commandResult = $this->chainedConsole->execute(
+                new SymfonyCommand('doctrine:mapping:info', SymfonyCommand::PROD),
+                $pim
+            );
         } catch (UnsuccessfulCommandException $exception) {
             throw new EntityMappingException($exception->getMessage(), $exception->getCode(), $exception);
         }

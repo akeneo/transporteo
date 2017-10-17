@@ -45,7 +45,7 @@ Found 53 mapped entities:
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
         $pim->absolutePath()->willReturn('/a-path');
-        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info'), $pim)->willReturn($commandResult);
+        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info', SymfonyCommand::PROD), $pim)->willReturn($commandResult);
 
         $this->check($pim, 'Pim\Bundle\CatalogBundle\Entity\Family');
     }
@@ -64,7 +64,7 @@ Found 53 mapped entities:
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
         $pim->absolutePath()->willReturn('/a-path');
-        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info'), $pim)->willReturn($commandResult);
+        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info', SymfonyCommand::PROD), $pim)->willReturn($commandResult);
 
         $this
             ->shouldThrow(
@@ -88,7 +88,7 @@ Found 53 mapped entities:
 TXT;
         $commandResult->getOutput()->willReturn($resultOutput);
         $pim->absolutePath()->willReturn('/a-path');
-        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info'), $pim)->willReturn($commandResult);
+        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info', SymfonyCommand::PROD), $pim)->willReturn($commandResult);
 
         $this
             ->shouldThrow(
@@ -104,7 +104,7 @@ TXT;
         $pimPath = '/a-path';
         $pim->absolutePath()->willReturn($pimPath);
 
-        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info'), $pim)->willThrow(UnsuccessfulCommandException::class);
+        $chainedConsole->execute(new SymfonyCommand('doctrine:mapping:info', SymfonyCommand::PROD), $pim)->willThrow(UnsuccessfulCommandException::class);
 
         $this->shouldThrow(new EntityMappingException())->during('check', [$pim, 'AnEntity']);
     }

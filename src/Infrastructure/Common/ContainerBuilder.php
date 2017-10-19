@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Common;
 
-use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\Console;
 use Akeneo\PimMigration\Domain\FileFetcher;
 use Akeneo\PimMigration\Domain\FileFetcherRegistry;
-use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloader;
 use Akeneo\PimMigration\Domain\MigrationStep\s040_DestinationPimDownload\DestinationPimDownloaderHelper;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstallerHelper;
-use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s070_StructureMigration\StructureMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s090_SystemMigration\SystemMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s100_JobMigration\JobMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s110_GroupMigration\GroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s125_EnterpriseEditionDataMigration\EnterpriseEditionDataMigrator;
+use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\FileLocator;
@@ -30,15 +30,14 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Translation\Loader\YamlFileLoader as TranslationYamlFileLoader;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\Loader\YamlFileLoader as TranslationYamlFileLoader;
 use Symfony\Component\Workflow\Definition as WorkflowDefinition;
 use Symfony\Component\Workflow\EventListener\AuditTrailListener;
 use Symfony\Component\Workflow\SupportStrategy\ClassInstanceSupportStrategy;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Yaml\Yaml;
-use Monolog\Handler\StreamHandler;
 
 /**
  * Symfony container configuration.
@@ -48,6 +47,8 @@ use Monolog\Handler\StreamHandler;
  */
 final class ContainerBuilder
 {
+    private const VAR_DIR = __DIR__ . '/../../../var';
+
     public static function getContainer(): Container
     {
         $container = new SymfonyContainerBuilder();
@@ -118,28 +119,14 @@ final class ContainerBuilder
 
     private static function loadLoggerConfiguration(SymfonyContainerBuilder $container)
     {
-        $fileSystemHelper = new FileSystemHelper();
-
-        $logsDir = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'var'.DIRECTORY_SEPARATOR.'logs';
-
-        $logsFiles = [
-            'all' => $logsDir.DIRECTORY_SEPARATOR.'migration.log',
-            'error' => $logsDir.DIRECTORY_SEPARATOR.'error.log',
-        ];
-
+        $logsDir = self::VAR_DIR . DIRECTORY_SEPARATOR . 'logs';
         if (!is_dir($logsDir)) {
             mkdir($logsDir);
         }
 
-        foreach ($logsFiles as $logsFile) {
-            if (!$fileSystemHelper->fileExists($logsFile)) {
-                file_put_contents($logsFile, '');
-            }
-        }
-
         $loggerDefinition = new Definition(Logger::class, ['app']);
-        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsFiles['all'])]);
-        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsFiles['error'], Logger::WARNING)]);
+        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsDir.DIRECTORY_SEPARATOR.'migration.log')]);
+        $loggerDefinition->addMethodCall('pushHandler', [new StreamHandler($logsDir.DIRECTORY_SEPARATOR.'error.log', Logger::WARNING)]);
 
         $container->setDefinition('logger', $loggerDefinition);
         $container->setAlias(LoggerInterface::class, 'logger');

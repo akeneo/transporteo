@@ -47,9 +47,6 @@ class GroupMigrator implements DataMigrator
             $this->chainedConsole->execute(
                 new MySqlExecuteCommand('ALTER TABLE pim_catalog_group_type DROP COLUMN is_variant'), $destinationPim
             );
-            $this->chainedConsole->execute(
-                new MySqlExecuteCommand('UPDATE pim_catalog_group_type SET code = "MVARIANT" WHERE code = "VARIANT"'), $destinationPim
-            );
         } catch (\Exception $exception) {
             throw new GroupMigrationException($exception->getMessage(), $exception->getCode(), $exception);
         }

@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Infrastructure\Cli;
 
 use Akeneo\Pim\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\Command\Api\DeleteProductCommand;
+use Akeneo\PimMigration\Domain\Command\Api\GetAttributeCommand;
 use Akeneo\PimMigration\Domain\Command\Api\GetFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\Api\ListAllProductsCommand;
 use Akeneo\PimMigration\Domain\Command\Api\UpdateFamilyCommand;
@@ -65,6 +66,10 @@ class ApiCommandExecutor
 
         if ($command instanceof UpdateFamilyCommand) {
             return $apiClient->getFamilyApi()->upsert($command->getFamilyCode(), $command->getFamily());
+        }
+
+        if ($command instanceof GetAttributeCommand) {
+            return $apiClient->getAttributeApi()->get($command->getAttributeCode());
         }
 
         throw new \RuntimeException(sprintf('ApiCommand of type %s is not supported', get_class($command)));

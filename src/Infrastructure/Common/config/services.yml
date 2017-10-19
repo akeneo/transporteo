@@ -537,3 +537,9 @@ services:
 ## PRODUCT VARIATION MIGRATOR
 
   Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupMigrator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupRemover: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupCombinationValidator: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupMigrationCleaner: ~
+  Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupRetriever: ~

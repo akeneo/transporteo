@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Infrastructure\DestinationPimInstallation;
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\MigrationStep\s050_DestinationPimInstallation\DestinationPimSystemRequirementsInstaller;
 use Akeneo\PimMigration\Domain\Pim\PimConnection;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
+use Akeneo\PimMigration\Domain\Pim\PimParameters;
 use Akeneo\PimMigration\Infrastructure\Pim\Localhost;
 
 /**
@@ -22,21 +24,45 @@ class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSy
     /** @var ChainedConsole */
     private $chainedConsole;
 
-    public function __construct(ChainedConsole $chainedConsole)
+    /** @var FileSystemHelper */
+    private $fileSystemHelper;
+
+    public function __construct(ChainedConsole $chainedConsole, FileSystemHelper $fileSystemHelper)
     {
         $this->chainedConsole = $chainedConsole;
+        $this->fileSystemHelper = $fileSystemHelper;
     }
 
+    /**
+     * Drop and re-install the database with the minimum of fixtures.
+     * Using the fixtures "PimInstallerBundle:minimal" allows to have the internal jobs in the database (they don't exist in 1.7).
+     */
     public function install(DestinationPim $pim): void
     {
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:drop --force', SymfonyCommand::PROD), $pim);
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:database:create',SymfonyCommand::PROD), $pim);
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:create', SymfonyCommand::PROD), $pim);
-        $this->chainedConsole->execute(new SymfonyCommand('doctrine:schema:update --force',SymfonyCommand::PROD), $pim);
+        $this->updatePimParameterInstallerDataToMinimal($pim);
+
+        $this->chainedConsole->execute(new SymfonyCommand('cache:clear', SymfonyCommand::PROD), $pim);
+        $this->chainedConsole->execute(new SymfonyCommand('pim:installer:db', SymfonyCommand::PROD), $pim);
     }
 
     public function supports(PimConnection $connection): bool
     {
         return $connection instanceof Localhost;
+    }
+
+    private function updatePimParameterInstallerDataToMinimal(DestinationPim $pim): void
+    {
+        $pimParametersFilePath = sprintf('%s/app/config/%s', $pim->absolutePath(), PimParameters::getFileName());
+        $pimParametersLines = $this->fileSystemHelper->getFileLines($pimParametersFilePath);
+
+        foreach ($pimParametersLines as $numLine => $pimParametersLine) {
+            if (1 === preg_match('/^\s*installer_data:/', $pimParametersLine)) {
+                $this->fileSystemHelper->updateLineInFile($pimParametersFilePath, $numLine + 1, '    installer_data: PimInstallerBundle:minimal'.PHP_EOL);
+
+                return;
+            }
+        }
+
+        throw new \RuntimeException('Unable to find the parameter installer_data in '.$pimParametersFilePath);
     }
 }

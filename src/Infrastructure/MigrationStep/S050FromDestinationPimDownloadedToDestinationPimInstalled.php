@@ -220,6 +220,10 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         /** @var TransporteoStateMachine $stateMachine */
         $stateMachine = $event->getSubject();
 
+        $this->printerAndAsker->printMessage($this->translator->trans(
+            'from_destination_pim_downloaded_to_destination_pim_installed.on_local_destination_pim_system_requirements_installation.message'
+        ));
+
         try {
             $this->destinationPimSystemRequirementsInstallerHelper->install($stateMachine->getDestinationPim());
         } catch (DestinationPimSystemRequirementsNotBootable $exception) {

@@ -33,10 +33,6 @@ class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSy
         $this->fileSystemHelper = $fileSystemHelper;
     }
 
-    /**
-     * Drop and re-install the database with the minimum of fixtures.
-     * Using the fixtures "PimInstallerBundle:minimal" allows to have the internal jobs in the database (they don't exist in 1.7).
-     */
     public function install(DestinationPim $pim): void
     {
         $this->updatePimParameterInstallerDataToMinimal($pim);

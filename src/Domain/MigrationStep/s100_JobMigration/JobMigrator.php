@@ -42,6 +42,11 @@ class JobMigrator
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
         try {
+            // Create a backup of the table akeneo_batch_job_instance to keep the internal jobs.
+            $this->console->execute(new MySqlExecuteCommand(
+                'RENAME TABLE akeneo_batch_job_instance TO akeneo_batch_job_instance_migration'
+            ), $destinationPim);
+
             foreach ($this->jobMigrators as $jobMigrator) {
                 $jobMigrator->migrate($sourcePim, $destinationPim);
             }
@@ -49,7 +54,11 @@ class JobMigrator
             $queries = [];
             $queries[] = 'ALTER TABLE akeneo_batch_job_execution ADD COLUMN raw_parameters LONGTEXT NOT NULL AFTER log_file, ADD COLUMN health_check_time DATETIME NULL AFTER updated_time';
 
-            $queries[] = "INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants')";
+            $queries[] = "INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type)"
+                ." SELECT code,label,job_name,status,connector,raw_parameters,type"
+                ." FROM akeneo_batch_job_instance_migration WHERE connector = 'internal'";
+
+            $queries[] = 'DROP TABLE akeneo_batch_job_instance_migration';
 
             $queries = array_merge($queries, $this->getUpdateJobInstanceQueries($destinationPim));
 

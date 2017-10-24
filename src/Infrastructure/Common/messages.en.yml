@@ -61,6 +61,8 @@ from_destination_pim_downloaded_to_destination_pim_installed:
     base_uri:
       question: "What is the base URI to request the API of the destination PIM?"
       error_message: "You should provide a valid URI without parameters."
+  on_local_destination_pim_system_requirements_installation:
+      message: "Destination PIM database initialization..."
 from_destination_pim_requirements_checked_to_destination_pim_files_database_migrated:
   message: "Migrating files data..."
 from_destination_pim_files_migrated_to_destination_pim_structure_migrated:

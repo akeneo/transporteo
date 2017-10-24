@@ -44,8 +44,8 @@ abstract class DatabaseSetupedTestCase extends ConfiguredTestCase
 
         $apiParameters = new PimApiParameters('', '', '', '', '');
 
-        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, null, false, $sourcePimConfig['absolute_path'], new Localhost(), $apiParameters);
-        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, null, $destinationPimConfig['absolute_path'], new Localhost(), $apiParameters);
+        $this->sourcePim = new SourcePim($sourcePimConfig['database_host'], $sourcePimConfig['database_port'], $sourcePimConfig['database_name'], $sourcePimConfig['database_user'], $sourcePimConfig['database_password'], null, null, false, false, $sourcePimConfig['absolute_path'], new Localhost(), $apiParameters);
+        $this->destinationPim = new DestinationPim($destinationPimConfig['database_host'], $destinationPimConfig['database_port'], $destinationPimConfig['database_name'], $destinationPimConfig['database_user'], $destinationPimConfig['database_password'], false, $destinationPimConfig['absolute_path'], new Localhost(), $apiParameters);
 
         $connection = $this->getConnection($this->destinationPim, false);
         $connection->exec('DROP DATABASE IF EXISTS akeneo_pim_two_for_test');

@@ -49,6 +49,11 @@ class JobMigratorSpec extends ObjectBehavior
         $this->addJobMigrator($migratorOne);
         $this->addJobMigrator($migratorTwo);
 
+        $console->execute(
+            new MySqlExecuteCommand('RENAME TABLE akeneo_batch_job_instance TO akeneo_batch_job_instance_migration'),
+            $destinationPim
+        )->shouldBeCalled();
+
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
@@ -58,7 +63,16 @@ class JobMigratorSpec extends ObjectBehavior
         )->shouldBeCalled();
 
         $console->execute(
-            new MySqlExecuteCommand("INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type) VALUES ('compute_product_models_descendants','Compute product models descendants','compute_product_models_descendants',0,'internal','a:0:{}','compute_product_models_descendants')"),
+            new MySqlExecuteCommand(
+                "INSERT INTO akeneo_batch_job_instance (code,label,job_name,status,connector,raw_parameters,type)"
+                ." SELECT code,label,job_name,status,connector,raw_parameters,type"
+                ." FROM akeneo_batch_job_instance_migration WHERE connector = 'internal'"
+            ),
+            $destinationPim
+        )->shouldBeCalled();
+
+        $console->execute(
+            new MySqlExecuteCommand('DROP TABLE akeneo_batch_job_instance_migration'),
             $destinationPim
         )->shouldBeCalled();
 
@@ -89,10 +103,16 @@ class JobMigratorSpec extends ObjectBehavior
         DataMigrator $migratorOne,
         DataMigrator $migratorTwo,
         SourcePim $sourcePim,
-        DestinationPim $destinationPim
+        DestinationPim $destinationPim,
+        $console
     ) {
         $this->addJobMigrator($migratorOne);
         $this->addJobMigrator($migratorTwo);
+
+        $console->execute(
+            new MySqlExecuteCommand('RENAME TABLE akeneo_batch_job_instance TO akeneo_batch_job_instance_migration'),
+            $destinationPim
+        )->shouldBeCalled();
 
         $migratorOne->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $migratorTwo->migrate($sourcePim, $destinationPim)->willThrow(new DataMigrationException());

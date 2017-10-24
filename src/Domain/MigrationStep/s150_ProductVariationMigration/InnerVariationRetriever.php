@@ -116,7 +116,7 @@ class InnerVariationRetriever
             $locale
         )), $pim)->getOutput();
 
-        return empty($innerVariationTypeLabel) ? '' : $innerVariationTypeLabel[0]['label'];
+        return $innerVariationTypeLabel[0]['label'] ?? '';
     }
 
     /**

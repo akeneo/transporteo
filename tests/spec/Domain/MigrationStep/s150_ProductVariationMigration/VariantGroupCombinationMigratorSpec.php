@@ -110,17 +110,35 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
             ],
             'vg_att_3' => [
                 [
-                    'locale' => 'en_US',
+                    'locale' => null,
                     'scope' => 'ecommerce',
-                    'data' => 'VG 1 Att 3 ecommerce'
-                ],
-                [
-                    'locale' => 'en_US',
-                    'scope' => 'mobile',
-                    'data' => 'VG 1 Att 3 mobile'
+                    'data' => [
+                        [
+                            'amount' => 99,
+                            'currency' => 'USD'
+                        ],
+                        [
+                            'amount' => 110,
+                            'currency' => 'EUR'
+                        ]
+                    ]
                 ]
             ]
         ]);
+
+        $productModelImporter->import([
+            [
+                'code' => 'vg_1',
+                'family_variant' => 'family_variant_1',
+                'categories' => 'vg_1_cat_1,vg_1_cat_2',
+                'parent' => '',
+                'vg_att_1' => 'VG 1 Att 1 value',
+                'vg_att_2-en_US' => 'VG 1 Att 2 value US',
+                'vg_att_2-fr_FR' => 'VG 1 Att 2 value FR',
+                'vg_att_3-ecommerce-USD' => 99,
+                'vg_att_3-ecommerce-EUR' => 110
+            ]
+        ], $destinationPim)->shouldBeCalled();
 
         $variantGroupRetriever->retrieveVariantGroupCategories('vg_2', $destinationPim)->willReturn(['vg_2_cat_1']);
         $variantGroupRetriever->retrieveGroupAttributeValues('vg_2', $destinationPim)->willReturn([
@@ -143,32 +161,27 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
                     'data' => null
                 ],
             ],
-            'vg_att_3' => [
+            'vg_att_4' => [
                 [
                     'locale' => 'en_US',
                     'scope' => 'ecommerce',
-                    'data' => 'VG 2 Att 3 ecommerce'
+                    'data' => [
+                        'amount' => 345,
+                        'unit' => 'gram'
+                    ]
                 ],
                 [
-                    'locale' => 'en_US',
-                    'scope' => 'mobile',
-                    'data' => null
+                    'locale' => 'fr_FR',
+                    'scope' => 'ecommerce',
+                    'data' => [
+                        'amount' => 3,
+                        'unit' => 'kilogram'
+                    ]
                 ]
             ]
         ]);
 
         $productModelImporter->import([
-            [
-                'code' => 'vg_1',
-                'family_variant' => 'family_variant_1',
-                'categories' => 'vg_1_cat_1,vg_1_cat_2',
-                'parent' => '',
-                'vg_att_1' => 'VG 1 Att 1 value',
-                'vg_att_2-en_US' => 'VG 1 Att 2 value US',
-                'vg_att_2-fr_FR' => 'VG 1 Att 2 value FR',
-                'vg_att_3-en_US-ecommerce' => 'VG 1 Att 3 ecommerce',
-                'vg_att_3-en_US-mobile' => 'VG 1 Att 3 mobile'
-            ],
             [
                 'code' => 'vg_2',
                 'family_variant' => 'family_variant_1',
@@ -177,10 +190,11 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
                 'vg_att_1' => 'VG 2 Att 1 value',
                 'vg_att_2-en_US' => 'VG 2 Att 2 value US',
                 'vg_att_2-fr_FR' => null,
-                'vg_att_3-en_US-ecommerce' => 'VG 2 Att 3 ecommerce',
-                'vg_att_3-en_US-mobile' => null
+                'vg_att_4-en_US-ecommerce' => 345,
+                'vg_att_4-en_US-ecommerce-unit' => 'gram',
+                'vg_att_4-fr_FR-ecommerce' => 3,
+                'vg_att_4-fr_FR-ecommerce-unit' => 'kilogram'
             ]
-
         ], $destinationPim)->shouldBeCalled();
 
         $variantGroupRetriever->retrieveProductModelId('vg_1' ,$destinationPim)->willReturn(41);

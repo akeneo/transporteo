@@ -113,8 +113,6 @@ class VariantGroupCombinationMigrator
      */
     private function createProductModels(VariantGroupCombination $variantGroupCombination, Pim $pim): void
     {
-        $productModels = [];
-
         foreach ($variantGroupCombination->getGroups() as $variantGroupCode) {
             $categories = $this->variantGroupRetriever->retrieveVariantGroupCategories($variantGroupCode, $pim);
 
@@ -126,10 +124,12 @@ class VariantGroupCombinationMigrator
             ];
 
             $producModelValues = $this->buildProductModelValues($variantGroupCode, $pim);
-            $productModels[] = array_merge($productModel, $producModelValues);
-        }
+            $productModel = array_merge($productModel, $producModelValues);
 
-        $this->productModelImporter->import($productModels, $pim);
+            // One import per product because the variant groups can have different attribute values.
+            // It will be improved when it will be possible to create a product model by the API.
+            $this->productModelImporter->import([$productModel], $pim);
+        }
     }
 
     /**
@@ -150,8 +150,18 @@ class VariantGroupCombinationMigrator
                 if (null !== $value['scope']) {
                     $attributeValueKey .= '-'.$value['scope'];
                 }
-
-                $producModelValues[$attributeValueKey] = $value['data'];
+                if (is_array($value['data'])) {
+                    if (isset($value['data']['unit'])) {
+                        $producModelValues[$attributeValueKey] = $value['data']['amount'];
+                        $producModelValues[$attributeValueKey.'-unit'] = $value['data']['unit'];
+                    } elseif (isset($value['data'][0]['currency'])) {
+                        foreach ($value['data'] as $price) {
+                            $producModelValues[$attributeValueKey.'-'.$price['currency']] = $price['amount'];
+                        }
+                    }
+                } else {
+                    $producModelValues[$attributeValueKey] = $value['data'];
+                }
             }
         }
         

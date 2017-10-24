@@ -2,7 +2,7 @@
 
 ## Goal
 
-This tool aims to help you to migrate your *PIM 1.7 standard edition* (either _Community_ or _Enterprise_) to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
+This tool aims at helping you to migrate your *PIM 1.7 standard edition* (either _Community_ or _Enterprise_) to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
 - the [System Requirements](https://docs.akeneo.com/2.0/install_pim/system_requirements/system_requirements.html) have changed between Akeneo PIM 1.7 and 2.0
 - with variant groups and inner variation (a paid extension for the _Enterprise Edition_) there are a lot of different and complex use cases to migrate products data
 - the need to migrate real production data without worrying about a failure, a problem or an incomplete migration
@@ -12,7 +12,7 @@ The 1.7 source PIM you will migrate from can be either installed locally or remo
 The 2.0 destination PIM you will migrate to should be installed locally running on the port 80, you can install it following these [instructions](https://docs.akeneo.com/latest/install_pim/manual/system_requirements/system_requirements.html).
 We do not support the Docker installation yet regarding Transporteo.
 
-Both PIM should be functionnals and have a functionnal API with admin rights.
+Both PIM should be functionnal and have a functionnal API with admin rights.
 
 Before proceeding, we strongly encourage you to read our documentation and our functional and technical blog posts about the version 2.0:
 - [System Requirements](https://docs.akeneo.com/2.0/install_pim/system_requirements/system_requirements.html), documentation
@@ -73,7 +73,7 @@ The modeling of the variations with the IVB must be well structured to be fully 
 - Metric
 - Yes/No
 
-If one these conditions is not fulfilled, the products concerned won't be migrated. You will have to think about a better modeling for these products and migrate them manually.
+If one of these conditions is not fulfilled, the products concerned won't be migrated. You will have to think about a better modeling for these products and migrate them manually.
 
 You can find the details of the errors in the file "var/logs/error.log".
 
@@ -118,12 +118,12 @@ To launch the tool, run:
   $ php Transporteo.php akeneo-pim:migrate
 ```
 
-then, let you guide ;) 
+then, let yourself be guided ;) 
 
-At the end of the tool's job, you will have your database setuped with your data but we do not migrate your custom code.
+At the end of the tool's job, you will have your database setup with your data but we do not migrate your custom code.
 You will have to migrate it following this [upgrade file](./UPGRADE-2.0.md).
 
-We plan to automate this part in future release, stay tuned ! :)
+We plan to automate this part in future release, stay tuned! :)
 
 *Tip: You can define the default responses in the file "src/Infrastructure/Common/config/parameters.yml"*
 
@@ -131,7 +131,7 @@ We plan to automate this part in future release, stay tuned ! :)
 
 Please, have a look on the [CONTRIBUTING](./.github/CONTRIBUTING.md) page.
 
-## What's next ?
+## What's next?
 
 We will continuously improve this tool, you can follow our plans [here](https://github.com/akeneo/transporteo/projects/1).
 

@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Inva
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator;
 use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -22,7 +22,7 @@ class S150FromDestinationPimProductMigratedToDestinationPimProductVariationMigra
     /** @var ProductVariationMigrator */
     private $productVariationMigrator;
 
-    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, ProductVariationMigrator $productVariationMigrator)
+    public function __construct(Translator $translator, LoggerInterface $logger, ProductVariationMigrator $productVariationMigrator)
     {
         parent::__construct($translator, $logger);
 

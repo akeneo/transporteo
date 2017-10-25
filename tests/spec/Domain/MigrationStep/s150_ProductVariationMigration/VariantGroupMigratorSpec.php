@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupCombination;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupCombinationMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupFamilyCreator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupMigrationCleaner;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupProductMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupRemover;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupRetriever;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupValidator;
@@ -28,12 +30,13 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         VariantGroupRetriever $variantGroupRetriever,
         VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
-        VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
+        VariantGroupFamilyCreator $familyCreator,
+        VariantGroupProductMigrator $productMigrator,
         VariantGroupMigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     )
     {
-        $this->beConstructedWith($variantGroupRetriever, $variantGroupRemover, $variantGroupValidator, $variantGroupCombinationMigrator, $variantGroupMigrationCleaner, $tableMigrator);
+        $this->beConstructedWith($variantGroupRetriever, $variantGroupRemover, $variantGroupValidator, $familyCreator, $productMigrator, $variantGroupMigrationCleaner, $tableMigrator);
     }
 
     public function it_is_initializable()
@@ -46,7 +49,8 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim,
         $variantGroupRetriever,
         $variantGroupValidator,
-        $variantGroupCombinationMigrator,
+        $familyCreator,
+        $productMigrator,
         $tableMigrator
     )
     {
@@ -77,9 +81,21 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupValidator->isVariantGroupCombinationValid($secondVariantGroupCombination, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupCombinationValid($thirdVariantGroupCombination, $destinationPim)->willReturn(true);
 
-        $variantGroupCombinationMigrator->migrate($firstVariantGroupCombination, $destinationPim)->shouldBeCalled();
-        $variantGroupCombinationMigrator->migrate($secondVariantGroupCombination, $destinationPim)->shouldBeCalled();
-        $variantGroupCombinationMigrator->migrate($thirdVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $firstFamilyVariant = new FamilyVariant(1, 'family_variant_1', ['att_1'], []);
+        $secondFamilyVariant = new FamilyVariant(2, 'family_variant_2', ['att_1', 'att_2'], []);
+        $thirdFamilyVariant = new FamilyVariant(3, 'family_variant_3', ['att_3'], []);
+
+        $familyCreator->createFamilyVariant($firstVariantGroupCombination, $destinationPim)->willReturn($firstFamilyVariant);
+        $familyCreator->createFamilyVariant($secondVariantGroupCombination, $destinationPim)->willReturn($secondFamilyVariant);
+        $familyCreator->createFamilyVariant($thirdVariantGroupCombination, $destinationPim)->willReturn($thirdFamilyVariant);
+
+        $productMigrator->migrateProductModels($firstVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $productMigrator->migrateProductModels($secondVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $productMigrator->migrateProductModels($thirdVariantGroupCombination, $destinationPim)->shouldBeCalled();
+
+        $productMigrator->migrateProductVariants($firstFamilyVariant, $firstVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $productMigrator->migrateProductVariants($secondFamilyVariant, $secondVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $productMigrator->migrateProductVariants($thirdFamilyVariant, $thirdVariantGroupCombination, $destinationPim)->shouldBeCalled();
 
         $variantGroupRetriever->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim)->willReturn(0);
 
@@ -91,7 +107,8 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim,
         $variantGroupRetriever,
         $variantGroupValidator,
-        $variantGroupCombinationMigrator,
+        $familyCreator,
+        $productMigrator,
         $variantGroupRemover,
         $tableMigrator
     )
@@ -124,7 +141,11 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupRemover->remove('invalid_vg_1', $destinationPim)->shouldBeCalled();
         $variantGroupRemover->remove('invalid_vg_2', $destinationPim)->shouldBeCalled();
 
-        $variantGroupCombinationMigrator->migrate($validVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $familyVariant = new FamilyVariant(1, 'family_variant_1', ['att_1'], []);
+
+        $familyCreator->createFamilyVariant($validVariantGroupCombination, $destinationPim)->willReturn($familyVariant);
+        $productMigrator->migrateProductModels($validVariantGroupCombination, $destinationPim)->shouldBeCalled();
+        $productMigrator->migrateProductVariants($familyVariant, $validVariantGroupCombination, $destinationPim)->shouldBeCalled();
 
         $variantGroupRetriever->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim)->willReturn(1);
 

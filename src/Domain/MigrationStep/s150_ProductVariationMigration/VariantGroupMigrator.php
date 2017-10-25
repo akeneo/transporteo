@@ -29,17 +29,21 @@ class VariantGroupMigrator implements DataMigrator
     /** @var VariantGroupValidator */
     private $variantGroupValidator;
 
-    /** @var VariantGroupCombinationMigrator */
-    private $variantGroupCombinationMigrator;
-
     /** @var VariantGroupMigrationCleaner */
     private $variantGroupMigrationCleaner;
+
+    /** @var VariantGroupFamilyCreator */
+    private $familyCreator;
+
+    /** @var VariantGroupProductMigrator */
+    private $productMigrator;
 
     public function __construct(
         VariantGroupRetriever $variantGroupRetriever,
         VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
-        VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
+        VariantGroupFamilyCreator $familyCreator,
+        VariantGroupProductMigrator $productMigrator,
         VariantGroupMigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     ) {
@@ -47,8 +51,9 @@ class VariantGroupMigrator implements DataMigrator
         $this->tableMigrator = $tableMigrator;
         $this->variantGroupRemover = $variantGroupRemover;
         $this->variantGroupValidator = $variantGroupValidator;
-        $this->variantGroupCombinationMigrator = $variantGroupCombinationMigrator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
+        $this->familyCreator = $familyCreator;
+        $this->productMigrator = $productMigrator;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -61,7 +66,7 @@ class VariantGroupMigrator implements DataMigrator
         $variantGroupCombinations = $this->retrieveVariantGroupCombinationsToMigrate($destinationPim);
 
         foreach ($variantGroupCombinations as $variantGroupCombination) {
-            $this->variantGroupCombinationMigrator->migrate($variantGroupCombination, $destinationPim);
+            $this->migrateVariantGroupCombination($variantGroupCombination, $destinationPim);
         }
 
         $this->variantGroupMigrationCleaner->clean($destinationPim);
@@ -131,5 +136,13 @@ class VariantGroupMigrator implements DataMigrator
         foreach ($variantGroupCombination->getGroups() as $groupCode) {
             $this->variantGroupRemover->remove($groupCode, $pim);
         }
+    }
+
+    private function migrateVariantGroupCombination(VariantGroupCombination $variantGroupCombination, DestinationPim $pim)
+    {
+        $familyVariant = $this->familyCreator->createFamilyVariant($variantGroupCombination, $pim);
+
+        $this->productMigrator->migrateProductModels($variantGroupCombination, $pim);
+        $this->productMigrator->migrateProductVariants($familyVariant, $variantGroupCombination, $pim);
     }
 }

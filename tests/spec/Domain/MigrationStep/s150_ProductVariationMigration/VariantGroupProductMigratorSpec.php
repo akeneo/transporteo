@@ -6,10 +6,10 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMig
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupCombination;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupCombinationMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupProductMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupRetriever;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use PhpSpec\ObjectBehavior;
@@ -18,77 +18,22 @@ use PhpSpec\ObjectBehavior;
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class VariantGroupCombinationMigratorSpec extends ObjectBehavior
+class VariantGroupProductMigratorSpec extends ObjectBehavior
 {
-    public function let(
-        ChainedConsole $console,
-        VariantGroupRetriever $variantGroupRetriever,
-        FamilyVariantImporter $familyVariantImporter,
-        ProductModelImporter $productModelImporter
-    )
+    public function let(ChainedConsole $console, VariantGroupRetriever $variantGroupRetriever, ProductModelImporter $productModelImporter)
     {
-        $this->beConstructedWith($console, $variantGroupRetriever, $familyVariantImporter, $productModelImporter);
+        $this->beConstructedWith($console, $variantGroupRetriever, $productModelImporter);
     }
 
     public function it_is_initializable()
     {
-        $this->shouldHaveType(VariantGroupCombinationMigrator::class);
+        $this->shouldHaveType(VariantGroupProductMigrator::class);
     }
 
-    public function it_migrates_successfully_a_variant_group_combination(
-        DestinationPim $destinationPim,
-        $console,
-        $variantGroupRetriever,
-        $familyVariantImporter,
-        $productModelImporter
-    )
+    public function it_migrates_product_models(DestinationPim $pim, $variantGroupRetriever, $productModelImporter)
     {
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
-
-        $familyData = [
-            'code' => 'family_1',
-            'attributes' => [
-                'att_1', 'att_2', 'vg_att_1', 'vg_att_2', 'vg_att_3', 'att_axe_1', 'att_axe_2'
-            ],
-            'labels' => [
-                'en_US' => 'Family 1 US',
-                'fr_FR' => 'Family 1 FR',
-            ]
-        ];
-
-        $variantGroupRetriever->retrieveFamilyData('family_1', $destinationPim)->willReturn($familyData);
-        $variantGroupRetriever->retrieveGroupAttributes('vg_1', $destinationPim)->willReturn(['vg_att_1', 'vg_att_2', 'vg_att_3']);
-
-        $variantGroupRetriever->retrieveAttributeData('att_axe_1', $destinationPim)->willReturn([
-            'code' => 'att_axe_1',
-            'labels' => [
-                'en_US' => 'Axe 1 US',
-                'fr_FR' => 'Axe 1 FR',
-            ]
-        ]);
-        $variantGroupRetriever->retrieveAttributeData('att_axe_2', $destinationPim)->willReturn([
-            'code' => 'att_axe_2',
-            'labels' => [
-                'en_US' => 'Axe 2 US',
-                'fr_FR' => 'Axe 2 FR',
-            ]
-        ]);
-
-        $familyVariantImporter->import([[
-            'code' => 'family_variant_1',
-            'family' => 'family_1',
-            'variant-axes_1' => 'att_axe_1,att_axe_2',
-            'variant-axes_2' => '',
-            'variant-attributes_1' => 'att_1,att_2',
-            'variant-attributes_2' => '',
-            'label-en_US' => 'Family 1 US Axe 1 US Axe 2 US',
-            'label-fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
-        ]], $destinationPim)->shouldBeCalled();
-
-        $variantGroupRetriever->retrieveFamilyVariantId('family_variant_1', $destinationPim)->willReturn(11);
-
-        $variantGroupRetriever->retrieveVariantGroupCategories('vg_1', $destinationPim)->willReturn(['vg_1_cat_1', 'vg_1_cat_2']);
-        $variantGroupRetriever->retrieveGroupAttributeValues('vg_1', $destinationPim)->willReturn([
+        $variantGroupRetriever->retrieveVariantGroupCategories('vg_1', $pim)->willReturn(['vg_1_cat_1', 'vg_1_cat_2']);
+        $variantGroupRetriever->retrieveGroupAttributeValues('vg_1', $pim)->willReturn([
             'vg_att_1' => [
                 [
                     'locale' => null,
@@ -138,10 +83,10 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
                 'vg_att_3-ecommerce-USD' => 99,
                 'vg_att_3-ecommerce-EUR' => 110
             ]
-        ], $destinationPim)->shouldBeCalled();
+        ], $pim)->shouldBeCalled();
 
-        $variantGroupRetriever->retrieveVariantGroupCategories('vg_2', $destinationPim)->willReturn(['vg_2_cat_1']);
-        $variantGroupRetriever->retrieveGroupAttributeValues('vg_2', $destinationPim)->willReturn([
+        $variantGroupRetriever->retrieveVariantGroupCategories('vg_2', $pim)->willReturn(['vg_2_cat_1']);
+        $variantGroupRetriever->retrieveGroupAttributeValues('vg_2', $pim)->willReturn([
             'vg_att_1' => [
                 [
                     'locale' => null,
@@ -195,10 +140,27 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
                 'vg_att_4-fr_FR-ecommerce' => 3,
                 'vg_att_4-fr_FR-ecommerce-unit' => 'kilogram'
             ]
-        ], $destinationPim)->shouldBeCalled();
+        ], $pim)->shouldBeCalled();
 
-        $variantGroupRetriever->retrieveProductModelId('vg_1' ,$destinationPim)->willReturn(41);
-        $variantGroupRetriever->retrieveProductModelId('vg_2' ,$destinationPim)->willReturn(42);
+        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
+
+        $this->migrateProductModels($variantGroupCombination, $pim);
+    }
+
+    public function it_migrates_product_variants(
+        VariantGroupCombination $variantGroupCombination,
+        FamilyVariant $familyVariant,
+        DestinationPim $pim,
+        $variantGroupRetriever,
+        $console
+    ) {
+        $variantGroupCombination->getGroups()->willReturn(['vg_1', 'vg_2']);
+
+        $familyVariant->getId()->willReturn(11);
+        $familyVariant->getProductModelAttributes()->willReturn(['vg_att_1', 'vg_att_2', 'vg_att_3']);
+
+        $variantGroupRetriever->retrieveProductModelId('vg_1' ,$pim)->willReturn(41);
+        $variantGroupRetriever->retrieveProductModelId('vg_2' ,$pim)->willReturn(42);
 
         $console->execute(new MySqlExecuteCommand(
             "UPDATE pim_catalog_product p"
@@ -207,7 +169,7 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
             ." SET p.product_model_id = 41, p.family_variant_id = 11, p.product_type = 'variant_product'"
             .", raw_values = JSON_REMOVE(raw_values, '$.vg_att_1', '$.vg_att_2', '$.vg_att_3')"
             ." WHERE g.code = 'vg_1'"
-        ), $destinationPim)->shouldBeCalled();
+        ), $pim)->shouldBeCalled();
 
         $console->execute(new MySqlExecuteCommand(
             "UPDATE pim_catalog_product p"
@@ -216,8 +178,8 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
             ." SET p.product_model_id = 42, p.family_variant_id = 11, p.product_type = 'variant_product'"
             .", raw_values = JSON_REMOVE(raw_values, '$.vg_att_1', '$.vg_att_2', '$.vg_att_3')"
             ." WHERE g.code = 'vg_2'"
-        ), $destinationPim)->shouldBeCalled();
+        ), $pim)->shouldBeCalled();
 
-        $this->migrate($variantGroupCombination, $destinationPim);
+        $this->migrateProductVariants($familyVariant, $variantGroupCombination, $pim);
     }
 }

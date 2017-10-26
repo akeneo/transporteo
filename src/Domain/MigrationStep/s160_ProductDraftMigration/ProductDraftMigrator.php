@@ -25,11 +25,11 @@ class ProductDraftMigrator implements DataMigrator
     /** @var FileFetcherRegistry */
     private $fileFetcherRegistry;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     /** @var ProductDraftImporter */
     private $productDraftImporter;
+
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
      * ProductDraftMigrator constructor.
@@ -37,6 +37,7 @@ class ProductDraftMigrator implements DataMigrator
      * @param MigrationBundleInstaller $bundleInstaller
      * @param ChainedConsole           $console
      * @param FileFetcherRegistry      $fileFetcherRegistry
+     * @param ProductDraftImporter     $productDraftImporter
      * @param LoggerInterface          $logger
      */
     public function __construct(

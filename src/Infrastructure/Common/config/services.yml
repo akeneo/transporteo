@@ -537,3 +537,10 @@ services:
 ## PRODUCT VARIATION MIGRATOR
 
   Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator: ~
+
+## PRODUCT DRAFT IMPORTER
+
+  Akeneo\PimMigration\Domain\MigrationStep\s160_ProductDraftMigration\ProductDraftImporter:
+    arguments:
+      $console: '@Akeneo\PimMigration\Domain\Command\ChainedConsole'
+      $varDir: '/../../../../var'

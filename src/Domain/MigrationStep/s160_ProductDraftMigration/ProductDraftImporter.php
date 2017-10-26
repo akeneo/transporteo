@@ -18,17 +18,19 @@ class ProductDraftImporter
     /** @var ChainedConsole */
     private $console;
 
-    public function __construct(ChainedConsole $console)
+    /** @var string */
+    private $varDir;
+
+    public function __construct(ChainedConsole $console, string $varDir)
     {
         $this->console = $console;
+        $this->varDir = __DIR__ . $varDir;
     }
 
     public function import(DestinationPim $pim, string $draftFilename)
     {
         $reader = ReaderFactory::create(Type::CSV);
-
-        $varDir = __DIR__ . '/../../../../var';
-        $reader->open($varDir .'/'. $draftFilename);
+        $reader->open($this->varDir .'/'. $draftFilename);
 
         foreach ($reader->getSheetIterator() as $sheet) {
             $hasHeader = true;

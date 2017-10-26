@@ -32,7 +32,7 @@ class ProductDraftMigrationCommand extends ContainerAwareCommand
     {
         /** @var ProductDraftRepository $productDraftRepository */
         $productDraftRepository = $this->getContainer()->get('pimee_workflow.repository.product_draft');
-        $drafts = $productDraftRepository->createQueryBuilder()->getQuery()->execute();
+        $drafts = $productDraftRepository->createQueryBuilder('p')->getQuery()->execute();
 
         /** @var WriterFactory $writer */
         $writer = WriterFactory::create(Type::CSV);

@@ -1,3 +1,14 @@
+# 1.0.0-alpha4
+
+## Improvements
+
+- MIG-71 Execute Symfony commands in production env
+- MIG-77 Keep the internal jobs in destination PIM
+
+## Bug fixes
+
+- Fix error when the inner variation type label is null
+
 # 1.0.0-alpha3
 
 ## Improvements

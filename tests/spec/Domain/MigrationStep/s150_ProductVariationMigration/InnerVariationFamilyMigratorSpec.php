@@ -13,6 +13,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Inne
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationType;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -85,7 +86,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             ]
         ]);
 
-        $innerVariationRetriever->retrieveParentFamilies($innerVariationType, $pim)->willReturn([$firstParentFamily, $secondParentFamily]);
+        $innerVariationRetriever->retrieveParentFamiliesHavingProductsWithVariants($innerVariationType, $pim)->willReturn([$firstParentFamily, $secondParentFamily]);
 
         $console->execute(new UpdateFamilyCommand([
             'code' => 'first_parent_family',
@@ -144,6 +145,34 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
         ];
 
         $familyVariantImporter->import([$firstFamilyVariant, $secondFamilyVariant], $pim);
+
+        $this->migrate($innerVariationType, $pim);
+    }
+
+    public function it_does_nothing_if_there_is_no_family_having_products_with_variants(
+        $innerVariationRetriever,
+        $familyVariantImporter,
+        InnerVariationType $innerVariationType,
+        Pim $pim
+    )
+    {
+        $innerVariationFamily = new Family(1, 'inner_variation_family', [
+            'code' => 'inner_variation_family',
+            'attributes' => ['attribute_1', 'attribute_2', 'variation_parent_product'],
+            'attribute_requirements' => [
+                'ecommerce' => ['attribute_1', 'attribute_2', 'variation_parent_product'],
+                'mobile' => ['attribute_1']
+            ],
+            'labels' => [
+                'en_US' => 'inner_variation_family label US',
+                'fr_FR' => 'inner_variation_family label FR'
+            ]
+        ]);
+
+        $innerVariationRetriever->retrieveInnerVariationFamily($innerVariationType, $pim)->willReturn($innerVariationFamily);
+        $innerVariationRetriever->retrieveParentFamiliesHavingProductsWithVariants($innerVariationType, $pim)->willReturn([]);
+
+        $familyVariantImporter->import(Argument::cetera())->shouldNotBeCalled();
 
         $this->migrate($innerVariationType, $pim);
     }

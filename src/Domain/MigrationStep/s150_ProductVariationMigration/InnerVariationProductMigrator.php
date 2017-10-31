@@ -51,7 +51,7 @@ class InnerVariationProductMigrator
     public function migrate(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $innerVariationFamily = $this->innerVariationRetriever->retrieveInnerVariationFamily($innerVariationType, $pim);
-        $parentFamilies = $this->innerVariationRetriever->retrieveParentFamilies($innerVariationType, $pim);
+        $parentFamilies = $this->innerVariationRetriever->retrieveParentFamiliesHavingProductsWithVariants($innerVariationType, $pim);
 
         foreach ($parentFamilies as $parentFamily) {
             $familyVariant = $this->innerVariationRetriever->retrieveFamilyVariant($parentFamily, $innerVariationFamily, $pim);

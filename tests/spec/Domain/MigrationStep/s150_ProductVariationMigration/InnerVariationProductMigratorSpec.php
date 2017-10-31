@@ -49,7 +49,7 @@ class InnerVariationProductMigratorSpec extends ObjectBehavior
         $parentFamily = new Family(10, 'first_parent_family', []);
 
         $innerVariationRetriever->retrieveInnerVariationFamily($innerVariationType, $pim)->willReturn($innerVariationFamily);
-        $innerVariationRetriever->retrieveParentFamilies($innerVariationType, $pim)->willReturn([$parentFamily]);
+        $innerVariationRetriever->retrieveParentFamiliesHavingProductsWithVariants($innerVariationType, $pim)->willReturn([$parentFamily]);
         $innerVariationRetriever->retrieveFamilyVariant($parentFamily, $innerVariationFamily, $pim)->willReturn([
             'id' => '20',
             'code' => 'first_family_variant',

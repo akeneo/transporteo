@@ -60,7 +60,7 @@ class InnerVariationCleaner
     {
         foreach ($invalidInnerVariationTypes as $invalidInnerVariationType) {
             $innerVariationFamily = $this->innerVariationRetriever->retrieveInnerVariationFamily($invalidInnerVariationType, $pim);
-            $parentFamilies = $this->innerVariationRetriever->retrieveParentFamilies($invalidInnerVariationType, $pim);
+            $parentFamilies = $this->innerVariationRetriever->retrieveParentFamiliesHavingProductsWithVariants($invalidInnerVariationType, $pim);
 
             foreach ($parentFamilies as $family) {
                 $products = $this->innerVariationRetriever->retrievesFamilyProductsHavingVariants($family->getId(), $innerVariationFamily->getId(), $pim);

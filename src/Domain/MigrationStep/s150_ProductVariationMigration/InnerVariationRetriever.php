@@ -82,17 +82,25 @@ class InnerVariationRetriever
     }
 
     /**
-     * Retrieves the parent families related to an InnerVariationType.
+     * Retrieves the parent families related to an InnerVariationType and having products with variants via the InnerVariationType.
      */
-    public function retrieveParentFamilies(InnerVariationType $innerVariationType, Pim $pim): array
+    public function retrieveParentFamiliesHavingProductsWithVariants(InnerVariationType $innerVariationType, Pim $pim): array
     {
         $parentFamiliesData = $this->console->execute(
-            new MySqlQueryCommand(
-                'SELECT pim_catalog_family.code, pim_catalog_family.id
-                FROM pim_inner_variation_inner_variation_type_family
-                INNER JOIN pim_catalog_family ON pim_catalog_family.id = family_id
-                WHERE inner_variation_type_id = '.$innerVariationType->getId()
-            ),
+            new MySqlQueryCommand(sprintf(
+                'SELECT DISTINCT f.code, f.id
+                FROM pim_inner_variation_inner_variation_type ivt
+                INNER JOIN pim_inner_variation_inner_variation_type_family ivtf ON ivtf.inner_variation_type_id = ivt.id
+                INNER JOIN pim_catalog_family f ON f.id = ivtf.family_id
+                INNER JOIN pim_catalog_product product_model ON product_model.family_id = f.id
+                WHERE ivt.id = %d
+                 AND EXISTS(
+                    SELECT * FROM pim_catalog_product AS product_variant
+                    WHERE product_variant.family_id = ivt.variation_family_id
+                    AND JSON_EXTRACT(product_variant.raw_values, \'$.variation_parent_product."<all_channels>"."<all_locales>"\') = product_model.identifier
+                )',
+                $innerVariationType->getId()
+            )),
             $pim
         )->getOutput();
 

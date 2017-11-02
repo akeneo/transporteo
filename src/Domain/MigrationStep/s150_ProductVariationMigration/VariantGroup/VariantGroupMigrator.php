@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 
@@ -29,22 +30,22 @@ class VariantGroupMigrator implements DataMigrator
     /** @var VariantGroupValidator */
     private $variantGroupValidator;
 
-    /** @var VariantGroupMigrationCleaner */
+    /** @var MigrationCleaner */
     private $variantGroupMigrationCleaner;
 
-    /** @var VariantGroupFamilyCreator */
+    /** @var FamilyCreator */
     private $familyCreator;
 
-    /** @var VariantGroupProductMigrator */
+    /** @var ProductMigrator */
     private $productMigrator;
 
     public function __construct(
         VariantGroupRetriever $variantGroupRetriever,
         VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
-        VariantGroupFamilyCreator $familyCreator,
-        VariantGroupProductMigrator $productMigrator,
-        VariantGroupMigrationCleaner $variantGroupMigrationCleaner,
+        FamilyCreator $familyCreator,
+        ProductMigrator $productMigrator,
+        MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     ) {
         $this->variantGroupRetriever = $variantGroupRetriever;

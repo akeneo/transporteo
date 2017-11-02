@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -12,7 +15,7 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class VariantGroupFamilyCreator
+class FamilyCreator
 {
     /** @var FamilyVariantImporter */
     private $familyVariantImporter;

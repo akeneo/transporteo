@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupCombination;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupFamilyCreator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroupRetriever;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyCreator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRetriever;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use PhpSpec\ObjectBehavior;
 
@@ -16,7 +16,7 @@ use PhpSpec\ObjectBehavior;
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class VariantGroupFamilyCreatorSpec extends ObjectBehavior
+class FamilyCreatorSpec extends ObjectBehavior
 {
     public function let(FamilyVariantImporter $familyVariantImporter, VariantGroupRetriever $variantGroupRetriever)
     {
@@ -25,7 +25,7 @@ class VariantGroupFamilyCreatorSpec extends ObjectBehavior
 
     public function i_is_initializable()
     {
-        $this->shouldHaveType(VariantGroupFamilyCreator::class);
+        $this->shouldHaveType(FamilyCreator::class);
     }
 
     public function it_successfully_creates_a_family_variant(DestinationPim $destinationPim, $variantGroupRetriever, $familyVariantImporter)

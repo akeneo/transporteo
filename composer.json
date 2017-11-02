@@ -10,10 +10,10 @@
   ],
   "autoload": {
     "psr-4": {
-        "Akeneo\\PimMigration\\": "src/",
-        "integration\\Akeneo\\PimMigration\\": "tests/integration",
-        "resources\\Akeneo\\PimMigration\\": "tests/resources",
-        "spec\\Akeneo\\PimMigration\\": "tests/spec"
+      "Akeneo\\PimMigration\\": "src/",
+      "integration\\Akeneo\\PimMigration\\": "tests/integration",
+      "resources\\Akeneo\\PimMigration\\": "tests/resources",
+      "spec\\Akeneo\\PimMigration\\": "tests/spec"
     }
   },
   "require": {

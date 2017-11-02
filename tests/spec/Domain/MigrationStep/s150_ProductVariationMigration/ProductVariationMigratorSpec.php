@@ -78,7 +78,7 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
-        $this->shouldThrow(new InvalidProductVariationException([$invalidInnerVariationTypeException->getMessage(), $invalidVariantGroupException->getMessage()]))
+        $this->shouldThrow(new InvalidProductVariationException([$invalidVariantGroupException->getMessage(), $invalidInnerVariationTypeException->getMessage()]))
             ->during('migrate', [$sourcePim, $destinationPim]);
     }
 

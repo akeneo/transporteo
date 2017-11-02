@@ -38,6 +38,9 @@ class VariantGroupMigrator implements DataMigrator
     /** @var VariantGroupProductMigrator */
     private $productMigrator;
 
+    /** @var MixedVariationMigrator */
+    private $mixedVariationMigrator;
+
     public function __construct(
         VariantGroupRetriever $variantGroupRetriever,
         VariantGroupRemover $variantGroupRemover,
@@ -45,6 +48,7 @@ class VariantGroupMigrator implements DataMigrator
         VariantGroupFamilyCreator $familyCreator,
         VariantGroupProductMigrator $productMigrator,
         VariantGroupMigrationCleaner $variantGroupMigrationCleaner,
+        MixedVariationMigrator $mixedVariationMigrator,
         TableMigrator $tableMigrator
     ) {
         $this->variantGroupRetriever = $variantGroupRetriever;
@@ -54,6 +58,7 @@ class VariantGroupMigrator implements DataMigrator
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->familyCreator = $familyCreator;
         $this->productMigrator = $productMigrator;
+        $this->mixedVariationMigrator = $mixedVariationMigrator;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -66,7 +71,9 @@ class VariantGroupMigrator implements DataMigrator
         $variantGroupCombinations = $this->retrieveVariantGroupCombinationsToMigrate($destinationPim);
 
         foreach ($variantGroupCombinations as $variantGroupCombination) {
-            $this->migrateVariantGroupCombination($variantGroupCombination, $destinationPim);
+            if (false === $this->mixedVariationMigrator->migrate($variantGroupCombination, $sourcePim, $destinationPim)) {
+                $this->migrateVariantGroupCombination($variantGroupCombination, $destinationPim);
+            }
         }
 
         $this->variantGroupMigrationCleaner->clean($destinationPim);

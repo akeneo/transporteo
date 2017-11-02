@@ -62,17 +62,17 @@ class ProductVariationMigrator implements DataMigrator
         $warnings = [];
 
         try {
-            $isIvbMigrationDone = $this->migrateInnerVariationBundle($sourcePim, $destinationPim);
-        } catch (InvalidInnerVariationTypeException $exception) {
-            $warnings[] = $exception->getMessage();
-            $isIvbMigrationDone = true;
-        }
-
-        try {
             $isVariantGroupMigrationDone = $this->migrateVariantGroups($sourcePim, $destinationPim);
         } catch (InvalidVariantGroupException $exception) {
             $warnings[] = $exception->getMessage();
             $isVariantGroupMigrationDone = true;
+        }
+
+        try {
+            $isIvbMigrationDone = $this->migrateInnerVariationBundle($sourcePim, $destinationPim);
+        } catch (InvalidInnerVariationTypeException $exception) {
+            $warnings[] = $exception->getMessage();
+            $isIvbMigrationDone = true;
         }
 
         if ($isIvbMigrationDone || $isVariantGroupMigrationDone) {

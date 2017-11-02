@@ -49,4 +49,15 @@ class InnerVariationType
     {
         return $this->axes;
     }
+
+    public function getAxesCodes(): array
+    {
+        $axesCodes = [];
+
+        foreach ($this->axes as $axe) {
+            $axesCodes[] = $axe['code'];
+        }
+
+        return $axesCodes;
+    }
 }

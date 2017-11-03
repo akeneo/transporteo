@@ -6,8 +6,10 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 
 use Akeneo\PimMigration\Domain\Command\Api\GetAttributeCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -21,6 +23,9 @@ class VariantGroupRepository
     /** @var ChainedConsole */
     private $console;
 
+    /** @var int */
+    private $invalidVariantGroupTypeId;
+
     public function __construct(ChainedConsole $console)
     {
         $this->console = $console;
@@ -33,7 +38,7 @@ class VariantGroupRepository
 
     public function retrieveNumberOfRemovedInvalidVariantGroups(Pim $pim): int
     {
-        return $this->retrieveNumberOfVariantGroupsByType($pim, 'MVARIANT');
+        return $this->retrieveNumberOfVariantGroupsByType($pim, 'INVALID_VARIANT');
     }
 
     public function retrieveVariantGroups(Pim $pim): \Traversable
@@ -178,5 +183,49 @@ SQL;
         )), $pim)->getOutput();
 
         return isset($sqlResult[0]['nb_variant_groups']) ? (int) $sqlResult[0]['nb_variant_groups'] : 0;
+    }
+
+    /**
+     * Removes softly a variant-group from the migration by changing its type to a specific one.
+     */
+    public function softlyRemoveVariantGroup(string $variantGroupCode, DestinationPim $pim): void
+    {
+        $this->ensureInvalidVariantGroupTypeExists($pim);
+
+        $query = sprintf(
+            'UPDATE pim_catalog_group SET type_id = %d WHERE code = "%s"',
+            $this->invalidVariantGroupTypeId,
+            $variantGroupCode
+        );
+
+        $this->console->execute(new MySqlExecuteCommand($query), $pim);
+    }
+
+    private function ensureInvalidVariantGroupTypeExists(DestinationPim $pim): void
+    {
+        if (null !== $this->invalidVariantGroupTypeId) {
+            return;
+        }
+
+        $migrationGroupTypeId = $this->retrieveInvalidVariantGroupTypeId($pim);
+
+        if (null !== $migrationGroupTypeId) {
+            $this->invalidVariantGroupTypeId = $migrationGroupTypeId;
+
+            return;
+        }
+
+        $this->console->execute(new MySqlExecuteCommand(sprintf('INSERT INTO pim_catalog_group_type SET code = "INVALID_VARIANT"')), $pim);
+
+        $this->invalidVariantGroupTypeId = $this->retrieveInvalidVariantGroupTypeId($pim);
+    }
+
+    private function retrieveInvalidVariantGroupTypeId(DestinationPim $pim): ?int
+    {
+        $result = $this->console->execute(
+            new MySqlQueryCommand('SELECT id FROM pim_catalog_group_type WHERE code = "INVALID_VARIANT"'
+        ), $pim)->getOutput();
+
+        return isset($result[0]['id']) ? (int) $result[0]['id'] : null;
     }
 }

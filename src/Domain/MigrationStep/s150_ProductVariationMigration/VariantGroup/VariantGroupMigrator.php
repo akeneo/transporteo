@@ -25,9 +25,6 @@ class VariantGroupMigrator implements DataMigrator
     /** @var TableMigrator */
     private $tableMigrator;
 
-    /** @var VariantGroupRemover */
-    private $variantGroupRemover;
-
     /** @var VariantGroupValidator */
     private $variantGroupValidator;
 
@@ -45,7 +42,6 @@ class VariantGroupMigrator implements DataMigrator
 
     public function __construct(
         VariantGroupRepository $variantGroupRepository,
-        VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
         FamilyCreator $familyCreator,
         FamilyRepository $familyRepository,
@@ -55,7 +51,6 @@ class VariantGroupMigrator implements DataMigrator
     ) {
         $this->variantGroupRepository = $variantGroupRepository;
         $this->tableMigrator = $tableMigrator;
-        $this->variantGroupRemover = $variantGroupRemover;
         $this->variantGroupValidator = $variantGroupValidator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->familyCreator = $familyCreator;
@@ -93,7 +88,7 @@ class VariantGroupMigrator implements DataMigrator
 
         foreach ($variantGroups as $variantGroup) {
             if (!$this->variantGroupValidator->isVariantGroupValid($variantGroup, $pim)) {
-                $this->variantGroupRemover->remove($variantGroup->getCode(), $pim);
+                $this->variantGroupRepository->softlyRemoveVariantGroup($variantGroup->getCode(), $pim);
             }
         }
     }
@@ -144,7 +139,7 @@ class VariantGroupMigrator implements DataMigrator
     private function removeVariantGroupCombination(VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
     {
         foreach ($variantGroupCombination->getGroups() as $groupCode) {
-            $this->variantGroupRemover->remove($groupCode, $pim);
+            $this->variantGroupRepository->softlyRemoveVariantGroup($groupCode, $pim);
         }
     }
 

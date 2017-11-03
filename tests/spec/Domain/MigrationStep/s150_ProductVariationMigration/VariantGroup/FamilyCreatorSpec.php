@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantLabelBuilder;
@@ -31,10 +32,7 @@ class FamilyCreatorSpec extends ObjectBehavior
 
     public function it_successfully_creates_a_family_variant(DestinationPim $destinationPim, $variantGroupRepository, $familyVariantImporter, $familyVariantLabelBuilder)
     {
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
-
-        $familyData = [
-            'code' => 'family_1',
+        $family = new Family(11, 'family_1', [
             'attributes' => [
                 'att_1', 'att_2', 'vg_att_1', 'vg_att_2', 'vg_att_3', 'att_axe_1', 'att_axe_2'
             ],
@@ -42,12 +40,12 @@ class FamilyCreatorSpec extends ObjectBehavior
                 'en_US' => 'Family 1 US',
                 'fr_FR' => 'Family 1 FR',
             ]
-        ];
+        ]);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
 
-        $variantGroupRepository->retrieveFamilyData('family_1', $destinationPim)->willReturn($familyData);
         $variantGroupRepository->retrieveGroupAttributes('vg_1', $destinationPim)->willReturn(['vg_att_1', 'vg_att_2', 'vg_att_3']);
 
-        $familyVariantLabelBuilder->buildFromVariantGroupCombination($familyData, $variantGroupCombination, $destinationPim)->willReturn([
+        $familyVariantLabelBuilder->buildFromVariantGroupCombination($variantGroupCombination, $destinationPim)->willReturn([
             'en_US' => 'Family 1 US Axe 1 US Axe 2 US',
             'fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
         ]);
@@ -71,10 +69,7 @@ class FamilyCreatorSpec extends ObjectBehavior
     public function it_throws_an_exception_if_it_fails_to_create_a_family_variant(
         DestinationPim $destinationPim, $variantGroupRepository, $familyVariantImporter, $familyVariantLabelBuilder
     ) {
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
-
-        $familyData = [
-            'code' => 'family_1',
+        $family = new Family(11, 'family_1', [
             'attributes' => [
                 'att_1', 'att_2', 'vg_att_1', 'vg_att_2', 'vg_att_3', 'att_axe_1', 'att_axe_2'
             ],
@@ -82,12 +77,12 @@ class FamilyCreatorSpec extends ObjectBehavior
                 'en_US' => 'Family 1 US',
                 'fr_FR' => 'Family 1 FR',
             ]
-        ];
+        ]);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
 
-        $variantGroupRepository->retrieveFamilyData('family_1', $destinationPim)->willReturn($familyData);
         $variantGroupRepository->retrieveGroupAttributes('vg_1', $destinationPim)->willReturn(['vg_att_1', 'vg_att_2', 'vg_att_3']);
 
-        $familyVariantLabelBuilder->buildFromVariantGroupCombination($familyData, $variantGroupCombination, $destinationPim)->willReturn([
+        $familyVariantLabelBuilder->buildFromVariantGroupCombination($variantGroupCombination, $destinationPim)->willReturn([
             'en_US' => 'Family 1 US Axe 1 US Axe 2 US',
             'fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
         ]);

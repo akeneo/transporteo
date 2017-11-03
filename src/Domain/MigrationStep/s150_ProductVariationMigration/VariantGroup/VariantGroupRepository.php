@@ -66,7 +66,7 @@ SQL;
     {
         $query =
 <<<SQL
-SELECT f.code as family_code,
+SELECT f.code as family_code, f.id as family_id,
 (
 	SELECT GROUP_CONCAT(DISTINCT a.code ORDER BY a.code ASC SEPARATOR ',')
 	FROM pim_catalog_group_attribute axe
@@ -160,13 +160,6 @@ SQL;
         }
 
         return $familyAttributes;
-    }
-
-    public function retrieveFamilyData(string $familyCode, Pim $pim): array
-    {
-        $command = new GetFamilyCommand($familyCode);
-
-        return $this->console->execute($command, $pim)->getOutput();
     }
 
     public function retrieveAttributeData(string $attributeCode, Pim $pim): array

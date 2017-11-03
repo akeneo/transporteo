@@ -61,7 +61,7 @@ class VariantGroupValidator
      */
     public function isVariantGroupCombinationValid(VariantGroupCombination $variantGroupCombination, Pim $pim)
     {
-        $familyAttributes = $this->variantGroupRepository->retrieveFamilyAttributes($variantGroupCombination->getFamilyCode(), $pim);
+        $familyAttributes =$variantGroupCombination->getFamily()->getAttributes();
 
         $previousGroupAttributes = null;
         foreach ($variantGroupCombination->getGroups() as $group) {
@@ -73,7 +73,7 @@ class VariantGroupValidator
                 if (!empty($differencesWithThePreviousGroupAttributes)) {
                     $this->logger->warning(sprintf(
                         "Unable to migrate the variations for the family %s and axis %s, because all the following variation group(s) don't have the same attributes : %s",
-                        $variantGroupCombination->getFamilyCode(),
+                        $variantGroupCombination->getFamily()->getCode(),
                         implode(', ', $variantGroupCombination->getAxes()),
                         implode(', ', $variantGroupCombination->getGroups())
                     ));
@@ -90,7 +90,7 @@ class VariantGroupValidator
         if (!empty($differencesWithTheFamilyAttributes)) {
             $this->logger->warning(sprintf(
                 "Unable to migrate the variations for the family %s and axis %s, because all the following attribute(s) of the variant groups don't belong to the family : %s",
-                $variantGroupCombination->getFamilyCode(),
+                $variantGroupCombination->getFamily()->getCode(),
                 implode(', ', $variantGroupCombination->getAxes()),
                 implode(', ', $differencesWithTheFamilyAttributes)
             ));

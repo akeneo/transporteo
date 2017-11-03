@@ -6,6 +6,7 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMig
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
@@ -66,7 +67,8 @@ class ProductMigratorSpec extends ObjectBehavior
             'vg_att_2-fr_FR' => null,
         ], $pim)->shouldBeCalled();
 
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
+        $family = new Family(11, 'family_1', []);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
 
         $this->migrateProductModels($variantGroupCombination, $pim);
     }

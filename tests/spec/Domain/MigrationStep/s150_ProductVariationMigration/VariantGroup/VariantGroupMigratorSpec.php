@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
@@ -31,12 +33,13 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
         FamilyCreator $familyCreator,
+        FamilyRepository $familyRepository,
         ProductMigrator $productMigrator,
         MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     )
     {
-        $this->beConstructedWith($variantGroupRepository, $variantGroupRemover, $variantGroupValidator, $familyCreator, $productMigrator, $variantGroupMigrationCleaner, $tableMigrator);
+        $this->beConstructedWith($variantGroupRepository, $variantGroupRemover, $variantGroupValidator, $familyCreator, $familyRepository, $productMigrator, $variantGroupMigrationCleaner, $tableMigrator);
     }
 
     public function it_is_initializable()
@@ -50,6 +53,7 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupRepository,
         $variantGroupValidator,
         $familyCreator,
+        $familyRepository,
         $productMigrator,
         $tableMigrator
     )
@@ -67,16 +71,23 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupValidator->isVariantGroupValid($secondVariantGroup, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupValid($thirdVariantGroup, $destinationPim)->willReturn(true);
 
-        $variantGroupCombinations = [
+        $variantGroupCombinationsData = [
             ['family_code' => 'family_1', 'axes' => 'att_1', 'groups' => 'vg_1,vg_2'],
             ['family_code' => 'family_1', 'axes' => 'att_1,att_2', 'groups' => 'vg_3'],
             ['family_code' => 'family_2', 'axes' => 'att_2', 'groups' => 'vg_4'],
         ];
-        $firstVariantGroupCombination = new VariantGroupCombination('family_1', 'family_1_1', ['att_1'], ['vg_1', 'vg_2']);
-        $secondVariantGroupCombination = new VariantGroupCombination('family_1', 'family_1_2', ['att_1', 'att_2'], ['vg_3']);
-        $thirdVariantGroupCombination = new VariantGroupCombination('family_2', 'family_2_1', ['att_2'], ['vg_4']);
 
-        $variantGroupRepository->retrieveVariantGroupCombinations($destinationPim)->willReturn($variantGroupCombinations);
+        $firstFamily = new Family(11, 'family_1', []);
+        $secondFamily = new Family(12, 'family_2', []);
+
+        $familyRepository->findByCode('family_1', $destinationPim)->willReturn($firstFamily);
+        $familyRepository->findByCode('family_2', $destinationPim)->willReturn($secondFamily);
+
+        $firstVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_1', ['att_1'], ['vg_1', 'vg_2']);
+        $secondVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_2', ['att_1', 'att_2'], ['vg_3']);
+        $thirdVariantGroupCombination = new VariantGroupCombination($secondFamily, 'family_2_1', ['att_2'], ['vg_4']);
+
+        $variantGroupRepository->retrieveVariantGroupCombinations($destinationPim)->willReturn($variantGroupCombinationsData);
         $variantGroupValidator->isVariantGroupCombinationValid($firstVariantGroupCombination, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupCombinationValid($secondVariantGroupCombination, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupCombinationValid($thirdVariantGroupCombination, $destinationPim)->willReturn(true);
@@ -108,6 +119,7 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupRepository,
         $variantGroupValidator,
         $familyCreator,
+        $familyRepository,
         $productMigrator,
         $variantGroupRemover,
         $tableMigrator
@@ -131,8 +143,15 @@ class VariantGroupMigratorSpec extends ObjectBehavior
             ['family_code' => 'family_1', 'axes' => 'att_1', 'groups' => 'vg_1,vg_2'],
             ['family_code' => 'family_2', 'axes' => 'att_1', 'groups' => 'invalid_vg_1,invalid_vg_2'],
         ];
-        $validVariantGroupCombination = new VariantGroupCombination('family_1', 'family_1_1', ['att_1'], ['vg_1', 'vg_2']);
-        $invalidVariantGroupCombination = new VariantGroupCombination('family_2', 'family_2_1', ['att_1'], ['invalid_vg_1', 'invalid_vg_2']);
+
+        $firstFamily = new Family(11, 'family_1', []);
+        $secondFamily = new Family(12, 'family_2', []);
+
+        $familyRepository->findByCode('family_1', $destinationPim)->willReturn($firstFamily);
+        $familyRepository->findByCode('family_2', $destinationPim)->willReturn($secondFamily);
+
+        $validVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_1', ['att_1'], ['vg_1', 'vg_2']);
+        $invalidVariantGroupCombination = new VariantGroupCombination($secondFamily, 'family_2_1', ['att_1'], ['invalid_vg_1', 'invalid_vg_2']);
 
         $variantGroupRepository->retrieveVariantGroupCombinations($destinationPim)->willReturn($variantGroupCombinations);
         $variantGroupValidator->isVariantGroupCombinationValid($validVariantGroupCombination, $destinationPim)->willReturn(true);

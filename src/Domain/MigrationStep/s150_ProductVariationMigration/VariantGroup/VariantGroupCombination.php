@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
+
 /**
  * Represents a combination of variant groups by family and axes.
  *
@@ -12,8 +14,8 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
  */
 class VariantGroupCombination
 {
-    /** @var string */
-    private $familyCode;
+    /** @var Family */
+    private $family;
 
     /** @var string */
     private $familyVariantCode;
@@ -24,17 +26,17 @@ class VariantGroupCombination
     /** @var array */
     private $groups;
 
-    public function __construct(string $familyCode, string $familyVariantCode, array $axes, array $groups)
+    public function __construct(Family $family, string $familyVariantCode, array $axes, array $groups)
     {
-        $this->familyCode = $familyCode;
+        $this->family = $family;
         $this->familyVariantCode = $familyVariantCode;
         $this->axes = $axes;
         $this->groups = $groups;
     }
 
-    public function getFamilyCode(): string
+    public function getFamily(): Family
     {
-        return $this->familyCode;
+        return $this->family;
     }
 
     public function getFamilyVariantCode(): string

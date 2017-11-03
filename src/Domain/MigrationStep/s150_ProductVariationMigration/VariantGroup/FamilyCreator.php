@@ -35,24 +35,23 @@ class FamilyCreator
 
     public function createFamilyVariant(VariantGroupCombination $variantGroupCombination, Pim $pim): FamilyVariant
     {
-        $familyCode = $variantGroupCombination->getFamilyCode();
+        $family = $variantGroupCombination->getFamily();
         $familyVariantCode = $variantGroupCombination->getFamilyVariantCode();
-        $familyData = $this->variantGroupRepository->retrieveFamilyData($familyCode, $pim);
 
         $variantAxes = $variantGroupCombination->getAxes();
         $variantGroupAttributes = $this->variantGroupRepository->retrieveGroupAttributes($variantGroupCombination->getGroups()[0], $pim);
-        $variantAttributes = array_diff($familyData['attributes'], $variantGroupAttributes, $variantAxes);
+        $variantAttributes = array_diff($family->getAttributes(), $variantGroupAttributes, $variantAxes);
 
         $familyVariant = [
             'code' => $familyVariantCode,
-            'family' => $familyCode,
+            'family' => $family->getCode(),
             'variant-axes_1' => implode(',', $variantAxes),
             'variant-axes_2' => '',
             'variant-attributes_1' => implode(',', $variantAttributes),
             'variant-attributes_2' => '',
         ];
 
-        $familyVariantLabels = $this->familyVariantLabelBuilder->buildFromVariantGroupCombination($familyData, $variantGroupCombination, $pim);
+        $familyVariantLabels = $this->familyVariantLabelBuilder->buildFromVariantGroupCombination($variantGroupCombination, $pim);
 
         foreach ($familyVariantLabels as $locale => $label) {
             $familyVariant['label-'.$locale] = $label;

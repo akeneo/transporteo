@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -39,11 +40,15 @@ class VariantGroupMigrator implements DataMigrator
     /** @var ProductMigrator */
     private $productMigrator;
 
+    /** @var FamilyRepository */
+    private $familyRepository;
+
     public function __construct(
         VariantGroupRepository $variantGroupRepository,
         VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
         FamilyCreator $familyCreator,
+        FamilyRepository $familyRepository,
         ProductMigrator $productMigrator,
         MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
@@ -55,6 +60,7 @@ class VariantGroupMigrator implements DataMigrator
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->familyCreator = $familyCreator;
         $this->productMigrator = $productMigrator;
+        $this->familyRepository = $familyRepository;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -112,19 +118,18 @@ class VariantGroupMigrator implements DataMigrator
     {
         $variantGroupCombinations = $this->variantGroupRepository->retrieveVariantGroupCombinations($pim);
         $familyIncrement = 1;
-        $previousFamily = null;
+        $family = null;
 
         foreach ($variantGroupCombinations as $variantGroupCombination) {
-            if ($variantGroupCombination['family_code'] === $previousFamily) {
+            if (null !== $family && $variantGroupCombination['family_code'] === $family->getCode()) {
                 ++$familyIncrement;
             } else {
                 $familyIncrement = 1;
+                $family = $this->familyRepository->findByCode($variantGroupCombination['family_code'], $pim);
             }
 
-            $previousFamily = $variantGroupCombination['family_code'];
-
             yield new VariantGroupCombination(
-                (string) $variantGroupCombination['family_code'],
+                $family,
                 $variantGroupCombination['family_code'].'_'.$familyIncrement,
                 explode(',', $variantGroupCombination['axes']),
                 explode(',', $variantGroupCombination['groups'])

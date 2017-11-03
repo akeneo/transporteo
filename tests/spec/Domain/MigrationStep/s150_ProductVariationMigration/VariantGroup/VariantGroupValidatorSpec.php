@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
@@ -57,9 +58,9 @@ class VariantGroupValidatorSpec extends ObjectBehavior
 
     public function it_validates_a_variant_group_combination($variantGroupRepository, Pim $pim)
     {
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
+        $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2', 'att_3']]);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
 
-        $variantGroupRepository->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2', 'att_3']);
         $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_2']);
         $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_2']);
 
@@ -72,9 +73,9 @@ class VariantGroupValidatorSpec extends ObjectBehavior
         Pim $pim
     )
     {
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
+        $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2', 'att_3']]);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
 
-        $variantGroupRepository->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2', 'att_3']);
         $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_2']);
         $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_3']);
 
@@ -91,9 +92,9 @@ class VariantGroupValidatorSpec extends ObjectBehavior
         Pim $pim
     )
     {
-        $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
+        $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2']]);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
 
-        $variantGroupRepository->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2']);
         $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_3', 'att_4']);
         $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_3', 'att_4']);
 

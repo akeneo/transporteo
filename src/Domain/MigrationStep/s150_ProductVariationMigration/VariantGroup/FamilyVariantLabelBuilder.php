@@ -22,9 +22,9 @@ class FamilyVariantLabelBuilder
         $this->variantGroupRepository = $variantGroupRepository;
     }
 
-    public function buildFromVariantGroupCombination(array $familyData, VariantGroupCombination $variantGroupCombination, Pim $pim): array
+    public function buildFromVariantGroupCombination(VariantGroupCombination $variantGroupCombination, Pim $pim): array
     {
-        $familyVariantLabels = $familyData['labels'];
+        $familyVariantLabels = $variantGroupCombination->getFamily()->getLabels();
 
         foreach ($variantGroupCombination->getAxes() as $axe) {
             $axeData = $this->variantGroupRepository->retrieveAttributeData($axe, $pim);

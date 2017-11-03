@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantLabelBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
@@ -28,7 +29,7 @@ class FamilyVariantLabelBuilderSpec extends ObjectBehavior
 
     public function it_builds_labels_from_a_variant_group_combination($variantGroupRepository, VariantGroupCombination $variantGroupCombination, Pim $pim)
     {
-        $familyData = [
+        $family = new Family(1, 'family_1', [
             'code' => 'family_1',
             'attributes' => [
                 'att_1', 'att_2', 'vg_att_1', 'vg_att_2', 'vg_att_3', 'att_axe_1', 'att_axe_2'
@@ -37,8 +38,9 @@ class FamilyVariantLabelBuilderSpec extends ObjectBehavior
                 'en_US' => 'Family 1 US',
                 'fr_FR' => 'Family 1 FR',
             ]
-        ];
+        ]);
 
+        $variantGroupCombination->getFamily()->willReturn($family);
         $variantGroupCombination->getAxes()->willReturn(['att_axe_1', 'att_axe_2']);
 
         $variantGroupRepository->retrieveAttributeData('att_axe_1', $pim)->willReturn([
@@ -56,7 +58,7 @@ class FamilyVariantLabelBuilderSpec extends ObjectBehavior
             ]
         ]);
 
-        $this->buildFromVariantGroupCombination($familyData, $variantGroupCombination, $pim)->shouldReturn([
+        $this->buildFromVariantGroupCombination($variantGroupCombination, $pim)->shouldReturn([
             'en_US' => 'Family 1 US Axe 1 US Axe 2 US',
             'fr_FR' => 'Family 1 FR Axe 1 FR',
         ]);

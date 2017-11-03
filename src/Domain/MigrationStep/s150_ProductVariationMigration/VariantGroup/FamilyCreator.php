@@ -23,10 +23,14 @@ class FamilyCreator
     /** @var VariantGroupRetriever */
     private $variantGroupRetriever;
 
-    public function __construct(FamilyVariantImporter $familyVariantImporter, VariantGroupRetriever $variantGroupRetriever)
+    /** @var FamilyVariantLabelBuilder */
+    private $familyVariantLabelBuilder;
+
+    public function __construct(FamilyVariantImporter $familyVariantImporter, VariantGroupRetriever $variantGroupRetriever, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
     {
         $this->familyVariantImporter = $familyVariantImporter;
         $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->familyVariantLabelBuilder = $familyVariantLabelBuilder;
     }
 
     public function createFamilyVariant(VariantGroupCombination $variantGroupCombination, Pim $pim): FamilyVariant
@@ -48,7 +52,7 @@ class FamilyCreator
             'variant-attributes_2' => '',
         ];
 
-        $familyVariantLabels = $this->buildFamilyVariantLabels($familyData, $variantGroupCombination, $pim);
+        $familyVariantLabels = $this->familyVariantLabelBuilder->buildFromVariantGroupCombination($familyData, $variantGroupCombination, $pim);
 
         foreach ($familyVariantLabels as $locale => $label) {
             $familyVariant['label-'.$locale] = $label;
@@ -63,26 +67,5 @@ class FamilyCreator
         }
 
         return new FamilyVariant($familyVariantId, $familyVariantCode, $variantAttributes, $variantGroupAttributes);
-    }
-
-    /**
-     * Build the labels of a family variant by adding the axes labels to the family labels.
-     */
-    private function buildFamilyVariantLabels(array $familyData, VariantGroupCombination $variantGroupCombination, Pim $pim): array
-    {
-        $familyVariantLabels = $familyData['labels'];
-
-        foreach ($variantGroupCombination->getAxes() as $axe) {
-            $axeData = $this->variantGroupRetriever->retrieveAttributeData($axe, $pim);
-            $axeLabels = $axeData['labels'];
-
-            foreach (array_keys($familyVariantLabels) as $locale) {
-                if (isset($axeLabels[$locale])) {
-                    $familyVariantLabels[$locale] .= ' '.$axeLabels[$locale];
-                }
-            }
-        }
-
-        return $familyVariantLabels;
     }
 }

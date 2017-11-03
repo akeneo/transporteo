@@ -72,6 +72,8 @@ class ProductMigrator
      */
     public function migrateProductVariants(FamilyVariant $familyVariant, VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
     {
+        $attributesToRemove = $variantGroupCombination->getAttributes();
+
         foreach ($variantGroupCombination->getGroups() as $variantGroup) {
             $productModelId = $this->productModelRepository->retrieveProductModelId($variantGroup, $pim);
 
@@ -88,9 +90,9 @@ class ProductMigrator
                 $familyVariant->getId()
             );
 
-            if (!empty($familyVariant->getProductModelAttributes())) {
+            if (!empty($attributesToRemove)) {
                 $query .= ", raw_values = JSON_REMOVE(raw_values";
-                foreach ($familyVariant->getProductModelAttributes() as $attribute) {
+                foreach ($attributesToRemove as $attribute) {
                     $query .= sprintf(", '$.%s'", $attribute);
                 }
                 $query .= ")";

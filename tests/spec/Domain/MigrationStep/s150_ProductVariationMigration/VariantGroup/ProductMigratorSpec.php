@@ -68,7 +68,7 @@ class ProductMigratorSpec extends ObjectBehavior
         ], $pim)->shouldBeCalled();
 
         $family = new Family(11, 'family_1', []);
-        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2'], []);
 
         $this->migrateProductModels($variantGroupCombination, $pim);
     }
@@ -81,9 +81,9 @@ class ProductMigratorSpec extends ObjectBehavior
         $console
     ) {
         $variantGroupCombination->getGroups()->willReturn(['vg_1', 'vg_2']);
+        $variantGroupCombination->getAttributes()->willReturn(['vg_att_1', 'vg_att_2', 'vg_att_3']);
 
         $familyVariant->getId()->willReturn(11);
-        $familyVariant->getProductModelAttributes()->willReturn(['vg_att_1', 'vg_att_2', 'vg_att_3']);
 
         $productModelRepository->retrieveProductModelId('vg_1' ,$pim)->willReturn(41);
         $productModelRepository->retrieveProductModelId('vg_2' ,$pim)->willReturn(42);

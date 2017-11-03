@@ -30,12 +30,25 @@ class FamilyRepository
         $this->familyVariantImporter = $familyVariantImporter;
     }
 
-    public function createFamilyVariant($familyVariantData, DestinationPim $pim): void
+    public function persistFamilyVariant(FamilyVariant $familyVariant, DestinationPim $pim): void
     {
+        $familyVariantData = [
+            'code' => $familyVariant->getCode(),
+            'family' => $familyVariant->getFamilyCode(),
+            'variant-axes_1' => implode(',', $familyVariant->getLevelOneAxes()),
+            'variant-axes_2' => implode(',', $familyVariant->getLevelTwoAxes()),
+            'variant-attributes_1' => implode(',', $familyVariant->getLevelOneAttributes()),
+            'variant-attributes_2' => implode(',', $familyVariant->getLevelTwoAttributes()),
+        ];
+
+        foreach ($familyVariant->getLabels() as $locale => $label) {
+            $familyVariantData['label-'.$locale] = $label;
+        }
+
         $this->familyVariantImporter->import([$familyVariantData], $pim);
     }
 
-        public function findByCode(string $familyCode, Pim $pim): Family
+    public function findByCode(string $familyCode, Pim $pim): Family
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family WHERE code = "%s"',

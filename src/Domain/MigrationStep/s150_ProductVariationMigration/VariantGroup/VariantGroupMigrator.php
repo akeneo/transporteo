@@ -128,11 +128,15 @@ class VariantGroupMigrator implements DataMigrator
                 $family = $this->familyRepository->findByCode($variantGroupCombination['family_code'], $pim);
             }
 
+            $groups = explode(',', $variantGroupCombination['groups']);
+            $attributes = $this->variantGroupRepository->retrieveGroupAttributes($groups[0], $pim);
+
             yield new VariantGroupCombination(
                 $family,
                 $variantGroupCombination['family_code'].'_'.$familyIncrement,
                 explode(',', $variantGroupCombination['axes']),
-                explode(',', $variantGroupCombination['groups'])
+                $groups,
+                $attributes
             );
         }
     }

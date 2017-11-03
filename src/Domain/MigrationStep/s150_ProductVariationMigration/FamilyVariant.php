@@ -19,17 +19,41 @@ class FamilyVariant
     private $code;
 
     /** @var array */
-    private $attributes;
+    private $levelOneAttributes;
 
     /** @var array */
-    private $productModelAttributes;
+    private $levelTwoAttributes;
 
-    public function __construct(int $id, string $code, array $attributes, array $productModelAttributes)
-    {
+    /** @var array */
+    private $levelOneAxes;
+
+    /** @var array */
+    private $levelTwoAxes;
+
+    /** @var array */
+    private $labels;
+
+    /** @var string */
+    private $familyCode;
+
+    public function __construct(
+        ?int $id,
+        string $code,
+        string $familyCode,
+        array $levelOneAxes,
+        array $levelTwoAxes,
+        array $levelOneAttributes,
+        array $levelTwoAttributes,
+        array $labels
+    ) {
         $this->id = $id;
         $this->code = $code;
-        $this->attributes = $attributes;
-        $this->productModelAttributes = $productModelAttributes;
+        $this->levelOneAxes = $levelOneAxes;
+        $this->levelTwoAxes = $levelTwoAxes;
+        $this->levelOneAttributes = $levelOneAttributes;
+        $this->levelTwoAttributes = $levelTwoAttributes;
+        $this->labels = $labels;
+        $this->familyCode = $familyCode;
     }
 
     public function getId(): int
@@ -42,13 +66,33 @@ class FamilyVariant
         return $this->code;
     }
 
-    public function getAttributes(): array
+    public function getLevelOneAttributes(): array
     {
-        return $this->attributes;
+        return $this->levelOneAttributes;
     }
 
-    public function getProductModelAttributes(): array
+    public function getLevelTwoAttributes(): array
     {
-        return $this->productModelAttributes;
+        return $this->levelTwoAttributes;
+    }
+
+    public function getLevelOneAxes(): array
+    {
+        return $this->levelOneAxes;
+    }
+
+    public function getLevelTwoAxes(): array
+    {
+        return $this->levelTwoAxes;
+    }
+
+    public function getLabels(): array
+    {
+        return $this->labels;
+    }
+
+    public function getFamilyCode(): string
+    {
+        return $this->familyCode;
     }
 }

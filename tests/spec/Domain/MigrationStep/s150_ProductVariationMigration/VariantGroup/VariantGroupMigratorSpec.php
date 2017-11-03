@@ -83,18 +83,22 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $familyRepository->findByCode('family_1', $destinationPim)->willReturn($firstFamily);
         $familyRepository->findByCode('family_2', $destinationPim)->willReturn($secondFamily);
 
-        $firstVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_1', ['att_1'], ['vg_1', 'vg_2']);
-        $secondVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_2', ['att_1', 'att_2'], ['vg_3']);
-        $thirdVariantGroupCombination = new VariantGroupCombination($secondFamily, 'family_2_1', ['att_2'], ['vg_4']);
+        $variantGroupRepository->retrieveGroupAttributes('vg_1', $destinationPim)->willReturn(['vg_att_1', 'vg_att_2']);
+        $variantGroupRepository->retrieveGroupAttributes('vg_3', $destinationPim)->willReturn(['vg_att_1']);
+        $variantGroupRepository->retrieveGroupAttributes('vg_4', $destinationPim)->willReturn(['vg_att_3', 'vg_att_4']);
+
+        $firstVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_1', ['att_1'], ['vg_1', 'vg_2'], ['vg_att_1', 'vg_att_2']);
+        $secondVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_2', ['att_1', 'att_2'], ['vg_3'], ['vg_att_1']);
+        $thirdVariantGroupCombination = new VariantGroupCombination($secondFamily, 'family_2_1', ['att_2'], ['vg_4'], ['vg_att_3', 'vg_att_4']);
 
         $variantGroupRepository->retrieveVariantGroupCombinations($destinationPim)->willReturn($variantGroupCombinationsData);
         $variantGroupValidator->isVariantGroupCombinationValid($firstVariantGroupCombination, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupCombinationValid($secondVariantGroupCombination, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupCombinationValid($thirdVariantGroupCombination, $destinationPim)->willReturn(true);
 
-        $firstFamilyVariant = new FamilyVariant(1, 'family_variant_1', ['att_1'], []);
-        $secondFamilyVariant = new FamilyVariant(2, 'family_variant_2', ['att_1', 'att_2'], []);
-        $thirdFamilyVariant = new FamilyVariant(3, 'family_variant_3', ['att_3'], []);
+        $firstFamilyVariant = new FamilyVariant(1, 'family_variant_1', 'family_1', ['att_1'], [], [], [], []);
+        $secondFamilyVariant = new FamilyVariant(2, 'family_variant_2', 'family_1', ['att_1', 'att_2'], [], [], [], []);
+        $thirdFamilyVariant = new FamilyVariant(3, 'family_variant_3', 'family_2', ['att_3'], [], [], [], []);
 
         $familyCreator->createFamilyVariant($firstVariantGroupCombination, $destinationPim)->willReturn($firstFamilyVariant);
         $familyCreator->createFamilyVariant($secondVariantGroupCombination, $destinationPim)->willReturn($secondFamilyVariant);
@@ -150,8 +154,11 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $familyRepository->findByCode('family_1', $destinationPim)->willReturn($firstFamily);
         $familyRepository->findByCode('family_2', $destinationPim)->willReturn($secondFamily);
 
-        $validVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_1', ['att_1'], ['vg_1', 'vg_2']);
-        $invalidVariantGroupCombination = new VariantGroupCombination($secondFamily, 'family_2_1', ['att_1'], ['invalid_vg_1', 'invalid_vg_2']);
+        $variantGroupRepository->retrieveGroupAttributes('vg_1', $destinationPim)->willReturn(['vg_att_1', 'vg_att_2']);
+        $variantGroupRepository->retrieveGroupAttributes('invalid_vg_1', $destinationPim)->willReturn(['vg_att_1']);
+
+        $validVariantGroupCombination = new VariantGroupCombination($firstFamily, 'family_1_1', ['att_1'], ['vg_1', 'vg_2'], ['vg_att_1', 'vg_att_2']);
+        $invalidVariantGroupCombination = new VariantGroupCombination($secondFamily, 'family_2_1', ['att_1'], ['invalid_vg_1', 'invalid_vg_2'], ['vg_att_1']);
 
         $variantGroupRepository->retrieveVariantGroupCombinations($destinationPim)->willReturn($variantGroupCombinations);
         $variantGroupValidator->isVariantGroupCombinationValid($validVariantGroupCombination, $destinationPim)->willReturn(true);
@@ -160,7 +167,7 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupRemover->remove('invalid_vg_1', $destinationPim)->shouldBeCalled();
         $variantGroupRemover->remove('invalid_vg_2', $destinationPim)->shouldBeCalled();
 
-        $familyVariant = new FamilyVariant(1, 'family_variant_1', ['att_1'], []);
+        $familyVariant = new FamilyVariant(1, 'family_variant_1', 'family_1', ['att_1'], [], [], [], []);
 
         $familyCreator->createFamilyVariant($validVariantGroupCombination, $destinationPim)->willReturn($familyVariant);
         $productMigrator->migrateProductModels($validVariantGroupCombination, $destinationPim)->shouldBeCalled();

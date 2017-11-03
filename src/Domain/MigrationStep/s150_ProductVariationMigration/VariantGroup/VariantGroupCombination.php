@@ -26,12 +26,16 @@ class VariantGroupCombination
     /** @var array */
     private $groups;
 
-    public function __construct(Family $family, string $familyVariantCode, array $axes, array $groups)
+    /** @var array */
+    private $attributes;
+
+    public function __construct(Family $family, string $familyVariantCode, array $axes, array $groups, array $attributes)
     {
         $this->family = $family;
         $this->familyVariantCode = $familyVariantCode;
         $this->axes = $axes;
         $this->groups = $groups;
+        $this->attributes = $attributes;
     }
 
     public function getFamily(): Family
@@ -52,5 +56,10 @@ class VariantGroupCombination
     public function getGroups(): array
     {
         return $this->groups;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

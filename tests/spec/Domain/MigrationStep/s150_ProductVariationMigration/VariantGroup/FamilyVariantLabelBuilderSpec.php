@@ -6,7 +6,7 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMig
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantLabelBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRetriever;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use PhpSpec\ObjectBehavior;
 
@@ -16,9 +16,9 @@ use PhpSpec\ObjectBehavior;
  */
 class FamilyVariantLabelBuilderSpec extends ObjectBehavior
 {
-    public function let(VariantGroupRetriever $variantGroupRetriever)
+    public function let(VariantGroupRepository $variantGroupRepository)
     {
-        $this->beConstructedWith($variantGroupRetriever);
+        $this->beConstructedWith($variantGroupRepository);
     }
 
     public function it_is_initializable()
@@ -26,7 +26,7 @@ class FamilyVariantLabelBuilderSpec extends ObjectBehavior
         $this->shouldHaveType(FamilyVariantLabelBuilder::class);
     }
 
-    public function it_builds_labels_from_a_variant_group_combination($variantGroupRetriever, VariantGroupCombination $variantGroupCombination, Pim $pim)
+    public function it_builds_labels_from_a_variant_group_combination($variantGroupRepository, VariantGroupCombination $variantGroupCombination, Pim $pim)
     {
         $familyData = [
             'code' => 'family_1',
@@ -41,14 +41,14 @@ class FamilyVariantLabelBuilderSpec extends ObjectBehavior
 
         $variantGroupCombination->getAxes()->willReturn(['att_axe_1', 'att_axe_2']);
 
-        $variantGroupRetriever->retrieveAttributeData('att_axe_1', $pim)->willReturn([
+        $variantGroupRepository->retrieveAttributeData('att_axe_1', $pim)->willReturn([
             'code' => 'att_axe_1',
             'labels' => [
                 'en_US' => 'Axe 1 US',
                 'fr_FR' => 'Axe 1 FR',
             ]
         ]);
-        $variantGroupRetriever->retrieveAttributeData('att_axe_2', $pim)->willReturn([
+        $variantGroupRepository->retrieveAttributeData('att_axe_2', $pim)->willReturn([
             'code' => 'att_axe_2',
             'labels' => [
                 'en_US' => 'Axe 2 US',

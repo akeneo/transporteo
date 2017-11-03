@@ -12,7 +12,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Inva
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRetriever;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
@@ -28,10 +28,10 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         ChainedConsole $console,
         InnerVariationTypeMigrator $innerVariantTypeMigrator,
         VariantGroupMigrator $variantGroupMigrator,
-        VariantGroupRetriever $variantGroupRetriever,
+        VariantGroupRepository $variantGroupRepository,
         LoggerInterface $logger
     ) {
-        $this->beConstructedWith($console, $innerVariantTypeMigrator, $variantGroupMigrator, $variantGroupRetriever, $logger);
+        $this->beConstructedWith($console, $innerVariantTypeMigrator, $variantGroupMigrator, $variantGroupRepository, $logger);
     }
 
     public function it_is_initializable()
@@ -45,12 +45,12 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         $console,
         $innerVariantTypeMigrator,
         $variantGroupMigrator,
-        $variantGroupRetriever
+        $variantGroupRepository
     ) {
         $sourcePim->hasIvb()->willReturn(true);
         $innerVariantTypeMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
-        $variantGroupRetriever->retrieveNumberOfVariantGroups($destinationPim)->willReturn(2);
+        $variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim)->willReturn(2);
         $variantGroupMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
         $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
@@ -65,13 +65,13 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         $console,
         $innerVariantTypeMigrator,
         $variantGroupMigrator,
-        $variantGroupRetriever
+        $variantGroupRepository
     ) {
         $sourcePim->hasIvb()->willReturn(true);
         $invalidInnerVariationTypeException = new InvalidInnerVariationTypeException();
         $innerVariantTypeMigrator->migrate($sourcePim, $destinationPim)->willThrow($invalidInnerVariationTypeException);
 
-        $variantGroupRetriever->retrieveNumberOfVariantGroups($destinationPim)->willReturn(2);
+        $variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim)->willReturn(2);
         $invalidVariantGroupException = new InvalidVariantGroupException(1);
         $variantGroupMigrator->migrate($sourcePim, $destinationPim)->willThrow($invalidVariantGroupException);
 
@@ -85,13 +85,13 @@ class ProductVariationMigratorSpec extends ObjectBehavior
     public function it_does_nothing_if_there_are_no_product_variations(
         SourcePim $sourcePim,
         DestinationPim $destinationPim,
-        $variantGroupRetriever,
+        $variantGroupRepository,
         $logger
     ) {
         $sourcePim->hasIvb()->willReturn(false);
         $logger->info('There is no InnerVariationType to migrate.')->shouldBeCalled();
 
-        $variantGroupRetriever->retrieveNumberOfVariantGroups($destinationPim)->willReturn(0);
+        $variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim)->willReturn(0);
         $logger->info("There are no variant groups to migrate")->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

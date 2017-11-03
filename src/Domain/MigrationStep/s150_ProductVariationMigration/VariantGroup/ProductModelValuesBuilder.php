@@ -14,18 +14,18 @@ use Akeneo\PimMigration\Domain\Pim\DestinationPim;
  */
 class ProductModelValuesBuilder
 {
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
-    public function __construct(VariantGroupRetriever $variantGroupRetriever)
+    public function __construct(VariantGroupRepository $variantGroupRepository)
     {
-        $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->variantGroupRepository = $variantGroupRepository;
     }
 
     public function buildFromVariantGroup(string $variantGroupCode, DestinationPim $pim): array
     {
         $producModelValues = [];
-        $variantGroupValues = $this->variantGroupRetriever->retrieveGroupAttributeValues($variantGroupCode, $pim);
+        $variantGroupValues = $this->variantGroupRepository->retrieveGroupAttributeValues($variantGroupCode, $pim);
 
         foreach ($variantGroupValues as $attribute => $values) {
             foreach ($values as $value) {

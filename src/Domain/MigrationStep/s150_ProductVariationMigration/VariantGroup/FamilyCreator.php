@@ -20,16 +20,16 @@ class FamilyCreator
     /** @var FamilyVariantImporter */
     private $familyVariantImporter;
 
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
     /** @var FamilyVariantLabelBuilder */
     private $familyVariantLabelBuilder;
 
-    public function __construct(FamilyVariantImporter $familyVariantImporter, VariantGroupRetriever $variantGroupRetriever, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
+    public function __construct(FamilyVariantImporter $familyVariantImporter, VariantGroupRepository $variantGroupRepository, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
     {
         $this->familyVariantImporter = $familyVariantImporter;
-        $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->variantGroupRepository = $variantGroupRepository;
         $this->familyVariantLabelBuilder = $familyVariantLabelBuilder;
     }
 
@@ -37,10 +37,10 @@ class FamilyCreator
     {
         $familyCode = $variantGroupCombination->getFamilyCode();
         $familyVariantCode = $variantGroupCombination->getFamilyVariantCode();
-        $familyData = $this->variantGroupRetriever->retrieveFamilyData($familyCode, $pim);
+        $familyData = $this->variantGroupRepository->retrieveFamilyData($familyCode, $pim);
 
         $variantAxes = $variantGroupCombination->getAxes();
-        $variantGroupAttributes = $this->variantGroupRetriever->retrieveGroupAttributes($variantGroupCombination->getGroups()[0], $pim);
+        $variantGroupAttributes = $this->variantGroupRepository->retrieveGroupAttributes($variantGroupCombination->getGroups()[0], $pim);
         $variantAttributes = array_diff($familyData['attributes'], $variantGroupAttributes, $variantAxes);
 
         $familyVariant = [
@@ -60,7 +60,7 @@ class FamilyCreator
 
         $this->familyVariantImporter->import([$familyVariant], $pim);
 
-        $familyVariantId = $this->variantGroupRetriever->retrieveFamilyVariantId($familyVariantCode, $pim);
+        $familyVariantId = $this->variantGroupRepository->retrieveFamilyVariantId($familyVariantCode, $pim);
 
         if (null === $familyVariantId) {
             throw new ProductVariationMigrationException(sprintf('Unable to retrieve the family variant %s. It seems that its creation failed.', $familyVariantCode));

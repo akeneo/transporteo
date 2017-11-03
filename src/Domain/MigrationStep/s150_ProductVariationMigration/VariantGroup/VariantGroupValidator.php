@@ -17,15 +17,15 @@ use Psr\Log\LoggerInterface;
  */
 class VariantGroupValidator
 {
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(VariantGroupRetriever $variantGroupRetriever, LoggerInterface $logger)
+    public function __construct(VariantGroupRepository $variantGroupRepository, LoggerInterface $logger)
     {
-        $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->variantGroupRepository = $variantGroupRepository;
         $this->logger = $logger;
     }
 
@@ -61,11 +61,11 @@ class VariantGroupValidator
      */
     public function isVariantGroupCombinationValid(VariantGroupCombination $variantGroupCombination, Pim $pim)
     {
-        $familyAttributes = $this->variantGroupRetriever->retrieveFamilyAttributes($variantGroupCombination->getFamilyCode(), $pim);
+        $familyAttributes = $this->variantGroupRepository->retrieveFamilyAttributes($variantGroupCombination->getFamilyCode(), $pim);
 
         $previousGroupAttributes = null;
         foreach ($variantGroupCombination->getGroups() as $group) {
-            $groupAttributes = $this->variantGroupRetriever->retrieveGroupAttributes($group, $pim);
+            $groupAttributes = $this->variantGroupRepository->retrieveGroupAttributes($group, $pim);
 
             if (null !== $previousGroupAttributes) {
                 $differencesWithThePreviousGroupAttributes = array_diff($previousGroupAttributes, $groupAttributes);

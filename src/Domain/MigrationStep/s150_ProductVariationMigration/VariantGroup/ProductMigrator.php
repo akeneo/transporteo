@@ -7,7 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelImporter;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
@@ -22,24 +22,24 @@ class ProductMigrator
     /** @var ChainedConsole */
     private $console;
 
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
-    /** @var ProductModelImporter */
-    private $productModelImporter;
+    /** @var ProductModelRepository */
+    private $productModelRepository;
 
     /** @var ProductModelValuesBuilder */
     private $productModelValuesBuilder;
 
     public function __construct(
         ChainedConsole $console,
-        VariantGroupRetriever $variantGroupRetriever,
-        ProductModelImporter $productModelImporter,
+        VariantGroupRepository $variantGroupRepository,
+        ProductModelRepository $productModelRepository,
         ProductModelValuesBuilder $productModelValuesBuilder
     ) {
         $this->console = $console;
-        $this->variantGroupRetriever = $variantGroupRetriever;
-        $this->productModelImporter = $productModelImporter;
+        $this->variantGroupRepository = $variantGroupRepository;
+        $this->productModelRepository = $productModelRepository;
         $this->productModelValuesBuilder = $productModelValuesBuilder;
     }
 
@@ -49,7 +49,7 @@ class ProductMigrator
     public function migrateProductModels(VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
     {
         foreach ($variantGroupCombination->getGroups() as $variantGroupCode) {
-            $categories = $this->variantGroupRetriever->retrieveVariantGroupCategories($variantGroupCode, $pim);
+            $categories = $this->variantGroupRepository->retrieveVariantGroupCategories($variantGroupCode, $pim);
 
             $productModel = [
                 'code' => $variantGroupCode,
@@ -61,9 +61,7 @@ class ProductMigrator
             $producModelValues = $this->productModelValuesBuilder->buildFromVariantGroup($variantGroupCode, $pim);
             $productModel = array_merge($productModel, $producModelValues);
 
-            // One import per product because the variant groups can have different attribute values.
-            // It will be improved when it will be possible to create a product model by the API.
-            $this->productModelImporter->import([$productModel], $pim);
+            $this->productModelRepository->create($productModel, $pim);
         }
     }
 
@@ -75,7 +73,7 @@ class ProductMigrator
     public function migrateProductVariants(FamilyVariant $familyVariant, VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
     {
         foreach ($variantGroupCombination->getGroups() as $variantGroup) {
-            $productModelId = $this->variantGroupRetriever->retrieveProductModelId($variantGroup, $pim);
+            $productModelId = $this->productModelRepository->retrieveProductModelId($variantGroup, $pim);
 
             if (null === $productModelId) {
                 throw new ProductVariationMigrationException(sprintf('Unable to retrieve the product model %s. It seems that its creation failed.', $variantGroup));

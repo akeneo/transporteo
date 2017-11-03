@@ -18,8 +18,8 @@ use Akeneo\PimMigration\Domain\Pim\SourcePim;
  */
 class VariantGroupMigrator implements DataMigrator
 {
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
     /** @var TableMigrator */
     private $tableMigrator;
@@ -40,7 +40,7 @@ class VariantGroupMigrator implements DataMigrator
     private $productMigrator;
 
     public function __construct(
-        VariantGroupRetriever $variantGroupRetriever,
+        VariantGroupRepository $variantGroupRepository,
         VariantGroupRemover $variantGroupRemover,
         VariantGroupValidator $variantGroupValidator,
         FamilyCreator $familyCreator,
@@ -48,7 +48,7 @@ class VariantGroupMigrator implements DataMigrator
         MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     ) {
-        $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->variantGroupRepository = $variantGroupRepository;
         $this->tableMigrator = $tableMigrator;
         $this->variantGroupRemover = $variantGroupRemover;
         $this->variantGroupValidator = $variantGroupValidator;
@@ -72,7 +72,7 @@ class VariantGroupMigrator implements DataMigrator
 
         $this->variantGroupMigrationCleaner->clean($destinationPim);
 
-        $numberOfRemovedInvalidVariantGroups = $this->variantGroupRetriever->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim);
+        $numberOfRemovedInvalidVariantGroups = $this->variantGroupRepository->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim);
         if ($numberOfRemovedInvalidVariantGroups > 0) {
             throw new InvalidVariantGroupException($numberOfRemovedInvalidVariantGroups);
         }
@@ -83,7 +83,7 @@ class VariantGroupMigrator implements DataMigrator
      */
     private function removeInvalidVariantGroups(DestinationPim $pim): void
     {
-        $variantGroups = $this->variantGroupRetriever->retrieveVariantGroups($pim);
+        $variantGroups = $this->variantGroupRepository->retrieveVariantGroups($pim);
 
         foreach ($variantGroups as $variantGroup) {
             if (!$this->variantGroupValidator->isVariantGroupValid($variantGroup, $pim)) {
@@ -110,7 +110,7 @@ class VariantGroupMigrator implements DataMigrator
      */
     private function retrieveVariantGroupCombinations(DestinationPim $pim)
     {
-        $variantGroupCombinations = $this->variantGroupRetriever->retrieveVariantGroupCombinations($pim);
+        $variantGroupCombinations = $this->variantGroupRepository->retrieveVariantGroupCombinations($pim);
         $familyIncrement = 1;
         $previousFamily = null;
 

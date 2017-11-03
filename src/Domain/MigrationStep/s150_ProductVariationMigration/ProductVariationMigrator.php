@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRetriever;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use Psr\Log\LoggerInterface;
@@ -39,8 +39,8 @@ class ProductVariationMigrator implements DataMigrator
     /** @var ChainedConsole */
     private $console;
 
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
     /** @var LoggerInterface */
     private $logger;
@@ -49,13 +49,13 @@ class ProductVariationMigrator implements DataMigrator
         ChainedConsole $console,
         InnerVariationTypeMigrator $innerVariantTypeMigrator,
         VariantGroupMigrator $variantGroupMigrator,
-        VariantGroupRetriever $variantGroupRetriever,
+        VariantGroupRepository $variantGroupRepository,
         LoggerInterface $logger
     ) {
         $this->console = $console;
         $this->innerVariantTypeMigrator = $innerVariantTypeMigrator;
         $this->variantGroupMigrator = $variantGroupMigrator;
-        $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->variantGroupRepository = $variantGroupRepository;
         $this->logger = $logger;
     }
 
@@ -101,7 +101,7 @@ class ProductVariationMigrator implements DataMigrator
 
     private function migrateVariantGroups(SourcePim $sourcePim, DestinationPim $destinationPim): bool
     {
-        $numberOfVariantGroups = $this->variantGroupRetriever->retrieveNumberOfVariantGroups($destinationPim);
+        $numberOfVariantGroups = $this->variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim);
 
         if (0 === $numberOfVariantGroups) {
             $this->logger->info("There are no variant groups to migrate");

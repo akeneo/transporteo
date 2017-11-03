@@ -6,7 +6,7 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMig
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRetriever;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupValidator;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use PhpSpec\ObjectBehavior;
@@ -18,9 +18,9 @@ use Psr\Log\LoggerInterface;
  */
 class VariantGroupValidatorSpec extends ObjectBehavior
 {
-    public function let(VariantGroupRetriever $variantGroupRetriever, LoggerInterface $logger)
+    public function let(VariantGroupRepository $variantGroupRepository, LoggerInterface $logger)
     {
-        $this->beConstructedWith($variantGroupRetriever, $logger);
+        $this->beConstructedWith($variantGroupRepository, $logger);
     }
 
     public function it_is_initializable()
@@ -55,28 +55,28 @@ class VariantGroupValidatorSpec extends ObjectBehavior
         $this->isVariantGroupValid($variantGroup)->shouldReturn(false);
     }
 
-    public function it_validates_a_variant_group_combination($variantGroupRetriever, Pim $pim)
+    public function it_validates_a_variant_group_combination($variantGroupRepository, Pim $pim)
     {
         $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
 
-        $variantGroupRetriever->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2', 'att_3']);
-        $variantGroupRetriever->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_2']);
-        $variantGroupRetriever->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_2']);
+        $variantGroupRepository->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2', 'att_3']);
+        $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_2']);
+        $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_2']);
 
         $this->isVariantGroupCombinationValid($variantGroupCombination, $pim)->shouldReturn(true);
     }
 
     public function it_invalidates_a_variant_group_combination_having_variant_groups_with_different_attributes(
-        $variantGroupRetriever,
+        $variantGroupRepository,
         $logger,
         Pim $pim
     )
     {
         $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
 
-        $variantGroupRetriever->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2', 'att_3']);
-        $variantGroupRetriever->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_2']);
-        $variantGroupRetriever->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_3']);
+        $variantGroupRepository->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2', 'att_3']);
+        $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_2']);
+        $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_3']);
 
         $logger->warning(
             "Unable to migrate the variations for the family family_1 and axis axe_1, axe_2, because all the following variation group(s) don't have the same attributes : group_1, group_2"
@@ -86,16 +86,16 @@ class VariantGroupValidatorSpec extends ObjectBehavior
     }
 
     public function it_invalidates_a_variant_group_combination_if_a_variant_groups_has_an_attribute_that_does_not_belong_to_the_family(
-        $variantGroupRetriever,
+        $variantGroupRepository,
         $logger,
         Pim $pim
     )
     {
         $variantGroupCombination = new VariantGroupCombination('family_1', 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2']);
 
-        $variantGroupRetriever->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2']);
-        $variantGroupRetriever->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_3', 'att_4']);
-        $variantGroupRetriever->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_3', 'att_4']);
+        $variantGroupRepository->retrieveFamilyAttributes('family_1', $pim)->willReturn(['att_1', 'att_2']);
+        $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1', 'att_3', 'att_4']);
+        $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1', 'att_3', 'att_4']);
 
         $logger->warning(
             "Unable to migrate the variations for the family family_1 and axis axe_1, axe_2, because all the following attribute(s) of the variant groups don't belong to the family : att_3, att_4"

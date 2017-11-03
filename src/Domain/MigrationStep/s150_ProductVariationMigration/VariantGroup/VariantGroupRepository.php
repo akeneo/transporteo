@@ -17,7 +17,7 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class VariantGroupRetriever
+class VariantGroupRepository
 {
     /** @var ChainedConsole */
     private $console;
@@ -205,16 +205,6 @@ SQL;
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',
             $familyVariantCode
-        )), $pim)->getOutput();
-
-        return isset($sqlResult[0]['id']) ? (int) $sqlResult[0]['id'] : null;
-    }
-
-    public function retrieveProductModelId(string $productModelCode, Pim $pim): ?int
-    {
-        $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
-            'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',
-            $productModelCode
         )), $pim)->getOutput();
 
         return isset($sqlResult[0]['id']) ? (int) $sqlResult[0]['id'] : null;

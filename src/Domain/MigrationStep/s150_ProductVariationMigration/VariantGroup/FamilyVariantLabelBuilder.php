@@ -14,12 +14,12 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  */
 class FamilyVariantLabelBuilder
 {
-    /** @var VariantGroupRetriever */
-    private $variantGroupRetriever;
+    /** @var VariantGroupRepository */
+    private $variantGroupRepository;
 
-    public function __construct(VariantGroupRetriever $variantGroupRetriever)
+    public function __construct(VariantGroupRepository $variantGroupRepository)
     {
-        $this->variantGroupRetriever = $variantGroupRetriever;
+        $this->variantGroupRepository = $variantGroupRepository;
     }
 
     public function buildFromVariantGroupCombination(array $familyData, VariantGroupCombination $variantGroupCombination, Pim $pim): array
@@ -27,7 +27,7 @@ class FamilyVariantLabelBuilder
         $familyVariantLabels = $familyData['labels'];
 
         foreach ($variantGroupCombination->getAxes() as $axe) {
-            $axeData = $this->variantGroupRetriever->retrieveAttributeData($axe, $pim);
+            $axeData = $this->variantGroupRepository->retrieveAttributeData($axe, $pim);
             $axeLabels = $axeData['labels'];
 
             foreach (array_keys($familyVariantLabels) as $locale) {

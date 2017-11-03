@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModel;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductModelValuesBuilder;
@@ -41,14 +42,16 @@ class ProductMigratorSpec extends ObjectBehavior
             'vg_att_2-en_US' => 'VG 1 Att 2 value US'
         ]);
 
-        $productModelRepository->create([
-            'code' => 'vg_1',
-            'family_variant' => 'family_variant_1',
-            'categories' => 'vg_1_cat_1,vg_1_cat_2',
-            'parent' => '',
-            'vg_att_1' => 'VG 1 Att 1 value',
-            'vg_att_2-en_US' => 'VG 1 Att 2 value US',
-        ], $pim)->shouldBeCalled();
+        $productModelRepository->persist(new ProductModel(
+            null,
+            'vg_1',
+            'family_variant_1',
+            ['vg_1_cat_1', 'vg_1_cat_2'],
+            [
+                'vg_att_1' => 'VG 1 Att 1 value',
+                'vg_att_2-en_US' => 'VG 1 Att 2 value US',
+            ]
+        ), $pim)->shouldBeCalled();
 
         $variantGroupRepository->retrieveVariantGroupCategories('vg_2', $pim)->willReturn(['vg_2_cat_1']);
         $productModelValuesBuilder->buildFromVariantGroup('vg_2', $pim)->willReturn([
@@ -57,15 +60,17 @@ class ProductMigratorSpec extends ObjectBehavior
             'vg_att_2-fr_FR' => null,
         ]);
 
-        $productModelRepository->create([
-            'code' => 'vg_2',
-            'family_variant' => 'family_variant_1',
-            'categories' => 'vg_2_cat_1',
-            'parent' => '',
-            'vg_att_1' => 'VG 2 Att 1 value',
-            'vg_att_2-en_US' => 'VG 2 Att 2 value US',
-            'vg_att_2-fr_FR' => null,
-        ], $pim)->shouldBeCalled();
+        $productModelRepository->persist(new ProductModel(
+            null,
+            'vg_2',
+            'family_variant_1',
+            ['vg_2_cat_1'],
+            [
+                'vg_att_1' => 'VG 2 Att 1 value',
+                'vg_att_2-en_US' => 'VG 2 Att 2 value US',
+                'vg_att_2-fr_FR' => null,
+            ]
+        ), $pim)->shouldBeCalled();
 
         $family = new Family(11, 'family_1', []);
         $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2'], []);

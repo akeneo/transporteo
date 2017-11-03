@@ -63,4 +63,14 @@ class FamilyRepository
 
         return new Family((int) $sqlResult[0]['id'], $familyCode, $familyData);
     }
+
+    public function retrieveFamilyVariantId(string $familyVariantCode, Pim $pim): ?int
+    {
+        $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
+            'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',
+            $familyVariantCode
+        )), $pim)->getOutput();
+
+        return isset($sqlResult[0]['id']) ? (int) $sqlResult[0]['id'] : null;
+    }
 }

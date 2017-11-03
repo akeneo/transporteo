@@ -20,16 +20,12 @@ class FamilyCreator
     /** @var FamilyRepository */
     private $familyRepository;
 
-    /** @var VariantGroupRepository */
-    private $variantGroupRepository;
-
     /** @var FamilyVariantLabelBuilder */
     private $familyVariantLabelBuilder;
 
-    public function __construct(FamilyRepository $familyRepository, VariantGroupRepository $variantGroupRepository, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
+    public function __construct(FamilyRepository $familyRepository, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
     {
         $this->familyRepository = $familyRepository;
-        $this->variantGroupRepository = $variantGroupRepository;
         $this->familyVariantLabelBuilder = $familyVariantLabelBuilder;
     }
 
@@ -56,7 +52,7 @@ class FamilyCreator
 
         $this->familyRepository->persistFamilyVariant($familyVariant, $pim);
 
-        $familyVariantId = $this->variantGroupRepository->retrieveFamilyVariantId($familyVariantCode, $pim);
+        $familyVariantId = $this->familyRepository->retrieveFamilyVariantId($familyVariantCode, $pim);
 
         if (null === $familyVariantId) {
             throw new ProductVariationMigrationException(sprintf('Unable to retrieve the family variant %s. It seems that its creation failed.', $familyVariantCode));

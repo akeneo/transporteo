@@ -7,6 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModel;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
@@ -50,18 +51,17 @@ class ProductMigrator
     {
         foreach ($variantGroupCombination->getGroups() as $variantGroupCode) {
             $categories = $this->variantGroupRepository->retrieveVariantGroupCategories($variantGroupCode, $pim);
-
-            $productModel = [
-                'code' => $variantGroupCode,
-                'family_variant' => $variantGroupCombination->getFamilyVariantCode(),
-                'categories' => implode(',', $categories),
-                'parent' => '',
-            ];
-
             $producModelValues = $this->productModelValuesBuilder->buildFromVariantGroup($variantGroupCode, $pim);
-            $productModel = array_merge($productModel, $producModelValues);
 
-            $this->productModelRepository->create($productModel, $pim);
+            $productModel = new ProductModel(
+                null,
+                $variantGroupCode,
+                $variantGroupCombination->getFamilyVariantCode(),
+                $categories,
+                $producModelValues
+            );
+
+            $this->productModelRepository->persist($productModel, $pim);
         }
     }
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
 use Akeneo\PimMigration\Domain\Command\Api\GetAttributeCommand;
-use Akeneo\PimMigration\Domain\Command\Api\GetFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
@@ -137,31 +136,6 @@ SQL;
         return $attributeValues;
     }
 
-    /**
-     * Retrieve the attributes codes of aa family.
-     */
-    public function retrieveFamilyAttributes(string $familyCode, Pim $pim): array
-    {
-        $familyAttributes = [];
-
-        $results = $this->console->execute(
-            new MySqlQueryCommand(sprintf(
-                'SELECT a.code FROM pim_catalog_family f 
-                INNER JOIN pim_catalog_family_attribute fa ON fa.family_id = f.id
-                INNER JOIN pim_catalog_attribute a ON a.id = fa.attribute_id
-                WHERE f.code = "%s"',
-                $familyCode
-            )),
-            $pim
-        )->getOutput();
-
-        foreach ($results as $result) {
-            $familyAttributes[] = $result['code'];
-        }
-
-        return $familyAttributes;
-    }
-
     public function retrieveAttributeData(string $attributeCode, Pim $pim): array
     {
         $command = new GetAttributeCommand($attributeCode);
@@ -191,16 +165,6 @@ SQL;
         }
 
         return $categories;
-    }
-
-    public function retrieveFamilyVariantId(string $familyVariantCode, Pim $pim): ?int
-    {
-        $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
-            'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',
-            $familyVariantCode
-        )), $pim)->getOutput();
-
-        return isset($sqlResult[0]['id']) ? (int) $sqlResult[0]['id'] : null;
     }
 
     private function retrieveNumberOfVariantGroupsByType(Pim $pim, string $type): int

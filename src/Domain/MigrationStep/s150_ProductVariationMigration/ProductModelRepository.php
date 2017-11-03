@@ -28,8 +28,17 @@ class ProductModelRepository
         $this->productModelImporter = $productModelImporter;
     }
 
-    public function create(array $productModelData, DestinationPim $pim): void
+    public function persist(ProductModel $productModel, DestinationPim $pim): void
     {
+        $productModelData = [
+            'code' => $productModel->getIdentifier(),
+            'family_variant' => $productModel->getFamilyVariantCode(),
+            'categories' => implode(',', $productModel->getCategories()),
+            'parent' => '',
+        ];
+
+        $productModelData = array_merge($productModelData, $productModel->getValues());
+
         $this->productModelImporter->import([$productModelData], $pim);
     }
 

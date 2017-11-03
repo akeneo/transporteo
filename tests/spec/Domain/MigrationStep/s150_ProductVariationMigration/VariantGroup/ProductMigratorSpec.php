@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelImporter;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductModelValuesBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRetriever;
@@ -20,9 +21,9 @@ use PhpSpec\ObjectBehavior;
  */
 class ProductMigratorSpec extends ObjectBehavior
 {
-    public function let(ChainedConsole $console, VariantGroupRetriever $variantGroupRetriever, ProductModelImporter $productModelImporter)
+    public function let(ChainedConsole $console, VariantGroupRetriever $variantGroupRetriever, ProductModelImporter $productModelImporter, ProductModelValuesBuilder $productModelValuesBuilder)
     {
-        $this->beConstructedWith($console, $variantGroupRetriever, $productModelImporter);
+        $this->beConstructedWith($console, $variantGroupRetriever, $productModelImporter, $productModelValuesBuilder);
     }
 
     public function it_is_initializable()
@@ -30,45 +31,12 @@ class ProductMigratorSpec extends ObjectBehavior
         $this->shouldHaveType(ProductMigrator::class);
     }
 
-    public function it_migrates_product_models(DestinationPim $pim, $variantGroupRetriever, $productModelImporter)
+    public function it_migrates_product_models(DestinationPim $pim, $variantGroupRetriever, $productModelImporter, $productModelValuesBuilder)
     {
         $variantGroupRetriever->retrieveVariantGroupCategories('vg_1', $pim)->willReturn(['vg_1_cat_1', 'vg_1_cat_2']);
-        $variantGroupRetriever->retrieveGroupAttributeValues('vg_1', $pim)->willReturn([
-            'vg_att_1' => [
-                [
-                    'locale' => null,
-                    'scope' => null,
-                    'data' => 'VG 1 Att 1 value'
-                ]
-            ],
-            'vg_att_2' => [
-                [
-                    'locale' => 'en_US',
-                    'scope' => null,
-                    'data' => 'VG 1 Att 2 value US'
-                ],
-                [
-                    'locale' => 'fr_FR',
-                    'scope' => null,
-                    'data' => 'VG 1 Att 2 value FR'
-                ],
-            ],
-            'vg_att_3' => [
-                [
-                    'locale' => null,
-                    'scope' => 'ecommerce',
-                    'data' => [
-                        [
-                            'amount' => 99,
-                            'currency' => 'USD'
-                        ],
-                        [
-                            'amount' => 110,
-                            'currency' => 'EUR'
-                        ]
-                    ]
-                ]
-            ]
+        $productModelValuesBuilder->buildFromVariantGroup('vg_1', $pim)->willReturn([
+            'vg_att_1' => 'VG 1 Att 1 value',
+            'vg_att_2-en_US' => 'VG 1 Att 2 value US'
         ]);
 
         $productModelImporter->import([
@@ -79,51 +47,14 @@ class ProductMigratorSpec extends ObjectBehavior
                 'parent' => '',
                 'vg_att_1' => 'VG 1 Att 1 value',
                 'vg_att_2-en_US' => 'VG 1 Att 2 value US',
-                'vg_att_2-fr_FR' => 'VG 1 Att 2 value FR',
-                'vg_att_3-ecommerce-USD' => 99,
-                'vg_att_3-ecommerce-EUR' => 110
             ]
         ], $pim)->shouldBeCalled();
 
         $variantGroupRetriever->retrieveVariantGroupCategories('vg_2', $pim)->willReturn(['vg_2_cat_1']);
-        $variantGroupRetriever->retrieveGroupAttributeValues('vg_2', $pim)->willReturn([
-            'vg_att_1' => [
-                [
-                    'locale' => null,
-                    'scope' => null,
-                    'data' => 'VG 2 Att 1 value'
-                ]
-            ],
-            'vg_att_2' => [
-                [
-                    'locale' => 'en_US',
-                    'scope' => null,
-                    'data' => 'VG 2 Att 2 value US'
-                ],
-                [
-                    'locale' => 'fr_FR',
-                    'scope' => null,
-                    'data' => null
-                ],
-            ],
-            'vg_att_4' => [
-                [
-                    'locale' => 'en_US',
-                    'scope' => 'ecommerce',
-                    'data' => [
-                        'amount' => 345,
-                        'unit' => 'gram'
-                    ]
-                ],
-                [
-                    'locale' => 'fr_FR',
-                    'scope' => 'ecommerce',
-                    'data' => [
-                        'amount' => 3,
-                        'unit' => 'kilogram'
-                    ]
-                ]
-            ]
+        $productModelValuesBuilder->buildFromVariantGroup('vg_2', $pim)->willReturn([
+            'vg_att_1' => 'VG 2 Att 1 value',
+            'vg_att_2-en_US' => 'VG 2 Att 2 value US',
+            'vg_att_2-fr_FR' => null,
         ]);
 
         $productModelImporter->import([
@@ -135,10 +66,6 @@ class ProductMigratorSpec extends ObjectBehavior
                 'vg_att_1' => 'VG 2 Att 1 value',
                 'vg_att_2-en_US' => 'VG 2 Att 2 value US',
                 'vg_att_2-fr_FR' => null,
-                'vg_att_4-en_US-ecommerce' => 345,
-                'vg_att_4-en_US-ecommerce-unit' => 'gram',
-                'vg_att_4-fr_FR-ecommerce' => 3,
-                'vg_att_4-fr_FR-ecommerce-unit' => 'kilogram'
             ]
         ], $pim)->shouldBeCalled();
 

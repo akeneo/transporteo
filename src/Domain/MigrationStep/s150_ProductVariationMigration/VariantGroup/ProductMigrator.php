@@ -28,11 +28,19 @@ class ProductMigrator
     /** @var ProductModelImporter */
     private $productModelImporter;
 
-    public function __construct(ChainedConsole $console, VariantGroupRetriever $variantGroupRetriever, ProductModelImporter $productModelImporter)
-    {
+    /** @var ProductModelValuesBuilder */
+    private $productModelValuesBuilder;
+
+    public function __construct(
+        ChainedConsole $console,
+        VariantGroupRetriever $variantGroupRetriever,
+        ProductModelImporter $productModelImporter,
+        ProductModelValuesBuilder $productModelValuesBuilder
+    ) {
         $this->console = $console;
         $this->variantGroupRetriever = $variantGroupRetriever;
         $this->productModelImporter = $productModelImporter;
+        $this->productModelValuesBuilder = $productModelValuesBuilder;
     }
 
     /**
@@ -50,7 +58,7 @@ class ProductMigrator
                 'parent' => '',
             ];
 
-            $producModelValues = $this->buildProductModelValues($variantGroupCode, $pim);
+            $producModelValues = $this->productModelValuesBuilder->buildFromVariantGroup($variantGroupCode, $pim);
             $productModel = array_merge($productModel, $producModelValues);
 
             // One import per product because the variant groups can have different attribute values.
@@ -94,41 +102,5 @@ class ProductMigrator
 
             $this->console->execute(new MySqlExecuteCommand($query), $pim);
         }
-    }
-
-    /**
-     * Builds the attributes values of a product model from a variant group.
-     */
-    private function buildProductModelValues(string $variantGroupCode, DestinationPim $pim): array
-    {
-        $producModelValues = [];
-        $variantGroupValues = $this->variantGroupRetriever->retrieveGroupAttributeValues($variantGroupCode, $pim);
-
-        foreach ($variantGroupValues as $attribute => $values) {
-            foreach ($values as $value) {
-                $attributeValueKey = $attribute;
-
-                if (null !== $value['locale']) {
-                    $attributeValueKey .= '-'.$value['locale'];
-                }
-                if (null !== $value['scope']) {
-                    $attributeValueKey .= '-'.$value['scope'];
-                }
-                if (is_array($value['data'])) {
-                    if (isset($value['data']['unit'])) {
-                        $producModelValues[$attributeValueKey] = $value['data']['amount'];
-                        $producModelValues[$attributeValueKey.'-unit'] = $value['data']['unit'];
-                    } elseif (isset($value['data'][0]['currency'])) {
-                        foreach ($value['data'] as $price) {
-                            $producModelValues[$attributeValueKey.'-'.$price['currency']] = $price['amount'];
-                        }
-                    }
-                } else {
-                    $producModelValues[$attributeValueKey] = $value['data'];
-                }
-            }
-        }
-
-        return $producModelValues;
     }
 }

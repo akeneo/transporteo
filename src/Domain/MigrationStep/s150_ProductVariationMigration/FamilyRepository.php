@@ -8,10 +8,9 @@ use Akeneo\PimMigration\Domain\Command\Api\GetFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
- * Repository for family data.
+ * Repository for family data on the destination PIM.
  *
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
@@ -48,7 +47,7 @@ class FamilyRepository
         $this->familyVariantImporter->import([$familyVariantData], $pim);
     }
 
-    public function findByCode(string $familyCode, Pim $pim): Family
+    public function findByCode(string $familyCode, DestinationPim $pim): Family
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family WHERE code = "%s"',
@@ -64,7 +63,7 @@ class FamilyRepository
         return new Family((int) $sqlResult[0]['id'], $familyCode, $familyData);
     }
 
-    public function retrieveFamilyVariantId(string $familyVariantCode, Pim $pim): ?int
+    public function retrieveFamilyVariantId(string $familyVariantCode, DestinationPim $pim): ?int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',

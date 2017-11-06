@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Fami
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantLabelBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
-use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use PhpSpec\ObjectBehavior;
 
 /**
@@ -27,7 +27,7 @@ class FamilyVariantLabelBuilderSpec extends ObjectBehavior
         $this->shouldHaveType(FamilyVariantLabelBuilder::class);
     }
 
-    public function it_builds_labels_from_a_variant_group_combination($variantGroupRepository, VariantGroupCombination $variantGroupCombination, Pim $pim)
+    public function it_builds_labels_from_a_variant_group_combination($variantGroupRepository, VariantGroupCombination $variantGroupCombination, DestinationPim $pim)
     {
         $family = new Family(1, 'family_1', [
             'code' => 'family_1',

@@ -10,7 +10,7 @@ use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**
- * Removes a variant group and its related products.
+ * Removes a variant group and its related products on the destination PIM.
  *
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**
- * Repository for product models data.
+ * Repository for product models data on the destination PIM.
  *
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)

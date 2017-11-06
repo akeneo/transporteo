@@ -10,10 +10,9 @@ use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
- * Aims to retrieve data related to the migration of the variant groups.
+ * Aims to read an write data related to the migration of the variant groups on the destination PIM.
  *
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
@@ -31,17 +30,17 @@ class VariantGroupRepository
         $this->console = $console;
     }
 
-    public function retrieveNumberOfVariantGroups(Pim $pim): int
+    public function retrieveNumberOfVariantGroups(DestinationPim $pim): int
     {
         return $this->retrieveNumberOfVariantGroupsByType($pim, 'VARIANT');
     }
 
-    public function retrieveNumberOfRemovedInvalidVariantGroups(Pim $pim): int
+    public function retrieveNumberOfRemovedInvalidVariantGroups(DestinationPim $pim): int
     {
         return $this->retrieveNumberOfVariantGroupsByType($pim, 'INVALID_VARIANT');
     }
 
-    public function retrieveVariantGroups(Pim $pim): \Traversable
+    public function retrieveVariantGroups(DestinationPim $pim): \Traversable
     {
         $query =
 <<<SQL
@@ -66,7 +65,7 @@ SQL;
         }
     }
 
-    public function retrieveVariantGroupCombinations(Pim $pim): array
+    public function retrieveVariantGroupCombinations(DestinationPim $pim): array
     {
         $query =
 <<<SQL
@@ -91,7 +90,7 @@ SQL;
         return $this->console->execute(new MySqlQueryCommand($query), $pim)->getOutput();
     }
 
-    public function retrieveVariantGroupsAxes(int $variantGroupId, Pim $pim)
+    public function retrieveVariantGroupsAxes(int $variantGroupId, DestinationPim $pim)
     {
         return $this->console->execute(
             new MySqlQueryCommand(
@@ -106,7 +105,7 @@ SQL;
     /**
      * Retrieves the attributes codes of a variant group.
      */
-    public function retrieveGroupAttributes(string $groupCode, Pim $pim): array
+    public function retrieveGroupAttributes(string $groupCode, DestinationPim $pim): array
     {
         $attributeValues = $this->retrieveGroupAttributeValues($groupCode, $pim);
 
@@ -116,7 +115,7 @@ SQL;
     /**
      * Retrieves the attributes values of a variant group.
      */
-    public function retrieveGroupAttributeValues(string $groupCode, Pim $pim): array
+    public function retrieveGroupAttributeValues(string $groupCode, DestinationPim $pim): array
     {
         $results = $this->console->execute(
             new MySqlQueryCommand(sprintf(
@@ -141,14 +140,14 @@ SQL;
         return $attributeValues;
     }
 
-    public function retrieveAttributeData(string $attributeCode, Pim $pim): array
+    public function retrieveAttributeData(string $attributeCode, DestinationPim $pim): array
     {
         $command = new GetAttributeCommand($attributeCode);
 
         return $this->console->execute($command, $pim)->getOutput();
     }
 
-    public function retrieveVariantGroupCategories(string $variantGroupCode, Pim $pim): array
+    public function retrieveVariantGroupCategories(string $variantGroupCode, DestinationPim $pim): array
     {
         $categories = [];
 
@@ -172,7 +171,7 @@ SQL;
         return $categories;
     }
 
-    private function retrieveNumberOfVariantGroupsByType(Pim $pim, string $type): int
+    private function retrieveNumberOfVariantGroupsByType(DestinationPim $pim, string $type): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT COUNT(g.id) as nb_variant_groups

@@ -9,7 +9,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Vari
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupValidator;
-use Akeneo\PimMigration\Domain\Pim\Pim;
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use PhpSpec\ObjectBehavior;
 use Psr\Log\LoggerInterface;
 
@@ -56,7 +56,7 @@ class VariantGroupValidatorSpec extends ObjectBehavior
         $this->isVariantGroupValid($variantGroup)->shouldReturn(false);
     }
 
-    public function it_validates_a_variant_group_combination($variantGroupRepository, Pim $pim)
+    public function it_validates_a_variant_group_combination($variantGroupRepository, DestinationPim $pim)
     {
         $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2', 'att_3']]);
         $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['axe_1', 'axe_2'], ['group_1', 'group_2'], []);
@@ -70,7 +70,7 @@ class VariantGroupValidatorSpec extends ObjectBehavior
     public function it_invalidates_a_variant_group_combination_having_variant_groups_with_different_attributes(
         $variantGroupRepository,
         $logger,
-        Pim $pim
+        DestinationPim $pim
     )
     {
         $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2', 'att_3']]);
@@ -89,7 +89,7 @@ class VariantGroupValidatorSpec extends ObjectBehavior
     public function it_invalidates_a_variant_group_combination_if_a_variant_groups_has_an_attribute_that_does_not_belong_to_the_family(
         $variantGroupRepository,
         $logger,
-        Pim $pim
+        DestinationPim $pim
     )
     {
         $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2']]);

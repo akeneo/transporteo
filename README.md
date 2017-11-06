@@ -3,7 +3,7 @@
 ## Goal
 
 This tool aims at helping you to migrate your *PIM 1.7 standard edition* (either _Community_ or _Enterprise_) to the new version 2.0. All your data will be migrated seamlessly. Your source PIM won't be updated nor touched. Instead, we'll perform the migration in a brand new PIM 2.0. Several reasons led us to this choice:
-- the [System Requirements](https://docs.akeneo.com/2.0/install_pim/system_requirements/system_requirements.html) have changed between Akeneo PIM 1.7 and 2.0
+- the [System Requirements](https://docs.akeneo.com/2.0/install_pim/manual/system_requirements/system_requirements.html) have changed between Akeneo PIM 1.7 and 2.0
 - with variant groups and inner variation (a paid extension for the _Enterprise Edition_) there are a lot of different and complex use cases to migrate products data
 - the need to migrate real production data without worrying about a failure, a problem or an incomplete migration
 
@@ -15,7 +15,7 @@ We do not support the Docker installation yet regarding Transporteo.
 Both PIM should be functionnal and have a functionnal API with admin rights.
 
 Before proceeding, we strongly encourage you to read our documentation and our functional and technical blog posts about the version 2.0:
-- [System Requirements](https://docs.akeneo.com/2.0/install_pim/system_requirements/system_requirements.html), documentation
+- [System Requirements](https://docs.akeneo.com/2.0/install_pim/manual/system_requirements/system_requirements.html), documentation
 - [Community Edition BC Breaks](https://github.com/akeneo/pim-community-dev/blob/master/CHANGELOG-2.0.md), documentation
 - Enterprise Edition BC Breaks (check out the file `CHANGELOG-2.0.md` provided at the root of your archive), documentation
 - [Story of Storage](https://medium.com/akeneo-labs/story-of-storage-9dbc27090de0), technical blog post

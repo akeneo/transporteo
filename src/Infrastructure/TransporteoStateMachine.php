@@ -202,10 +202,6 @@ class TransporteoStateMachine
     public function setSourcePimConnection(PimConnection $connection): void
     {
         $this->sourcePimConnection = $connection;
-
-        if ($connection instanceof SshConnection) {
-            $this->setEnterpriseAccessAllowedKey($connection->getSshKey());
-        }
     }
 
     public function getSourcePimConnection(): PimConnection

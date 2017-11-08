@@ -162,37 +162,7 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             $stateMachine->getDefaultResponse('ssh_user_source_pim')
         );
 
-        $sshPath = $this
-            ->printerAndAsker
-            ->askSimpleQuestion(
-                $this->translator->trans($transPrefix.'ssh_key_path_question'),
-                $stateMachine->getDefaultResponse('ssh_key_path_source_pim'),
-                function ($answer) use ($transPrefix) {
-                    $fs = new Filesystem();
-
-                    if (!$fs->isAbsolutePath($answer)) {
-                        throw new \RuntimeException($this->translator->trans($transPrefix.'ssh_key_path_error'));
-                    }
-
-                    return $answer;
-                }
-            );
-
-        $hasPassword = $this->printerAndAsker->askChoiceQuestion(
-            $this->translator->trans($transPrefix . 'ssh_key_protected'),
-            [self::YES => self::YES, self::NO => self::NO]
-        );
-
-        $password = null;
-        if (self::YES === $hasPassword) {
-            $password = $this
-                ->printerAndAsker
-                ->askHiddenSimpleQuestion(
-                    sprintf($this->translator->trans($transPrefix . 'ssh_key_passphrase'), $sshPath)
-                );
-        }
-
-        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user, new SshKey($sshPath), $password));
+        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user));
 
         $pimProjectPath = $this
             ->printerAndAsker

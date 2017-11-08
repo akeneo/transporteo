@@ -56,7 +56,7 @@ class FamilyVariant
         $this->familyCode = $familyCode;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

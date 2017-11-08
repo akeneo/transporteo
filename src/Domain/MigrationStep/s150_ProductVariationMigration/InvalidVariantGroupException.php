@@ -16,11 +16,11 @@ class InvalidVariantGroupException extends MigrationStepException
 {
     public function __construct(int $numberOfRemovedInvalidVariantGroups)
     {
-        parent::__construct(sprintf(
-            "There are %s variant groups that can't be automatically migrated. Related products have been migrated but they're not variant."
-            .PHP_EOL."Your catalog structure should be rework, according to the catalog modeling introduced in v2.0"
-            .PHP_EOL."See the file 'var/logs/error.log' for more details.",
-            $numberOfRemovedInvalidVariantGroups
-        ));
+        $message = <<<EOT
+There are $numberOfRemovedInvalidVariantGroups variant groups that can't be automatically migrated. Related products have been migrated but they're not variant.
+Your catalog structure should be rework, according to the catalog modeling introduced in v2.0
+See the file 'var/logs/error.log' for more details.
+EOT;
+        parent::__construct($message);
     }
 }

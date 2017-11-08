@@ -58,7 +58,7 @@ class InnerVariationTypeMigrator implements DataMigrator
         $invalidInnerVariationTypes = [];
 
         foreach ($innerVariationTypes as $innerVariationType) {
-            if ($this->isInnerVariationTypeCanBeMigrated($innerVariationType)) {
+            if ($this->canInnerVariationTypeBeMigrated($innerVariationType)) {
                 $this->migrateInnerVariationType($innerVariationType, $destinationPim);
             } else {
                 $invalidInnerVariationTypes[] = $innerVariationType;
@@ -93,7 +93,7 @@ class InnerVariationTypeMigrator implements DataMigrator
     /**
      * Retrieves and validate the variation axes of an InnerVariationType.
      */
-    private function isInnerVariationTypeCanBeMigrated(InnerVariationType $innerVariationType): bool
+    private function canInnerVariationTypeBeMigrated(InnerVariationType $innerVariationType): bool
     {
         $axes = $innerVariationType->getAxes();
 
@@ -108,7 +108,7 @@ class InnerVariationTypeMigrator implements DataMigrator
         }
 
         foreach ($axes as $axe) {
-            if (!in_array($axe['attribute_type'], ProductVariationMigrator::ALLOWED_AXE_TYPES)) {
+            if (!in_array($axe['attribute_type'], ProductVariationMigrator::ALLOWED_AXIS_TYPES)) {
                 $this->logger->warning(sprintf(
                     'Unable to migrate the inner variation type %s because it has an axe of type %s.',
                     $innerVariationType->getCode(),

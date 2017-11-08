@@ -16,6 +16,6 @@ class ProductVariationMigrationException extends MigrationStepException
 {
     public function __construct(string $message)
     {
-        parent::__construct('Error: Step 15 - Product variation migration: '.$message);
+        parent::__construct(sprintf('Error: Step 15 - Product variation migration: %s', $message));
     }
 }

@@ -28,6 +28,7 @@ class ProductModelRepository
         $this->productModelImporter = $productModelImporter;
     }
 
+    // TODO: persist via the API.
     public function persist(ProductModel $productModel, DestinationPim $pim): void
     {
         $productModelData = [

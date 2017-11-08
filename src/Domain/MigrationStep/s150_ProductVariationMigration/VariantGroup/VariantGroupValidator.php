@@ -59,7 +59,7 @@ class VariantGroupValidator
     /**
      * Validates that a variant-groups combination can be migrated.
      */
-    public function isVariantGroupCombinationValid(VariantGroupCombination $variantGroupCombination, Pim $pim)
+    public function isVariantGroupCombinationValid(VariantGroupCombination $variantGroupCombination, Pim $pim): bool
     {
         $familyAttributes =$variantGroupCombination->getFamily()->getAttributes();
 

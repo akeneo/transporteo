@@ -23,7 +23,7 @@ class ProductVariationMigrator implements DataMigrator
 {
     const MAX_VARIANT_AXES = 5;
 
-    const ALLOWED_AXE_TYPES = [
+    const ALLOWED_AXIS_TYPES = [
         'pim_catalog_simpleselect',
         'pim_reference_data_simpleselect',
         'pim_catalog_metric',

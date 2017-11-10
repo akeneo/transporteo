@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+
 /**
  * Data of a product model used for the migration.
  *
@@ -25,15 +27,24 @@ class ProductModel
     private $categories;
 
     /** @var array */
-    private $values;
+    private $attributeValues;
 
-    public function __construct(?int $id, string $identifier, string $familyVariantCode, array $categories, array $values)
+    public function __construct(?int $id, string $identifier, string $familyVariantCode, array $categories, array $attributeValues)
     {
         $this->id = $id;
         $this->identifier = $identifier;
         $this->familyVariantCode = $familyVariantCode;
         $this->categories = $categories;
-        $this->values = $values;
+        $this->attributeValues = $attributeValues;
+    }
+
+    public function persist(ProductModelRepository $productModelRepository, DestinationPim $pim): void
+    {
+        $productModelRepository->persist($this, $pim);
+
+        if (null === $this->id) {
+            $this->id = $productModelRepository->retrieveProductModelId($this->identifier, $pim);
+        }
     }
 
     public function getId(): ?int
@@ -56,8 +67,8 @@ class ProductModel
         return $this->categories;
     }
 
-    public function getValues(): array
+    public function getAttributeValues(): array
     {
-        return $this->values;
+        return $this->attributeValues;
     }
 }

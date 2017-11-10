@@ -6,6 +6,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductModelValuesBuilder;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**
@@ -22,13 +23,17 @@ class ProductModelRepository
     /** @var ProductModelImporter */
     private $productModelImporter;
 
-    public function __construct(ChainedConsole $console, ProductModelImporter $productModelImporter)
+    /** @var ProductModelValuesBuilder */
+    private $productModelValuesBuilder;
+
+    public function __construct(ChainedConsole $console, ProductModelImporter $productModelImporter, ProductModelValuesBuilder $productModelValuesBuilder)
     {
         $this->console = $console;
         $this->productModelImporter = $productModelImporter;
+        $this->productModelValuesBuilder = $productModelValuesBuilder;
     }
 
-    // TODO: persist via the API.
+    // TODO: persist via the API and remove the dependency to ProductModelValuesBuilder.
     public function persist(ProductModel $productModel, DestinationPim $pim): void
     {
         $productModelData = [
@@ -38,18 +43,26 @@ class ProductModelRepository
             'parent' => '',
         ];
 
-        $productModelData = array_merge($productModelData, $productModel->getValues());
+        $productModelValues = $this->productModelValuesBuilder->build($productModel);
+        $productModelData = array_merge($productModelData, $productModelValues);
 
         $this->productModelImporter->import([$productModelData], $pim);
     }
 
-    public function retrieveProductModelId(string $productModelCode, DestinationPim $pim): ?int
+    public function retrieveProductModelId(string $productModelCode, DestinationPim $pim): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',
             $productModelCode
         )), $pim)->getOutput();
 
-        return isset($sqlResult[0]['id']) ? (int) $sqlResult[0]['id'] : null;
+        if(!isset($sqlResult[0]['id'])) {
+            throw new ProductVariationMigrationException(sprintf(
+                'Unable to retrieve the product model %s. It seems that its creation failed.',
+                $productModelCode
+            ));
+        }
+
+        return (int) $sqlResult[0]['id'];
     }
 }

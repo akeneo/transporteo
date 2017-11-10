@@ -6,8 +6,6 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -32,25 +30,17 @@ class VariantGroupMigrator implements DataMigrator
     /** @var MigrationCleaner */
     private $variantGroupMigrationCleaner;
 
-    /** @var FamilyVariantBuilder */
-    private $familyCreator;
-
-    /** @var ProductMigrator */
-    private $productMigrator;
-
     /** @var VariantGroupCombinationRepository */
     private $variantGroupCombinationRepository;
 
-    /** @var FamilyVariantRepository */
-    private $familyVariantRepository;
+    /** @var VariantGroupCombinationMigrator */
+    private $variantGroupCombinationMigrator;
 
     public function __construct(
         VariantGroupRepository $variantGroupRepository,
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
-        FamilyVariantBuilder $familyCreator,
-        FamilyVariantRepository $familyVariantRepository,
-        ProductMigrator $productMigrator,
+        VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
         MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     ) {
@@ -59,9 +49,7 @@ class VariantGroupMigrator implements DataMigrator
         $this->variantGroupValidator = $variantGroupValidator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->variantGroupCombinationRepository = $variantGroupCombinationRepository;
-        $this->familyCreator = $familyCreator;
-        $this->productMigrator = $productMigrator;
-        $this->familyVariantRepository = $familyVariantRepository;
+        $this->variantGroupCombinationMigrator = $variantGroupCombinationMigrator;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -73,11 +61,7 @@ class VariantGroupMigrator implements DataMigrator
         $variantGroupCombinations = $this->variantGroupCombinationRepository->findAll($destinationPim);
 
         foreach ($variantGroupCombinations as $variantGroupCombination) {
-            $familyVariant = $this->familyCreator->buildFromVariantGroupCombination($variantGroupCombination, $destinationPim);
-            $familyVariant->persist($this->familyVariantRepository, $destinationPim);
-
-            $this->productMigrator->migrateProductModels($variantGroupCombination, $familyVariant, $destinationPim);
-            $this->productMigrator->migrateProductVariants($variantGroupCombination, $familyVariant, $destinationPim);
+            $this->variantGroupCombinationMigrator->migrate($variantGroupCombination, $destinationPim);
         }
 
         $this->variantGroupMigrationCleaner->removeDeprecatedData($destinationPim);

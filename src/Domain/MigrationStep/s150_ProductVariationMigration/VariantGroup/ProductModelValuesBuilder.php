@@ -4,30 +4,23 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModel;
 
 /**
- * Builds product model values.
+ * Builds product model values to import them.
+ *
+ * TODO: Remove this class when the import will be replaced by the API.
  *
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
 class ProductModelValuesBuilder
 {
-    /** @var VariantGroupRepository */
-    private $variantGroupRepository;
-
-    public function __construct(VariantGroupRepository $variantGroupRepository)
+    public function build(ProductModel $productModel): array
     {
-        $this->variantGroupRepository = $variantGroupRepository;
-    }
+        $productModelValues = [];
 
-    public function buildFromVariantGroup(string $variantGroupCode, DestinationPim $pim): array
-    {
-        $producModelValues = [];
-        $variantGroupValues = $this->variantGroupRepository->retrieveGroupAttributeValues($variantGroupCode, $pim);
-
-        foreach ($variantGroupValues as $attribute => $values) {
+        foreach ($productModel->getAttributeValues() as $attribute => $values) {
             foreach ($values as $value) {
                 $attributeValueKey = $attribute;
 
@@ -39,19 +32,19 @@ class ProductModelValuesBuilder
                 }
                 if (is_array($value['data'])) {
                     if (isset($value['data']['unit'])) {
-                        $producModelValues[$attributeValueKey] = $value['data']['amount'];
-                        $producModelValues[$attributeValueKey.'-unit'] = $value['data']['unit'];
+                        $productModelValues[$attributeValueKey] = $value['data']['amount'];
+                        $productModelValues[$attributeValueKey.'-unit'] = $value['data']['unit'];
                     } elseif (isset($value['data'][0]['currency'])) {
                         foreach ($value['data'] as $price) {
-                            $producModelValues[$attributeValueKey.'-'.$price['currency']] = $price['amount'];
+                            $productModelValues[$attributeValueKey.'-'.$price['currency']] = $price['amount'];
                         }
                     }
                 } else {
-                    $producModelValues[$attributeValueKey] = $value['data'];
+                    $productModelValues[$attributeValueKey] = $value['data'];
                 }
             }
         }
 
-        return $producModelValues;
+        return $productModelValues;
     }
 }

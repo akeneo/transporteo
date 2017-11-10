@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModel;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductModelValuesBuilder;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use PhpSpec\ObjectBehavior;
 
 /**
@@ -15,19 +14,14 @@ use PhpSpec\ObjectBehavior;
  */
 class ProductModelValuesBuilderSpec extends ObjectBehavior
 {
-    public function let(VariantGroupRepository $variantGroupRepository)
-    {
-        $this->beConstructedWith($variantGroupRepository);
-    }
-
     public function it_is_initializable()
     {
         $this->shouldHaveType(ProductModelValuesBuilder::class);
     }
 
-    public function it_builds_values_from_a_variant_group($variantGroupRepository, DestinationPim $pim)
+    public function it_builds_values_from_a_variant_group(ProductModel $productModel)
     {
-        $variantGroupRepository->retrieveGroupAttributeValues('vg_1', $pim)->willReturn([
+        $productModel->getAttributeValues()->willReturn([
             'vg_att_1' => [
                 [
                     'locale' => null,
@@ -83,7 +77,7 @@ class ProductModelValuesBuilderSpec extends ObjectBehavior
             ]
         ]);
 
-        $this->buildFromVariantGroup('vg_1', $pim)->shouldReturn([
+        $this->build($productModel)->shouldReturn([
             'vg_att_1' => 'VG 1 Att 1 value',
             'vg_att_2-en_US' => 'VG 1 Att 2 value US',
             'vg_att_2-fr_FR' => 'VG 1 Att 2 value FR',

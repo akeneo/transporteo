@@ -34,13 +34,20 @@ class ProductMigratorSpec extends ObjectBehavior
         $this->shouldHaveType(ProductMigrator::class);
     }
 
-    public function it_migrates_product_models(DestinationPim $pim, $variantGroupRepository, $productModelRepository, $productModelValuesBuilder)
-    {
+    public function it_migrates_product_models(
+        DestinationPim $pim,
+        FamilyVariant $familyVariant,
+        $variantGroupRepository,
+        $productModelRepository,
+        $productModelValuesBuilder
+    ) {
         $variantGroupRepository->retrieveVariantGroupCategories('vg_1', $pim)->willReturn(['vg_1_cat_1', 'vg_1_cat_2']);
         $productModelValuesBuilder->buildFromVariantGroup('vg_1', $pim)->willReturn([
             'vg_att_1' => 'VG 1 Att 1 value',
             'vg_att_2-en_US' => 'VG 1 Att 2 value US'
         ]);
+
+        $familyVariant->getCode()->willReturn('family_variant_1');
 
         $productModelRepository->persist(new ProductModel(
             null,
@@ -73,9 +80,9 @@ class ProductMigratorSpec extends ObjectBehavior
         ), $pim)->shouldBeCalled();
 
         $family = new Family(11, 'family_1', []);
-        $variantGroupCombination = new VariantGroupCombination($family, 'family_variant_1', ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2'], []);
+        $variantGroupCombination = new VariantGroupCombination($family, ['att_axe_1', 'att_axe_2'], ['vg_1', 'vg_2'], []);
 
-        $this->migrateProductModels($variantGroupCombination, $pim);
+        $this->migrateProductModels($variantGroupCombination, $familyVariant, $pim);
     }
 
     public function it_migrates_product_variants(
@@ -111,6 +118,6 @@ class ProductMigratorSpec extends ObjectBehavior
             ." WHERE g.code = 'vg_2'"
         ), $pim)->shouldBeCalled();
 
-        $this->migrateProductVariants($familyVariant, $variantGroupCombination, $pim);
+        $this->migrateProductVariants($variantGroupCombination, $familyVariant, $pim);
     }
 }

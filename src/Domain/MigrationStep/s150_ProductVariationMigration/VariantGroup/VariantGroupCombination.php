@@ -17,9 +17,6 @@ class VariantGroupCombination
     /** @var Family */
     private $family;
 
-    /** @var string */
-    private $familyVariantCode;
-
     /** @var array */
     private $axes;
 
@@ -29,10 +26,9 @@ class VariantGroupCombination
     /** @var array */
     private $attributes;
 
-    public function __construct(Family $family, string $familyVariantCode, array $axes, array $groups, array $attributes)
+    public function __construct(Family $family, array $axes, array $groups, array $attributes)
     {
         $this->family = $family;
-        $this->familyVariantCode = $familyVariantCode;
         $this->axes = $axes;
         $this->groups = $groups;
         $this->attributes = $attributes;
@@ -41,11 +37,6 @@ class VariantGroupCombination
     public function getFamily(): Family
     {
         return $this->family;
-    }
-
-    public function getFamilyVariantCode(): string
-    {
-        return $this->familyVariantCode;
     }
 
     public function getAxes(): array

@@ -47,7 +47,7 @@ class ProductMigrator
     /**
      * Creates the product models for a variant group combination.
      */
-    public function migrateProductModels(VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
+    public function migrateProductModels(VariantGroupCombination $variantGroupCombination, FamilyVariant $familyVariant, DestinationPim $pim): void
     {
         foreach ($variantGroupCombination->getGroups() as $variantGroupCode) {
             $categories = $this->variantGroupRepository->retrieveVariantGroupCategories($variantGroupCode, $pim);
@@ -56,7 +56,7 @@ class ProductMigrator
             $productModel = new ProductModel(
                 null,
                 $variantGroupCode,
-                $variantGroupCombination->getFamilyVariantCode(),
+                $familyVariant->getCode(),
                 $categories,
                 $producModelValues
             );
@@ -70,7 +70,7 @@ class ProductMigrator
      *  - Set the product model and the family variant
      *  - Remove the attributes that belong to the family variant.
      */
-    public function migrateProductVariants(FamilyVariant $familyVariant, VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
+    public function migrateProductVariants(VariantGroupCombination $variantGroupCombination, FamilyVariant $familyVariant, DestinationPim $pim): void
     {
         $attributesToRemove = $variantGroupCombination->getAttributes();
 

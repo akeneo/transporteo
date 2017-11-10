@@ -32,9 +32,9 @@ class MigrationCleaner
 
     /**
      * Drops the columns and tables that should no longer exists in the destination PIM.
-     * Deletes the variant-group that have been migrated.
+     * Deletes the variant groups that have been transformed into product models.
      */
-    public function clean(DestinationPim $pim)
+    public function removeDeprecatedData(DestinationPim $pim)
     {
         $this->removeProductTemplateForeignKey($pim);
         $this->removeProductTemplateColumn($pim);

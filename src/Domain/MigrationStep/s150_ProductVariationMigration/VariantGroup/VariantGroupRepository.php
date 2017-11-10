@@ -65,31 +65,6 @@ SQL;
         }
     }
 
-    public function retrieveVariantGroupCombinations(DestinationPim $pim): array
-    {
-        $query =
-<<<SQL
-SELECT f.code as family_code, f.id as family_id,
-(
-	SELECT GROUP_CONCAT(DISTINCT a.code ORDER BY a.code ASC SEPARATOR ',')
-	FROM pim_catalog_group_attribute axe
-	INNER JOIN pim_catalog_attribute a ON axe.attribute_id = a.id
-	WHERE axe.group_id = g.id
-) as axes
-, GROUP_CONCAT(DISTINCT g.code SEPARATOR ',') as groups
-FROM pim_catalog_group g
-    INNER JOIN pim_catalog_group_type gt ON gt.id = g.type_id
-    INNER JOIN pim_catalog_group_product gp ON g.id =  gp.group_id
-    INNER JOIN pim_catalog_product p ON gp.product_id = p.id
-    INNER JOIN pim_catalog_family f ON p.family_id = f.id
-WHERE gt.code = 'VARIANT'
-GROUP BY family_code, axes
-ORDER BY f.code;
-SQL;
-
-        return $this->console->execute(new MySqlQueryCommand($query), $pim)->getOutput();
-    }
-
     public function retrieveVariantGroupsAxes(int $variantGroupId, DestinationPim $pim)
     {
         return $this->console->execute(
@@ -187,7 +162,7 @@ SQL;
     /**
      * Removes softly a variant-group from the migration by changing its type to a specific one.
      */
-    public function softlyRemoveVariantGroup(string $variantGroupCode, DestinationPim $pim): void
+    public function removeSoftlyVariantGroup(string $variantGroupCode, DestinationPim $pim): void
     {
         $this->ensureInvalidVariantGroupTypeExists($pim);
 

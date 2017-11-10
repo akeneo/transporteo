@@ -37,14 +37,14 @@ class VariantGroupMigrator implements DataMigrator
     /** @var ProductMigrator */
     private $productMigrator;
 
-    /** @var FamilyRepository */
-    private $familyRepository;
+    /** @var VariantGroupCombinationRepository */
+    private $variantGroupCombinationRepository;
 
     public function __construct(
         VariantGroupRepository $variantGroupRepository,
         VariantGroupValidator $variantGroupValidator,
+        VariantGroupCombinationRepository $variantGroupCombinationRepository,
         FamilyCreator $familyCreator,
-        FamilyRepository $familyRepository,
         ProductMigrator $productMigrator,
         MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
@@ -53,25 +53,27 @@ class VariantGroupMigrator implements DataMigrator
         $this->tableMigrator = $tableMigrator;
         $this->variantGroupValidator = $variantGroupValidator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
+        $this->variantGroupCombinationRepository = $variantGroupCombinationRepository;
         $this->familyCreator = $familyCreator;
         $this->productMigrator = $productMigrator;
-        $this->familyRepository = $familyRepository;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_group_attribute');
-        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_product_template');
-
+        $this->migrateDeprecatedTables($sourcePim, $destinationPim);
         $this->removeInvalidVariantGroups($destinationPim);
+        $this->removeInvalidVariantGroupCombinations($destinationPim);
 
-        $variantGroupCombinations = $this->retrieveVariantGroupCombinationsToMigrate($destinationPim);
+        $variantGroupCombinations = $this->variantGroupCombinationRepository->findAll($destinationPim);
 
         foreach ($variantGroupCombinations as $variantGroupCombination) {
-            $this->migrateVariantGroupCombination($variantGroupCombination, $destinationPim);
+            $familyVariant = $this->familyCreator->createFamilyVariant($variantGroupCombination, $destinationPim);
+
+            $this->productMigrator->migrateProductModels($variantGroupCombination, $familyVariant, $destinationPim);
+            $this->productMigrator->migrateProductVariants($variantGroupCombination, $familyVariant, $destinationPim);
         }
 
-        $this->variantGroupMigrationCleaner->clean($destinationPim);
+        $this->variantGroupMigrationCleaner->removeDeprecatedData($destinationPim);
 
         $numberOfRemovedInvalidVariantGroups = $this->variantGroupRepository->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim);
         if ($numberOfRemovedInvalidVariantGroups > 0) {
@@ -80,74 +82,33 @@ class VariantGroupMigrator implements DataMigrator
     }
 
     /**
-     * Remove softly the invalid variant-groups from the migration by changing their type to a specific one.
+     * Migrates MySQL tables that no longer exists in PIM 2.0, but are used to retrieve the variant group combinations.
      */
+    private function migrateDeprecatedTables(SourcePim $sourcePim, DestinationPim $destinationPim): void
+    {
+        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_group_attribute');
+        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_product_template');
+    }
+
     private function removeInvalidVariantGroups(DestinationPim $pim): void
     {
         $variantGroups = $this->variantGroupRepository->retrieveVariantGroups($pim);
 
         foreach ($variantGroups as $variantGroup) {
             if (!$this->variantGroupValidator->isVariantGroupValid($variantGroup, $pim)) {
-                $this->variantGroupRepository->softlyRemoveVariantGroup($variantGroup->getCode(), $pim);
+                $this->variantGroupRepository->removeSoftlyVariantGroup($variantGroup->getCode(), $pim);
             }
         }
     }
 
-    private function retrieveVariantGroupCombinationsToMigrate(DestinationPim $pim): \Traversable
+    private function removeInvalidVariantGroupCombinations(DestinationPim $pim): void
     {
-        $variantGroupCombinations = $this->retrieveVariantGroupCombinations($pim);
+        $variantGroupCombinations = $this->variantGroupCombinationRepository->findAll($pim);
 
         foreach ($variantGroupCombinations as $variantGroupCombination) {
-            if ($this->variantGroupValidator->isVariantGroupCombinationValid($variantGroupCombination, $pim)) {
-                yield $variantGroupCombination;
-            } else {
-                $this->removeVariantGroupCombination($variantGroupCombination, $pim);
+            if (!$this->variantGroupValidator->isVariantGroupCombinationValid($variantGroupCombination, $pim)) {
+                $this->variantGroupCombinationRepository->removeSoftly($variantGroupCombination, $pim);
             }
         }
-    }
-
-    /**
-     * Retrieves and build the variant groups combinations.
-     */
-    private function retrieveVariantGroupCombinations(DestinationPim $pim)
-    {
-        $variantGroupCombinations = $this->variantGroupRepository->retrieveVariantGroupCombinations($pim);
-        $familyIncrement = 1;
-        $family = null;
-
-        foreach ($variantGroupCombinations as $variantGroupCombination) {
-            if (null !== $family && $variantGroupCombination['family_code'] === $family->getCode()) {
-                ++$familyIncrement;
-            } else {
-                $familyIncrement = 1;
-                $family = $this->familyRepository->findByCode($variantGroupCombination['family_code'], $pim);
-            }
-
-            $groups = explode(',', $variantGroupCombination['groups']);
-            $attributes = $this->variantGroupRepository->retrieveGroupAttributes($groups[0], $pim);
-
-            yield new VariantGroupCombination(
-                $family,
-                $variantGroupCombination['family_code'].'_'.$familyIncrement,
-                explode(',', $variantGroupCombination['axes']),
-                $groups,
-                $attributes
-            );
-        }
-    }
-
-    private function removeVariantGroupCombination(VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
-    {
-        foreach ($variantGroupCombination->getGroups() as $groupCode) {
-            $this->variantGroupRepository->softlyRemoveVariantGroup($groupCode, $pim);
-        }
-    }
-
-    private function migrateVariantGroupCombination(VariantGroupCombination $variantGroupCombination, DestinationPim $pim)
-    {
-        $familyVariant = $this->familyCreator->createFamilyVariant($variantGroupCombination, $pim);
-
-        $this->productMigrator->migrateProductModels($variantGroupCombination, $pim);
-        $this->productMigrator->migrateProductVariants($familyVariant, $variantGroupCombination, $pim);
     }
 }

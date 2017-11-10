@@ -23,16 +23,23 @@ class FamilyCreator
     /** @var FamilyVariantLabelBuilder */
     private $familyVariantLabelBuilder;
 
-    public function __construct(FamilyRepository $familyRepository, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
-    {
+    /** @var FamilyVariantCodeBuilder */
+    private $familyVariantCodeBuilder;
+
+    public function __construct(
+        FamilyRepository $familyRepository,
+        FamilyVariantLabelBuilder $familyVariantLabelBuilder,
+        FamilyVariantCodeBuilder $familyVariantCodeBuilder
+    ) {
         $this->familyRepository = $familyRepository;
         $this->familyVariantLabelBuilder = $familyVariantLabelBuilder;
+        $this->familyVariantCodeBuilder = $familyVariantCodeBuilder;
     }
 
     public function createFamilyVariant(VariantGroupCombination $variantGroupCombination, Pim $pim): FamilyVariant
     {
         $family = $variantGroupCombination->getFamily();
-        $familyVariantCode = $variantGroupCombination->getFamilyVariantCode();
+        $familyVariantCode = $this->familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination);
 
         $variantAxes = $variantGroupCombination->getAxes();
         $variantAttributes = array_diff($family->getAttributes(), $variantGroupCombination->getAttributes(), $variantAxes);

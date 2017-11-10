@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Fami
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantCodeBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantLabelBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyCreator;
@@ -21,9 +22,9 @@ use PhpSpec\ObjectBehavior;
  */
 class FamilyCreatorSpec extends ObjectBehavior
 {
-    public function let(FamilyRepository $familyRepository, FamilyVariantLabelBuilder $familyVariantLabelBuilder)
+    public function let(FamilyRepository $familyRepository, FamilyVariantLabelBuilder $familyVariantLabelBuilder, FamilyVariantCodeBuilder $familyVariantCodeBuilder)
     {
-        $this->beConstructedWith($familyRepository, $familyVariantLabelBuilder);
+        $this->beConstructedWith($familyRepository, $familyVariantLabelBuilder, $familyVariantCodeBuilder);
     }
 
     public function it_is_initializable()
@@ -31,7 +32,7 @@ class FamilyCreatorSpec extends ObjectBehavior
         $this->shouldHaveType(FamilyCreator::class);
     }
 
-    public function it_successfully_creates_a_family_variant(DestinationPim $destinationPim, $familyRepository, $familyVariantLabelBuilder)
+    public function it_successfully_creates_a_family_variant(DestinationPim $destinationPim, $familyRepository, $familyVariantLabelBuilder, $familyVariantCodeBuilder)
     {
         $family = new Family(11, 'family_1', [
             'attributes' => [
@@ -44,7 +45,6 @@ class FamilyCreatorSpec extends ObjectBehavior
         ]);
         $variantGroupCombination = new VariantGroupCombination(
             $family,
-            'family_variant_1',
             ['att_axe_1', 'att_axe_2'],
             ['vg_1', 'vg_2'],
             ['vg_att_1', 'vg_att_2', 'vg_att_3']
@@ -55,9 +55,11 @@ class FamilyCreatorSpec extends ObjectBehavior
             'fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
         ]);
 
+        $familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination)->willReturn('family_1_att_axe_1_att_axe_2');
+
         $familyRepository->persistFamilyVariant(new FamilyVariant(
             null,
-            'family_variant_1',
+            'family_1_att_axe_1_att_axe_2',
             'family_1',
             ['att_axe_1', 'att_axe_2'],
             [],
@@ -69,12 +71,12 @@ class FamilyCreatorSpec extends ObjectBehavior
             ]
         ), $destinationPim)->shouldBeCalled();
 
-        $familyRepository->retrieveFamilyVariantId('family_variant_1', $destinationPim)->willReturn(11);
+        $familyRepository->retrieveFamilyVariantId('family_1_att_axe_1_att_axe_2', $destinationPim)->willReturn(11);
 
-        $this->createFamilyVariant($variantGroupCombination, $destinationPim);
+        $this->createFamilyVariant($variantGroupCombination, $destinationPim)->shouldReturnAnInstanceOf(FamilyVariant::class);
     }
 
-    public function it_throws_an_exception_if_it_fails_to_create_a_family_variant(DestinationPim $destinationPim, $familyRepository, $familyVariantLabelBuilder)
+    public function it_throws_an_exception_if_it_fails_to_create_a_family_variant(DestinationPim $destinationPim, $familyRepository, $familyVariantLabelBuilder, $familyVariantCodeBuilder)
     {
         $family = new Family(11, 'family_1', [
             'attributes' => [
@@ -87,7 +89,6 @@ class FamilyCreatorSpec extends ObjectBehavior
         ]);
         $variantGroupCombination = new VariantGroupCombination(
             $family,
-            'family_variant_1',
             ['att_axe_1', 'att_axe_2'],
             ['vg_1', 'vg_2'],
             ['vg_att_1', 'vg_att_2', 'vg_att_3']
@@ -98,9 +99,11 @@ class FamilyCreatorSpec extends ObjectBehavior
             'fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
         ]);
 
+        $familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination)->willReturn('family_1_att_axe_1_att_axe_2');
+
         $familyRepository->persistFamilyVariant(new FamilyVariant(
             null,
-            'family_variant_1',
+            'family_1_att_axe_1_att_axe_2',
             'family_1',
             ['att_axe_1', 'att_axe_2'],
             [],
@@ -112,9 +115,9 @@ class FamilyCreatorSpec extends ObjectBehavior
             ]
         ), $destinationPim)->shouldBeCalled();
 
-        $familyRepository->retrieveFamilyVariantId('family_variant_1', $destinationPim)->willReturn(null);
+        $familyRepository->retrieveFamilyVariantId('family_1_att_axe_1_att_axe_2', $destinationPim)->willReturn(null);
 
-        $this->shouldThrow(new ProductVariationMigrationException('Unable to retrieve the family variant family_variant_1. It seems that its creation failed.'))
+        $this->shouldThrow(new ProductVariationMigrationException('Unable to retrieve the family variant family_1_att_axe_1_att_axe_2. It seems that its creation failed.'))
             ->during('createFamilyVariant', [$variantGroupCombination, $destinationPim]);
     }
 }

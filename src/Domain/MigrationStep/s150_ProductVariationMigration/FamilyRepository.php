@@ -23,6 +23,9 @@ class FamilyRepository
     /** @var FamilyVariantImporter */
     private $familyVariantImporter;
 
+    /** @var array */
+    private $familyCache = [];
+
     public function __construct(ChainedConsole $console, FamilyVariantImporter $familyVariantImporter)
     {
         $this->console = $console;
@@ -49,6 +52,10 @@ class FamilyRepository
 
     public function findByCode(string $familyCode, DestinationPim $pim): Family
     {
+        if (isset($this->familyCache[$familyCode])) {
+            return $this->familyCache[$familyCode];
+        }
+
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family WHERE code = "%s"',
             $familyCode
@@ -59,8 +66,10 @@ class FamilyRepository
         }
 
         $familyData = $this->console->execute(new GetFamilyCommand($familyCode), $pim)->getOutput();
+        $family = new Family((int) $sqlResult[0]['id'], $familyCode, $familyData);
+        $this->familyCache[$familyCode] = $family;
 
-        return new Family((int) $sqlResult[0]['id'], $familyCode, $familyData);
+        return $family;
     }
 
     public function retrieveFamilyVariantId(string $familyVariantCode, DestinationPim $pim): ?int

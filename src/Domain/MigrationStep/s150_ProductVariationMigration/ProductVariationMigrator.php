@@ -63,57 +63,37 @@ class ProductVariationMigrator implements DataMigrator
     {
         $warnings = [];
 
-        try {
-            $isIvbMigrationDone = $this->migrateInnerVariationBundle($sourcePim, $destinationPim);
-        } catch (InvalidInnerVariationTypeException $exception) {
-            $warnings[] = $exception->getMessage();
-            $isIvbMigrationDone = true;
+        if ($sourcePim->hasIvb()) {
+            try {
+                $this->innerVariantTypeMigrator->migrate($sourcePim, $destinationPim);
+            } catch (InvalidInnerVariationTypeException $exception) {
+                $warnings[] = $exception->getMessage();
+            }
+        } else {
+            $this->logger->info('There is no InnerVariationType to migrate.');
         }
 
-        try {
-            $isVariantGroupMigrationDone = $this->migrateVariantGroups($sourcePim, $destinationPim);
-        } catch (InvalidVariantGroupException $exception) {
-            $warnings[] = $exception->getMessage();
-            $isVariantGroupMigrationDone = true;
+        $numberOfVariantGroups = $this->variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim);
+
+        if ($numberOfVariantGroups > 0) {
+            $this->logger->info(sprintf("There are %d variant groups to migrate", $numberOfVariantGroups));
+
+            try {
+                $this->variantGroupMigrator->migrate($sourcePim, $destinationPim);
+            } catch (InvalidVariantGroupException $exception) {
+                $warnings[] = $exception->getMessage();
+            }
+        } else {
+            $this->logger->info("There are no variant groups to migrate");
         }
 
-        if ($isIvbMigrationDone || $isVariantGroupMigrationDone) {
+        if ($sourcePim->hasIvb() || $numberOfVariantGroups > 0) {
             $this->refreshElasticSearchIndexes($destinationPim);
         }
 
         if (!empty($warnings)) {
             throw new InvalidProductVariationException($warnings);
         }
-    }
-
-    private function migrateInnerVariationBundle(SourcePim $sourcePim, DestinationPim $destinationPim): bool
-    {
-        if (!$sourcePim->hasIvb()) {
-            $this->logger->info('There is no InnerVariationType to migrate.');
-
-            return false;
-        }
-
-        $this->innerVariantTypeMigrator->migrate($sourcePim, $destinationPim);
-
-        return true;
-    }
-
-    private function migrateVariantGroups(SourcePim $sourcePim, DestinationPim $destinationPim): bool
-    {
-        $numberOfVariantGroups = $this->variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim);
-
-        if (0 === $numberOfVariantGroups) {
-            $this->logger->info("There are no variant groups to migrate");
-
-            return false;
-        }
-
-        $this->logger->info(sprintf("There are %d variant groups to migrate", $numberOfVariantGroups));
-
-        $this->variantGroupMigrator->migrate($sourcePim, $destinationPim);
-
-        return true;
     }
 
     private function refreshElasticSearchIndexes(DestinationPim $destinationPim)

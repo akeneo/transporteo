@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -15,11 +13,8 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  * @author    Laurent Petard <laurent.petard@akeneo.com>
  * @copyright 2017 Akeneo SAS (http://www.akeneo.com)
  */
-class FamilyCreator
+class FamilyVariantBuilder
 {
-    /** @var FamilyRepository */
-    private $familyRepository;
-
     /** @var FamilyVariantLabelBuilder */
     private $familyVariantLabelBuilder;
 
@@ -27,16 +22,14 @@ class FamilyCreator
     private $familyVariantCodeBuilder;
 
     public function __construct(
-        FamilyRepository $familyRepository,
         FamilyVariantLabelBuilder $familyVariantLabelBuilder,
         FamilyVariantCodeBuilder $familyVariantCodeBuilder
     ) {
-        $this->familyRepository = $familyRepository;
         $this->familyVariantLabelBuilder = $familyVariantLabelBuilder;
         $this->familyVariantCodeBuilder = $familyVariantCodeBuilder;
     }
 
-    public function createFamilyVariant(VariantGroupCombination $variantGroupCombination, Pim $pim): FamilyVariant
+    public function buildFromVariantGroupCombination(VariantGroupCombination $variantGroupCombination, Pim $pim): FamilyVariant
     {
         $family = $variantGroupCombination->getFamily();
         $familyVariantCode = $this->familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination);
@@ -46,7 +39,7 @@ class FamilyCreator
 
         $familyVariantLabels = $this->familyVariantLabelBuilder->buildFromVariantGroupCombination($variantGroupCombination, $pim);
 
-        $familyVariant = new FamilyVariant(
+        return new FamilyVariant(
             null,
             $familyVariantCode,
             $family->getCode(),
@@ -55,25 +48,6 @@ class FamilyCreator
             $variantAttributes,
             [],
             $familyVariantLabels
-        );
-
-        $this->familyRepository->persistFamilyVariant($familyVariant, $pim);
-
-        $familyVariantId = $this->familyRepository->retrieveFamilyVariantId($familyVariantCode, $pim);
-
-        if (null === $familyVariantId) {
-            throw new ProductVariationMigrationException(sprintf('Unable to retrieve the family variant %s. It seems that its creation failed.', $familyVariantCode));
-        }
-
-        return new FamilyVariant(
-            $familyVariantId,
-            $familyVariant->getCode(),
-            $family->getCode(),
-            $familyVariant->getLevelOneAxes(),
-            $familyVariant->getLevelTwoAxes(),
-            $familyVariant->getLevelOneAttributes(),
-            $familyVariant->getLevelTwoAttributes(),
-            $familyVariant->getLabels()
         );
     }
 }

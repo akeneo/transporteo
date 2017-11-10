@@ -7,10 +7,11 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMig
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyCreator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\MigrationCleaner;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductMigrator;
@@ -31,13 +32,14 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         VariantGroupRepository $variantGroupRepository,
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
-        FamilyCreator $familyCreator,
+        FamilyVariantBuilder $familyVariantBuilder,
+        FamilyVariantRepository $familyVariantRepository,
         ProductMigrator $productMigrator,
         MigrationCleaner $variantGroupMigrationCleaner,
         TableMigrator $tableMigrator
     )
     {
-        $this->beConstructedWith($variantGroupRepository, $variantGroupValidator, $variantGroupCombinationRepository, $familyCreator, $productMigrator, $variantGroupMigrationCleaner, $tableMigrator);
+        $this->beConstructedWith($variantGroupRepository, $variantGroupValidator, $variantGroupCombinationRepository, $familyVariantBuilder, $familyVariantRepository, $productMigrator, $variantGroupMigrationCleaner, $tableMigrator);
     }
 
     public function it_is_initializable()
@@ -51,7 +53,8 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupRepository,
         $variantGroupValidator,
         $variantGroupCombinationRepository,
-        $familyCreator,
+        $familyVariantBuilder,
+        $familyVariantRepository,
         $productMigrator,
         $tableMigrator,
         $variantGroupMigrationCleaner
@@ -87,13 +90,21 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupValidator->isVariantGroupCombinationValid($secondVariantGroupCombination, $destinationPim)->willReturn(true);
         $variantGroupValidator->isVariantGroupCombinationValid($thirdVariantGroupCombination, $destinationPim)->willReturn(true);
 
-        $firstFamilyVariant = new FamilyVariant(1, 'family_variant_1', 'family_1', ['att_1'], [], [], [], []);
-        $secondFamilyVariant = new FamilyVariant(2, 'family_variant_2', 'family_1', ['att_1', 'att_2'], [], [], [], []);
-        $thirdFamilyVariant = new FamilyVariant(3, 'family_variant_3', 'family_2', ['att_3'], [], [], [], []);
+        $firstFamilyVariant = new FamilyVariant(null, 'family_variant_1', 'family_1', ['att_1'], [], [], [], []);
+        $secondFamilyVariant = new FamilyVariant(null, 'family_variant_2', 'family_1', ['att_1', 'att_2'], [], [], [], []);
+        $thirdFamilyVariant = new FamilyVariant(null, 'family_variant_3', 'family_2', ['att_3'], [], [], [], []);
 
-        $familyCreator->createFamilyVariant($firstVariantGroupCombination, $destinationPim)->willReturn($firstFamilyVariant);
-        $familyCreator->createFamilyVariant($secondVariantGroupCombination, $destinationPim)->willReturn($secondFamilyVariant);
-        $familyCreator->createFamilyVariant($thirdVariantGroupCombination, $destinationPim)->willReturn($thirdFamilyVariant);
+        $familyVariantBuilder->buildFromVariantGroupCombination($firstVariantGroupCombination, $destinationPim)->willReturn($firstFamilyVariant);
+        $familyVariantBuilder->buildFromVariantGroupCombination($secondVariantGroupCombination, $destinationPim)->willReturn($secondFamilyVariant);
+        $familyVariantBuilder->buildFromVariantGroupCombination($thirdVariantGroupCombination, $destinationPim)->willReturn($thirdFamilyVariant);
+
+        $familyVariantRepository->persist($firstFamilyVariant, $destinationPim)->shouldBeCalled();
+        $familyVariantRepository->persist($secondFamilyVariant, $destinationPim)->shouldBeCalled();
+        $familyVariantRepository->persist($thirdFamilyVariant, $destinationPim)->shouldBeCalled();
+
+        $familyVariantRepository->retrieveFamilyVariantId('family_variant_1', $destinationPim)->willReturn(1);
+        $familyVariantRepository->retrieveFamilyVariantId('family_variant_2', $destinationPim)->willReturn(2);
+        $familyVariantRepository->retrieveFamilyVariantId('family_variant_3', $destinationPim)->willReturn(3);
 
         $productMigrator->migrateProductModels($firstVariantGroupCombination, $firstFamilyVariant, $destinationPim)->shouldBeCalled();
         $productMigrator->migrateProductModels($secondVariantGroupCombination, $secondFamilyVariant, $destinationPim)->shouldBeCalled();
@@ -115,7 +126,8 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim,
         $variantGroupRepository,
         $variantGroupValidator,
-        $familyCreator,
+        $familyVariantBuilder,
+        $familyVariantRepository,
         $variantGroupCombinationRepository,
         $productMigrator,
         $tableMigrator,
@@ -152,9 +164,13 @@ class VariantGroupMigratorSpec extends ObjectBehavior
 
         $variantGroupCombinationRepository->removeSoftly($invalidVariantGroupCombination, $destinationPim)->shouldBeCalled();
 
-        $familyVariant = new FamilyVariant(1, 'family_variant_1', 'family_1', ['att_1'], [], [], [], []);
+        $familyVariant = new FamilyVariant(null, 'family_variant_1', 'family_1', ['att_1'], [], [], [], []);
 
-        $familyCreator->createFamilyVariant($validVariantGroupCombination, $destinationPim)->willReturn($familyVariant);
+        $familyVariantBuilder->buildFromVariantGroupCombination($validVariantGroupCombination, $destinationPim)->willReturn($familyVariant);
+
+        $familyVariantRepository->persist($familyVariant, $destinationPim)->shouldBeCalled();
+        $familyVariantRepository->retrieveFamilyVariantId('family_variant_1', $destinationPim)->willReturn(1);
+
         $productMigrator->migrateProductModels($validVariantGroupCombination, $familyVariant, $destinationPim)->shouldBeCalled();
         $productMigrator->migrateProductVariants($validVariantGroupCombination, $familyVariant, $destinationPim)->shouldBeCalled();
 

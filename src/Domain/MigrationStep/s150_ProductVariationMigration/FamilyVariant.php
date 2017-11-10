@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
+use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+
 /**
  * Data of a family variant used for the migration.
  *
@@ -54,6 +56,15 @@ class FamilyVariant
         $this->levelTwoAttributes = $levelTwoAttributes;
         $this->labels = $labels;
         $this->familyCode = $familyCode;
+    }
+
+    public function persist(FamilyVariantRepository $familyVariantRepository, DestinationPim $pim)
+    {
+        $familyVariantRepository->persist($this, $pim);
+
+        if (null === $this->id) {
+            $this->id = $familyVariantRepository->retrieveFamilyVariantId($this->code, $pim);
+        }
     }
 
     public function getId(): ?int

@@ -42,4 +42,14 @@ class Family
     {
         return $this->standardData;
     }
+
+    public function getAttributes(): array
+    {
+        return $this->standardData['attributes'] ?? [];
+    }
+
+    public function getLabels(): array
+    {
+        return $this->standardData['labels'] ?? [];
+    }
 }

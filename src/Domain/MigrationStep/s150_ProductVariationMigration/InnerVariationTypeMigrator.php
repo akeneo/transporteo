@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
-use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -24,15 +23,6 @@ use Psr\Log\LoggerInterface;
  */
 class InnerVariationTypeMigrator implements DataMigrator
 {
-    const MAX_VARIANT_AXES = 5;
-
-    const ALLOWED_AXE_TYPES = [
-        'pim_catalog_simpleselect',
-        'pim_reference_data_simpleselect',
-        'pim_catalog_metric',
-        'pim_catalog_boolean',
-    ];
-
     /** @var LoggerInterface */
     private $logger;
 
@@ -48,11 +38,7 @@ class InnerVariationTypeMigrator implements DataMigrator
     /** @var InnerVariationCleaner */
     private $innerVariationCleaner;
 
-    /** @var ChainedConsole */
-    private $console;
-
     public function __construct(
-        ChainedConsole $console,
         InnerVariationRetriever $innerVariationRetriever,
         InnerVariationFamilyMigrator $innerVariationFamilyMigrator,
         InnerVariationProductMigrator $innerVariationProductMigrator,
@@ -64,22 +50,15 @@ class InnerVariationTypeMigrator implements DataMigrator
         $this->innerVariationProductMigrator = $innerVariationProductMigrator;
         $this->logger = $logger;
         $this->innerVariationCleaner = $innerVariationCleaner;
-        $this->console = $console;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        if (!$sourcePim->hasIvb()) {
-            $this->logger->info('There is no InnerVariationType to migrate.');
-
-            return;
-        }
-
         $innerVariationTypes = $this->innerVariationRetriever->retrieveInnerVariationTypes($destinationPim);
         $invalidInnerVariationTypes = [];
 
         foreach ($innerVariationTypes as $innerVariationType) {
-            if ($this->isInnerVariationTypeCanBeMigrated($innerVariationType)) {
+            if ($this->canInnerVariationTypeBeMigrated($innerVariationType)) {
                 $this->migrateInnerVariationType($innerVariationType, $destinationPim);
             } else {
                 $invalidInnerVariationTypes[] = $innerVariationType;
@@ -88,9 +67,6 @@ class InnerVariationTypeMigrator implements DataMigrator
 
         $this->innerVariationCleaner->deleteInvalidInnerVariationTypesProducts($invalidInnerVariationTypes, $destinationPim);
         $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
-
-        $this->console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim);
-        $this->console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim);
 
         if (!empty($invalidInnerVariationTypes)) {
             throw new InvalidInnerVariationTypeException();
@@ -117,22 +93,22 @@ class InnerVariationTypeMigrator implements DataMigrator
     /**
      * Retrieves and validate the variation axes of an InnerVariationType.
      */
-    private function isInnerVariationTypeCanBeMigrated(InnerVariationType $innerVariationType): bool
+    private function canInnerVariationTypeBeMigrated(InnerVariationType $innerVariationType): bool
     {
         $axes = $innerVariationType->getAxes();
 
-        if (count($axes) > self::MAX_VARIANT_AXES) {
+        if (count($axes) > ProductVariationMigrator::MAX_VARIANT_AXES) {
             $this->logger->warning(sprintf(
                 'Unable to migrate the inner variation type %s because it has more than %d axes.',
                 $innerVariationType->getCode(),
-                self::MAX_VARIANT_AXES
+                ProductVariationMigrator::MAX_VARIANT_AXES
             ));
 
             return false;
         }
 
         foreach ($axes as $axe) {
-            if (!in_array($axe['attribute_type'], self::ALLOWED_AXE_TYPES)) {
+            if (!in_array($axe['attribute_type'], ProductVariationMigrator::ALLOWED_AXIS_TYPES)) {
                 $this->logger->warning(sprintf(
                     'Unable to migrate the inner variation type %s because it has an axe of type %s.',
                     $innerVariationType->getCode(),

@@ -25,7 +25,6 @@ use Psr\Log\LoggerInterface;
 class InnerVariationTypeMigratorSpec extends ObjectBehavior
 {
     public function let(
-        ChainedConsole $console,
         InnerVariationRetriever $innerVariationRetriever,
         InnerVariationFamilyMigrator $innerVariationFamilyMigrator,
         InnerVariationProductMigrator $innerVariationProductMigrator,
@@ -33,7 +32,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         LoggerInterface $logger
     )
     {
-        $this->beConstructedWith($console, $innerVariationRetriever, $innerVariationFamilyMigrator, $innerVariationProductMigrator, $innerVariationCleaner, $logger);
+        $this->beConstructedWith($innerVariationRetriever, $innerVariationFamilyMigrator, $innerVariationProductMigrator, $innerVariationCleaner, $logger);
     }
 
     public function it_is_initializable()
@@ -41,16 +40,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $this->shouldHaveType(InnerVariationTypeMigrator::class);
     }
 
-    public function it_does_nothing_if_ivb_is_not_installed(SourcePim $sourcePim, DestinationPim $destinationPim, $logger)
-    {
-        $sourcePim->hasIvb()->willReturn(false);
-        $logger->info('There is no InnerVariationType to migrate.')->shouldBeCalled();
-
-        $this->migrate($sourcePim, $destinationPim);
-    }
-
     public function it_successfully_migrates_inner_variation_types(
-        $console,
         $innerVariationRetriever,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
@@ -59,8 +49,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
-        $sourcePim->hasIvb()->willReturn(true);
-
         $firstInnerVariationType = new InnerVariationType(
             1, 'ivt_with_two_axes', 10, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
@@ -83,14 +71,10 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-
         $this->migrate($sourcePim, $destinationPim);
     }
 
     public function it_does_not_migrate_ivt_having_more_than_five_axes(
-        $console,
         $innerVariationRetriever,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
@@ -99,8 +83,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
-        $sourcePim->hasIvb()->willReturn(true);
-
         $firstInnerVariationType = new InnerVariationType(
             1, 'ivt_with_five_axes', 10, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
@@ -133,14 +115,10 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-
         $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_does_not_migrate_ivt_having_an_invalid_axes(
-        $console,
         $innerVariationRetriever,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
@@ -149,8 +127,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
-        $sourcePim->hasIvb()->willReturn(true);
-
         $firstInnerVariationType = new InnerVariationType(
             1, 'valid_ivt', 10, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
@@ -178,14 +154,10 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-
         $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_continues_to_migrate_if_an_exception_is_thrown(
-        $console,
         $innerVariationRetriever,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
@@ -194,8 +166,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
-        $sourcePim->hasIvb()->willReturn(true);
-
         $firstInnerVariationType = new InnerVariationType(
             1, 'ivt_with_two_axes', 10, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
@@ -219,9 +189,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
 
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
-
-        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
     }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidInnerVariationTypeException;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidProductVariationException;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator;
 use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 use Symfony\Component\Workflow\Event\Event;
 
 /**
@@ -19,14 +19,14 @@ use Symfony\Component\Workflow\Event\Event;
  */
 class S150FromDestinationPimProductMigratedToDestinationPimProductVariationMigrated extends AbstractStateMachineSubscriber implements StateMachineSubscriber
 {
-    /** @var InnerVariationTypeMigrator */
-    private $innerVariationTypeMigrator;
+    /** @var ProductVariationMigrator */
+    private $productVariationMigrator;
 
-    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InnerVariationTypeMigrator $innerVariationTypeMigrator)
+    public function __construct(Translator $translator, LoggerInterface $logger, ProductVariationMigrator $productVariationMigrator)
     {
         parent::__construct($translator, $logger);
 
-        $this->innerVariationTypeMigrator = $innerVariationTypeMigrator;
+        $this->productVariationMigrator = $productVariationMigrator;
     }
 
     public static function getSubscribedEvents()
@@ -46,9 +46,11 @@ class S150FromDestinationPimProductMigratedToDestinationPimProductVariationMigra
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_product_migrated_to_destination_pim_product_variation_migrated.message'));
 
         try {
-            $this->innerVariationTypeMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
-        } catch (InvalidInnerVariationTypeException $exception) {
-            $this->printerAndAsker->warning($exception->getMessage());
+            $this->productVariationMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
+        } catch (InvalidProductVariationException $exception) {
+            foreach ($exception->getMessages() as $message) {
+                $this->printerAndAsker->warning($message);
+            }
         }
 
         $this->logExit(__FUNCTION__);

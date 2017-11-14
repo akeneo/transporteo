@@ -38,15 +38,6 @@ class ProductModel
         $this->attributeValues = $attributeValues;
     }
 
-    public function persist(ProductModelRepository $productModelRepository, DestinationPim $pim): void
-    {
-        $productModelRepository->persist($this, $pim);
-
-        if (null === $this->id) {
-            $this->id = $productModelRepository->retrieveProductModelId($this->identifier, $pim);
-        }
-    }
-
     public function getId(): ?int
     {
         return $this->id;

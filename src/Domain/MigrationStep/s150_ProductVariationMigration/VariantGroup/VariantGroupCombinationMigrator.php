@@ -48,11 +48,11 @@ class VariantGroupCombinationMigrator
     public function migrate(VariantGroupCombination $variantGroupCombination, DestinationPim $pim): void
     {
         $familyVariant = $this->familyVariantBuilder->buildFromVariantGroupCombination($variantGroupCombination, $pim);
-        $familyVariant->persist($this->familyVariantRepository, $pim);
+        $familyVariant = $this->familyVariantRepository->persist($familyVariant, $pim);
 
         foreach ($variantGroupCombination->getGroups() as $variantGroupCode) {
             $productModel = $this->productModelBuilder->buildFromVariantGroup($variantGroupCode, $familyVariant, $pim);
-            $productModel->persist($this->productModelRepository, $pim);
+            $productModel = $this->productModelRepository->persist($productModel, $pim);
 
             $this->productVariantTransformer->transformFromProductModel($productModel, $familyVariant, $pim);
         }

@@ -34,7 +34,7 @@ class ProductModelRepository
     }
 
     // TODO: persist via the API and remove the dependency to ProductModelValuesBuilder.
-    public function persist(ProductModel $productModel, DestinationPim $pim): void
+    public function persist(ProductModel $productModel, DestinationPim $pim): ProductModel
     {
         $productModelData = [
             'code' => $productModel->getIdentifier(),
@@ -47,9 +47,23 @@ class ProductModelRepository
         $productModelData = array_merge($productModelData, $productModelValues);
 
         $this->productModelImporter->import([$productModelData], $pim);
+
+        if (null === $productModel->getId()) {
+            $id = $this->retrieveProductModelId($this->identifier, $pim);
+
+            $productModel = new ProductModel(
+                $id,
+                $productModel->getIdentifier(),
+                $productModel->getFamilyVariantCode(),
+                $productModel->getCategories(),
+                $productModel->getAttributeValues()
+            );
+        }
+
+        return $productModel;
     }
 
-    public function retrieveProductModelId(string $productModelCode, DestinationPim $pim): int
+    private function retrieveProductModelId(string $productModelCode, DestinationPim $pim): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',

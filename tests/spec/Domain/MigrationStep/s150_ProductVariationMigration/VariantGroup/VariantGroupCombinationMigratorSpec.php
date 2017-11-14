@@ -53,15 +53,15 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
     )
     {
         $familyVariantBuilder->buildFromVariantGroupCombination($variantGroupCombination, $pim)->willReturn($familyVariant);
-        $familyVariant->persist($familyVariantRepository, $pim)->shouldBeCalled();
+        $familyVariantRepository->persist($familyVariant, $pim)->shouldBeCalled();
 
         $variantGroupCombination->getGroups()->willReturn(['vg_1', 'vg_2']);
 
         $productModelBuilder->buildFromVariantGroup('vg_1', $familyVariant, $pim)->willReturn($firstProductModel);
         $productModelBuilder->buildFromVariantGroup('vg_2', $familyVariant, $pim)->willReturn($secondProductModel);
 
-        $firstProductModel->persist($productModelRepository, $pim)->shouldBeCalled();
-        $secondProductModel->persist($productModelRepository, $pim)->shouldBeCalled();
+        $productModelRepository->persist($firstProductModel, $pim)->shouldBeCalled();
+        $productModelRepository->persist($secondProductModel, $pim)->shouldBeCalled();
 
         $productVariantTransformer->transformFromProductModel($firstProductModel, $familyVariant, $pim)->shouldBeCalled();
         $productVariantTransformer->transformFromProductModel($secondProductModel, $familyVariant, $pim)->shouldBeCalled();

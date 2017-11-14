@@ -58,15 +58,6 @@ class FamilyVariant
         $this->familyCode = $familyCode;
     }
 
-    public function persist(FamilyVariantRepository $familyVariantRepository, DestinationPim $pim)
-    {
-        $familyVariantRepository->persist($this, $pim);
-
-        if (null === $this->id) {
-            $this->id = $familyVariantRepository->retrieveFamilyVariantId($this->code, $pim);
-        }
-    }
-
     public function getId(): ?int
     {
         return $this->id;

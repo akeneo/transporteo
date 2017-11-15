@@ -1,6 +1,6 @@
 <?php
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity;
 
 /**
  * Data of an InnerVariationType used to the migration.

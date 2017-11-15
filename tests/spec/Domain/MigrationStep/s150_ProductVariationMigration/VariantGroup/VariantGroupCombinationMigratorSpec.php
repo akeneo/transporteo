@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\ProductModel;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModel;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\FamilyVariantBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductModelBuilder;
@@ -53,15 +53,15 @@ class VariantGroupCombinationMigratorSpec extends ObjectBehavior
     )
     {
         $familyVariantBuilder->buildFromVariantGroupCombination($variantGroupCombination, $pim)->willReturn($familyVariant);
-        $familyVariantRepository->persist($familyVariant, $pim)->shouldBeCalled();
+        $familyVariantRepository->persist($familyVariant, $pim)->willReturn($familyVariant);
 
         $variantGroupCombination->getGroups()->willReturn(['vg_1', 'vg_2']);
 
         $productModelBuilder->buildFromVariantGroup('vg_1', $familyVariant, $pim)->willReturn($firstProductModel);
         $productModelBuilder->buildFromVariantGroup('vg_2', $familyVariant, $pim)->willReturn($secondProductModel);
 
-        $productModelRepository->persist($firstProductModel, $pim)->shouldBeCalled();
-        $productModelRepository->persist($secondProductModel, $pim)->shouldBeCalled();
+        $productModelRepository->persist($firstProductModel, $pim)->willReturn($firstProductModel);
+        $productModelRepository->persist($secondProductModel, $pim)->willReturn($secondProductModel);
 
         $productVariantTransformer->transformFromProductModel($firstProductModel, $familyVariant, $pim)->shouldBeCalled();
         $productVariantTransformer->transformFromProductModel($secondProductModel, $familyVariant, $pim)->shouldBeCalled();

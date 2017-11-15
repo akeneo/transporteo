@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Family;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 
 /**
  * Represents a combination of variant groups by family and axes.

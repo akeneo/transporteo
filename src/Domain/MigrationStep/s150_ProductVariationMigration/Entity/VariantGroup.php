@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity;
 
 /**
  * Data of a VariantGroup used for the migration.

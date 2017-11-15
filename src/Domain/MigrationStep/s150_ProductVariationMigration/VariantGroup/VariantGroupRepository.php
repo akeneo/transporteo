@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\Api\GetAttributeCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\VariantGroup;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**

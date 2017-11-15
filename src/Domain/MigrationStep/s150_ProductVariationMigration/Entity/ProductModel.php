@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
-
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity;
 
 /**
  * Data of a product model used for the migration.
@@ -29,8 +27,13 @@ class ProductModel
     /** @var array */
     private $attributeValues;
 
-    public function __construct(?int $id, string $identifier, string $familyVariantCode, array $categories, array $attributeValues)
-    {
+    public function __construct(
+        ?int $id,
+        string $identifier,
+        string $familyVariantCode,
+        array $categories,
+        array $attributeValues
+    ) {
         $this->id = $id;
         $this->identifier = $identifier;
         $this->familyVariantCode = $familyVariantCode;

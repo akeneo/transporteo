@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
-
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity;
 
 /**
  * Data of a family variant used for the migration.

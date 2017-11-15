@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception;
 
 use Akeneo\PimMigration\Domain\MigrationStep\MigrationStepException;
 

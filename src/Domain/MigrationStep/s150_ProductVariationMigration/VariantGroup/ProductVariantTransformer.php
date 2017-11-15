@@ -6,8 +6,8 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariant;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModel;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\ProductModel;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**

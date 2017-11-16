@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation;
 
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidInnerVariationTypeException;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
@@ -27,8 +28,8 @@ class InnerVariationTypeMigrator implements DataMigrator
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var InnerVariationRetriever */
-    private $innerVariationRetriever;
+    /** @var InnerVariationTypeRepository */
+    private $innerVariationTypeRepository;
 
     /** @var InnerVariationFamilyMigrator */
     private $innerVariationFamilyMigrator;
@@ -40,13 +41,13 @@ class InnerVariationTypeMigrator implements DataMigrator
     private $innerVariationCleaner;
 
     public function __construct(
-        InnerVariationRetriever $innerVariationRetriever,
+        InnerVariationTypeRepository $innerVariationTypeRepository,
         InnerVariationFamilyMigrator $innerVariationFamilyMigrator,
         InnerVariationProductMigrator $innerVariationProductMigrator,
         InnerVariationCleaner $innerVariationCleaner,
         LoggerInterface $logger
     ) {
-        $this->innerVariationRetriever = $innerVariationRetriever;
+        $this->innerVariationTypeRepository = $innerVariationTypeRepository;
         $this->innerVariationFamilyMigrator = $innerVariationFamilyMigrator;
         $this->innerVariationProductMigrator = $innerVariationProductMigrator;
         $this->logger = $logger;
@@ -55,7 +56,7 @@ class InnerVariationTypeMigrator implements DataMigrator
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $innerVariationTypes = $this->innerVariationRetriever->retrieveInnerVariationTypes($destinationPim);
+        $innerVariationTypes = $this->innerVariationTypeRepository->findAll($destinationPim);
         $invalidInnerVariationTypes = [];
 
         foreach ($innerVariationTypes as $innerVariationType) {

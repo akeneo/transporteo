@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Repository for family variant.
@@ -48,7 +49,7 @@ class FamilyVariantRepository
         $this->familyVariantImporter->import([$familyVariantData], $pim);
 
         if (null === $familyVariant->getId()) {
-            $id = $this->retrieveFamilyVariantId($this->code, $pim);
+            $id = $this->getFamilyVariantId($familyVariant->getCode(), $pim);
 
             $familyVariant = new FamilyVariant(
                 $id,
@@ -65,7 +66,26 @@ class FamilyVariantRepository
         return $familyVariant;
     }
 
-    private function retrieveFamilyVariantId(string $familyVariantCode, DestinationPim $pim): int
+    public function findOneByCode(string $familyVariantCode, Pim $pim): FamilyVariant
+    {
+        $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
+            'SELECT id, code FROM pim_catalog_family_variant WHERE code = "%s"',
+            $familyVariantCode
+        )), $pim)->getOutput();
+
+        if (empty($sqlResult)) {
+            throw new ProductVariationMigrationException(
+                sprintf(
+                    'Unable to find the family variant "%s" from parent family.',
+                    $familyVariantCode
+                )
+            );
+        }
+
+        return new FamilyVariant((int) $sqlResult[0]['id'], $sqlResult[0]['code']);
+    }
+
+    private function getFamilyVariantId(string $familyVariantCode, DestinationPim $pim): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',
@@ -73,7 +93,12 @@ class FamilyVariantRepository
         )), $pim)->getOutput();
 
         if(!isset($sqlResult[0]['id'])) {
-            throw new ProductVariationMigrationException(sprintf('Unable to retrieve the family variant %s. It seems that its creation failed.', $familyVariantCode));
+            throw new ProductVariationMigrationException(
+                sprintf(
+                    'Unable to retrieve the family variant %s. It seems that its creation failed.',
+                    $familyVariantCode
+                )
+            );
         }
 
         return (int) $sqlResult[0]['id'];

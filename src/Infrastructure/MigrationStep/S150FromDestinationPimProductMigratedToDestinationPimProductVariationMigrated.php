@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\MigrationStep;
 
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InvalidProductVariationException;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidProductVariationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator;
 use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;

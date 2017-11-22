@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidInnerVariationTypeException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationCleaner;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationFamilyMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationProductMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationRetriever;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariationTypeMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationCleaner;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationFamilyMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationProductMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationTypeMigrator;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationTypeRepository;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
@@ -23,14 +23,20 @@ use Psr\Log\LoggerInterface;
 class InnerVariationTypeMigratorSpec extends ObjectBehavior
 {
     public function let(
-        InnerVariationRetriever $innerVariationRetriever,
+        InnerVariationTypeRepository $innerVariationTypeRepository,
         InnerVariationFamilyMigrator $innerVariationFamilyMigrator,
         InnerVariationProductMigrator $innerVariationProductMigrator,
         InnerVariationCleaner $innerVariationCleaner,
         LoggerInterface $logger
     )
     {
-        $this->beConstructedWith($innerVariationRetriever, $innerVariationFamilyMigrator, $innerVariationProductMigrator, $innerVariationCleaner, $logger);
+        $this->beConstructedWith(
+            $innerVariationTypeRepository,
+            $innerVariationFamilyMigrator,
+            $innerVariationProductMigrator,
+            $innerVariationCleaner,
+            $logger
+        );
     }
 
     public function it_is_initializable()
@@ -39,7 +45,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
     }
 
     public function it_successfully_migrates_inner_variation_types(
-        $innerVariationRetriever,
+        $innerVariationTypeRepository,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
         $innerVariationCleaner,
@@ -58,7 +64,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
             2, 'ivt_with_one_axe', 11, [['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect']]
         );
 
-        $innerVariationRetriever->retrieveInnerVariationTypes($destinationPim)->willReturn([$firstInnerVariationType, $secondInnerVariationType]);
+        $innerVariationTypeRepository->findAll($destinationPim)->willReturn([$firstInnerVariationType, $secondInnerVariationType]);
 
         $innerVariationFamilyMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
@@ -73,7 +79,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
     }
 
     public function it_does_not_migrate_ivt_having_more_than_five_axes(
-        $innerVariationRetriever,
+        $innerVariationTypeRepository,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
         $innerVariationCleaner,
@@ -102,7 +108,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
             ]
         );
 
-        $innerVariationRetriever->retrieveInnerVariationTypes($destinationPim)->willReturn([$firstInnerVariationType, $invalidInnerVariationType]);
+        $innerVariationTypeRepository->findAll($destinationPim)->willReturn([$firstInnerVariationType, $invalidInnerVariationType]);
 
         $innerVariationFamilyMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
@@ -117,7 +123,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
     }
 
     public function it_does_not_migrate_ivt_having_an_invalid_axes(
-        $innerVariationRetriever,
+        $innerVariationTypeRepository,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
         $innerVariationCleaner,
@@ -141,7 +147,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
             ]
         );
 
-        $innerVariationRetriever->retrieveInnerVariationTypes($destinationPim)->willReturn([$firstInnerVariationType, $invalidInnerVariationType]);
+        $innerVariationTypeRepository->findAll($destinationPim)->willReturn([$firstInnerVariationType, $invalidInnerVariationType]);
 
         $innerVariationFamilyMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
@@ -156,7 +162,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
     }
 
     public function it_continues_to_migrate_if_an_exception_is_thrown(
-        $innerVariationRetriever,
+        $innerVariationTypeRepository,
         $innerVariationFamilyMigrator,
         $innerVariationProductMigrator,
         $innerVariationCleaner,
@@ -175,7 +181,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
             2, 'ivt_with_one_axe', 11, [['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect']]
         );
 
-        $innerVariationRetriever->retrieveInnerVariationTypes($destinationPim)->willReturn([$firstInnerVariationType, $secondInnerVariationType]);
+        $innerVariationTypeRepository->findAll($destinationPim)->willReturn([$firstInnerVariationType, $secondInnerVariationType]);
 
         $innerVariationFamilyMigrator->migrate($firstInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator

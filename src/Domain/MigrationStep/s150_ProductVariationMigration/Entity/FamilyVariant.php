@@ -39,12 +39,12 @@ class FamilyVariant
     public function __construct(
         ?int $id,
         string $code,
-        string $familyCode,
-        array $levelOneAxes,
-        array $levelTwoAxes,
-        array $levelOneAttributes,
-        array $levelTwoAttributes,
-        array $labels
+        ?string $familyCode = null,
+        array $levelOneAxes = [],
+        array $levelTwoAxes = [],
+        array $levelOneAttributes = [],
+        array $levelTwoAttributes = [],
+        array $labels = []
     ) {
         $this->id = $id;
         $this->code = $code;
@@ -91,7 +91,7 @@ class FamilyVariant
         return $this->labels;
     }
 
-    public function getFamilyCode(): string
+    public function getFamilyCode(): ?string
     {
         return $this->familyCode;
     }

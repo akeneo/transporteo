@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
+use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\ProductModel;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\ProductVariationMigrationException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductModelValuesBuilder;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Repository for product models data on the destination PIM.
@@ -51,7 +53,7 @@ class ProductModelRepository
         $this->productModelImporter->import([$productModelData], $pim);
 
         if (null === $productModel->getId()) {
-            $id = $this->retrieveProductModelId($this->identifier, $pim);
+            $id = $this->getProductModelId($productModel->getIdentifier(), $pim);
 
             $productModel = new ProductModel(
                 $id,
@@ -65,7 +67,19 @@ class ProductModelRepository
         return $productModel;
     }
 
-    private function retrieveProductModelId(string $productModelCode, DestinationPim $pim): int
+    public function updateRawValuesAndCreatedForProduct(ProductModel $productModel, Pim $pim): void
+    {
+        $command = new MySqlExecuteCommand(
+            'UPDATE pim_catalog_product_model AS product_model'
+            .' INNER JOIN pim_catalog_product AS product ON product.identifier = product_model.code'
+            .' SET product_model.raw_values = product.raw_values, product_model.created = product.created'
+            .' WHERE product_model.id = '.$productModel->getId()
+        );
+
+        $this->console->execute($command, $pim);
+    }
+
+    private function getProductModelId(string $productModelCode, DestinationPim $pim): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',

@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation;
 
 use Akeneo\PimMigration\Domain\Command\Api\UpdateFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Psr\Log\LoggerInterface;
 
@@ -21,8 +24,8 @@ use Psr\Log\LoggerInterface;
  */
 class InnerVariationFamilyMigrator
 {
-    /** @var InnerVariationRetriever */
-    private $innerVariationRetriever;
+    /** @var InnerVariationTypeRepository */
+    private $innerVariationTypeRepository;
 
     /** @var FamilyVariantImporter */
     private $familyVariantImporter;
@@ -33,37 +36,45 @@ class InnerVariationFamilyMigrator
     /** @var ChainedConsole */
     private $console;
 
+    /** @var FamilyVariantRepository */
+    private $familyVariantRepository;
+
     public function __construct(
-        InnerVariationRetriever $innerVariationRetriever,
+        InnerVariationTypeRepository $innerVariationTypeRepository,
         FamilyVariantImporter $familyVariantImporter,
         ChainedConsole $console,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        FamilyVariantRepository $familyVariantRepository
     ) {
-        $this->innerVariationRetriever = $innerVariationRetriever;
+        $this->innerVariationTypeRepository = $innerVariationTypeRepository;
         $this->familyVariantImporter = $familyVariantImporter;
         $this->logger = $logger;
         $this->console = $console;
+        $this->familyVariantRepository = $familyVariantRepository;
     }
 
     public function migrate(InnerVariationType $innerVariationType, Pim $pim): void
     {
-        $innerVariationFamily = $this->innerVariationRetriever->retrieveInnerVariationFamily($innerVariationType, $pim);
-        $parentFamilies = $this->innerVariationRetriever->retrieveParentFamilies($innerVariationType, $pim);
+        $innerVariationFamily = $this->innerVariationTypeRepository->getFamily($innerVariationType, $pim);
+        $parentFamilies = $this->innerVariationTypeRepository->getParentFamilies($innerVariationType, $pim);
 
-        $familiesVariants = [];
         foreach ($parentFamilies as $parentFamily) {
             $this->migrateFamilyAttributes($parentFamily, $innerVariationFamily, $pim);
 
-            $familiesVariants[] = $this->buildFamilyVariant($parentFamily, $innerVariationFamily, $innerVariationType, $pim);
+            $familyVariant = $this->buildFamilyVariant($parentFamily, $innerVariationFamily, $innerVariationType, $pim);
+            $this->familyVariantRepository->persist($familyVariant, $pim);
         }
-
-        $this->familyVariantImporter->import($familiesVariants, $pim);
     }
 
     /**
      * Creates a family variant from an InnerVariationType.
      */
-    private function buildFamilyVariant(Family $parentFamily, Family $innerVariationFamily, InnerVariationType $innerVariationType, Pim $pim): array
+    private function buildFamilyVariant(
+        Family $parentFamily,
+        Family $innerVariationFamily,
+        InnerVariationType $innerVariationType,
+        Pim $pim
+    ): FamilyVariant
     {
         $axesCodes = [];
         foreach ($innerVariationType->getAxes() as $axe) {
@@ -74,23 +85,22 @@ class InnerVariationFamilyMigrator
         $innerVariationFamilyData = $innerVariationFamily->getStandardData();
         $attributes = $this->removeVariationParentProductAttribute($innerVariationFamilyData['attributes']);
 
-        $familyVariant = [
-            'code' => $parentFamily->getCode().'_'.$innerVariationFamily->getCode(),
-            'family' => $parentFamily->getCode(),
-            'variant-axes_1' => implode(',', $axesCodes),
-            'variant-axes_2' => '',
-            'variant-attributes_1' => implode(',', $attributes),
-            'variant-attributes_2' => '',
-        ];
-
+        $labels = [];
         foreach ($parentFamilyData['labels'] as $locale => $label) {
-            $innerVariationLabel = $this->innerVariationRetriever->retrieveInnerVariationLabel($innerVariationType, $locale, $pim);
-            $familyVariant['label-'.$locale] = $label.' '.$innerVariationLabel;
+            $innerVariationLabel = $this->innerVariationTypeRepository->getLabel($innerVariationType, $locale, $pim);
+            $labels[$locale] = $label.' '.$innerVariationLabel;
         }
 
-        $this->logger->debug('Create the new family variant '.$familyVariant['code'], $familyVariant);
-
-        return $familyVariant;
+        return new FamilyVariant(
+            null,
+            $parentFamily->getCode().'_'.$innerVariationFamily->getCode(),
+            $parentFamily->getCode(),
+            $axesCodes,
+            [],
+            $attributes,
+            [],
+            $labels
+        );
     }
 
     /**

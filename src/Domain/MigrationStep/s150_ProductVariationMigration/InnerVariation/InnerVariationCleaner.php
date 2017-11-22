@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation;
 
-use Akeneo\PimMigration\Domain\Command\Api\DeleteProductCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductRepository;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 use Psr\Log\LoggerInterface;
@@ -26,14 +26,23 @@ class InnerVariationCleaner
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var InnerVariationRetriever */
-    private $innerVariationRetriever;
+    /** @var InnerVariationTypeRepository */
+    private $innerVariationTypeRepository;
 
-    public function __construct(ChainedConsole $console, InnerVariationRetriever $innerVariationRetriever, LoggerInterface $logger)
+    /** @var ProductRepository */
+    private $productRepository;
+
+    public function __construct(
+        ChainedConsole $console,
+        InnerVariationTypeRepository $innerVariationRepository,
+        LoggerInterface $logger,
+        ProductRepository $productRepository
+    )
     {
         $this->console = $console;
-        $this->innerVariationRetriever = $innerVariationRetriever;
+        $this->innerVariationTypeRepository = $innerVariationRepository;
         $this->logger = $logger;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -60,21 +69,21 @@ class InnerVariationCleaner
     public function deleteInvalidInnerVariationTypesProducts(array $invalidInnerVariationTypes, DestinationPim $pim): void
     {
         foreach ($invalidInnerVariationTypes as $invalidInnerVariationType) {
-            $innerVariationFamily = $this->innerVariationRetriever->retrieveInnerVariationFamily($invalidInnerVariationType, $pim);
-            $parentFamilies = $this->innerVariationRetriever->retrieveParentFamilies($invalidInnerVariationType, $pim);
+            $innerVariationFamily = $this->innerVariationTypeRepository->getFamily($invalidInnerVariationType, $pim);
+            $parentFamilies = $this->innerVariationTypeRepository->getParentFamilies($invalidInnerVariationType, $pim);
 
             foreach ($parentFamilies as $family) {
-                $products = $this->innerVariationRetriever->retrievesFamilyProductsHavingVariants($family->getId(), $innerVariationFamily->getId(), $pim);
+                $products = $this->productRepository->findAllHavingVariantsForIvb($family->getId(), $innerVariationFamily->getId(), $pim);
 
                 foreach ($products as $product) {
-                    $this->deleteProduct($product['identifier'], $pim);
+                    $this->productRepository->delete($product->getIdentifier(), $pim);
                 }
             }
         }
 
-        $productsVariants = $this->innerVariationRetriever->retrieveNotMigratedProductVariants($pim);
+        $productsVariants = $this->productRepository->findAllNotMigratedProductVariants($pim);
         foreach ($productsVariants as $productsVariant) {
-            $this->deleteProduct($productsVariant['identifier'], $pim);
+            $this->productRepository->delete($productsVariant->getIdentifier(), $pim);
         }
     }
 
@@ -111,30 +120,14 @@ class InnerVariationCleaner
         }
     }
 
-    private function deleteProduct(string $productCode, Pim $pim): void
-    {
-        /**
-         * TODO: Do a SQL query when the console command "akeneo:elasticsearch:reset-indexes" can be used.
-         * The problem is that this command ask a confirmation.
-         * This command is available since the version 2.0.2 so we have to ensure that it's the minimal version of the destination PIM.
-         */
-        $command = new DeleteProductCommand($productCode);
-
-        try {
-            $this->console->execute($command, $pim);
-        } catch (\Exception $exception) {
-            $this->logger->warning(sprintf(
-                'Unable to delete the product %s : %s', $productCode, $exception->getMessage()
-            ));
-        }
-    }
-
     /**
      * Delete the attribute "variation_parent_product" specific to the IVB.
      */
     private function deleteInnerVariationAttribute(Pim $pim)
     {
-        $deleteAttributeCommand = new MySqlExecuteCommand('DELETE FROM pim_catalog_attribute WHERE code = "variation_parent_product"');
+        $deleteAttributeCommand = new MySqlExecuteCommand(
+            'DELETE FROM pim_catalog_attribute WHERE code = "variation_parent_product"'
+        );
 
         try {
             $this->console->execute($deleteAttributeCommand, $pim);

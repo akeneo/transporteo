@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation;
 
-use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
@@ -25,9 +24,6 @@ use Psr\Log\LoggerInterface;
  */
 class InnerVariationProductMigrator
 {
-    /** @var ChainedConsole */
-    private $console;
-
     /** @var InnerVariationTypeRepository */
     private $innerVariationTypeRepository;
 
@@ -49,7 +45,6 @@ class InnerVariationProductMigrator
     private $familyVariantRepository;
 
     public function __construct(
-        ChainedConsole $console,
         InnerVariationTypeRepository $innerVariationTypeRepository,
         LoggerInterface $logger,
         ProductRepository $productRepository,
@@ -58,7 +53,6 @@ class InnerVariationProductMigrator
         ProductVariantTransformer $productVariantTransformer,
         FamilyVariantRepository $familyVariantRepository
     ) {
-        $this->console = $console;
         $this->innerVariationTypeRepository = $innerVariationTypeRepository;
         $this->logger = $logger;
         $this->productRepository = $productRepository;

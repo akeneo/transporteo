@@ -31,7 +31,7 @@ class FamilyVariantRepository
         $this->familyVariantImporter = $familyVariantImporter;
     }
 
-    public function persist(FamilyVariant $familyVariant, DestinationPim $pim): FamilyVariant
+    public function persist(FamilyVariant $familyVariant, Pim $pim): FamilyVariant
     {
         $familyVariantData = [
             'code' => $familyVariant->getCode(),
@@ -85,7 +85,7 @@ class FamilyVariantRepository
         return new FamilyVariant((int) $sqlResult[0]['id'], $sqlResult[0]['code']);
     }
 
-    private function getFamilyVariantId(string $familyVariantCode, DestinationPim $pim): int
+    private function getFamilyVariantId(string $familyVariantCode, Pim $pim): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',

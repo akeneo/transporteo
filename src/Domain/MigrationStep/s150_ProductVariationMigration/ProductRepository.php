@@ -40,7 +40,7 @@ class ProductRepository
         return $categories;
     }
 
-    public function findAllHavingVariantsForIvb(int $parentFamilyId, int $innerVariationFamilyId, Pim $pim): \Iterator
+    public function findAllHavingVariantsForIvb(int $parentFamilyId, int $innerVariationFamilyId, Pim $pim): \Traversable
     {
         $sqlResults = $this->console->execute(new MySqlQueryCommand(sprintf(
                 'SELECT id, identifier FROM pim_catalog_product AS product_model

@@ -50,8 +50,8 @@ class InnerVariationTypeMigrator implements DataMigrator
         $this->innerVariationTypeRepository = $innerVariationTypeRepository;
         $this->innerVariationFamilyMigrator = $innerVariationFamilyMigrator;
         $this->innerVariationProductMigrator = $innerVariationProductMigrator;
-        $this->logger = $logger;
         $this->innerVariationCleaner = $innerVariationCleaner;
+        $this->logger = $logger;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void

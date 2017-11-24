@@ -53,10 +53,21 @@ class ProductModelRepository
         $this->productModelImporter->import([$productModelData], $pim);
 
         if (null === $productModel->getId()) {
-            $id = $this->getProductModelId($productModel->getIdentifier(), $pim);
+            //$id = $this->getProductModelId($productModel->getIdentifier(), $pim);
+            $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
+                'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',
+                $productModel->getIdentifier()
+            )), $pim)->getOutput();
+
+            if(!isset($sqlResult[0]['id'])) {
+                throw new ProductVariationMigrationException(sprintf(
+                    'Unable to retrieve the product model %s. It seems that its creation failed.',
+                    $productModel->getIdentifier()
+                ));
+            }
 
             $productModel = new ProductModel(
-                $id,
+                (int) $sqlResult[0]['id'],
                 $productModel->getIdentifier(),
                 $productModel->getFamilyVariantCode(),
                 $productModel->getCategories(),
@@ -79,20 +90,12 @@ class ProductModelRepository
         $this->console->execute($command, $pim);
     }
 
-    private function getProductModelId(string $productModelCode, DestinationPim $pim): int
+    public function getProductModelId(string $identifier, DestinationPim $pim): ?int
     {
-        $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
-            'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',
-            $productModelCode
+        $productData = $this->console->execute(new MySqlQueryCommand(sprintf(
+            'SELECT id FROM pim_catalog_product_model WHERE code = "%s"', $identifier
         )), $pim)->getOutput();
 
-        if(!isset($sqlResult[0]['id'])) {
-            throw new ProductVariationMigrationException(sprintf(
-                'Unable to retrieve the product model %s. It seems that its creation failed.',
-                $productModelCode
-            ));
-        }
-
-        return (int) $sqlResult[0]['id'];
+        return empty($productData) ? null : (int) $productData[0]['id'];
     }
 }

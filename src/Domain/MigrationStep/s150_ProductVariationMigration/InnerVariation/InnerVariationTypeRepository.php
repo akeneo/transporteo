@@ -70,18 +70,25 @@ class InnerVariationTypeRepository
     }
 
     /**
-     * Retrieves the parent families related to an InnerVariationType.
+     * Retrieves parent families having variant products related to an InnerVariationType.
      */
-    public function getParentFamilies(InnerVariationType $innerVariationType, Pim $pim): \Traversable
+    public function getParentFamiliesHavingVariantProducts(InnerVariationType $innerVariationType, Pim $pim): \Traversable
     {
         $parentFamiliesData = $this->console->execute(
-            new MySqlQueryCommand(
-                'SELECT pim_catalog_family.code, pim_catalog_family.id
-                FROM pim_inner_variation_inner_variation_type_family
-                INNER JOIN pim_catalog_family ON pim_catalog_family.id = family_id
-                WHERE inner_variation_type_id = '.$innerVariationType->getId()
-            ),
-            $pim
+            new MySqlQueryCommand(sprintf(
+                'SELECT DISTINCT f.code, f.id
+                 FROM pim_inner_variation_inner_variation_type ivt
+                 INNER JOIN pim_inner_variation_inner_variation_type_family ivtf ON ivtf.inner_variation_type_id = ivt.id
+                 INNER JOIN pim_catalog_family f ON f.id = ivtf.family_id
+                 INNER JOIN pim_catalog_product product_model ON product_model.family_id = f.id
+                 WHERE ivt.id = %d
+                  AND EXISTS(
+                     SELECT * FROM pim_catalog_product AS product_variant
+                     WHERE product_variant.family_id = ivt.variation_family_id
+                     AND JSON_EXTRACT(product_variant.raw_values, \'$.variation_parent_product."<all_channels>"."<all_locales>"\') = product_model.identifier
+                 )',
+                 $innerVariationType->getId()
+        )), $pim
         )->getOutput();
 
         foreach ($parentFamiliesData as $parentFamilyData) {
@@ -102,6 +109,34 @@ class InnerVariationTypeRepository
         )), $pim)->getOutput();
 
         return $innerVariationTypeLabel[0]['label'] ?? '';
+    }
+
+    public function findOneForFamilyCode(string $familyCode, Pim $pim): ?InnerVariationType
+    {
+        $innerVariationTypeData = $this->console->execute(
+            new MySqlQueryCommand(sprintf(
+                'SELECT ivt.id, ivt.code, ivt.variation_family_id 
+                FROM pim_inner_variation_inner_variation_type ivt
+                INNER JOIN pim_inner_variation_inner_variation_type_family ivtf ON ivtf.inner_variation_type_id = ivt.id
+                INNER JOIN pim_catalog_family f ON f.id = ivtf.family_id
+                WHERE f.code = "%s"'
+                , $familyCode)),
+            $pim
+        )->getOutput();
+
+        if (empty($innerVariationTypeData)) {
+            return null;
+        }
+
+        $innerVariationTypeData = $innerVariationTypeData[0];
+        $innerVariationTypeId = (int) $innerVariationTypeData['id'];
+
+        return new InnerVariationType(
+            $innerVariationTypeId,
+            $innerVariationTypeData['code'],
+            (int) $innerVariationTypeData['variation_family_id'],
+            $this->getAxes($innerVariationTypeId, $pim)
+        );
     }
 
     /**

@@ -56,7 +56,7 @@ class InnerVariationFamilyMigrator
     public function migrate(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $innerVariationFamily = $this->innerVariationTypeRepository->getFamily($innerVariationType, $pim);
-        $parentFamilies = $this->innerVariationTypeRepository->getParentFamilies($innerVariationType, $pim);
+        $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim);
 
         foreach ($parentFamilies as $parentFamily) {
             $this->migrateFamilyAttributes($parentFamily, $innerVariationFamily, $pim);
@@ -106,7 +106,7 @@ class InnerVariationFamilyMigrator
     /**
      * Adds the attributes (and their requirements) of a "variant" family into a "parent" family.
      */
-    private function migrateFamilyAttributes(Family $parentFamily, Family $familyVariant, Pim $pim): void
+    public function migrateFamilyAttributes(Family $parentFamily, Family $familyVariant, Pim $pim): void
     {
         $this->logger->debug(sprintf('Add the attributes of family %s to family %s', $familyVariant->getCode(), $parentFamily->getCode()));
 

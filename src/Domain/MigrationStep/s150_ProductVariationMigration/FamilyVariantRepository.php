@@ -85,7 +85,7 @@ class FamilyVariantRepository
         return new FamilyVariant((int) $sqlResult[0]['id'], $sqlResult[0]['code']);
     }
 
-    private function getFamilyVariantId(string $familyVariantCode, Pim $pim): int
+    public function getFamilyVariantId(string $familyVariantCode, Pim $pim): int
     {
         $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
             'SELECT id FROM pim_catalog_family_variant WHERE code = "%s"',

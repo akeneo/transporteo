@@ -93,7 +93,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             ]
         ]);
 
-        $innerVariationTypeRepository->getParentFamilies($innerVariationType, $pim)->willReturn(new \ArrayObject([$firstParentFamily, $secondParentFamily]));
+        $innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim)->willReturn(new \ArrayObject([$firstParentFamily, $secondParentFamily]));
 
         $console->execute(new UpdateFamilyCommand([
             'code' => 'first_parent_family',

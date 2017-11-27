@@ -54,7 +54,7 @@ class MixedVariationMigrator
             return false;
         }
 
-        $productsHavingVariants = $this->productRepository->findAllHavingVariantsByGroups($variantGroupCombination->getGroups(), $innerVariationType->getVariationFamilyId(), $destinationPim);
+        $productsHavingVariants = $this->productRepository->findAllHavingVariantsByGroups($variantGroupCombination->getGroups(), $innerVariationType->getVariationFamily()->getId(), $destinationPim);
 
         if (empty($productsHavingVariants)) {
             return false;

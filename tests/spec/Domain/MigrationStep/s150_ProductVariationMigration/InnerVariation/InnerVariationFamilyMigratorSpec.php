@@ -66,7 +66,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             ]
         ]);
 
-        $innerVariationTypeRepository->getFamily($innerVariationType, $pim)->willReturn($innerVariationFamily);
+        $innerVariationType->getVariationFamily()->willReturn($innerVariationFamily);
 
         $firstParentFamily = new Family(1, 'first_parent_family', [
             'code' => 'first_parent_family',

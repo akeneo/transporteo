@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation;
 
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidInnerVariationTypeException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationCleaner;
@@ -53,15 +54,18 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
+        $firstVariationFamily = new Family(10, 'an_inner_variation_family', []);
+        $secondVariationFamily = new Family(11, 'another_inner_variation_family', []);
+
         $firstInnerVariationType = new InnerVariationType(
-            1, 'ivt_with_two_axes', 10, [
+            1, 'ivt_with_two_axes', $firstVariationFamily, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_metric']
             ]
         );
 
         $secondInnerVariationType = new InnerVariationType(
-            2, 'ivt_with_one_axe', 11, [['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect']]
+            2, 'ivt_with_one_axe', $secondVariationFamily, [['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect']]
         );
 
         $innerVariationTypeRepository->findAll($destinationPim)->willReturn([$firstInnerVariationType, $secondInnerVariationType]);
@@ -87,8 +91,11 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
+        $firstVariationFamily = new Family(10, 'an_inner_variation_family', []);
+        $secondVariationFamily = new Family(11, 'another_inner_variation_family', []);
+
         $firstInnerVariationType = new InnerVariationType(
-            1, 'ivt_with_five_axes', 10, [
+            1, 'ivt_with_five_axes', $firstVariationFamily, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_3', 'attribute_type' => 'pim_catalog_simpleselect'],
@@ -98,7 +105,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         );
 
         $invalidInnerVariationType = new InnerVariationType(
-            2, 'ivt_with_six_axes', 11, [
+            2, 'ivt_with_six_axes', $secondVariationFamily, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_3', 'attribute_type' => 'pim_catalog_simpleselect'],
@@ -131,8 +138,11 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
+        $firstVariationFamily = new Family(10, 'an_inner_variation_family', []);
+        $secondVariationFamily = new Family(11, 'another_inner_variation_family', []);
+
         $firstInnerVariationType = new InnerVariationType(
-            1, 'valid_ivt', 10, [
+            1, 'valid_ivt', $firstVariationFamily, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_2', 'attribute_type' => 'pim_reference_data_simpleselect'],
                 ['code' => 'axe_3', 'attribute_type' => 'pim_catalog_metric'],
@@ -141,7 +151,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         );
 
         $invalidInnerVariationType = new InnerVariationType(
-            2, 'invalid_ivt', 11, [
+            2, 'invalid_ivt', $secondVariationFamily, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'invalid_axe', 'attribute_type' => 'pim_catalog_identifier'],
             ]
@@ -170,15 +180,18 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         DestinationPim $destinationPim
     )
     {
+        $firstVariationFamily = new Family(10, 'an_inner_variation_family', []);
+        $secondVariationFamily = new Family(11, 'another_inner_variation_family', []);
+
         $firstInnerVariationType = new InnerVariationType(
-            1, 'ivt_with_two_axes', 10, [
+            1, 'ivt_with_two_axes', $firstVariationFamily, [
                 ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
                 ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_metric']
             ]
         );
 
         $secondInnerVariationType = new InnerVariationType(
-            2, 'ivt_with_one_axe', 11, [['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect']]
+            2, 'ivt_with_one_axe', $secondVariationFamily, [['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect']]
         );
 
         $innerVariationTypeRepository->findAll($destinationPim)->willReturn([$firstInnerVariationType, $secondInnerVariationType]);

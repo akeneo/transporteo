@@ -69,7 +69,7 @@ class InnerVariationCleaner
     public function deleteInvalidInnerVariationTypesProducts(array $invalidInnerVariationTypes, DestinationPim $pim): void
     {
         foreach ($invalidInnerVariationTypes as $invalidInnerVariationType) {
-            $innerVariationFamily = $this->innerVariationTypeRepository->getFamily($invalidInnerVariationType, $pim);
+            $innerVariationFamily = $invalidInnerVariationType->getVariationFamily();
             $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($invalidInnerVariationType, $pim);
 
             foreach ($parentFamilies as $family) {

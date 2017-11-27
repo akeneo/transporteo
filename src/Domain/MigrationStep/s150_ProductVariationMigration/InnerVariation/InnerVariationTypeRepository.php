@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -22,9 +23,13 @@ class InnerVariationTypeRepository
     /** @var ChainedConsole */
     private $console;
 
-    public function __construct(ChainedConsole $console)
+    /** @var FamilyRepository */
+    private $familyRepository;
+
+    public function __construct(ChainedConsole $console, FamilyRepository $familyRepository)
     {
         $this->console = $console;
+        $this->familyRepository = $familyRepository;
     }
 
     /**
@@ -44,29 +49,12 @@ class InnerVariationTypeRepository
             $innerVariationTypes[] = new InnerVariationType(
                 $id,
                 $innerVariationTypeData['code'],
-                (int) $innerVariationTypeData['variation_family_id'],
+                $this->familyRepository->findById((int) $innerVariationTypeData['variation_family_id']),
                 $this->getAxes($id, $pim)
             );
         }
 
         return $innerVariationTypes;
-    }
-
-    /**
-     * Retrieves the family variant data of an InnerVariationType.
-     */
-    public function getFamily(InnerVariationType $innerVariationType, Pim $pim): Family
-    {
-        $innerVariationFamily = $this->console->execute(
-            new MySqlQueryCommand('SELECT id, code FROM pim_catalog_family WHERE id = '.$innerVariationType->getVariationFamilyId()),
-            $pim
-        )->getOutput();
-
-        if (empty($innerVariationFamily)) {
-            throw new \RuntimeException('Unable te retrieve the family having id = '.$innerVariationType->getVariationFamilyId());
-        }
-
-        return $this->buildFamily((int) $innerVariationFamily[0]['id'], $innerVariationFamily[0]['code'], $pim);
     }
 
     /**
@@ -134,7 +122,7 @@ class InnerVariationTypeRepository
         return new InnerVariationType(
             $innerVariationTypeId,
             $innerVariationTypeData['code'],
-            (int) $innerVariationTypeData['variation_family_id'],
+            $this->familyRepository->findById((int) $innerVariationTypeData['variation_family_id']),
             $this->getAxes($innerVariationTypeId, $pim)
         );
     }

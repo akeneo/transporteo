@@ -130,7 +130,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
 
         $firstFamilyVariant = new FamilyVariant(
             null,
-            'first_parent_family_inner_variation_family',
+            'first_parent_family',
             'first_parent_family',
             ['axe_1', 'axe_2'],
             [],
@@ -144,7 +144,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
 
         $secondFamilyVariant = new FamilyVariant(
             null,
-            'second_parent_family_inner_variation_family',
+            'second_parent_family',
             'second_parent_family',
             ['axe_1', 'axe_2'],
             [],

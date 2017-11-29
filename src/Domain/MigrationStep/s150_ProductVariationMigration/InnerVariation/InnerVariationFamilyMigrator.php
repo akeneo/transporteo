@@ -93,7 +93,7 @@ class InnerVariationFamilyMigrator
 
         return new FamilyVariant(
             null,
-            $parentFamily->getCode().'_'.$innerVariationFamily->getCode(),
+            $parentFamily->getCode(),
             $parentFamily->getCode(),
             $axesCodes,
             [],

@@ -54,8 +54,9 @@ Enterprise | Product Asset            | 1.0.0-alpha1 |
 Enterprise | Asset files              |      `-`     |
 Enterprise | Product Asset Categories | 1.0.0-alpha1 |
 Enterprise | Product Rules            | 1.0.0-alpha1 |
-Enterprise | Product Draft            |      WIP     |
-Enterprise | Published Product        |      WIP     |
+Enterprise | Product Draft            |      `-`     |
+Enterprise | Published Product        |      `-`     |
+Enterprise | Teamwork Assistant       |      `-`     |
 
 ### Extensions
 

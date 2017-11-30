@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Infrastructure\Cli;
 
-use Akeneo\Pim\AkeneoPimClientInterface;
+use Akeneo\Pim\ApiClient\AkeneoPimClientInterface;
 use Akeneo\PimMigration\Domain\Command\Api\CreateFamilyVariantCommand;
 use Akeneo\PimMigration\Domain\Command\Api\CreateProductModelCommand;
 use Akeneo\PimMigration\Domain\Command\Api\DeleteProductCommand;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace spec\Akeneo\PimMigration\Infrastructure\MigrationStep;
 
-use Akeneo\Pim\AkeneoPimClientInterface;
-use Akeneo\Pim\Api\ProductApiInterface;
+use Akeneo\Pim\ApiClient\AkeneoPimClientInterface;
+use Akeneo\Pim\ApiClient\Api\ProductApiInterface;
 use Akeneo\PimMigration\Domain\Pim\PimApiClientBuilder;
 use Akeneo\PimMigration\Domain\Pim\PimApiParameters;
 use Akeneo\PimMigration\Domain\PrinterAndAsker;

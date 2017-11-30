@@ -40,7 +40,7 @@ class VariantGroupRepository
         return $this->retrieveNumberOfVariantGroupsByType($pim, 'INVALID_VARIANT');
     }
 
-    public function retrieveVariantGroups(DestinationPim $pim): \Traversable
+    public function retrieveVariantGroups(DestinationPim $pim, array $codes = []): \Traversable
     {
         $query =
 <<<SQL
@@ -56,8 +56,12 @@ FROM pim_catalog_group_type gt
 INNER JOIN pim_catalog_group g ON g.type_id = gt.id
 LEFT JOIN pim_catalog_group_attribute axe ON axe.group_id = g.id
 WHERE gt.code = "VARIANT"
-GROUP BY g.code
 SQL;
+        if (!empty($codes)) {
+            $query .= sprintf(' AND g.code IN ("%s")', implode('","', $codes));
+        }
+
+        $query .= ' GROUP BY g.code';
 
         $variantGroups = $this->console->execute(new MySqlQueryCommand($query), $pim)->getOutput();
 

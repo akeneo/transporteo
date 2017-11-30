@@ -2,20 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
+namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation;
 
-use Akeneo\PimMigration\Domain\Command\Api\CreateProductModelCommand;
-use Akeneo\PimMigration\Domain\Command\Api\DeleteProductCommand;
-use Akeneo\PimMigration\Domain\Command\Api\GetProductCommand;
-use Akeneo\PimMigration\Domain\Command\ChainedConsole;
-use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\ProductModel;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\ProductVariationMigrationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\ProductVariantTransformer as InnerVariationProductVariantTransformer;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductRepository;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductVariantTransformer as VariantGroupProductVariantTransformer;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
-use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
  * Migrates products according to the migration of mixed variant group and IVB.
@@ -25,90 +19,76 @@ use Akeneo\PimMigration\Domain\Pim\Pim;
  */
 class MixedVariationProductMigrator
 {
-    /** @var ChainedConsole */
-    private $console;
+    /** @var ProductModelBuilder */
+    private $productModelBuilder;
 
-    /** @var VariantGroupProductMigrator */
-    private $variantGroupProductMigrator;
+    /** @var ProductRepository */
+    private $productRepository;
 
-    /** @var MixedVariationRetriever */
-    private $mixedVariationRetriever;
+    /** @var ProductModelRepository */
+    private $productModelRepository;
+
+    /** @var InnerVariationProductVariantTransformer */
+    private $innerVariationProductVariantTransformer;
+
+    /** @var VariantGroupProductVariantTransformer */
+    private $variantGroupProductVariantTransformer;
+
+    /** @var ProductModelSaver */
+    private $productModelSaver;
 
     public function __construct(
-        ChainedConsole $console,
-        VariantGroupProductMigrator $variantGroupProductMigrator,
-        MixedVariationRetriever $mixedVariationRetriever
+        ProductModelBuilder $productModelBuilder,
+        ProductRepository $productRepository,
+        ProductModelRepository $productModelRepository,
+        ProductModelSaver $productModelSaver,
+        InnerVariationProductVariantTransformer $innerVariationProductVariantTransformer,
+        VariantGroupProductVariantTransformer $variantGroupProductVariantTransformer
     )
     {
-        $this->console = $console;
-        $this->variantGroupProductMigrator = $variantGroupProductMigrator;
-        $this->mixedVariationRetriever = $mixedVariationRetriever;
-    }
-
-    public function migrateLevelOneProductModels(VariantGroupCombination $variantGroupCombination, Pim $pim): void
-    {
-        $this->variantGroupProductMigrator->migrateProductModels($variantGroupCombination, $pim);
-    }
-
-    public function migrateLevelTwoProductModels(array $parentProducts, VariantGroupCombination $variantGroupCombination, Pim $pim): array
-    {
-        foreach ($parentProducts as $parentProduct) {
-            $parentProductData = $this->console->execute(new GetProductCommand($parentProduct->getIdentifier()), $pim)->getOutput();
-
-            $productModelData = [
-                'family_variant' => $variantGroupCombination->getFamilyVariantCode(),
-                'categories' => $parentProductData['categories'],
-                'parent' => $parentProduct->getVariantGroupCode(),
-                'values' => $parentProductData['values'],
-            ];
-
-            $this->console->execute(new CreateProductModelCommand($parentProduct->getIdentifier(), $productModelData), $pim);
-        }
-
-        $createdProductModels = [];
-        foreach ($parentProducts as $parentProduct) {
-            $productModelId = $this->mixedVariationRetriever->retrieveProductModelId($parentProduct->getIdentifier(), $pim);
-
-            if (null === $productModelId) {
-                throw new ProductVariationMigrationException(sprintf('Unable to retrieve the product model %s. It seems that its creation failed.', $parentProduct->getIdentifier()));
-            }
-
-            $this->console->execute(new DeleteProductCommand($parentProduct->getIdentifier()), $pim);
-
-            $createdProductModels[] = new ProductModel($productModelId, $parentProduct->getIdentifier(), $parentProduct->getFamilyId());
-        }
-
-        return $createdProductModels;
-    }
-
-    public function migrateInnerVariationTypeProductVariants(ProductModel $productModel, FamilyVariant $familyVariant, InnerVariationType $innerVariationType, $pim)
-    {
-        $command = new MySqlExecuteCommand(sprintf(
-            'UPDATE pim_catalog_product '
-            .' SET family_id = %s, product_model_id = %s, family_variant_id = %s, product_type = "variant_product",'
-            .' raw_values = JSON_REMOVE(raw_values, \'$.variation_parent_product\')'
-            .' WHERE family_id = %s'
-            .' AND JSON_EXTRACT(raw_values, \'$.variation_parent_product."<all_channels>"."<all_locales>"\') = "%s"',
-            $productModel->getFamilyId(),
-            $productModel->getId(),
-            $familyVariant->getId(),
-            $innerVariationType->getVariationFamilyId(),
-            $productModel->getIdentifier()
-        ));
-
-        $this->console->execute($command, $pim);
+        $this->productModelBuilder = $productModelBuilder;
+        $this->productRepository = $productRepository;
+        $this->productModelRepository = $productModelRepository;
+        $this->innerVariationProductVariantTransformer = $innerVariationProductVariantTransformer;
+        $this->variantGroupProductVariantTransformer = $variantGroupProductVariantTransformer;
+        $this->productModelSaver = $productModelSaver;
     }
 
     /**
-     * Migrates products variants for the variant groups products that don't have variants via the IVB.
-     * It's just like the variant group migration because all the products having variants via the IVB have been deleted before.
+     * Migrates products variations by creating products models and transforming products in product variants.
+     *  - A root product model is created for each variant group of a family an variant axes combination.
+     *  - A sub product model is created for each product grouped in the variant group, having variation via an inner-variation-type.
+     *  - Each product variation of the product grouped in the variant group is transformed to a product variant having the sub product model as parent.
+     *  - Each product grouped in the variant group that doesn't have variation is transformed to a product variant having the root product model as parent.
      */
-    public function migrateRemainingProductVariants(
-        FamilyVariant $familyVariant,
-        VariantGroupCombination $variantGroupCombination,
-        DestinationPim $pim
-    ): void
+    public function migrateProducts(MixedVariation $mixedVariation, FamilyVariant $familyVariant, DestinationPim $pim): void
     {
-        $this->variantGroupProductMigrator->migrateProductVariants($familyVariant, $variantGroupCombination, $pim);
+        $variantGroupCombination = $mixedVariation->getVariantGroupCombination();
+        $innerVariationType = $mixedVariation->getInnerVariationType();
+
+        foreach ($variantGroupCombination->getGroups() as $variantGroupCode) {
+            $rootProductModel = $this->productModelBuilder->buildRootProductModel($variantGroupCode, $familyVariant, $pim);
+            $rootProductModel = $this->productModelRepository->persist($rootProductModel, $pim);
+
+            $productsHavingVariants = $mixedVariation->getVariantGroupProductsHavingVariants($variantGroupCode);
+
+            foreach ($productsHavingVariants as $parentProduct) {
+                $subProductModel = $this->productModelBuilder->buildSubProductModel($rootProductModel, $parentProduct, $familyVariant, $pim);
+                $subProductModel = $this->productModelSaver->save($subProductModel, $pim);
+
+                $this->innerVariationProductVariantTransformer->transform(
+                    $subProductModel,
+                    $familyVariant,
+                    $variantGroupCombination->getFamily(),
+                    $innerVariationType->getVariationFamily(),
+                    $pim
+                );
+
+                $this->productRepository->delete($parentProduct->getIdentifier(), $pim);
+            }
+
+            // To transform into variants the remaining products that would not have variations via the IVB.
+            $this->variantGroupProductVariantTransformer->transformFromProductModel($rootProductModel, $familyVariant, $pim);
+        }
     }
 }

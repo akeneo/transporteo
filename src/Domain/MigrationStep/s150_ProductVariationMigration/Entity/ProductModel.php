@@ -27,18 +27,23 @@ class ProductModel
     /** @var array */
     private $attributeValues;
 
+    /** @var string */
+    private $parentIdentifier;
+
     public function __construct(
         ?int $id,
         string $identifier,
         string $familyVariantCode,
         array $categories,
-        array $attributeValues
+        array $attributeValues,
+        string $parentIdentifier = null
     ) {
         $this->id = $id;
         $this->identifier = $identifier;
         $this->familyVariantCode = $familyVariantCode;
         $this->categories = $categories;
         $this->attributeValues = $attributeValues;
+        $this->parentIdentifier = $parentIdentifier;
     }
 
     public function getId(): ?int
@@ -64,5 +69,10 @@ class ProductModel
     public function getAttributeValues(): array
     {
         return $this->attributeValues;
+    }
+
+    public function getParentIdentifier(): ?string
+    {
+        return $this->parentIdentifier;
     }
 }

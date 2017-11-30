@@ -21,9 +21,6 @@ class VariantGroupMigrator implements DataMigrator
     /** @var VariantGroupRepository */
     private $variantGroupRepository;
 
-    /** @var TableMigrator */
-    private $tableMigrator;
-
     /** @var VariantGroupValidator */
     private $variantGroupValidator;
 
@@ -41,11 +38,9 @@ class VariantGroupMigrator implements DataMigrator
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
         VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
-        MigrationCleaner $variantGroupMigrationCleaner,
-        TableMigrator $tableMigrator
+        MigrationCleaner $variantGroupMigrationCleaner
     ) {
         $this->variantGroupRepository = $variantGroupRepository;
-        $this->tableMigrator = $tableMigrator;
         $this->variantGroupValidator = $variantGroupValidator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->variantGroupCombinationRepository = $variantGroupCombinationRepository;
@@ -54,7 +49,6 @@ class VariantGroupMigrator implements DataMigrator
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $this->migrateDeprecatedTables($sourcePim, $destinationPim);
         $this->removeInvalidVariantGroups($destinationPim);
         $this->removeInvalidVariantGroupCombinations($destinationPim);
 
@@ -70,15 +64,6 @@ class VariantGroupMigrator implements DataMigrator
         if ($numberOfRemovedInvalidVariantGroups > 0) {
             throw new InvalidVariantGroupException($numberOfRemovedInvalidVariantGroups);
         }
-    }
-
-    /**
-     * Migrates MySQL tables that no longer exists in PIM 2.0, but are used to retrieve the variant group combinations.
-     */
-    private function migrateDeprecatedTables(SourcePim $sourcePim, DestinationPim $destinationPim): void
-    {
-        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_group_attribute');
-        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_product_template');
     }
 
     private function removeInvalidVariantGroups(DestinationPim $pim): void

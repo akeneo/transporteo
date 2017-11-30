@@ -30,11 +30,10 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
         VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
-        MigrationCleaner $variantGroupMigrationCleaner,
-        TableMigrator $tableMigrator
+        MigrationCleaner $variantGroupMigrationCleaner
     )
     {
-        $this->beConstructedWith($variantGroupRepository, $variantGroupValidator, $variantGroupCombinationRepository, $variantGroupCombinationMigrator, $variantGroupMigrationCleaner, $tableMigrator);
+        $this->beConstructedWith($variantGroupRepository, $variantGroupValidator, $variantGroupCombinationRepository, $variantGroupCombinationMigrator, $variantGroupMigrationCleaner);
     }
 
     public function it_is_initializable()
@@ -49,13 +48,9 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupValidator,
         $variantGroupCombinationRepository,
         $variantGroupCombinationMigrator,
-        $tableMigrator,
         $variantGroupMigrationCleaner
     )
     {
-        $tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_group_attribute')->shouldBeCalled();
-        $tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_product_template')->shouldBeCalled();
-
         $firstVariantGroup = new VariantGroup('vg_1', 1, 1);
         $secondVariantGroup = new VariantGroup('vg_2', 1, 1);
         $thirdVariantGroup = new VariantGroup('vg_3', 2, 1);
@@ -101,13 +96,9 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         $variantGroupValidator,
         $variantGroupCombinationRepository,
         $variantGroupCombinationMigrator,
-        $tableMigrator,
         $variantGroupMigrationCleaner
     )
     {
-        $tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_group_attribute')->shouldBeCalled();
-        $tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_product_template')->shouldBeCalled();
-
         $validVariantGroup = new VariantGroup('valid_vg', 1, 1);
         $invalidVariantGroup = new VariantGroup('vg_too_many_axes', 6, 1);
 

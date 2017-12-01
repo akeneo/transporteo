@@ -79,10 +79,10 @@ class MixedVariationMigratorSpec extends ObjectBehavior
         $parentFamily = new Family(20, 'a_family', []);
         $variationFamily = new Family(31, 'ivt_family', []);
 
-        $mixedVariantGroupCombination = new VariantGroupCombination($parentFamily, ['axe_1'], ['group_1', 'group_2'], []);
-        $notMixedVariantGroupCombination = new VariantGroupCombination($parentFamily, ['axe_2'], ['group_3', 'group_4'], []);
+        $mixedVariantGroupCombination = new VariantGroupCombination($parentFamily, ['axis_1'], ['group_1', 'group_2'], []);
+        $notMixedVariantGroupCombination = new VariantGroupCombination($parentFamily, ['axis_2'], ['group_3', 'group_4'], []);
 
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $firstVariantGroup = new VariantGroup('group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('group_2', 1, 1);
@@ -132,9 +132,9 @@ class MixedVariationMigratorSpec extends ObjectBehavior
         $parentFamily = new Family(20, 'a_family', []);
         $variationFamily = new Family(31, 'ivt_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($parentFamily, ['axe_1'], ['group_1', 'group_2'], []);
+        $variantGroupCombination = new VariantGroupCombination($parentFamily, ['axis_1'], ['group_1', 'group_2'], []);
 
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $firstVariantGroup = new VariantGroup('group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('group_2', 1, 1);

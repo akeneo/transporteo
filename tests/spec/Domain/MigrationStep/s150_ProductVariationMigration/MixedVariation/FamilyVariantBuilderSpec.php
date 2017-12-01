@@ -47,7 +47,7 @@ class FamilyVariantBuilderSpec extends ObjectBehavior
     )
     {
         $family = new Family(41, 'family_parent', [
-            'attributes' => ['family_parent_att_1', 'vg_axe_1', 'vg_axe_2', 'variation_family_att_1', 'group_att_1', 'group_att_2'],
+            'attributes' => ['family_parent_att_1', 'vg_axis_1', 'vg_axis_2', 'variation_family_att_1', 'group_att_1', 'group_att_2'],
             'labels' => [
                 'en_US' => 'Parent family',
                 'fr_FR' => 'Famille parent'
@@ -55,15 +55,15 @@ class FamilyVariantBuilderSpec extends ObjectBehavior
         ]);
 
         $innerVariationFamily = new Family(42, 'variation_family', [
-            'attributes' => ['variation_family_att_1', 'ivt_axe', 'variation_parent_product'],
+            'attributes' => ['variation_family_att_1', 'ivt_axis', 'variation_parent_product'],
             'labels' => [
                 'en_US' => 'Variation family',
                 'fr_FR' => 'Famille de variation'
             ]
         ]);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $innerVariationFamily, [['code' => 'ivt_axe']]);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $innerVariationFamily, [['code' => 'ivt_axis']]);
         $mixedVariation = new MixedVariation($variantGroupCombination, $innerVariationType, [], new \ArrayObject());
 
         $innerVariationFamilyMigrator->migrateFamilyAttributes($family, $innerVariationFamily, $destinationPim)->shouldBeCalled();
@@ -71,21 +71,21 @@ class FamilyVariantBuilderSpec extends ObjectBehavior
         $variantGroupRepository->retrieveGroupAttributes('group_1', $destinationPim)->willReturn(['group_att_1', 'group_att_2']);
         $familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination)->willReturn('family_variant');
         $familyLabelBuilder->build($variantGroupCombination, $innerVariationType, $destinationPim)->willReturn([
-            'en_US' => 'Parent family VG axe 1 VG axe 2',
-            'fr_FR' => 'Famille parent Axe 2 VG IVT FR'
+            'en_US' => 'Parent family VG axis 1 VG axis 2',
+            'fr_FR' => 'Famille parent axis 2 VG IVT FR'
         ]);
 
         $familyVariant = new FamilyVariant(
             null,
             'family_variant',
             'family_parent',
-            ['vg_axe_1', 'vg_axe_2'],
-            ['ivt_axe'],
+            ['vg_axis_1', 'vg_axis_2'],
+            ['ivt_axis'],
             ['family_parent_att_1'],
             ['variation_family_att_1'],
             [
-                'en_US' => 'Parent family VG axe 1 VG axe 2',
-                'fr_FR' => 'Famille parent Axe 2 VG IVT FR'
+                'en_US' => 'Parent family VG axis 1 VG axis 2',
+                'fr_FR' => 'Famille parent axis 2 VG IVT FR'
             ]
         );
 

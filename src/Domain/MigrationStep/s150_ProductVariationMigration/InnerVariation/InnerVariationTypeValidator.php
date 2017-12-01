@@ -38,12 +38,12 @@ class InnerVariationTypeValidator
             return false;
         }
 
-        foreach ($axes as $axe) {
-            if (!in_array($axe['attribute_type'], ProductVariationMigrator::ALLOWED_AXIS_TYPES)) {
+        foreach ($axes as $axis) {
+            if (!in_array($axis['attribute_type'], ProductVariationMigrator::ALLOWED_AXIS_TYPES)) {
                 $this->logger->warning(sprintf(
-                    'Unable to migrate the inner variation type %s because it has an axe of type %s.',
+                    'Unable to migrate the inner variation type %s because it has an axis of type %s.',
                     $innerVariationType->getCode(),
-                    $axe['attribute_type']
+                    $axis['attribute_type']
                 ));
 
                 return false;

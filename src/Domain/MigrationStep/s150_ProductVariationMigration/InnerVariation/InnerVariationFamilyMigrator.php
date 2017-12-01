@@ -77,8 +77,8 @@ class InnerVariationFamilyMigrator
     ): FamilyVariant
     {
         $axesCodes = [];
-        foreach ($innerVariationType->getAxes() as $axe) {
-            $axesCodes[] = $axe['code'];
+        foreach ($innerVariationType->getAxes() as $axis) {
+            $axesCodes[] = $axis['code'];
         }
 
         $parentFamilyData = $parentFamily->getStandardData();

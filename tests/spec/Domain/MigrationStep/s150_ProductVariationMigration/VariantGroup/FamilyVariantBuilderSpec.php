@@ -33,7 +33,7 @@ class FamilyVariantBuilderSpec extends ObjectBehavior
     {
         $family = new Family(11, 'family_1', [
             'attributes' => [
-                'att_1', 'att_2', 'vg_att_1', 'vg_att_2', 'vg_att_3', 'att_axe_1', 'att_axe_2'
+                'att_1', 'att_2', 'vg_att_1', 'vg_att_2', 'vg_att_3', 'att_axis_1', 'att_axis_2'
             ],
             'labels' => [
                 'en_US' => 'Family 1 US',
@@ -42,29 +42,29 @@ class FamilyVariantBuilderSpec extends ObjectBehavior
         ]);
         $variantGroupCombination = new VariantGroupCombination(
             $family,
-            ['att_axe_1', 'att_axe_2'],
+            ['att_axis_1', 'att_axis_2'],
             ['vg_1', 'vg_2'],
             ['vg_att_1', 'vg_att_2', 'vg_att_3']
         );
 
         $familyVariantLabelBuilder->buildFromVariantGroupCombination($variantGroupCombination, $destinationPim)->willReturn([
-            'en_US' => 'Family 1 US Axe 1 US Axe 2 US',
-            'fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
+            'en_US' => 'Family 1 US axis 1 US axis 2 US',
+            'fr_FR' => 'Family 1 FR axis 1 FR axis 2 FR',
         ]);
 
-        $familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination)->willReturn('family_1_att_axe_1_att_axe_2');
+        $familyVariantCodeBuilder->buildFromVariantGroupCombination($variantGroupCombination)->willReturn('family_1_att_axis_1_att_axis_2');
 
         $familyVariant = new FamilyVariant(
             null,
-            'family_1_att_axe_1_att_axe_2',
+            'family_1_att_axis_1_att_axis_2',
             'family_1',
-            ['att_axe_1', 'att_axe_2'],
+            ['att_axis_1', 'att_axis_2'],
             [],
             ['att_1', 'att_2'],
             [],
             [
-                'en_US' => 'Family 1 US Axe 1 US Axe 2 US',
-                'fr_FR' => 'Family 1 FR Axe 1 FR Axe 2 FR',
+                'en_US' => 'Family 1 US axis 1 US axis 2 US',
+                'fr_FR' => 'Family 1 FR axis 1 FR axis 2 FR',
             ]
         );
 

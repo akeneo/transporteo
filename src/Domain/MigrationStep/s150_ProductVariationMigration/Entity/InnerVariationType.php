@@ -59,8 +59,8 @@ class InnerVariationType
     {
         $axesCodes = [];
 
-        foreach ($this->axes as $axe) {
-            $axesCodes[] = $axe['code'];
+        foreach ($this->axes as $axis) {
+            $axesCodes[] = $axis['code'];
         }
 
         return $axesCodes;

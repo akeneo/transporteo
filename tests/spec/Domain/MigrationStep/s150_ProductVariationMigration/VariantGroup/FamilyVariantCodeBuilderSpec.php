@@ -27,9 +27,9 @@ class FamilyVariantCodeBuilderSpec extends ObjectBehavior
         $variantGroupCombination->getFamily()->willReturn($family);
         $family->getCode()->willReturn('the_family');
 
-        $variantGroupCombination->getAxes()->willReturn(['axe_1', 'axe_2']);
+        $variantGroupCombination->getAxes()->willReturn(['axis_1', 'axis_2']);
 
-        $this->buildFromVariantGroupCombination($variantGroupCombination)->shouldReturn('the_family_axe_1_axe_2');
+        $this->buildFromVariantGroupCombination($variantGroupCombination)->shouldReturn('the_family_axis_1_axis_2');
     }
 
     public function it_builds_a_valid_family_variant_code_even_if_the_axes_codes_are_too_long(VariantGroupCombination $variantGroupCombination, Family $family)
@@ -37,7 +37,7 @@ class FamilyVariantCodeBuilderSpec extends ObjectBehavior
         $variantGroupCombination->getFamily()->willReturn($family);
         $family->getCode()->willReturn('the_family');
 
-        $variantGroupCombination->getAxes()->willReturn(['axe_1', str_repeat('code_too_long', 10)]);
+        $variantGroupCombination->getAxes()->willReturn(['axis_1', str_repeat('code_too_long', 10)]);
 
         $validCodeRegex = sprintf('/^the_family[\w]{1,%d}$/', (FamilyVariantCodeBuilder::MAX_LENGTH - strlen('the_family')));
         $this->buildFromVariantGroupCombination($variantGroupCombination)->shouldMatch($validCodeRegex);
@@ -53,7 +53,7 @@ class FamilyVariantCodeBuilderSpec extends ObjectBehavior
         $family->getCode()->willReturn('the_family');
 
         $firstVariantGroupCombination->getAxes()->willReturn([str_repeat('code_too_long', 10)]);
-        $secondVariantGroupCombination->getAxes()->willReturn([str_repeat('code_too_long', 10), 'axe_2']);
+        $secondVariantGroupCombination->getAxes()->willReturn([str_repeat('code_too_long', 10), 'axis_2']);
 
         $firstCode = $this->buildFromVariantGroupCombination($firstVariantGroupCombination)->getWrappedObject();
         $secondCode = $this->buildFromVariantGroupCombination($secondVariantGroupCombination)->getWrappedObject();

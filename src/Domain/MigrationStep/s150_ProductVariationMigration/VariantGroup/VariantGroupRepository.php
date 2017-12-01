@@ -44,7 +44,7 @@ class VariantGroupRepository
     {
         $query =
 <<<SQL
-SELECT g.code, COUNT(axe.group_id) as nb_axes,
+SELECT g.code, COUNT(axis.group_id) as nb_axes,
 (
     SELECT COUNT(DISTINCT f.id)
     FROM pim_catalog_group_product gp
@@ -54,7 +54,7 @@ SELECT g.code, COUNT(axe.group_id) as nb_axes,
 ) as nb_families
 FROM pim_catalog_group_type gt
 INNER JOIN pim_catalog_group g ON g.type_id = gt.id
-LEFT JOIN pim_catalog_group_attribute axe ON axe.group_id = g.id
+LEFT JOIN pim_catalog_group_attribute axis ON axis.group_id = g.id
 WHERE gt.code = "VARIANT"
 SQL;
         if (!empty($codes)) {

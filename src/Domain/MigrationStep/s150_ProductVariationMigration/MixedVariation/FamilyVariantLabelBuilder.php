@@ -37,13 +37,13 @@ class FamilyVariantLabelBuilder
     {
         $familyVariantLabels = $variantGroupCombination->getFamily()->getStandardData()['labels'];
 
-        foreach ($variantGroupCombination->getAxes() as $axe) {
-            $axeData = $this->variantGroupRepository->retrieveAttributeData($axe, $pim);
-            $axeLabels = $axeData['labels'];
+        foreach ($variantGroupCombination->getAxes() as $axis) {
+            $axisData = $this->variantGroupRepository->retrieveAttributeData($axis, $pim);
+            $axisLabels = $axisData['labels'];
 
             foreach (array_keys($familyVariantLabels) as $locale) {
-                if (isset($axeLabels[$locale])) {
-                    $familyVariantLabels[$locale] .= ' '.$axeLabels[$locale];
+                if (isset($axisLabels[$locale])) {
+                    $familyVariantLabels[$locale] .= ' '.$axisLabels[$locale];
                 }
             }
         }

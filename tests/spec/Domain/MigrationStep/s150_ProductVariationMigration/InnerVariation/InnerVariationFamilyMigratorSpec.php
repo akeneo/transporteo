@@ -121,8 +121,8 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
         ]), $pim)->shouldBeCalled();
 
         $innerVariationType->getAxes()->willReturn([
-            ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_metric']
+            ['code' => 'axis_1', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_2', 'attribute_type' => 'pim_catalog_metric']
         ]);
 
         $innerVariationTypeRepository->getLabel($innerVariationType, 'en_US', $pim)->willReturn('IVT US');
@@ -132,7 +132,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             null,
             'first_parent_family',
             'first_parent_family',
-            ['axe_1', 'axe_2'],
+            ['axis_1', 'axis_2'],
             [],
             ['attribute_1', 'attribute_2'],
             [],
@@ -146,7 +146,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             null,
             'second_parent_family',
             'second_parent_family',
-            ['axe_1', 'axe_2'],
+            ['axis_1', 'axis_2'],
             [],
             ['attribute_1', 'attribute_2'],
             [],

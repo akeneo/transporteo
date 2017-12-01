@@ -43,8 +43,8 @@ class MixedVariationBuilderSpec extends ObjectBehavior
         $family = new Family(41, 'family_parent', []);
         $variationFamily = new Family(41, 'variation_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $products = [
             new Product(1, 'product_1', 31, '2016-11-23 12:45:38', 'group_1'),
@@ -71,7 +71,7 @@ class MixedVariationBuilderSpec extends ObjectBehavior
     public function it_returns_null_if_there_is_no_inner_variation_type(DestinationPim $destinationPim, $innerVariationTypeRepository)
     {
         $family = new Family(41, 'family_parent', []);
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
 
         $innerVariationTypeRepository->findOneForFamilyCode('family_parent', $destinationPim)->willReturn(null);
 
@@ -83,8 +83,8 @@ class MixedVariationBuilderSpec extends ObjectBehavior
         $family = new Family(41, 'family_parent', []);
         $variationFamily = new Family(41, 'variation_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $innerVariationTypeRepository->findOneForFamilyCode('family_parent', $destinationPim)->willReturn($innerVariationType);
 

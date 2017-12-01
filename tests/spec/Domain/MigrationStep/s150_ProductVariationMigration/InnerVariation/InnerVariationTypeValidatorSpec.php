@@ -32,11 +32,11 @@ class InnerVariationTypeValidatorSpec extends ObjectBehavior
 
         $innerVariationType = new InnerVariationType(
             1, 'ivt_with_five_axes', $family, [
-                ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
-                ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_simpleselect'],
-                ['code' => 'axe_3', 'attribute_type' => 'pim_catalog_simpleselect'],
-                ['code' => 'axe_4', 'attribute_type' => 'pim_catalog_simpleselect'],
-                ['code' => 'axe_5', 'attribute_type' => 'pim_catalog_simpleselect'],
+                ['code' => 'axis_1', 'attribute_type' => 'pim_catalog_simpleselect'],
+                ['code' => 'axis_2', 'attribute_type' => 'pim_catalog_simpleselect'],
+                ['code' => 'axis_3', 'attribute_type' => 'pim_catalog_simpleselect'],
+                ['code' => 'axis_4', 'attribute_type' => 'pim_catalog_simpleselect'],
+                ['code' => 'axis_5', 'attribute_type' => 'pim_catalog_simpleselect'],
             ]
         );
 
@@ -49,26 +49,26 @@ class InnerVariationTypeValidatorSpec extends ObjectBehavior
 
         $innerVariationType = new InnerVariationType(
         2, 'ivt_with_six_axes', $family, [
-            ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_3', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_4', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_5', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_6', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_1', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_2', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_3', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_4', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_5', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_6', 'attribute_type' => 'pim_catalog_simpleselect'],
         ]
     );
 
         $this->canInnerVariationTypeBeMigrated($innerVariationType)->shouldReturn(false);
     }
 
-    public function it_returns_false_if_the_inner_variation_type_has_an_invalid_axe()
+    public function it_returns_false_if_the_inner_variation_type_has_an_invalid_axis()
     {
         $family = new Family(10, 'an_inner_variation_family', []);
 
         $innerVariationType = new InnerVariationType(
             2, 'invalid_ivt', $family, [
-                ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
-                ['code' => 'invalid_axe', 'attribute_type' => 'pim_catalog_identifier'],
+                ['code' => 'axis_1', 'attribute_type' => 'pim_catalog_simpleselect'],
+                ['code' => 'invalid_axis', 'attribute_type' => 'pim_catalog_identifier'],
             ]
         );
 

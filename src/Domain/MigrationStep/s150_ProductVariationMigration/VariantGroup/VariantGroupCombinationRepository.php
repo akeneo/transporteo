@@ -39,9 +39,9 @@ class VariantGroupCombinationRepository
 SELECT f.code as family_code, f.id as family_id,
 (
 	SELECT GROUP_CONCAT(DISTINCT a.code ORDER BY a.code ASC SEPARATOR ',')
-	FROM pim_catalog_group_attribute axe
-	INNER JOIN pim_catalog_attribute a ON axe.attribute_id = a.id
-	WHERE axe.group_id = g.id
+	FROM pim_catalog_group_attribute axis
+	INNER JOIN pim_catalog_attribute a ON axis.attribute_id = a.id
+	WHERE axis.group_id = g.id
 ) as axes
 , GROUP_CONCAT(DISTINCT g.code SEPARATOR ',') as groups
 FROM pim_catalog_group g

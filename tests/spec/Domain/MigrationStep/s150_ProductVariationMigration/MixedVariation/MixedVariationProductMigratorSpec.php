@@ -67,15 +67,15 @@ class MixedVariationProductMigratorSpec extends ObjectBehavior
             42,
             'family_variant',
             'a_family',
-            ['vg_axe_1', 'vg_axe_2'],
-            ['ivt_axe'],
+            ['vg_axis_1', 'vg_axis_2'],
+            ['ivt_axis'],
             ['family_parent_att_1'],
             ['variation_family_att_1'],
             []
         );
 
-        $variantGroupCombination = new VariantGroupCombination($parentFamily, ['axe_1'], ['variant_group_1', 'variant_group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($parentFamily, ['axis_1'], ['variant_group_1', 'variant_group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $firstVariantGroup = new VariantGroup('variant_group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('variant_group_2', 1, 1);

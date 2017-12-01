@@ -40,8 +40,8 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $family = new Family(41, 'family_parent', []);
         $variationFamily = new Family(41, 'variation_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $firstVariantGroup = new VariantGroup('group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('group_2', 1, 1);
@@ -68,8 +68,8 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $family = new Family(41, 'family_parent', []);
         $variationFamily = new Family(41, 'variation_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $mixedVariation = new MixedVariation(
             $variantGroupCombination,
@@ -92,8 +92,8 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $family = new Family(41, 'family_parent', []);
         $variationFamily = new Family(41, 'variation_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $validVariantGroup = new VariantGroup('group_1', 1, 1);
         $invalidVariantGroup = new VariantGroup('group_2', 6, 1);
@@ -122,8 +122,8 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $family = new Family(41, 'family_parent', []);
         $variationFamily = new Family(41, 'variation_family', []);
 
-        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axe_1', 'vg_axe_2'], ['group_1', 'group_2'], []);
-        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axe_2']);
+        $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
+        $innerVariationType = new InnerVariationType(11, 'ivt_1', $variationFamily, ['axis_2']);
 
         $firstVariantGroup = new VariantGroup('group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('group_2', 1, 1);

@@ -74,20 +74,17 @@ class ProductRepository
         $this->console->execute(new DeleteProductCommand($productIdentifier), $pim);
     }
 
-    public function findAllHavingVariantsByGroups(array $variantGroups, int $innerVariationFamilyId, Pim $pim): array
+    public function findAllByGroupCode(string $groupCode, Pim $pim): array
     {
-        $results = $this->console->execute(new MySqlQueryCommand(sprintf(
-                'SELECT DISTINCT p.id, p.identifier, p.created, p.family_id ,g.code AS variant_group_code
-            FROM pim_catalog_group g
-            INNER JOIN pim_catalog_group_product gp ON gp.group_id = g.id
-            INNER JOIN pim_catalog_product p ON p.id = gp.product_id
-            WHERE g.code IN("%s")
-            AND EXISTS(
-              SELECT * FROM pim_catalog_product AS product_variant
-              WHERE product_variant.family_id = %d
-              AND JSON_EXTRACT(product_variant.raw_values, \'$.variation_parent_product."<all_channels>"."<all_locales>"\') = p.identifier
-            )', implode('","', $variantGroups), $innerVariationFamilyId)
-        ), $pim)->getOutput();
+        $query = <<<SQL
+SELECT DISTINCT p.id, p.identifier, p.created, p.family_id ,g.code AS variant_group_code
+FROM pim_catalog_group g
+INNER JOIN pim_catalog_group_product gp ON gp.group_id = g.id
+INNER JOIN pim_catalog_product p ON p.id = gp.product_id
+WHERE g.code IN("%s")
+SQL;
+
+        $results = $this->console->execute(new MySqlQueryCommand(sprintf($query,$groupCode)), $pim)->getOutput();
 
         $products = [];
         foreach ($results as $productData) {

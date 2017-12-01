@@ -49,7 +49,6 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $mixedVariation = new MixedVariation(
             $variantGroupCombination,
             $innerVariationType,
-            [],
             new \ArrayObject([$firstVariantGroup, $secondVariantGroup])
         );
 
@@ -74,7 +73,6 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $mixedVariation = new MixedVariation(
             $variantGroupCombination,
             $innerVariationType,
-            [],
             new \ArrayObject([])
         );
 
@@ -101,7 +99,6 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $mixedVariation = new MixedVariation(
             $variantGroupCombination,
             $innerVariationType,
-            [],
             new \ArrayObject([$validVariantGroup, $invalidVariantGroup])
         );
 
@@ -131,7 +128,6 @@ class MixedVariationValidatorSpec extends ObjectBehavior
         $mixedVariation = new MixedVariation(
             $variantGroupCombination,
             $innerVariationType,
-            [],
             new \ArrayObject([$firstVariantGroup, $secondVariantGroup])
         );
 

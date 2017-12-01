@@ -21,16 +21,12 @@ class MixedVariationBuilder
     /** @var InnerVariationTypeRepository */
     private $innerVariationTypeRepository;
 
-    /** @var ProductRepository */
-    private $productRepository;
-
     /** @var VariantGroupRepository */
     private $variantGroupRepository;
 
-    public function __construct(InnerVariationTypeRepository $innerVariationTypeRepository, ProductRepository $productRepository, VariantGroupRepository $variantGroupRepository)
+    public function __construct(InnerVariationTypeRepository $innerVariationTypeRepository, VariantGroupRepository $variantGroupRepository)
     {
         $this->innerVariationTypeRepository = $innerVariationTypeRepository;
-        $this->productRepository = $productRepository;
         $this->variantGroupRepository = $variantGroupRepository;
     }
 
@@ -42,14 +38,8 @@ class MixedVariationBuilder
             return null;
         }
 
-        $productsHavingVariants = $this->productRepository->findAllHavingVariantsByGroups($variantGroupCombination->getGroups(), $innerVariationType->getVariationFamily()->getId(), $destinationPim);
-
-        if (empty($productsHavingVariants)) {
-            return null;
-        }
-
         $variantGroups = $this->variantGroupRepository->retrieveVariantGroups($destinationPim, $variantGroupCombination->getGroups());
 
-        return new MixedVariation($variantGroupCombination, $innerVariationType, $productsHavingVariants, $variantGroups);
+        return new MixedVariation($variantGroupCombination, $innerVariationType, $variantGroups);
     }
 }

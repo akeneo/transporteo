@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Product;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
 
 /**
@@ -22,21 +21,16 @@ class MixedVariation
     /** @var InnerVariationType */
     private $innerVariationType;
 
-    /** @var array */
-    private $productsHavingVariants;
-
     /** @var \Traversable */
     private $variantGroups;
 
     public function __construct(
         VariantGroupCombination $variantGroupCombination,
         InnerVariationType $innerVariationType,
-        array $productsHavingVariants,
         \Traversable $variantGroups
     ){
         $this->variantGroupCombination = $variantGroupCombination;
         $this->innerVariationType = $innerVariationType;
-        $this->productsHavingVariants = $productsHavingVariants;
         $this->variantGroups = $variantGroups;
     }
 
@@ -48,11 +42,6 @@ class MixedVariation
     public function getInnerVariationType(): InnerVariationType
     {
         return $this->innerVariationType;
-    }
-
-    public function getProductsHavingVariants(): array
-    {
-        return $this->productsHavingVariants;
     }
 
     public function getVariantGroupProductsHavingVariants(string $variantGroupCode): \Traversable

@@ -79,7 +79,7 @@ class MixedVariationMigrator implements DataMigrator
         foreach ($variantGroupCombinations as $variantGroupCombination) {
             $mixedVariation = $this->mixedVariationBuilder->buildFromVariantGroupCombination($variantGroupCombination, $destinationPim);
 
-            if (!$mixedVariation instanceof MixedVariation) {
+            if (null === $mixedVariation) {
                 continue;
             }
 

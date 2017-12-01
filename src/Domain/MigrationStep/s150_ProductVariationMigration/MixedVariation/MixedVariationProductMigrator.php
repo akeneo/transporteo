@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation;
 
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\ProductVariantTransformer as InnerVariationProductVariantTransformer;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\ProductVariantTransformer;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductRepository;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\ProductVariantTransformer as VariantGroupProductVariantTransformer;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 
 /**
@@ -28,11 +27,8 @@ class MixedVariationProductMigrator
     /** @var ProductModelRepository */
     private $productModelRepository;
 
-    /** @var InnerVariationProductVariantTransformer */
-    private $innerVariationProductVariantTransformer;
-
-    /** @var VariantGroupProductVariantTransformer */
-    private $variantGroupProductVariantTransformer;
+    /** @var ProductVariantTransformer */
+    private $productVariantTransformer;
 
     /** @var ProductModelSaver */
     private $productModelSaver;
@@ -42,24 +38,21 @@ class MixedVariationProductMigrator
         ProductRepository $productRepository,
         ProductModelRepository $productModelRepository,
         ProductModelSaver $productModelSaver,
-        InnerVariationProductVariantTransformer $innerVariationProductVariantTransformer,
-        VariantGroupProductVariantTransformer $variantGroupProductVariantTransformer
+        ProductVariantTransformer $productVariantTransformer
     )
     {
         $this->productModelBuilder = $productModelBuilder;
         $this->productRepository = $productRepository;
         $this->productModelRepository = $productModelRepository;
-        $this->innerVariationProductVariantTransformer = $innerVariationProductVariantTransformer;
-        $this->variantGroupProductVariantTransformer = $variantGroupProductVariantTransformer;
+        $this->productVariantTransformer = $productVariantTransformer;
         $this->productModelSaver = $productModelSaver;
     }
 
     /**
      * Migrates products variations by creating products models and transforming products in product variants.
      *  - A root product model is created for each variant group of a family an variant axes combination.
-     *  - A sub product model is created for each product grouped in the variant group, having variation via an inner-variation-type.
+     *  - A sub product model is created for each product grouped in the variant group.
      *  - Each product variation of the product grouped in the variant group is transformed to a product variant having the sub product model as parent.
-     *  - Each product grouped in the variant group that doesn't have variation is transformed to a product variant having the root product model as parent.
      */
     public function migrateProducts(MixedVariation $mixedVariation, FamilyVariant $familyVariant, DestinationPim $pim): void
     {
@@ -70,13 +63,13 @@ class MixedVariationProductMigrator
             $rootProductModel = $this->productModelBuilder->buildRootProductModel($variantGroupCode, $familyVariant, $pim);
             $rootProductModel = $this->productModelRepository->persist($rootProductModel, $pim);
 
-            $productsHavingVariants = $mixedVariation->getVariantGroupProductsHavingVariants($variantGroupCode);
+            $parentProducts = $this->productRepository->findAllByGroupCode($variantGroupCode, $pim);
 
-            foreach ($productsHavingVariants as $parentProduct) {
+            foreach ($parentProducts as $parentProduct) {
                 $subProductModel = $this->productModelBuilder->buildSubProductModel($rootProductModel, $parentProduct, $familyVariant, $pim);
                 $subProductModel = $this->productModelSaver->save($subProductModel, $pim);
 
-                $this->innerVariationProductVariantTransformer->transform(
+                $this->productVariantTransformer->transform(
                     $subProductModel,
                     $familyVariant,
                     $variantGroupCombination->getFamily(),
@@ -86,9 +79,6 @@ class MixedVariationProductMigrator
 
                 $this->productRepository->delete($parentProduct->getIdentifier(), $pim);
             }
-
-            // To transform into variants the remaining products that would not have variations via the IVB.
-            $this->variantGroupProductVariantTransformer->transformFromProductModel($rootProductModel, $familyVariant, $pim);
         }
     }
 }

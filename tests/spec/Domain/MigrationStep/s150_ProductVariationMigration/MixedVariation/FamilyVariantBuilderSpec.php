@@ -64,7 +64,7 @@ class FamilyVariantBuilderSpec extends ObjectBehavior
 
         $variantGroupCombination = new VariantGroupCombination($family, ['vg_axis_1', 'vg_axis_2'], ['group_1', 'group_2'], []);
         $innerVariationType = new InnerVariationType(11, 'ivt_1', $innerVariationFamily, [['code' => 'ivt_axis']]);
-        $mixedVariation = new MixedVariation($variantGroupCombination, $innerVariationType, [], new \ArrayObject());
+        $mixedVariation = new MixedVariation($variantGroupCombination, $innerVariationType, new \ArrayObject());
 
         $innerVariationFamilyMigrator->migrateFamilyAttributes($family, $innerVariationFamily, $destinationPim)->shouldBeCalled();
 

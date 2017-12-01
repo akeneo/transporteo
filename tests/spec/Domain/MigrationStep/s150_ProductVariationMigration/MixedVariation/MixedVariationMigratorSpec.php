@@ -87,13 +87,9 @@ class MixedVariationMigratorSpec extends ObjectBehavior
         $firstVariantGroup = new VariantGroup('group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('group_2', 1, 1);
 
-        $firstProduct = new Product(1, 'product_1', 31, '2016-11-23 12:45:38', 'group_1');
-        $seconProduct = new Product(2, 'product_2', 31, '2016-11-21 12:42:38', 'group_2');
-
         $mixedVariation = new MixedVariation(
             $mixedVariantGroupCombination,
             $innerVariationType,
-            [$firstProduct, $seconProduct],
             new \ArrayObject([$firstVariantGroup, $secondVariantGroup])
         );
 
@@ -139,13 +135,9 @@ class MixedVariationMigratorSpec extends ObjectBehavior
         $firstVariantGroup = new VariantGroup('group_1', 1, 1);
         $secondVariantGroup = new VariantGroup('group_2', 1, 1);
 
-        $firstProduct = new Product(1, 'product_1', 31, '2016-11-23 12:45:38', 'group_1');
-        $seconProduct = new Product(2, 'product_2', 31, '2016-11-21 12:42:38', 'group_2');
-
         $mixedVariation = new MixedVariation(
             $variantGroupCombination,
             $innerVariationType,
-            [$firstProduct, $seconProduct],
             new \ArrayObject([$firstVariantGroup, $secondVariantGroup])
         );
 

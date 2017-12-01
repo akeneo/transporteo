@@ -8,11 +8,13 @@ use Akeneo\PimMigration\Domain\Command\Api\GetFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
+use Akeneo\PimMigration\Domain\DataMigration\QueryException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\Pim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Aims to retrieve data related to the migration of the inner variation types.
@@ -28,10 +30,14 @@ class InnerVariationTypeRepository
     /** @var FamilyRepository */
     private $familyRepository;
 
-    public function __construct(ChainedConsole $console, FamilyRepository $familyRepository)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(ChainedConsole $console, FamilyRepository $familyRepository, LoggerInterface $logger)
     {
         $this->console = $console;
         $this->familyRepository = $familyRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -71,6 +77,20 @@ class InnerVariationTypeRepository
             'DELETE FROM pim_inner_variation_inner_variation_type WHERE id = %d',
             $innerVariationType->getId()
         )), $pim);
+
+        // Try to delete the variation family is its not related to another inner variation type.
+        try {
+            $this->console->execute(new MySqlExecuteCommand(sprintf(
+                'DELETE FROM pim_catalog_family WHERE id = %d',
+                $innerVariationType->getVariationFamilyId()
+            )), $pim);
+        } catch (QueryException $e) {
+            $this->logger->debug(sprintf(
+                'Failed to delete the variation family %s of the inner variation type %s',
+                $innerVariationType->getVariationFamilyId(),
+                $innerVariationType->getCode()
+            ));
+        }
     }
 
     /**

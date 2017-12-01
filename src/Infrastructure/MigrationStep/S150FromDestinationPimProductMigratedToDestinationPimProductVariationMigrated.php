@@ -45,13 +45,7 @@ class S150FromDestinationPimProductMigratedToDestinationPimProductVariationMigra
 
         $this->printerAndAsker->printMessage($this->translator->trans('from_destination_pim_product_migrated_to_destination_pim_product_variation_migrated.message'));
 
-        try {
-            $this->productVariationMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
-        } catch (InvalidProductVariationException $exception) {
-            foreach ($exception->getMessages() as $message) {
-                $this->printerAndAsker->warning($message);
-            }
-        }
+        $this->productVariationMigrator->migrate($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
 
         $this->logExit(__FUNCTION__);
     }

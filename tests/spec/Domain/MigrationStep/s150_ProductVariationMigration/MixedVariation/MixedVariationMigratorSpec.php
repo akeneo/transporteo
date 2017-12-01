@@ -24,6 +24,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Vari
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author    Laurent Petard <laurent.petard@akeneo.com>
@@ -39,7 +40,8 @@ class MixedVariationMigratorSpec extends ObjectBehavior
         MixedVariationBuilder $mixedVariationBuilder,
         MixedVariationValidator $mixedVariationValidator,
         VariantGroupRepository $variantGroupRepository,
-        VariantGroupCombinationRepository $variantGroupCombinationRepository
+        VariantGroupCombinationRepository $variantGroupCombinationRepository,
+        LoggerInterface $logger
     )
     {
         $this->beConstructedWith(
@@ -50,7 +52,8 @@ class MixedVariationMigratorSpec extends ObjectBehavior
             $mixedVariationBuilder,
             $mixedVariationValidator,
             $variantGroupRepository,
-            $variantGroupCombinationRepository
+            $variantGroupCombinationRepository,
+            $logger
         );
     }
 
@@ -159,6 +162,6 @@ class MixedVariationMigratorSpec extends ObjectBehavior
         $variantGroupRepository->removeSoftlyVariantGroup('group_1', $destinationPim)->shouldBeCalled();
         $variantGroupRepository->removeSoftlyVariantGroup('group_2', $destinationPim)->shouldBeCalled();
 
-        $this->shouldThrow(new InvalidMixedVariationException())->during('migrate', [$sourcePim, $destinationPim]);
+        $this->migrate($sourcePim, $destinationPim);
     }
 }

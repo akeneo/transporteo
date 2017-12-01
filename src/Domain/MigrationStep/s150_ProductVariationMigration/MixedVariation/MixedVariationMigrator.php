@@ -12,6 +12,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Vari
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupRepository;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Migration for products having variations through variant-group and IVB both.
@@ -45,6 +46,9 @@ class MixedVariationMigrator implements DataMigrator
     /** @var VariantGroupCombinationRepository */
     private $variantGroupCombinationRepository;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         FamilyVariantBuilder $familyVariantBuilder,
         FamilyVariantRepository $familyVariantRepository,
@@ -53,7 +57,8 @@ class MixedVariationMigrator implements DataMigrator
         MixedVariationBuilder $mixedVariationBuilder,
         MixedVariationValidator $mixedVariationValidator,
         VariantGroupRepository $variantGroupRepository,
-        VariantGroupCombinationRepository $variantGroupCombinationRepository
+        VariantGroupCombinationRepository $variantGroupCombinationRepository,
+        LoggerInterface $logger
     ) {
         $this->familyVariantBuilder = $familyVariantBuilder;
         $this->productMigrator = $productMigrator;
@@ -63,6 +68,7 @@ class MixedVariationMigrator implements DataMigrator
         $this->mixedVariationValidator = $mixedVariationValidator;
         $this->variantGroupRepository = $variantGroupRepository;
         $this->variantGroupCombinationRepository = $variantGroupCombinationRepository;
+        $this->logger = $logger;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -87,7 +93,11 @@ class MixedVariationMigrator implements DataMigrator
         }
 
         if ($hasInvalidMixedVariations) {
-            throw new InvalidMixedVariationException();
+            $this->logger->warning(<<<EOT
+There are mixed variant groups and inner variation types that can't be automatically migrated. Related products have been migrated but they're not variant.
+Your catalog structure should be rework, according to the catalog modeling introduced in v2.0
+EOT
+            );
         }
     }
 

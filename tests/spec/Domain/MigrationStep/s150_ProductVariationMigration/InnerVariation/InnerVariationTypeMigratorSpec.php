@@ -132,7 +132,7 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$validInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
-        $this->shouldThrow(new InvalidInnerVariationTypeException())->during('migrate', [$sourcePim, $destinationPim]);
+        $this->migrate($sourcePim, $destinationPim);
     }
 
     public function it_continues_to_migrate_if_an_exception_is_thrown(

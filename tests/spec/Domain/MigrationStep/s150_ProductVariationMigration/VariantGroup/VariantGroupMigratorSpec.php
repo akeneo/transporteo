@@ -18,6 +18,7 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Vari
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
 use PhpSpec\ObjectBehavior;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author    Laurent Petard <laurent.petard@akeneo.com>
@@ -30,10 +31,11 @@ class VariantGroupMigratorSpec extends ObjectBehavior
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
         VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
-        MigrationCleaner $variantGroupMigrationCleaner
+        MigrationCleaner $variantGroupMigrationCleaner,
+        LoggerInterface $logger
     )
     {
-        $this->beConstructedWith($variantGroupRepository, $variantGroupValidator, $variantGroupCombinationRepository, $variantGroupCombinationMigrator, $variantGroupMigrationCleaner);
+        $this->beConstructedWith($variantGroupRepository, $variantGroupValidator, $variantGroupCombinationRepository, $variantGroupCombinationMigrator, $variantGroupMigrationCleaner, $logger);
     }
 
     public function it_is_initializable()
@@ -132,6 +134,6 @@ class VariantGroupMigratorSpec extends ObjectBehavior
 
         $variantGroupRepository->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim)->willReturn(1);
 
-        $this->shouldThrow(new InvalidVariantGroupException(1))->during('migrate', [$sourcePim, $destinationPim]);
+        $this->migrate($sourcePim, $destinationPim);
     }
 }

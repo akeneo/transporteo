@@ -7,10 +7,6 @@ namespace spec\Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMig
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidInnerVariationTypeException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidMixedVariationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidProductVariationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationTypeMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation\MixedVariationMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductVariationMigrator;
@@ -121,37 +117,6 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
-    }
-
-    public function it_throws_an_exception_if_there_are_invalid_product_variations(
-        SourcePim $sourcePim,
-        DestinationPim $destinationPim,
-        $console,
-        $innerVariantTypeMigrator,
-        $variantGroupMigrator,
-        $mixedVariationMigrator,
-        $variantGroupRepository
-    ) {
-        $sourcePim->hasIvb()->willReturn(true);
-        $variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim)->willReturn(2);
-
-        $invalidInnerVariationTypeException = new InvalidInnerVariationTypeException();
-        $invalidVariantGroupException = new InvalidVariantGroupException(1);
-        $invalidMixedVariationException = new InvalidMixedVariationException();
-
-        $mixedVariationMigrator->migrate($sourcePim, $destinationPim)->willThrow($invalidMixedVariationException);
-        $variantGroupMigrator->migrate($sourcePim, $destinationPim)->willThrow($invalidVariantGroupException);
-        $innerVariantTypeMigrator->migrate($sourcePim, $destinationPim)->willThrow($invalidInnerVariationTypeException);
-
-        $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-        $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
-
-        $this->shouldThrow(new InvalidProductVariationException([
-            $invalidMixedVariationException->getMessage(),
-            $invalidVariantGroupException->getMessage(),
-            $invalidInnerVariationTypeException->getMessage(),
-        ]))
-            ->during('migrate', [$sourcePim, $destinationPim]);
     }
 
     public function it_does_nothing_if_there_are_no_product_variations(

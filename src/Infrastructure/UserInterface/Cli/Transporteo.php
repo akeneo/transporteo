@@ -5,6 +5,7 @@ namespace Akeneo\PimMigration\Infrastructure\UserInterface\Cli;
 use Akeneo\PimMigration\Domain\FileSystemHelper;
 use Akeneo\PimMigration\Infrastructure\TransporteoStateMachine;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Monolog\Handler\ConsoleHandler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,6 +36,8 @@ final class Transporteo extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->cleanVarDirectory();
+
+        $this->container->get('logger')->pushHandler(new ConsoleHandler($output));
 
         $stateMachine = new TransporteoStateMachine($this->container->get('state_machine.transporteo'), $this->container->get(LoggerInterface::class));
         $stateMachine->setDefaultResponses($this->container->getParameter('default_responses'));

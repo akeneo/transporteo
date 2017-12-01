@@ -8,10 +8,6 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\SymfonyCommand;
 use Akeneo\PimMigration\Domain\DataMigration\DataMigrator;
 use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidInnerVariationTypeException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidMixedVariationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidProductVariationException;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationTypeMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation\MixedVariationMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupMigrator;
@@ -78,7 +74,6 @@ class ProductVariationMigrator implements DataMigrator
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $warnings = [];
         $numberOfVariantGroups = $this->variantGroupRepository->retrieveNumberOfVariantGroups($destinationPim);
 
         if ($numberOfVariantGroups > 0) {
@@ -87,38 +82,22 @@ class ProductVariationMigrator implements DataMigrator
             $this->migrateVariantGroupDeprecatedTables($sourcePim, $destinationPim);
 
             if ($sourcePim->hasIvb()) {
-                try {
-                    $this->mixedVariationMigrator->migrate($sourcePim, $destinationPim);
-                } catch(InvalidMixedVariationException $exception) {
-                    $warnings[] = $exception->getMessage();
-                }
+                $this->mixedVariationMigrator->migrate($sourcePim, $destinationPim);
             }
 
-            try {
-                $this->variantGroupMigrator->migrate($sourcePim, $destinationPim);
-            } catch (InvalidVariantGroupException $exception) {
-                $warnings[] = $exception->getMessage();
-            }
+            $this->variantGroupMigrator->migrate($sourcePim, $destinationPim);
         } else {
             $this->logger->info("There are no variant groups to migrate");
         }
 
         if ($sourcePim->hasIvb()) {
-            try {
-                $this->innerVariantTypeMigrator->migrate($sourcePim, $destinationPim);
-            } catch (InvalidInnerVariationTypeException $exception) {
-                $warnings[] = $exception->getMessage();
-            }
+            $this->innerVariantTypeMigrator->migrate($sourcePim, $destinationPim);
         } else {
             $this->logger->info('There is no InnerVariationType to migrate.');
         }
 
         if ($sourcePim->hasIvb() || $numberOfVariantGroups > 0) {
             $this->refreshElasticSearchIndexes($destinationPim);
-        }
-
-        if (!empty($warnings)) {
-            throw new InvalidProductVariationException($warnings);
         }
     }
 

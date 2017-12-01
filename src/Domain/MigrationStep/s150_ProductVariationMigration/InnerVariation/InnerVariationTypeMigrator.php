@@ -76,7 +76,11 @@ class InnerVariationTypeMigrator implements DataMigrator
         $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
 
         if (!empty($invalidInnerVariationTypes)) {
-            throw new InvalidInnerVariationTypeException();
+            $this->logger->warning(<<<EOT
+Some inner variation types can't be automatically migrated. Related products have not been migrated yet.
+Your catalog structure should be rework, according to the catalog modeling introduced in v2.0 (Authorized axes are attributes of type 'Simple select', 'Reference data simple select', 'Metric', 'Boolean' and maximum 5 attributes per variant level)
+EOT
+            );
         }
     }
 

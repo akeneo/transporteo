@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Migrates variant groups data according to the new product variation model.
@@ -33,18 +34,23 @@ class VariantGroupMigrator implements DataMigrator
     /** @var VariantGroupCombinationMigrator */
     private $variantGroupCombinationMigrator;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         VariantGroupRepository $variantGroupRepository,
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
         VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
-        MigrationCleaner $variantGroupMigrationCleaner
+        MigrationCleaner $variantGroupMigrationCleaner,
+        LoggerInterface $logger
     ) {
         $this->variantGroupRepository = $variantGroupRepository;
         $this->variantGroupValidator = $variantGroupValidator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->variantGroupCombinationRepository = $variantGroupCombinationRepository;
         $this->variantGroupCombinationMigrator = $variantGroupCombinationMigrator;
+        $this->logger = $logger;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
@@ -61,8 +67,13 @@ class VariantGroupMigrator implements DataMigrator
         $this->variantGroupMigrationCleaner->removeDeprecatedData($destinationPim);
 
         $numberOfRemovedInvalidVariantGroups = $this->variantGroupRepository->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim);
+
         if ($numberOfRemovedInvalidVariantGroups > 0) {
-            throw new InvalidVariantGroupException($numberOfRemovedInvalidVariantGroups);
+            $this->logger->warning(<<<EOT
+There are $numberOfRemovedInvalidVariantGroups variant groups that can't be automatically migrated. Related products have been migrated but they're not variant.
+Your catalog structure should be rework, according to the catalog modeling introduced in v2.0
+EOT
+            );
         }
     }
 

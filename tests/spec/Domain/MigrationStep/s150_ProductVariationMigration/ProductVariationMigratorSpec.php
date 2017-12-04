@@ -62,6 +62,7 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         $mixedVariationMigrator->migrate(Argument::any())->shouldNotBeCalled();
         $innerVariantTypeMigrator->migrate(Argument::any())->shouldNotBeCalled();
 
+        $console->execute(new SymfonyCommand('pim:completeness:calculate', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
@@ -87,6 +88,7 @@ class ProductVariationMigratorSpec extends ObjectBehavior
 
         $innerVariantTypeMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
+        $console->execute(new SymfonyCommand('pim:completeness:calculate', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 
@@ -113,6 +115,7 @@ class ProductVariationMigratorSpec extends ObjectBehavior
         $mixedVariationMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
         $innerVariantTypeMigrator->migrate($sourcePim, $destinationPim)->shouldBeCalled();
 
+        $console->execute(new SymfonyCommand('pim:completeness:calculate', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
         $console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim)->shouldBeCalled();
 

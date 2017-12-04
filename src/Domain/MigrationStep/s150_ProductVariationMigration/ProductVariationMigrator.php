@@ -97,14 +97,10 @@ class ProductVariationMigrator implements DataMigrator
         }
 
         if ($sourcePim->hasIvb() || $numberOfVariantGroups > 0) {
-            $this->refreshElasticSearchIndexes($destinationPim);
+            $this->console->execute(new SymfonyCommand('pim:completeness:calculate', SymfonyCommand::PROD), $destinationPim);
+            $this->console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim);
+            $this->console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim);
         }
-    }
-
-    private function refreshElasticSearchIndexes(DestinationPim $destinationPim)
-    {
-        $this->console->execute(new SymfonyCommand('pim:product:index --all', SymfonyCommand::PROD), $destinationPim);
-        $this->console->execute(new SymfonyCommand('pim:product-model:index --all', SymfonyCommand::PROD), $destinationPim);
     }
 
     /**

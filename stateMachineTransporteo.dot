@@ -14,8 +14,8 @@ digraph workflow {
   place_destination_pim_configured [label="destination_pim_configured", shape=circle];
   place_destination_pim_api_configured [label="destination_pim_api_configured", shape=circle];
   place_destination_pim_detected [label="destination_pim_detected", shape=circle];
-  place_destination_pim_system_requirements_installed [label="destination_pim_system_requirements_installed", shape=circle];
   place_destination_pim_requirements_checked [label="destination_pim_requirements_checked", shape=circle];
+  place_destination_pim_system_requirements_installed [label="destination_pim_system_requirements_installed", shape=circle];
   place_destination_pim_file_database_migrated [label="destination_pim_file_database_migrated", shape=circle];
   place_destination_pim_structure_migrated [label="destination_pim_structure_migrated", shape=circle];
   place_destination_pim_family_migrated [label="destination_pim_family_migrated", shape=circle];
@@ -40,8 +40,8 @@ digraph workflow {
   transition_destination_pim_configuration [label="destination_pim_configuration", shape=box, shape="box", regular="1"];
   transition_destination_pim_api_configuration [label="destination_pim_api_configuration", shape=box, shape="box", regular="1"];
   transition_destination_pim_detection [label="destination_pim_detection", shape=box, shape="box", regular="1"];
-  transition_local_destination_pim_system_requirements_installation [label="local_destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
   transition_destination_pim_check_requirements [label="destination_pim_check_requirements", shape=box, shape="box", regular="1"];
+  transition_local_destination_pim_system_requirements_installation [label="local_destination_pim_system_requirements_installation", shape=box, shape="box", regular="1"];
   transition_destination_pim_file_database_migration [label="destination_pim_file_database_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_structure_migration [label="destination_pim_structure_migration", shape=box, shape="box", regular="1"];
   transition_destination_pim_family_migration [label="destination_pim_family_migration", shape=box, shape="box", regular="1"];
@@ -78,11 +78,11 @@ digraph workflow {
   transition_destination_pim_api_configuration -> place_destination_pim_api_configured [style="solid"];
   place_destination_pim_api_configured -> transition_destination_pim_detection [style="solid"];
   transition_destination_pim_detection -> place_destination_pim_detected [style="solid"];
-  place_destination_pim_detected -> transition_local_destination_pim_system_requirements_installation [style="solid"];
-  transition_local_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
-  place_destination_pim_system_requirements_installed -> transition_destination_pim_check_requirements [style="solid"];
+  place_destination_pim_detected -> transition_destination_pim_check_requirements [style="solid"];
   transition_destination_pim_check_requirements -> place_destination_pim_requirements_checked [style="solid"];
-  place_destination_pim_requirements_checked -> transition_destination_pim_file_database_migration [style="solid"];
+  place_destination_pim_requirements_checked -> transition_local_destination_pim_system_requirements_installation [style="solid"];
+  transition_local_destination_pim_system_requirements_installation -> place_destination_pim_system_requirements_installed [style="solid"];
+  place_destination_pim_system_requirements_installed -> transition_destination_pim_file_database_migration [style="solid"];
   transition_destination_pim_file_database_migration -> place_destination_pim_file_database_migrated [style="solid"];
   place_destination_pim_file_database_migrated -> transition_destination_pim_structure_migration [style="solid"];
   transition_destination_pim_structure_migration -> place_destination_pim_structure_migrated [style="solid"];

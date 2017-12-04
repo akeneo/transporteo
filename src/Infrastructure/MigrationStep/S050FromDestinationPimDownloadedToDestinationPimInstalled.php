@@ -243,7 +243,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
         try {
             $this->destinationPimConfigurationChecker->check($stateMachine->getSourcePim(), $stateMachine->getDestinationPim());
         } catch (\Exception $exception) {
-            throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode(), $exception);
+            throw new DestinationPimInstallationException($exception->getMessage(), $exception->getCode());
         }
 
         $this->logExit(__FUNCTION__);

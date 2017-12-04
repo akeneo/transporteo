@@ -21,19 +21,23 @@ class DestinationPimConfigurationChecker
     /** @var DestinationPimSystemRequirementsChecker */
     private $destinationPimSystemRequirementsChecker;
 
-    public function __construct(DestinationPimEditionChecker $destinationPimEditionChecker, DestinationPimSystemRequirementsChecker $destinationPimSystemRequirementsChecker)
-    {
+    /** @var DestinationPimVersionChecker */
+    private $destinationPimVersionChecker;
+
+    public function __construct(
+        DestinationPimEditionChecker $destinationPimEditionChecker,
+        DestinationPimSystemRequirementsChecker $destinationPimSystemRequirementsChecker,
+        DestinationPimVersionChecker $destinationPimVersionChecker
+    ) {
         $this->destinationPimEditionChecker = $destinationPimEditionChecker;
         $this->destinationPimSystemRequirementsChecker = $destinationPimSystemRequirementsChecker;
+        $this->destinationPimVersionChecker = $destinationPimVersionChecker;
     }
 
     public function check(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        try {
-            $this->destinationPimEditionChecker->check($sourcePim, $destinationPim);
-            $this->destinationPimSystemRequirementsChecker->check($destinationPim);
-        } catch (\Exception $e) {
-            throw new DestinationPimCheckConfigurationException($e->getMessage(), $e->getCode(), $e);
-        }
+        $this->destinationPimEditionChecker->check($sourcePim, $destinationPim);
+        $this->destinationPimVersionChecker->check($destinationPim);
+        $this->destinationPimSystemRequirementsChecker->check($destinationPim);
     }
 }

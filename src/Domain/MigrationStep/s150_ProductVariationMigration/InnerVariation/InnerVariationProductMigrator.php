@@ -71,8 +71,7 @@ class InnerVariationProductMigrator
         $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim);
 
         foreach ($parentFamilies as $parentFamily) {
-            $familyVariantCode = $parentFamily->getCode().'_'.$innerVariationFamily->getCode();
-            $familyVariant = $this->familyVariantRepository->findOneByCode($familyVariantCode, $pim);
+            $familyVariant = $this->familyVariantRepository->findOneByCode($parentFamily->getCode(), $pim);
             $this->migrateFamilyVariantProducts($familyVariant, $parentFamily, $innerVariationFamily, $pim);
         }
     }

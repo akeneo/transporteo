@@ -70,7 +70,7 @@ class InnerVariationProductMigratorSpec extends ObjectBehavior
         $innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim)->willReturn(new \ArrayObject([$parentFamily]));
 
         $familyVariant = new FamilyVariant(20, 'first_family_variant');
-        $familyVariantRepository->findOneByCode('first_parent_family_inner_variation_family', $pim)->willReturn($familyVariant);
+        $familyVariantRepository->findOneByCode('first_parent_family', $pim)->willReturn($familyVariant);
 
         $product1 = new Product(110, 'product_model_1', null, null, null);
 

@@ -9,8 +9,9 @@ This tool aims at helping you to migrate your *PIM 1.7 standard edition* (either
 
 The 1.7 source PIM you will migrate from can be either installed locally or remotely. 
 
-The 2.0 destination PIM you will migrate to should be installed locally running on the port 80, you can install it following these [instructions](https://docs.akeneo.com/latest/install_pim/manual/system_requirements/system_requirements.html).
+The 2.0 destination PIM you will migrate to should be installed locally running on the port 80, you can install it following these [instructions](https://docs.akeneo.com/latest/install_pim/manual/index.html).
 We do not support the Docker installation yet regarding Transporteo.
+The minimum version of the destination PIM is 2.0.3.
 
 Both PIM should be functionnal and have a functionnal API with admin rights.
 

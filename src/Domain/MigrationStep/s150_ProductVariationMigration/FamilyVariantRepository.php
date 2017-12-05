@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
+use Akeneo\PimMigration\Domain\Command\Api\CreateFamilyVariantCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
@@ -31,22 +32,28 @@ class FamilyVariantRepository
         $this->familyVariantImporter = $familyVariantImporter;
     }
 
-    public function persist(FamilyVariant $familyVariant, Pim $pim): FamilyVariant
+    public function persist(FamilyVariant $familyVariant, DestinationPim $pim): FamilyVariant
     {
         $familyVariantData = [
-            'code' => $familyVariant->getCode(),
-            'family' => $familyVariant->getFamilyCode(),
-            'variant-axes_1' => implode(',', $familyVariant->getLevelOneAxes()),
-            'variant-axes_2' => implode(',', $familyVariant->getLevelTwoAxes()),
-            'variant-attributes_1' => implode(',', $familyVariant->getLevelOneAttributes()),
-            'variant-attributes_2' => implode(',', $familyVariant->getLevelTwoAttributes()),
+            'variant_attribute_sets' => [
+                [
+                    'level' => 1,
+                    'attributes' => $familyVariant->getLevelOneAttributes(),
+                    'axes' => $familyVariant->getLevelOneAxes()
+                ]
+            ],
+            'labels' => $familyVariant->getLabels()
         ];
 
-        foreach ($familyVariant->getLabels() as $locale => $label) {
-            $familyVariantData['label-'.$locale] = $label;
+        if (!empty($familyVariant->getLevelTwoAxes())) {
+            $familyVariantData['variant_attribute_sets'][] = [
+                'level' => 2,
+                'attributes' => $familyVariant->getLevelTwoAttributes(),
+                'axes' => $familyVariant->getLevelTwoAxes()
+            ];
         }
 
-        $this->familyVariantImporter->import([$familyVariantData], $pim);
+        $this->console->execute(new CreateFamilyVariantCommand($familyVariant->getFamilyCode(), $familyVariant->getCode(), $familyVariantData), $pim);
 
         if (null === $familyVariant->getId()) {
             $id = $this->getFamilyVariantId($familyVariant->getCode(), $pim);

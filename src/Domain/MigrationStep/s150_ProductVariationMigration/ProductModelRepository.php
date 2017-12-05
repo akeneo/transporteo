@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration;
 
+use Akeneo\PimMigration\Domain\Command\Api\CreateProductModelCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlExecuteCommand;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
@@ -37,23 +38,18 @@ class ProductModelRepository
         $this->productModelValuesBuilder = $productModelValuesBuilder;
     }
 
-    // TODO: persist via the API and remove the dependency to ProductModelValuesBuilder.
     public function persist(ProductModel $productModel, DestinationPim $pim): ProductModel
     {
         $productModelData = [
-            'code' => $productModel->getIdentifier(),
             'family_variant' => $productModel->getFamilyVariantCode(),
-            'categories' => implode(',', $productModel->getCategories()),
-            'parent' => '',
+            'categories' => $productModel->getCategories(),
+            'parent' => $productModel->getParentIdentifier(),
+            'values' => $productModel->getAttributeValues(),
         ];
 
-        $productModelValues = $this->productModelValuesBuilder->build($productModel);
-        $productModelData = array_merge($productModelData, $productModelValues);
-
-        $this->productModelImporter->import([$productModelData], $pim);
+        $this->console->execute(new CreateProductModelCommand($productModel->getIdentifier(), $productModelData), $pim);
 
         if (null === $productModel->getId()) {
-            //$id = $this->getProductModelId($productModel->getIdentifier(), $pim);
             $sqlResult = $this->console->execute(new MySqlQueryCommand(sprintf(
                 'SELECT id FROM pim_catalog_product_model WHERE code = "%s"',
                 $productModel->getIdentifier()
@@ -88,14 +84,5 @@ class ProductModelRepository
         );
 
         $this->console->execute($command, $pim);
-    }
-
-    public function getProductModelId(string $identifier, DestinationPim $pim): ?int
-    {
-        $productData = $this->console->execute(new MySqlQueryCommand(sprintf(
-            'SELECT id FROM pim_catalog_product_model WHERE code = "%s"', $identifier
-        )), $pim)->getOutput();
-
-        return empty($productData) ? null : (int) $productData[0]['id'];
     }
 }

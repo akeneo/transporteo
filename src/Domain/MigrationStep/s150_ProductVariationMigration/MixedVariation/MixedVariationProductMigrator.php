@@ -30,21 +30,16 @@ class MixedVariationProductMigrator
     /** @var ProductVariantTransformer */
     private $productVariantTransformer;
 
-    /** @var ProductModelSaver */
-    private $productModelSaver;
-
     public function __construct(
         ProductModelBuilder $productModelBuilder,
         ProductRepository $productRepository,
         ProductModelRepository $productModelRepository,
-        ProductModelSaver $productModelSaver,
         ProductVariantTransformer $productVariantTransformer
     ) {
         $this->productModelBuilder = $productModelBuilder;
         $this->productRepository = $productRepository;
         $this->productModelRepository = $productModelRepository;
         $this->productVariantTransformer = $productVariantTransformer;
-        $this->productModelSaver = $productModelSaver;
     }
 
     /**
@@ -66,7 +61,7 @@ class MixedVariationProductMigrator
 
             foreach ($parentProducts as $parentProduct) {
                 $subProductModel = $this->productModelBuilder->buildSubProductModel($rootProductModel, $parentProduct, $familyVariant, $pim);
-                $subProductModel = $this->productModelSaver->save($subProductModel, $pim);
+                $subProductModel = $this->productModelRepository->persist($subProductModel, $pim);
 
                 $this->productVariantTransformer->transform(
                     $subProductModel,

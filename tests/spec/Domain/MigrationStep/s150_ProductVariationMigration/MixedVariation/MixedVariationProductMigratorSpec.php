@@ -14,7 +14,6 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Inne
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation\MixedVariation;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation\MixedVariationProductMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation\ProductModelBuilder;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\MixedVariation\ProductModelSaver;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\VariantGroup\VariantGroupCombination;
@@ -31,11 +30,10 @@ class MixedVariationProductMigratorSpec extends ObjectBehavior
         ProductModelBuilder $productModelBuilder,
         ProductRepository $productRepository,
         ProductModelRepository $productModelRepository,
-        ProductModelSaver $productModelSaver,
         ProductVariantTransformer $productVariantTransformer
     )
     {
-        $this->beConstructedWith($productModelBuilder, $productRepository, $productModelRepository, $productModelSaver, $productVariantTransformer);
+        $this->beConstructedWith($productModelBuilder, $productRepository, $productModelRepository, $productVariantTransformer);
     }
 
     public function it_is_initializable()
@@ -53,7 +51,6 @@ class MixedVariationProductMigratorSpec extends ObjectBehavior
         $productModelBuilder,
         $productRepository,
         $productModelRepository,
-        $productModelSaver,
         $productVariantTransformer
     )
     {
@@ -97,7 +94,7 @@ class MixedVariationProductMigratorSpec extends ObjectBehavior
         $productRepository->findAllByGroupCode('variant_group_2', $pim)->willReturn([$thirdProduct]);
 
         $productModelBuilder->buildSubProductModel($firstRootProductModel, $firstProduct, $familyVariant, $pim)->willReturn($firstSubProductModel);
-        $productModelSaver->save($firstSubProductModel, $pim)->willReturn($firstSubProductModel);
+        $productModelRepository->persist($firstSubProductModel, $pim)->willReturn($firstSubProductModel);
 
         $productVariantTransformer
             ->transform($firstSubProductModel, $familyVariant, $parentFamily, $variationFamily, $pim)
@@ -106,7 +103,7 @@ class MixedVariationProductMigratorSpec extends ObjectBehavior
         $productRepository->delete('product_1', $pim)->shouldBeCalled();
 
         $productModelBuilder->buildSubProductModel($firstRootProductModel, $secondProduct, $familyVariant, $pim)->willReturn($secondSubProductModel);
-        $productModelSaver->save($secondSubProductModel, $pim)->willReturn($secondSubProductModel);
+        $productModelRepository->persist($secondSubProductModel, $pim)->willReturn($secondSubProductModel);
 
         $productVariantTransformer
             ->transform($secondSubProductModel, $familyVariant, $parentFamily, $variationFamily, $pim)
@@ -115,7 +112,7 @@ class MixedVariationProductMigratorSpec extends ObjectBehavior
         $productRepository->delete('product_2', $pim)->shouldBeCalled();
 
         $productModelBuilder->buildSubProductModel($secondRootProductModel, $thirdProduct, $familyVariant, $pim)->willReturn($thirdSubProdutModel);
-        $productModelSaver->save($thirdSubProdutModel, $pim)->willReturn($thirdSubProdutModel);
+        $productModelRepository->persist($thirdSubProdutModel, $pim)->willReturn($thirdSubProdutModel);
 
         $productVariantTransformer
             ->transform($thirdSubProdutModel, $familyVariant, $parentFamily, $variationFamily, $pim)

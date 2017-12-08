@@ -61,7 +61,7 @@ class VariantGroupValidator
      */
     public function isVariantGroupCombinationValid(VariantGroupCombination $variantGroupCombination, Pim $pim): bool
     {
-        $familyAttributes =$variantGroupCombination->getFamily()->getAttributes();
+        $familyAttributes = $variantGroupCombination->getFamily()->getAttributes();
 
         $previousGroupAttributes = null;
         foreach ($variantGroupCombination->getGroups() as $group) {
@@ -93,6 +93,19 @@ class VariantGroupValidator
                 $variantGroupCombination->getFamily()->getCode(),
                 implode(', ', $variantGroupCombination->getAxes()),
                 implode(', ', $differencesWithTheFamilyAttributes)
+            ));
+
+            return false;
+        }
+
+        $axesNotInFamilyAttributes = array_diff($variantGroupCombination->getAxes(), $variantGroupCombination->getFamily()->getAttributes());
+
+        if (!empty($axesNotInFamilyAttributes)) {
+            $this->logger->warning(sprintf(
+                "Unable to migrate the variations for the family %s and axis %s, because all the following axes of the variant groups don't belong to the family : %s",
+                $variantGroupCombination->getFamily()->getCode(),
+                implode(', ', $variantGroupCombination->getAxes()),
+                implode(', ', $axesNotInFamilyAttributes)
             ));
 
             return false;

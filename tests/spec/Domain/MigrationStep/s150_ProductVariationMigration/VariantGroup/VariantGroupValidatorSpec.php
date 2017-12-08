@@ -104,4 +104,23 @@ class VariantGroupValidatorSpec extends ObjectBehavior
 
         $this->isVariantGroupCombinationValid($variantGroupCombination, $pim)->shouldReturn(false);
     }
+
+    public function it_invalidates_a_variant_group_combination_if_an_axis_does_not_belong_to_the_family(
+        $variantGroupRepository,
+        $logger,
+        DestinationPim $pim
+    )
+    {
+        $family = new Family(11, 'family_1', ['attributes' => ['att_1', 'att_2', 'axis_2']]);
+        $variantGroupCombination = new VariantGroupCombination($family,['axis_1', 'axis_2', 'axis_3'], ['group_1', 'group_2'], []);
+
+        $variantGroupRepository->retrieveGroupAttributes('group_1', $pim)->willReturn(['att_1']);
+        $variantGroupRepository->retrieveGroupAttributes('group_2', $pim)->willReturn(['att_1']);
+
+        $logger->warning(
+            "Unable to migrate the variations for the family family_1 and axis axis_1, axis_2, because all the following axes of the variant groups don't belong to the family : axis_1, axis_3"
+        )->shouldBeCalled();
+
+        $this->isVariantGroupCombinationValid($variantGroupCombination, $pim)->shouldReturn(false);
+    }
 }

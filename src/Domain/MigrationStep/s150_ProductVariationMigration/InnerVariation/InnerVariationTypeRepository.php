@@ -54,11 +54,12 @@ class InnerVariationTypeRepository
 
         foreach ($innerVariationTypesData as $innerVariationTypeData) {
             $id = (int) $innerVariationTypeData['id'];
+            $variationFamilyId = $this->familyRepository->findById((int) $innerVariationTypeData['variation_family_id'], $pim);
 
             $innerVariationTypes[] = new InnerVariationType(
                 $id,
                 $innerVariationTypeData['code'],
-                $this->familyRepository->findById((int) $innerVariationTypeData['variation_family_id'], $pim),
+                $variationFamilyId,
                 $this->getAxes($id, $pim)
             );
         }

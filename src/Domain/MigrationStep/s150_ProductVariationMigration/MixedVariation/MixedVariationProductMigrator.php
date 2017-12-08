@@ -39,8 +39,7 @@ class MixedVariationProductMigrator
         ProductModelRepository $productModelRepository,
         ProductModelSaver $productModelSaver,
         ProductVariantTransformer $productVariantTransformer
-    )
-    {
+    ) {
         $this->productModelBuilder = $productModelBuilder;
         $this->productRepository = $productRepository;
         $this->productModelRepository = $productModelRepository;

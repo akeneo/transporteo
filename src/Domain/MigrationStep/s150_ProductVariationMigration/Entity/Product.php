@@ -47,17 +47,17 @@ class Product
         return $this->identifier;
     }
 
-    public function getFamilyId(): int
+    public function getFamilyId(): ?int
     {
         return $this->familyId;
     }
 
-    public function getCreatedAt(): string
+    public function getCreatedAt(): ?string
     {
         return $this->createdAt;
     }
 
-    public function getVariantGroupCode(): string
+    public function getVariantGroupCode(): ?string
     {
         return $this->variantGroupCode;
     }

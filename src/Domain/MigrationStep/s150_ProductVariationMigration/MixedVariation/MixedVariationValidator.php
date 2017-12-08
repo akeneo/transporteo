@@ -28,7 +28,7 @@ class MixedVariationValidator
         $this->innerVariationTypeValidator = $innerVariationTypeValidator;
     }
 
-    public function isValid(MixedVariation $mixedVariation, DestinationPim $pim)
+    public function isValid(MixedVariation $mixedVariation, DestinationPim $pim): bool
     {
         if (!$this->innerVariationTypeValidator->canInnerVariationTypeBeMigrated($mixedVariation->getInnerVariationType())) {
             return false;

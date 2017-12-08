@@ -18,7 +18,7 @@ class CreateProductModelCommand implements ApiCommand
     /** @var array */
     private $data;
 
-    public function __construct($code, array $data)
+    public function __construct(string $code, array $data)
     {
         $this->code = $code;
         $this->data = $data;

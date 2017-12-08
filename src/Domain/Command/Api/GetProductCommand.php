@@ -15,7 +15,7 @@ class GetProductCommand implements ApiCommand
     /** @var string */
     private $code;
 
-    public function __construct($code)
+    public function __construct(string $code)
     {
         $this->code = $code;
     }

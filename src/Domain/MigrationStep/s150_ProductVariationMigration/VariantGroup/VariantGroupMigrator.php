@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\DataMigration\TableMigrator;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Exception\InvalidVariantGroupException;
 use Akeneo\PimMigration\Domain\Pim\DestinationPim;
 use Akeneo\PimMigration\Domain\Pim\SourcePim;
+use Psr\Log\LoggerInterface;
 
 /**
  * Migrates variant groups data according to the new product variation model.
@@ -20,9 +21,6 @@ class VariantGroupMigrator implements DataMigrator
 {
     /** @var VariantGroupRepository */
     private $variantGroupRepository;
-
-    /** @var TableMigrator */
-    private $tableMigrator;
 
     /** @var VariantGroupValidator */
     private $variantGroupValidator;
@@ -36,25 +34,27 @@ class VariantGroupMigrator implements DataMigrator
     /** @var VariantGroupCombinationMigrator */
     private $variantGroupCombinationMigrator;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         VariantGroupRepository $variantGroupRepository,
         VariantGroupValidator $variantGroupValidator,
         VariantGroupCombinationRepository $variantGroupCombinationRepository,
         VariantGroupCombinationMigrator $variantGroupCombinationMigrator,
         MigrationCleaner $variantGroupMigrationCleaner,
-        TableMigrator $tableMigrator
+        LoggerInterface $logger
     ) {
         $this->variantGroupRepository = $variantGroupRepository;
-        $this->tableMigrator = $tableMigrator;
         $this->variantGroupValidator = $variantGroupValidator;
         $this->variantGroupMigrationCleaner = $variantGroupMigrationCleaner;
         $this->variantGroupCombinationRepository = $variantGroupCombinationRepository;
         $this->variantGroupCombinationMigrator = $variantGroupCombinationMigrator;
+        $this->logger = $logger;
     }
 
     public function migrate(SourcePim $sourcePim, DestinationPim $destinationPim): void
     {
-        $this->migrateDeprecatedTables($sourcePim, $destinationPim);
         $this->removeInvalidVariantGroups($destinationPim);
         $this->removeInvalidVariantGroupCombinations($destinationPim);
 
@@ -67,18 +67,14 @@ class VariantGroupMigrator implements DataMigrator
         $this->variantGroupMigrationCleaner->removeDeprecatedData($destinationPim);
 
         $numberOfRemovedInvalidVariantGroups = $this->variantGroupRepository->retrieveNumberOfRemovedInvalidVariantGroups($destinationPim);
-        if ($numberOfRemovedInvalidVariantGroups > 0) {
-            throw new InvalidVariantGroupException($numberOfRemovedInvalidVariantGroups);
-        }
-    }
 
-    /**
-     * Migrates MySQL tables that no longer exists in PIM 2.0, but are used to retrieve the variant group combinations.
-     */
-    private function migrateDeprecatedTables(SourcePim $sourcePim, DestinationPim $destinationPim): void
-    {
-        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_group_attribute');
-        $this->tableMigrator->migrate($sourcePim, $destinationPim, 'pim_catalog_product_template');
+        if ($numberOfRemovedInvalidVariantGroups > 0) {
+            $this->logger->warning(<<<EOT
+There are $numberOfRemovedInvalidVariantGroups variant groups that can't be automatically migrated. Related products have been migrated but they're not variant.
+Your catalog structure should be rework, according to the catalog modeling introduced in v2.0
+EOT
+            );
+        }
     }
 
     private function removeInvalidVariantGroups(DestinationPim $pim): void

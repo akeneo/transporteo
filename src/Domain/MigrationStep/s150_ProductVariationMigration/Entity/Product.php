@@ -14,10 +14,27 @@ class Product
     /** @var string */
     private $identifier;
 
-    public function __construct(int $id, string $identifier)
-    {
+    /** @var int|null */
+    private $familyId;
+
+    /** @var null|string */
+    private $createdAt;
+
+    /** @var null|string */
+    private $variantGroupCode;
+
+    public function __construct(
+        int $id,
+        string $identifier,
+        ?int $familyId,
+        ?string $createdAt,
+        ?string $variantGroupCode
+    ) {
         $this->id = $id;
         $this->identifier = $identifier;
+        $this->familyId = $familyId;
+        $this->createdAt = $createdAt;
+        $this->variantGroupCode = $variantGroupCode;
     }
 
     public function getId(): int
@@ -28,5 +45,20 @@ class Product
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function getFamilyId(): ?int
+    {
+        return $this->familyId;
+    }
+
+    public function getCreatedAt(): ?string
+    {
+        return $this->createdAt;
+    }
+
+    public function getVariantGroupCode(): ?string
+    {
+        return $this->variantGroupCode;
     }
 }

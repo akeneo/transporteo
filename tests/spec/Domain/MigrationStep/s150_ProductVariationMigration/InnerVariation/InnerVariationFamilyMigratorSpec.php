@@ -66,7 +66,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             ]
         ]);
 
-        $innerVariationTypeRepository->getFamily($innerVariationType, $pim)->willReturn($innerVariationFamily);
+        $innerVariationType->getVariationFamily()->willReturn($innerVariationFamily);
 
         $firstParentFamily = new Family(1, 'first_parent_family', [
             'code' => 'first_parent_family',
@@ -93,7 +93,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             ]
         ]);
 
-        $innerVariationTypeRepository->getParentFamilies($innerVariationType, $pim)->willReturn(new \ArrayObject([$firstParentFamily, $secondParentFamily]));
+        $innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim)->willReturn(new \ArrayObject([$firstParentFamily, $secondParentFamily]));
 
         $console->execute(new UpdateFamilyCommand([
             'code' => 'first_parent_family',
@@ -121,8 +121,8 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
         ]), $pim)->shouldBeCalled();
 
         $innerVariationType->getAxes()->willReturn([
-            ['code' => 'axe_1', 'attribute_type' => 'pim_catalog_simpleselect'],
-            ['code' => 'axe_2', 'attribute_type' => 'pim_catalog_metric']
+            ['code' => 'axis_1', 'attribute_type' => 'pim_catalog_simpleselect'],
+            ['code' => 'axis_2', 'attribute_type' => 'pim_catalog_metric']
         ]);
 
         $innerVariationTypeRepository->getLabel($innerVariationType, 'en_US', $pim)->willReturn('IVT US');
@@ -130,9 +130,9 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
 
         $firstFamilyVariant = new FamilyVariant(
             null,
-            'first_parent_family_inner_variation_family',
             'first_parent_family',
-            ['axe_1', 'axe_2'],
+            'first_parent_family',
+            ['axis_1', 'axis_2'],
             [],
             ['attribute_1', 'attribute_2'],
             [],
@@ -144,9 +144,9 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
 
         $secondFamilyVariant = new FamilyVariant(
             null,
-            'second_parent_family_inner_variation_family',
             'second_parent_family',
-            ['axe_1', 'axe_2'],
+            'second_parent_family',
+            ['axis_1', 'axis_2'],
             [],
             ['attribute_1', 'attribute_2'],
             [],

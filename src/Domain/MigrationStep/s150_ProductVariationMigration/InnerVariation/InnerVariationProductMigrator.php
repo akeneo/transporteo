@@ -67,12 +67,11 @@ class InnerVariationProductMigrator
      */
     public function migrate(InnerVariationType $innerVariationType, Pim $pim): void
     {
-        $innerVariationFamily = $this->innerVariationTypeRepository->getFamily($innerVariationType, $pim);
-        $parentFamilies = $this->innerVariationTypeRepository->getParentFamilies($innerVariationType, $pim);
+        $innerVariationFamily = $innerVariationType->getVariationFamily();
+        $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim);
 
         foreach ($parentFamilies as $parentFamily) {
-            $familyVariantCode = $parentFamily->getCode().'_'.$innerVariationFamily->getCode();
-            $familyVariant = $this->familyVariantRepository->findOneByCode($familyVariantCode, $pim);
+            $familyVariant = $this->familyVariantRepository->findOneByCode($parentFamily->getCode(), $pim);
             $this->migrateFamilyVariantProducts($familyVariant, $parentFamily, $innerVariationFamily, $pim);
         }
     }

@@ -16,17 +16,17 @@ class InnerVariationType
     /** @var string */
     private $code;
 
-    /** @var int */
-    private $variationFamilyId;
+    /** @var Family */
+    private $variationFamily;
 
     /** @var array */
     private $axes;
 
-    public function __construct(int $id, string $code, int $variationFamilyId, array $axes)
+    public function __construct(int $id, string $code, Family $variationFamily, array $axes)
     {
         $this->id = $id;
         $this->code = $code;
-        $this->variationFamilyId = $variationFamilyId;
+        $this->variationFamily = $variationFamily;
         $this->axes = $axes;
     }
 
@@ -40,13 +40,29 @@ class InnerVariationType
         return $this->id;
     }
 
+    public function getVariationFamily(): Family
+    {
+        return $this->variationFamily;
+    }
+
     public function getVariationFamilyId(): int
     {
-        return $this->variationFamilyId;
+        return $this->variationFamily->getId();
     }
 
     public function getAxes(): array
     {
         return $this->axes;
+    }
+
+    public function getAxesCodes(): array
+    {
+        $axesCodes = [];
+
+        foreach ($this->axes as $axis) {
+            $axesCodes[] = $axis['code'];
+        }
+
+        return $axesCodes;
     }
 }

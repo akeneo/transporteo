@@ -67,7 +67,7 @@ class DestinationPimVersionCheckerSpec extends ObjectBehavior
         $commandResult->getOutput()->willReturn('| Version  | 2.0.2 ');
 
         $this->shouldThrow(new DestinationPimCheckConfigurationException(sprintf(
-            'The current version of your destination PIM 2.0.2 is not supported. The minimum supported version is %d.%d.%d',
+            'The current version of your destination PIM 2.0.2 is not supported. The minimum version of the destination PIM is %d.%d.%d',
             DestinationPimVersionChecker::EXACT_MAJOR_VERSION,
             DestinationPimVersionChecker::EXACT_MINOR_VERSION,
             DestinationPimVersionChecker::MINIMUM_PATCH_VERSION

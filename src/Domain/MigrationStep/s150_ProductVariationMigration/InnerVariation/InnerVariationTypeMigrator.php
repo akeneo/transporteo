@@ -72,7 +72,6 @@ class InnerVariationTypeMigrator implements DataMigrator
             }
         }
 
-        $this->innerVariationCleaner->deleteInvalidInnerVariationTypesProducts($invalidInnerVariationTypes, $destinationPim);
         $this->innerVariationCleaner->cleanInnerVariationTypes($innerVariationTypes, $destinationPim);
 
         if (!empty($invalidInnerVariationTypes)) {

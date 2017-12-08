@@ -63,30 +63,6 @@ class InnerVariationCleaner
         $this->deleteInnerVariationAttribute($pim);
     }
 
-    /**
-     * Deletes the products of the invalid InnerVariationType that could not been migrated.
-     */
-    public function deleteInvalidInnerVariationTypesProducts(array $invalidInnerVariationTypes, DestinationPim $pim): void
-    {
-        foreach ($invalidInnerVariationTypes as $invalidInnerVariationType) {
-            $innerVariationFamily = $invalidInnerVariationType->getVariationFamily();
-            $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($invalidInnerVariationType, $pim);
-
-            foreach ($parentFamilies as $family) {
-                $products = $this->productRepository->findAllHavingVariantsForIvb($family->getId(), $innerVariationFamily->getId(), $pim);
-
-                foreach ($products as $product) {
-                    $this->productRepository->delete($product->getIdentifier(), $pim);
-                }
-            }
-        }
-
-        $productsVariants = $this->productRepository->findAllNotMigratedProductVariants($pim);
-        foreach ($productsVariants as $productsVariant) {
-            $this->productRepository->delete($productsVariant->getIdentifier(), $pim);
-        }
-    }
-
     private function deleteInnerVariationFamily(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $deleteFamilyCommand = new MySqlExecuteCommand('DELETE FROM pim_catalog_family WHERE id = '.$innerVariationType->getVariationFamilyId());

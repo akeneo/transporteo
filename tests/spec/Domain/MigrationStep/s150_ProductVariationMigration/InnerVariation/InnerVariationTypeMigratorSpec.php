@@ -83,7 +83,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
 
-        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
@@ -129,7 +128,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($invalidInnerVariationType, $destinationPim)->shouldNotBeCalled();
         $innerVariationProductMigrator->migrate($invalidInnerVariationType, $destinationPim)->shouldNotBeCalled();
 
-        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([$invalidInnerVariationType], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$validInnerVariationType, $invalidInnerVariationType], $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);
@@ -172,7 +170,6 @@ class InnerVariationTypeMigratorSpec extends ObjectBehavior
         $innerVariationFamilyMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
         $innerVariationProductMigrator->migrate($secondInnerVariationType, $destinationPim)->shouldBeCalled();
 
-        $innerVariationCleaner->deleteInvalidInnerVariationTypesProducts([], $destinationPim)->shouldBeCalled();
         $innerVariationCleaner->cleanInnerVariationTypes([$firstInnerVariationType, $secondInnerVariationType], $destinationPim)->shouldBeCalled();
 
         $this->migrate($sourcePim, $destinationPim);

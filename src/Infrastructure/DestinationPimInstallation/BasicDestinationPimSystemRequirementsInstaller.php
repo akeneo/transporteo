@@ -53,7 +53,10 @@ class BasicDestinationPimSystemRequirementsInstaller implements DestinationPimSy
 
         foreach ($pimParametersLines as $numLine => $pimParametersLine) {
             if (1 === preg_match('/^\s*installer_data:/', $pimParametersLine)) {
-                $this->fileSystemHelper->updateLineInFile($pimParametersFilePath, $numLine + 1, '    installer_data: PimInstallerBundle:minimal'.PHP_EOL);
+                $installerBundle = $pim->isEnterpriseEdition() ? 'PimEnterpriseInstallerBundle' : 'PimInstallerBundle';
+                $installerDataValue = sprintf("    installer_data: %s:minimal\n", $installerBundle);
+
+                $this->fileSystemHelper->updateLineInFile($pimParametersFilePath, $numLine + 1, $installerDataValue);
 
                 return;
             }

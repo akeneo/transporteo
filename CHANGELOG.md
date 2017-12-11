@@ -1,3 +1,16 @@
+# 1.0.0-beta1
+
+## Improvements
+
+- MIG-64 Migration of product variants from InnerVariationBundle and variant groups both
+- MIG-36 Migration of product variants from variant groups
+- Improve use of SSH to connect to a remote source PIM
+
+## Bug fixes
+
+- MIG-92 fix destination PIM installation for EE
+- MIG-91 Missing variant group combination validation
+
 # 1.0.0-alpha4
 
 ## Improvements

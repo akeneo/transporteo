@@ -48,7 +48,7 @@ Community  | User                     | 1.0.0-alpha1 |
 Community  | User Roles               | 1.0.0-alpha1 |
 Community  | User Groups              | 1.0.0-alpha1 |
 Community  | Access Control List      | 1.0.0-alpha1 |
-Community  | Variant Group            |      WIP     |
+Community  | Variant Group            | 1.0.0-beta1  |
 Community  | Product History          |      `-`     |
 Community  | Image files              |      `-`     |
 Enterprise | Product Asset            | 1.0.0-alpha1 |
@@ -65,7 +65,7 @@ Extension             | Version                                                 
 --------------------- | ------------------------------------------------------------- |
 ElasticSearchBundle   | Not relevant as ElasticSearch is now part of the native stack |
 InnerVariationBundle  | 1.0.0-alpha3                                                  |
-CustomEntityBundle    | WIP                                                           |
+CustomEntityBundle    | `-`                                                           |
 
 #### InnerVariationBundle
 

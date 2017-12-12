@@ -10,7 +10,6 @@ This tool aims at helping you to migrate your *PIM 1.7 standard edition* (either
 The 1.7 source PIM you will migrate from can be either installed locally or remotely. 
 
 The 2.0 destination PIM you will migrate to should be installed locally running on the port 80, you can install it following these [instructions](https://docs.akeneo.com/latest/install_pim/manual/index.html).
-We do not support the Docker installation yet regarding Transporteo.
 The minimum version of the destination PIM is 2.0.3.
 
 Both PIM should be functionnal and have a functionnal API with admin rights.
@@ -23,7 +22,7 @@ Before proceeding, we strongly encourage you to read our documentation and our f
 - [Single Product Storage?](https://medium.com/akeneo-labs/single-product-storage-28d92f35cbd7), technical blog post
 - [Re-building the storage from the ground up](https://medium.com/akeneo-labs/re-building-the-storage-from-the-ground-up-d857bf497c32), technical blog post
 - [Offer choice with variants!](https://medium.com/akeneo-labs/offer-choice-with-variants-8460a82fa36), functional blog post
-- [How Akeneo deals products with variants?](https://medium.com/akeneo-labs/how-does-akeneo-deal-with-variants-42bcab83a879), functional blog post
+- [How Akeneo deals with variants?](https://medium.com/akeneo-labs/how-does-akeneo-deal-with-variants-42bcab83a879), functional blog post
 
 ## Scope
 
@@ -33,31 +32,31 @@ We count on your feedback to continue to improve it in attempt to cover all your
 
 ### Data Migration
 
-Edition    | Model                    | Version      |
----------- | ------------------------ | ------------ |
-Community  | Association type         | 1.0.0-alpha1 |
-Community  | Attribute                | 1.0.0-alpha1 |
-Community  | Attribute Group          | 1.0.0-alpha1 |
-Community  | Categories               | 1.0.0-alpha1 |
-Community  | Family                   | 1.0.0-alpha1 |
-Community  | Group type               | 1.0.0-alpha1 |
-Community  | Group                    | 1.0.0-alpha1 |
-Community  | Reference Data           | 1.0.0-alpha1 |
-Community  | Product                  | 1.0.0-alpha1 |
-Community  | User                     | 1.0.0-alpha1 |
-Community  | User Roles               | 1.0.0-alpha1 |
-Community  | User Groups              | 1.0.0-alpha1 |
-Community  | Access Control List      | 1.0.0-alpha1 |
-Community  | Variant Group            | 1.0.0-beta1  |
-Community  | Product History          |      `-`     |
-Community  | Image files              |      `-`     |
-Enterprise | Product Asset            | 1.0.0-alpha1 |
-Enterprise | Asset files              |      `-`     |
-Enterprise | Product Asset Categories | 1.0.0-alpha1 |
-Enterprise | Product Rules            | 1.0.0-alpha1 |
-Enterprise | Product Draft            |      `-`     |
-Enterprise | Published Product        |      `-`     |
-Enterprise | Teamwork Assistant       |      `-`     |
+Edition    | Model                    | Version           |
+---------- | ------------------------ | ------------------|
+Community  | Association type         | 1.0.0-alpha1      |
+Community  | Attribute                | 1.0.0-alpha1      |
+Community  | Attribute Group          | 1.0.0-alpha1      |
+Community  | Categories               | 1.0.0-alpha1      |
+Community  | Family                   | 1.0.0-alpha1      |
+Community  | Group type               | 1.0.0-alpha1      |
+Community  | Group                    | 1.0.0-alpha1      |
+Community  | Reference Data           | 1.0.0-alpha1      |
+Community  | Product                  | 1.0.0-alpha1      |
+Community  | User                     | 1.0.0-alpha1      |
+Community  | User Roles               | 1.0.0-alpha1      |
+Community  | User Groups              | 1.0.0-alpha1      |
+Community  | Access Control List      | 1.0.0-alpha1      |
+Community  | Variant Group            | 1.0.0-beta1       |
+Community  | Product History          | Not supported     |
+Community  | Image files              | [See this section](#image-and-asset-files)  |
+Enterprise | Product Asset            | 1.0.0-alpha1      |
+Enterprise | Asset files              | [See this section](#image-and-asset-files)  |
+Enterprise | Product Asset Categories | 1.0.0-alpha1      |
+Enterprise | Product Rules            | 1.0.0-alpha1      |
+Enterprise | Product Draft            | Not supported     |
+Enterprise | Published Product        | Not supported     |
+Enterprise | Teamwork Assistant       | Not supported     |
 
 ### Extensions
 
@@ -65,19 +64,7 @@ Extension             | Version                                                 
 --------------------- | ------------------------------------------------------------- |
 ElasticSearchBundle   | Not relevant as ElasticSearch is now part of the native stack |
 InnerVariationBundle  | 1.0.0-alpha3                                                  |
-CustomEntityBundle    | `-`                                                           |
-
-#### InnerVariationBundle
-
-The modeling of the variations with the IVB must be well structured to be fully handled by Transporteo. In the PIM 2.0, a family variant can't have more than 5 axis, and this axis should be one of the following types: 
-- Simple select
-- Reference data simple select
-- Metric
-- Yes/No
-
-If one of these conditions is not fulfilled, the products concerned won't be migrated. You will have to think about a better modeling for these products and migrate them manually.
-
-You can find the details of the errors in the file "var/logs/error.log".
+CustomEntityBundle    | Not supported                                                 |
 
 ### Custom Code
 
@@ -85,34 +72,18 @@ For now, the custom code migration is not automated.
 
 Our plan is to enrich Transporteo with a step by step assistant to help you updating your custom code.
 
+### Image and asset files
+
+If your images and assets are configured on a remote file system, you just have to configure you 2.0 PIM to access them.
+If your images and assets are configured to be stored locally, you have to copy them manually into the 2.0 PIM.
+
 ## Installation
-
-### System requirements
-
-- php7.1
-- php7.1-gmp
-- php7.1-mbstring
-- php7.1-json
-- php7.1-xml
-- [composer](https://getcomposer.org/download/)
-- a SSH client
-
-And the same requirements as the PIM as you need a PIM installed on your computer ([instructions](https://docs.akeneo.com/latest/install_pim/manual/system_requirements/system_requirements.html)).
-As we don't use Elasticsearch in Transporteo, you can install it the way you want.
-
-### Install the tool and its dependencies
 
 ```bash
   $ composer.phar create-project "akeneo/transporteo":"dev-master"
 ```
 
 ## How to use
-
-### Access to remote servers
-
-If the 1.7 source PIM you will migrate from is installed remotely, you'll be asked to provide a *private SSH key* able to connect to this server.
-
-### Upgrade!
 
 To launch the tool, run:
 
@@ -127,14 +98,16 @@ You will have to migrate it following this [upgrade file](./UPGRADE-2.0.md).
 
 We plan to automate this part in future release, stay tuned! :)
 
-*Tip: You can define the default responses in the file "src/Infrastructure/Common/config/parameters.yml"*
+## Documentation
 
-## How to contribute
+- [Requirements](doc/requirements.md)
+- [Advance usage](doc/advance-usage.md)
+- [Product variants migration](doc/product-variants-migration.md)
 
-Please, have a look on the [CONTRIBUTING](./.github/CONTRIBUTING.md) page.
+## Support & contribution
 
-## What's next?
+Be aware that this tool is only supported in **best effort** by our team.
+If you find an issue or want to ask for an improvement, do not hesitate to open a Github issue on this repository.
 
-We will continuously improve this tool, you can follow our plans [here](https://github.com/akeneo/transporteo/projects/1).
-
-You can also have a look on the [changelog](./CHANGELOG.md).
+All contributions are of course very welcomed! So do not hesitate to help us build an even better migration tool. We'd love that.
+You can have a look to the [Contributing](./.github/CONTRIBUTING.md) page.

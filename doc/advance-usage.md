@@ -1,0 +1,129 @@
+# Advance usage
+
+## Configuration
+
+In order to avoid answering questions when starting the migration, you can define the default answsers in the [configuration parameters file](../src/Infrastructure/Common/config/parameters.yml) 
+
+## Migration steps
+
+Transporteo uses [Symfony workflow](https://github.com/symfony/workflow) to define each step of the migration. You can edit the [workflow configuration file](../src/Infrastructure/Common/config/transporteo_state_machine.yml) to move, add, or remove some steps. Be aware that certain steps are mandatory, and that their orders are sometimes important.
+
+The most common reason to do that would be to want to migrate only structural data without products. In this case you'll have to remove the steps `destination_pim_product_migration` and `destination_pim_product_variation_migration` because the second step can't be performed without the first one. 
+
+Below is an example of how to remove the steps of products migration:
+
+```yaml
+ 	workflows:
+    transporteo:
+        type: 'state_machine'
+        audit_trail:
+            enabled: false
+        marking_store:
+            type: 'single_state'
+            arguments:
+                - 'currentState'
+        supports:
+            - 'Akeneo\PimMigration\Domain\TransporteoStateMachine'
+        places:
+            - 'ready'
+            - 'source_pim_location_guessed'
+            - 'source_pim_configured'
+            - 'source_pim_api_configured'
+            - 'source_pim_detected'
+            - 'destination_pim_location_guessed'
+            - 'destination_pim_downloaded'
+            - 'destination_pim_pre_configured'
+            - 'destination_pim_configured'
+            - 'destination_pim_api_configured'
+            - 'destination_pim_detected'
+            - 'destination_pim_requirements_checked'
+            - 'destination_pim_system_requirements_installed'
+            - 'destination_pim_file_database_migrated'
+            - 'destination_pim_structure_migrated'
+            - 'destination_pim_family_migrated'
+            - 'destination_pim_system_migrated'
+            - 'destination_pim_job_migrated'
+            - 'destination_pim_group_migrated'
+            - 'destination_pim_extra_data_migrated'
+            - 'destination_pim_enterprise_edition_data_migrated'
+            - 'destination_pim_reference_data_migrated'
+#            - 'destination_pim_product_migrated'
+#            - 'destination_pim_product_variation_migrated'
+            - 'migration_finished'
+        transitions:
+            ask_source_pim_location:
+                from: 'ready'
+                to: 'source_pim_location_guessed'
+            local_source_pim_configuration:
+                from: 'source_pim_location_guessed'
+                to: 'source_pim_configured'
+            distant_source_pim_configuration:
+                from: 'source_pim_location_guessed'
+                to: 'source_pim_configured'
+            source_pim_api_configuration:
+                from: 'source_pim_configured'
+                to: 'source_pim_api_configured'
+            source_pim_detection:
+                from: 'source_pim_api_configured'
+                to: 'source_pim_detected'
+            ask_destination_pim_location:
+                from: 'source_pim_detected'
+                to: 'destination_pim_location_guessed'
+            download_destination_pim:
+                from: 'destination_pim_location_guessed'
+                to: 'destination_pim_downloaded'
+            destination_pim_pre_configuration:
+                from: 'destination_pim_downloaded'
+                to: 'destination_pim_pre_configured'
+            destination_pim_configuration:
+                from: ['destination_pim_downloaded', 'destination_pim_pre_configured']
+                to: 'destination_pim_configured'
+            destination_pim_api_configuration:
+                from: 'destination_pim_configured'
+                to: 'destination_pim_api_configured'
+            destination_pim_detection:
+                from: 'destination_pim_api_configured'
+                to: 'destination_pim_detected'
+            destination_pim_check_requirements:
+                from: 'destination_pim_detected'
+                to: 'destination_pim_requirements_checked'
+            local_destination_pim_system_requirements_installation:
+                from: 'destination_pim_requirements_checked'
+                to: 'destination_pim_system_requirements_installed'
+            destination_pim_file_database_migration:
+                from: 'destination_pim_system_requirements_installed'
+                to: 'destination_pim_file_database_migrated'
+            destination_pim_structure_migration:
+                from: 'destination_pim_file_database_migrated'
+                to: 'destination_pim_structure_migrated'
+            destination_pim_family_migration:
+                from: 'destination_pim_structure_migrated'
+                to: 'destination_pim_family_migrated'
+            destination_pim_system_migration:
+                from: 'destination_pim_family_migrated'
+                to: 'destination_pim_system_migrated'
+            destination_pim_job_migration:
+                from: 'destination_pim_system_migrated'
+                to: 'destination_pim_job_migrated'
+            destination_pim_group_migration:
+                from: 'destination_pim_job_migrated'
+                to: 'destination_pim_group_migrated'
+            destination_pim_extra_data_migration:
+                from: 'destination_pim_group_migrated'
+                to: 'destination_pim_extra_data_migrated'
+            destination_pim_enterprise_edition_data_migration:
+                from: 'destination_pim_extra_data_migrated'
+                to: 'destination_pim_enterprise_edition_data_migrated'
+            destination_pim_reference_data_migration:
+                from: 'destination_pim_enterprise_edition_data_migrated'
+                to: 'destination_pim_reference_data_migrated'
+#            destination_pim_product_migration:
+#                from: 'destination_pim_reference_data_migrated'
+#                to: 'destination_pim_product_migrated'
+#            destination_pim_product_variation_migration:
+#                from: 'destination_pim_product_migrated'
+#                to: 'destination_pim_product_variation_migrated'
+            finish_migration:
+                from: 'destination_pim_reference_data_migrated'
+                to: 'migration_finished'
+```

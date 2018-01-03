@@ -32,38 +32,38 @@ We count on your feedback to continue to improve it in attempt to cover all your
 
 ### Data Migration
 
-Edition    | Model                    | Version           |
----------- | ------------------------ | ------------------|
-Community  | Association type         | 1.0.0-alpha1      |
-Community  | Attribute                | 1.0.0-alpha1      |
-Community  | Attribute Group          | 1.0.0-alpha1      |
-Community  | Categories               | 1.0.0-alpha1      |
-Community  | Family                   | 1.0.0-alpha1      |
-Community  | Group type               | 1.0.0-alpha1      |
-Community  | Group                    | 1.0.0-alpha1      |
-Community  | Reference Data           | 1.0.0-alpha1      |
-Community  | Product                  | 1.0.0-alpha1      |
-Community  | User                     | 1.0.0-alpha1      |
-Community  | User Roles               | 1.0.0-alpha1      |
-Community  | User Groups              | 1.0.0-alpha1      |
-Community  | Access Control List      | 1.0.0-alpha1      |
-Community  | Variant Group            | 1.0.0-beta1       |
-Community  | Product History          | Not supported     |
-Community  | Image files              | [See this section](#image-and-asset-files)  |
-Enterprise | Product Asset            | 1.0.0-alpha1      |
-Enterprise | Asset files              | [See this section](#image-and-asset-files)  |
-Enterprise | Product Asset Categories | 1.0.0-alpha1      |
-Enterprise | Product Rules            | 1.0.0-alpha1      |
-Enterprise | Product Draft            | Not supported     |
-Enterprise | Published Product        | Not supported     |
-Enterprise | Teamwork Assistant       | Not supported     |
+Edition    | Model                    | Version          |
+---------- | ------------------------ | -----------------|
+Community  | Association type         | 1.0.0            |
+Community  | Attribute                | 1.0.0            |
+Community  | Attribute Group          | 1.0.0            |
+Community  | Categories               | 1.0.0            |
+Community  | Family                   | 1.0.0            |
+Community  | Group type               | 1.0.0            |
+Community  | Group                    | 1.0.0            |
+Community  | Reference Data           | 1.0.0            |
+Community  | Product                  | 1.0.0            |
+Community  | User                     | 1.0.0            |
+Community  | User Roles               | 1.0.0            |
+Community  | User Groups              | 1.0.0            |
+Community  | Access Control List      | 1.0.0            |
+Community  | Variant Group            | 1.0.0            |
+Community  | Product History          | Not supported    |
+Community  | Image files              | [See this section](#image-and-asset-files) |
+Enterprise | Product Asset            | 1.0.0            |
+Enterprise | Asset files              | [See this section](#image-and-asset-files) |
+Enterprise | Product Asset Categories | 1.0.0            |
+Enterprise | Product Rules            | 1.0.0            |
+Enterprise | Product Draft            | Not supported    |
+Enterprise | Published Product        | Not supported    |
+Enterprise | Teamwork Assistant       | Not supported    |
 
 ### Extensions
 
 Extension             | Version                                                       |
 --------------------- | ------------------------------------------------------------- |
 ElasticSearchBundle   | Not relevant as ElasticSearch is now part of the native stack |
-InnerVariationBundle  | 1.0.0-alpha3                                                  |
+InnerVariationBundle  | 1.0.0                                                         |
 CustomEntityBundle    | Not supported                                                 |
 
 ### Custom Code

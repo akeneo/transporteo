@@ -38,7 +38,7 @@ class LocalMySqlQueryExecutor
     public function getConnection(Pim $pim): \PDO
     {
         $dsn = sprintf(
-            'mysql: host=%s;dbname=%s;port=%s',
+            'mysql:host=%s;dbname=%s;port=%s',
             $pim->getMysqlHost(),
             $pim->getDatabaseName(),
             strval($pim->getMysqlPort())

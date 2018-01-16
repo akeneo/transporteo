@@ -9,9 +9,9 @@ use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Enti
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Product;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\ProductModel;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationProductMigrator;
-use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationTypeRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\ProductModelBuilder;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\ProductVariantTransformer;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
@@ -27,7 +27,7 @@ use Psr\Log\LoggerInterface;
 class InnerVariationProductMigratorSpec extends ObjectBehavior
 {
     function let(
-        InnerVariationTypeRepository $innerVariationTypeRepository,
+        FamilyRepository $familyRepository,
         LoggerInterface $logger,
         ProductRepository $productRepository,
         ProductModelBuilder $productModelBuilder,
@@ -37,7 +37,7 @@ class InnerVariationProductMigratorSpec extends ObjectBehavior
     )
     {
         $this->beConstructedWith(
-            $innerVariationTypeRepository,
+            $familyRepository,
             $logger,
             $productRepository,
             $productModelBuilder,
@@ -53,7 +53,7 @@ class InnerVariationProductMigratorSpec extends ObjectBehavior
     }
 
     function it_successfully_migrates_products(
-        $innerVariationTypeRepository,
+        $familyRepository,
         $productModelRepository,
         $familyVariantRepository,
         $productRepository,
@@ -67,14 +67,14 @@ class InnerVariationProductMigratorSpec extends ObjectBehavior
         $parentFamily = new Family(10, 'first_parent_family', []);
 
         $innerVariationType->getVariationFamily()->willReturn($innerVariationFamily);
-        $innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim)->willReturn(new \ArrayObject([$parentFamily]));
+        $familyRepository->findAllByInnerVariationType($innerVariationType, $pim)->willReturn(new \ArrayObject([$parentFamily]));
 
         $familyVariant = new FamilyVariant(20, 'first_family_variant');
         $familyVariantRepository->findOneByCode('first_parent_family', $pim)->willReturn($familyVariant);
 
         $product1 = new Product(110, 'product_model_1', null, null, null);
 
-        $productRepository->findAllHavingVariantsForIvb(10, 1, $pim)->willReturn(new \ArrayObject([$product1]));
+        $productRepository->findAllByFamily($parentFamily, $pim)->willReturn(new \ArrayObject([$product1]));
 
         $productRepository->getCategoryCodes(110, $pim)->willReturn(['cat_1', 'cat_2']);
 

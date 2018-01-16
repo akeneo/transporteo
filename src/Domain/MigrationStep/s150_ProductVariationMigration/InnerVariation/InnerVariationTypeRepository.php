@@ -95,33 +95,6 @@ class InnerVariationTypeRepository
     }
 
     /**
-     * Retrieves parent families having variant products related to an InnerVariationType.
-     */
-    public function getParentFamiliesHavingVariantProducts(InnerVariationType $innerVariationType, Pim $pim): \Traversable
-    {
-        $parentFamiliesData = $this->console->execute(
-            new MySqlQueryCommand(sprintf(
-                'SELECT DISTINCT f.code, f.id
-                 FROM pim_inner_variation_inner_variation_type ivt
-                 INNER JOIN pim_inner_variation_inner_variation_type_family ivtf ON ivtf.inner_variation_type_id = ivt.id
-                 INNER JOIN pim_catalog_family f ON f.id = ivtf.family_id
-                 INNER JOIN pim_catalog_product product_model ON product_model.family_id = f.id
-                 WHERE ivt.id = %d
-                  AND EXISTS(
-                     SELECT * FROM pim_catalog_product AS product_variant
-                     WHERE product_variant.family_id = ivt.variation_family_id
-                     AND JSON_EXTRACT(product_variant.raw_values, \'$.variation_parent_product."<all_channels>"."<all_locales>"\') = product_model.identifier
-                 )',
-                 $innerVariationType->getId()
-        )), $pim
-        )->getOutput();
-
-        foreach ($parentFamiliesData as $parentFamilyData) {
-            yield $this->buildFamily((int) $parentFamilyData['id'], $parentFamilyData['code'], $pim);
-        }
-    }
-
-    /**
      * Retrieves the label of an InnerVariationType for a given locale.
      */
     public function getLabel(InnerVariationType $innerVariationType, string $locale, Pim $pim): string
@@ -177,16 +150,5 @@ class InnerVariationTypeRepository
             ),
             $pim
         )->getOutput();
-    }
-
-    /**
-     * Retrieves all the data of a family.
-     */
-    private function buildFamily(int $familyId, string $familyCode, Pim $pim): Family
-    {
-        $apiCommand = new GetFamilyCommand($familyCode);
-        $familyStandardData = $this->console->execute($apiCommand, $pim)->getOutput();
-
-        return new Family($familyId, $familyCode, $familyStandardData);
     }
 }

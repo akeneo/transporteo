@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\Pim\Pim;
@@ -39,24 +40,29 @@ class InnerVariationFamilyMigrator
     /** @var FamilyVariantRepository */
     private $familyVariantRepository;
 
+    /** @var FamilyRepository */
+    private $familyRepository;
+
     public function __construct(
         InnerVariationTypeRepository $innerVariationTypeRepository,
         FamilyVariantImporter $familyVariantImporter,
         ChainedConsole $console,
         LoggerInterface $logger,
-        FamilyVariantRepository $familyVariantRepository
+        FamilyVariantRepository $familyVariantRepository,
+        FamilyRepository $familyRepository
     ) {
         $this->innerVariationTypeRepository = $innerVariationTypeRepository;
         $this->familyVariantImporter = $familyVariantImporter;
         $this->logger = $logger;
         $this->console = $console;
         $this->familyVariantRepository = $familyVariantRepository;
+        $this->familyRepository = $familyRepository;
     }
 
     public function migrate(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $innerVariationFamily = $innerVariationType->getVariationFamily();
-        $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim);
+        $parentFamilies = $this->familyRepository->findAllByInnerVariationType($innerVariationType, $pim);
 
         foreach ($parentFamilies as $parentFamily) {
             $this->migrateFamilyAttributes($parentFamily, $innerVariationFamily, $pim);

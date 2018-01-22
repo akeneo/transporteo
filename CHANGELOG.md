@@ -1,3 +1,18 @@
+# 1.0.1
+
+## Bug fixes
+
+- Fix DSN construction for MySQL connection
+- PIM-7114: All the products of an inner variation type family must be migrated
+
+# 1.0.0
+
+## Improvements
+
+- Add comments to configuration parameters
+- Add some documentation
+- Remove useless file
+
 # 1.0.0-beta1
 
 ## Improvements

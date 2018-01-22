@@ -9,6 +9,7 @@ use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantImporter;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\InnerVariation\InnerVariationFamilyMigrator;
@@ -28,7 +29,8 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
         FamilyVariantImporter $familyVariantImporter,
         ChainedConsole $console,
         LoggerInterface $logger,
-        FamilyVariantRepository $familyVariantRepository
+        FamilyVariantRepository $familyVariantRepository,
+        FamilyRepository $familyRepository
     )
     {
         $this->beConstructedWith(
@@ -36,7 +38,8 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             $familyVariantImporter,
             $console,
             $logger,
-            $familyVariantRepository
+            $familyVariantRepository,
+            $familyRepository
         );
     }
 
@@ -47,6 +50,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
 
     function it_successfully_migrates_families(
         $innerVariationTypeRepository,
+        $familyRepository,
         InnerVariationType $innerVariationType,
         DestinationPim $pim,
         FamilyVariantRepository $familyVariantRepository,
@@ -93,7 +97,7 @@ class InnerVariationFamilyMigratorSpec extends ObjectBehavior
             ]
         ]);
 
-        $innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim)->willReturn(new \ArrayObject([$firstParentFamily, $secondParentFamily]));
+        $familyRepository->findAllByInnerVariationType($innerVariationType, $pim)->willReturn(new \ArrayObject([$firstParentFamily, $secondParentFamily]));
 
         $console->execute(new UpdateFamilyCommand([
             'code' => 'first_parent_family',

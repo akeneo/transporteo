@@ -7,6 +7,7 @@ namespace Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigratio
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\FamilyVariant;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\FamilyVariantRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductModelRepository;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\ProductRepository;
@@ -24,8 +25,8 @@ use Psr\Log\LoggerInterface;
  */
 class InnerVariationProductMigrator
 {
-    /** @var InnerVariationTypeRepository */
-    private $innerVariationTypeRepository;
+    /** @var FamilyRepository */
+    private $familyRepository;
 
     /** @var LoggerInterface */
     private $logger;
@@ -45,7 +46,7 @@ class InnerVariationProductMigrator
     private $familyVariantRepository;
 
     public function __construct(
-        InnerVariationTypeRepository $innerVariationTypeRepository,
+        FamilyRepository $familyRepository,
         LoggerInterface $logger,
         ProductRepository $productRepository,
         ProductModelBuilder $builder,
@@ -53,7 +54,7 @@ class InnerVariationProductMigrator
         ProductVariantTransformer $productVariantTransformer,
         FamilyVariantRepository $familyVariantRepository
     ) {
-        $this->innerVariationTypeRepository = $innerVariationTypeRepository;
+        $this->familyRepository = $familyRepository;
         $this->logger = $logger;
         $this->productRepository = $productRepository;
         $this->productModelBuilder = $builder;
@@ -68,7 +69,7 @@ class InnerVariationProductMigrator
     public function migrate(InnerVariationType $innerVariationType, Pim $pim): void
     {
         $innerVariationFamily = $innerVariationType->getVariationFamily();
-        $parentFamilies = $this->innerVariationTypeRepository->getParentFamiliesHavingVariantProducts($innerVariationType, $pim);
+        $parentFamilies = $this->familyRepository->findAllByInnerVariationType($innerVariationType, $pim);
 
         foreach ($parentFamilies as $parentFamily) {
             $familyVariant = $this->familyVariantRepository->findOneByCode($parentFamily->getCode(), $pim);
@@ -88,7 +89,7 @@ class InnerVariationProductMigrator
         Pim $pim
     ): void
     {
-        $productsModels = $this->createProductModels($parentFamily, $innerVariationFamily, $familyVariant, $pim);
+        $productsModels = $this->createProductModels($parentFamily, $familyVariant, $pim);
 
         foreach ($productsModels as $productModel) {
             $this->productModelRepository->updateRawValuesAndCreatedForProduct($productModel, $pim);
@@ -102,12 +103,11 @@ class InnerVariationProductMigrator
      */
     private function createProductModels(
         Family $parentFamily,
-        Family $innerVariationFamily,
         FamilyVariant $familyVariant,
         Pim $pim
     ): array
     {
-        $products = $this->productRepository->findAllHavingVariantsForIvb($parentFamily->getId(), $innerVariationFamily->getId(), $pim);
+        $products = $this->productRepository->findAllByFamily($parentFamily, $pim);
 
         $productsModels = [];
         foreach ($products as $product) {

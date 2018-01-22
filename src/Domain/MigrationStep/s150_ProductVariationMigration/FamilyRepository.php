@@ -8,7 +8,7 @@ use Akeneo\PimMigration\Domain\Command\Api\GetFamilyCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
-use Akeneo\PimMigration\Domain\Pim\DestinationPim;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\InnerVariationType;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
 /**
@@ -67,5 +67,26 @@ class FamilyRepository
         $family = new Family((int) $sqlResult[0]['id'], $sqlResult[0]['code'], $familyData);
 
         return $family;
+    }
+
+    public function findAllByInnerVariationType(InnerVariationType $innerVariationType, Pim $pim)
+    {
+        $sqlResult = $this->console->execute(
+            new MySqlQueryCommand(sprintf(
+                'SELECT DISTINCT f.code, f.id
+                 FROM pim_inner_variation_inner_variation_type ivt
+                 INNER JOIN pim_inner_variation_inner_variation_type_family ivtf ON ivtf.inner_variation_type_id = ivt.id
+                 INNER JOIN pim_catalog_family f ON f.id = ivtf.family_id
+                 WHERE ivt.id = %d',
+                $innerVariationType->getId()
+            )), $pim
+        )->getOutput();
+
+        foreach ($sqlResult as $sqlResultLine) {
+            $familyData = $this->console->execute(new GetFamilyCommand($sqlResultLine['code']), $pim)->getOutput();
+            $family = new Family((int) $sqlResultLine['id'], $sqlResultLine['code'], $familyData);
+
+            yield $family;
+        }
     }
 }

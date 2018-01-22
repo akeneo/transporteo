@@ -8,6 +8,7 @@ use Akeneo\PimMigration\Domain\Command\Api\DeleteProductCommand;
 use Akeneo\PimMigration\Domain\Command\Api\GetProductCommand;
 use Akeneo\PimMigration\Domain\Command\ChainedConsole;
 use Akeneo\PimMigration\Domain\Command\MySqlQueryCommand;
+use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Family;
 use Akeneo\PimMigration\Domain\MigrationStep\s150_ProductVariationMigration\Entity\Product;
 use Akeneo\PimMigration\Domain\Pim\Pim;
 
@@ -41,15 +42,11 @@ class ProductRepository
         return $categories;
     }
 
-    public function findAllHavingVariantsForIvb(int $parentFamilyId, int $innerVariationFamilyId, Pim $pim): \Traversable
+    public function findAllByFamily(Family $family, Pim $pim): \Traversable
     {
         $sqlResults = $this->console->execute(new MySqlQueryCommand(sprintf(
-                'SELECT id, identifier FROM pim_catalog_product AS product_model
-            WHERE family_id = %d AND EXISTS(
-                SELECT * FROM pim_catalog_product AS product_variant
-                WHERE product_variant.family_id = %d
-                AND JSON_EXTRACT(product_variant.raw_values, \'$.variation_parent_product."<all_channels>"."<all_locales>"\') = product_model.identifier
-            );', $parentFamilyId, $innerVariationFamilyId)
+            'SELECT id, identifier FROM pim_catalog_product WHERE family_id = %d',
+            $family->getId())
         ), $pim)->getOutput();
 
         foreach ($sqlResults as $result) {

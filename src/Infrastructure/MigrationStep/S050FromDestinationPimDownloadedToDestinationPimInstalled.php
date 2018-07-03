@@ -168,7 +168,7 @@ class S050FromDestinationPimDownloadedToDestinationPimInstalled extends Abstract
                 function ($answer) {
                     // This URI validation regex is intentionally imperfect.
                     // It's goal is only to avoid common mistakes like forgetting "http", or adding parameters from a copy/paste.
-                    if (0 === preg_match('~^https?:\/\/[a-z0-9]+[a-z0-9\-\.]*[a-z0-9]+\/?(?:\:?\d{1,4})?$~i', $answer)) {
+                    if (0 === preg_match('~^https?:\/\/[a-z0-9]+[a-z0-9\-\.]*[a-z0-9]+\/?(?:\:\d{1,4})?$~i', $answer)) {
                         throw new \RuntimeException(
                             $this->translator->trans(
                                 'from_destination_pim_downloaded_to_destination_pim_installed.on_destination_pim_api_configuration.base_uri.error_message'

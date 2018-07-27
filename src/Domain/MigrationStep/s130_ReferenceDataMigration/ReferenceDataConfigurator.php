@@ -30,7 +30,7 @@ class ReferenceDataConfigurator
         $this->logger = $logger;
     }
 
-    public function configure(array $referenceDataConfig, string $tableName, Pim $pim): string
+    public function configure(string $referenceDataName, array $referenceDataConfig, string $tableName, Pim $pim): string
     {
         $this->logger->debug('ReferenceDataConfigurator: Start configuring');
 
@@ -102,7 +102,7 @@ class ReferenceDataConfigurator
 
         $referenceDataConfig['class'] = $newClassPath;
 
-        $configFile['pim_reference_data'][] = $referenceDataConfig;
+        $configFile['pim_reference_data'][$referenceDataName] = $referenceDataConfig;
 
         $this->fileSystem->dumpYamlInFile($configFilePath, $configFile);
 

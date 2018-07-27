@@ -86,9 +86,10 @@ class ReferenceDataMigrator implements DataMigrator
                 $referenceDataTableName = $this->entityTableNameFetcher->fetchTableName($sourcePim, $referenceData['class']);
                 $this->logger->debug(sprintf('ReferenceDataMigrator: Class %s is related to %s table_name', $referenceData['class'], $referenceDataTableName));
 
+                $referenceDataName = strtolower(substr($referenceData['class'], strrpos($referenceData['class'], '\\') + 1));
                 $destinationReferenceDataNamespace = $this
                     ->referenceDataConfigurator
-                    ->configure($referenceData, $referenceDataTableName, $destinationPim)
+                    ->configure($referenceDataName, $referenceData, $referenceDataTableName, $destinationPim)
                 ;
 
                 $this->entityMappingChecker->check($destinationPim, $destinationReferenceDataNamespace);

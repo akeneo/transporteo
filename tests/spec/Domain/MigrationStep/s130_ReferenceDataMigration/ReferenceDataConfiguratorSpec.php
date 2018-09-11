@@ -164,7 +164,7 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
 
         $configResult = [
             'pim_reference_data' => [
-                0 => [
+                'fabric' => [
                     'class' => 'Akeneo\Bundle\MigrationBundle\Entity\Fabric',
                     'type' => 'multi',
                 ]
@@ -179,7 +179,7 @@ class ReferenceDataConfiguratorSpec extends ObjectBehavior
 
         $fileSystem->dumpYamlInFile($configFilePath, $configResult)->shouldBeCalled();
 
-        $this->configure($fabric, 'acme_reference_data_fabric', $pim)->shouldReturn('Akeneo\Bundle\MigrationBundle\Entity\Fabric');
+        $this->configure('fabric', $fabric, 'acme_reference_data_fabric', $pim)->shouldReturn('Akeneo\Bundle\MigrationBundle\Entity\Fabric');
     }
 
     public function it_does_nothing_for_an_asset(Pim $pim)

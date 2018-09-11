@@ -32,6 +32,11 @@ class EntityMappingChecker
     public function check(Pim $pim, string $entityClassPath): void
     {
         try {
+            $this->chainedConsole->execute(
+              new SymfonyCommand('cache:clear', SymfonyCommand::PROD),
+              $pim
+            );
+
             $commandResult = $this->chainedConsole->execute(
                 new SymfonyCommand('doctrine:mapping:info', SymfonyCommand::PROD),
                 $pim

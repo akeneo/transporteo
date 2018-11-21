@@ -16,6 +16,8 @@ from_ready_to_source_pim_configured:
     ssh_port_question: "What is the SSH port of the source PIM? "
     ssh_port_error: "The SSH port should be an int. "
     ssh_user_question:  "What is the SSH user you want to connect with to the source PIM? "
+    ssh_passwd_question: "What is the SSH password you want to connect with to the source PIM?"
+    ssh_auth_mode_question: "How to you want to authenticate on the source PIM SSH server?"
     ssh_key_path_question: "What is the absolute path of the private SSH key able to connect to the source PIM? "
     ssh_key_path_error: "Your SSH key path should be an absolute one."
     ssh_key_protected: "Is your ssh key protected by a passphrase ? "

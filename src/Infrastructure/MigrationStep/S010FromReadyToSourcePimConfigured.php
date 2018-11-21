@@ -28,6 +28,9 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
     private const LOCAL_SOURCE_PIM = 'locally';
     private const REMOTE_SOURCE_PIM = 'on a remote server';
 
+    private const SSH_AUTH_KEYPAIR = "ssh keypair";
+    private const SSH_AUTH_PASSWORD = "password";
+
     private const YES = 'yes';
     private const NO = 'no';
 
@@ -161,8 +164,19 @@ class S010FromReadyToSourcePimConfigured extends AbstractStateMachineSubscriber 
             $this->translator->trans($transPrefix.'ssh_user_question'),
             $stateMachine->getDefaultResponse('ssh_user_source_pim')
         );
+        $sshAuthMode = $this->printerAndAsker->askChoiceQuestion(
+            $this->translator->trans($transPrefix.'ssh_auth_mode_question'),
+            [self::SSH_AUTH_KEYPAIR, self::SSH_AUTH_PASSWORD]
+        );
+        $password = null;
+        if ($sshAuthMode === self::SSH_AUTH_PASSWORD) {
+            $password = $this->printerAndAsker->askSimpleQuestion(
+                $this->translator->trans($transPrefix . 'ssh_passwd_question'),
+                $stateMachine->getDefaultResponse('ssh_passwd_source_pim')
+            );
+        }
 
-        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user));
+        $stateMachine->setSourcePimConnection(new SshConnection($host, $port, $user, $password));
 
         $pimProjectPath = $this
             ->printerAndAsker

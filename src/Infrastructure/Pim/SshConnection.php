@@ -24,11 +24,15 @@ class SshConnection implements PimConnection
     /** @var string */
     private $username;
 
-    public function __construct(string $host, int $port, string $username)
+    /** @var string */
+    private $password;
+
+    public function __construct(string $host, int $port, string $username, ?string $password = null)
     {
         $this->host = $host;
         $this->port = $port;
         $this->username = $username;
+        $this->password = $password;
     }
 
     public static function fromString(string $serverInformation)
@@ -55,5 +59,10 @@ class SshConnection implements PimConnection
     public function getUsername(): string
     {
         return $this->username;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 }

@@ -30,7 +30,8 @@ class SshFileFetcher implements FileFetcher
 
         $output = $ssh->exec(
             sprintf('test -f %s ; echo "$?"', $filePath),
-            $connection->getUsername()
+            $connection->getUsername(),
+            $connection->getPassword()
         );
 
         if ("0" !== trim($output)) {
@@ -40,7 +41,7 @@ class SshFileFetcher implements FileFetcher
         $varDir = sprintf('%s/../../var', __DIR__);
         $localPath = realpath($varDir).DIRECTORY_SEPARATOR.$fileName;
 
-        $sshConnection = $ssh->getAuthenticatedConnection($connection->getUsername());
+        $sshConnection = $ssh->getAuthenticatedConnection($connection->getUsername(), $connection->getPassword());
         $result = ssh2_scp_recv($sshConnection, $filePath, $localPath);
         $ssh->disconnect($sshConnection);
 

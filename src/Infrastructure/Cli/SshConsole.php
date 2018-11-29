@@ -64,7 +64,7 @@ class SshConsole extends AbstractConsole implements Console
 
             $this->logger->debug(sprintf('SshConsole: executing MySqlQueryCommand -> %s', $command->getCommand()));
 
-            $output = $ssh->exec($query, $connection->getUsername());
+            $output = $ssh->exec($query, $connection->getUsername(), $connection->getPassword());
 
             return new CommandResult($output !== false ? 0 : 1, '');
         }
@@ -74,7 +74,7 @@ class SshConsole extends AbstractConsole implements Console
 
             $this->logger->debug(sprintf('SshConsole: executing MySqlQueryCommand -> %s', $command->getCommand()));
 
-            $output = $ssh->exec($query, $connection->getUsername());
+            $output = $ssh->exec($query, $connection->getUsername(), $connection->getPassword());
 
             $lines = array_filter(explode(PHP_EOL, $output), function ($element) {
                 return !empty(trim($element));
@@ -96,7 +96,7 @@ class SshConsole extends AbstractConsole implements Console
 
         $this->logger->debug(sprintf('SshConsole: executing %s command -> %s', get_class($command), $processedCommand));
 
-        $output = $ssh->exec($processedCommand, $connection->getUsername());
+        $output = $ssh->exec($processedCommand, $connection->getUsername(), $connection->getPassword());
 
         return new CommandResult($output !== false ? 0 : 1, $output);
     }

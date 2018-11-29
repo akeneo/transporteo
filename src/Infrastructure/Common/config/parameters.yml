@@ -9,6 +9,7 @@ parameters:
     ssh_hostname_source_pim: ''
     ssh_port_source_pim: '22'
     ssh_user_source_pim: ''
+    ssh_passwd_source_pim: ''
 
     # Base URI (with http://) to request the API
     api_base_uri_source_pim: ''

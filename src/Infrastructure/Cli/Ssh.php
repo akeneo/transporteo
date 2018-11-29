@@ -23,9 +23,9 @@ class Ssh
         $this->port = $port;
     }
 
-    public function exec(string $command, string $username): ?string
+    public function exec(string $command, string $username, ?string $password = null): ?string
     {
-        $connection = $this->getAuthenticatedConnection($username);
+        $connection = $this->getAuthenticatedConnection($username, $password);
 
         $stream = ssh2_exec($connection, $command);
         if (!is_resource($stream)) {
@@ -49,7 +49,7 @@ class Ssh
         return $output;
     }
 
-    public function getAuthenticatedConnection(string $username)
+    public function getAuthenticatedConnection(string $username, ?$password = null)
     {
         $connection = ssh2_connect($this->host, $this->port);
 
@@ -63,7 +63,13 @@ class Ssh
             );
         }
 
-        if (false === ssh2_auth_agent($connection, $username)) {
+        if (!empty($password)) {
+            $res = ssh2_auth_password($connection, $username, $password);
+        } else {
+            $res = ssh2_auth_agent($connection, $username);
+        }
+
+        if (false === $res) {
             throw new ImpossibleConnectionException(
                 sprintf(
                     'Impossible to login to %s@%s:%d using ssh local agent, try to run ssh-add before retry',

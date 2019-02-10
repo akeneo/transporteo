@@ -134,6 +134,6 @@ class SourcePim extends AbstractPim implements Pim
 
     protected static function getPimVersionAllowed(): string
     {
-        return  '1.7.';
+        return  '1.7';
     }
 }

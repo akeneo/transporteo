@@ -49,7 +49,7 @@ class Ssh
         return $output;
     }
 
-    public function getAuthenticatedConnection(string $username, ?$password = null)
+    public function getAuthenticatedConnection(string $username, ?string $password = null)
     {
         $connection = ssh2_connect($this->host, $this->port);
 
